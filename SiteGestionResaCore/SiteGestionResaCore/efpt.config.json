@@ -1,0 +1,77 @@
+﻿{
+   "ContextClassName": "GestionResaContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": "Data",
+   "OutputPath": null,
+   "ProjectRootNamespace": "SiteGestionResaCore.Data",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[equipement]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[essai]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_destination]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_financement]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_produit_in]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_provenance]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_provenance_produit]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[ld_type_projet]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[organisme]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[projet]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[reservation_projet]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[utilisateur]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[zone]"
+      }
+   ],
+   "UseDatabaseNames": true,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseNodaTime": false,
+   "UseSpatial": false,
+   "UseStoredProcedures": false
+}

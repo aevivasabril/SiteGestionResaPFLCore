@@ -1,0 +1,210 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.EquipementsParZoneViewModel
+
+@{
+    ViewBag.Title = "EquipementVsZone";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h4>Liste des équipements pour la zone @Model.NomZone </h4>
+<br />
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+@for (int i = 0; i < Model.Equipements.Count(); i++)
+{
+    <div class="form-row">
+        <div class="col-sm-8 col-md-8">
+            <div class="checkbox">
+                <strong>@Html.Label(Model.Equipements[i].nom + "( Num GMAO: " + Model.Equipements[i].numGmao + " )" + Model.Equipements[i].Id)</strong>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6">
+                    Emplacement pour la photo
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    Emplacement pour les liens résa!
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="col-sm-4 col-md-4">
+            <a class="btn-link" href="#" onclick="showCalendar(@Model.Equipements[i].Id.ToString())">Voir disponibilité</a>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12 col-md-12">
+                <div id="@Model.Equipements[i].Id.ToString()" class="hide" style="display:none">
+                    <div class="form-group row">
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-10 col-md-10">
+                                @using (Html.BeginForm("AfficherPlanning", "Reservation", new { idEquip = Model.CalendrierChildVM[i].EquipementCalendrier.Id }, FormMethod.Post, new { @role = "" }))
+                                {
+                                    @Html.Partial("~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml", Model.CalendrierChildVM[i])
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="cren-content">
+                        @using (Html.BeginForm("AjouterResa", "Reservation", new { idEquip = Model.CalendrierChildVM[i].EquipementCalendrier.Id }, FormMethod.Post, new { @role = "" }))
+                        {
+                            @Html.Partial("~/Areas/Reservation/Views/Shared/_Creneau.cshtml", Model.CalendrierChildVM[i])
+                        }
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </div>
+    </div>
+}
+<hr />
+<br />
+<div class="form-group row">
+    <div class="col-sm-12 col-md-12">
+        <h4 class="text-center"><strong>Récapitulatif de Réservation Zone @Model.NomZone</strong></h4>
+        <h6>Vérifiez les créneaux réservations ajoutés, si vous souhaitez modifier un créneau, supprimez-les et rajoutez si besoin</h6>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Equipement</th>
+                    <th scope="col">Date Début</th>
+                    <th scope="col">Date Fin</th>
+                    <th scope="col">Heure Début</th>
+                    <th scope="col">Heure Fin</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Equipements.Count(); i++)
+                {
+                    for (int j = 0; j < Model.CalendrierChildVM[i].ResaEquipement.Count(); j++)
+                    {
+                        <tr>
+                            <th scope="row">@Model.Equipements[i].nom (N° GMAO: @Model.Equipements[i].numGmao )</th>
+                            <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_debut.ToShortDateString()</td>
+                            <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_fin.ToShortDateString()</td>
+                            <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_debut.ToShortTimeString()</td>
+                            <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_fin.ToShortTimeString()</td>
+                            <td>@Html.ActionLink("Supprimer", "SupprimerCreneauResa", new { i = i, j = j })</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr />
+<br />
+@using (Html.BeginForm("ValiderResaZone", "Reservation", FormMethod.Post))
+{
+    <div class="form-group row">
+        <div class="col-md-2">
+            @Html.ActionLink("Annuler", "AnnulerResaZone", null, new { @class = "btn btn-primary" })
+        </div>
+        <div class="offset-7 col-md-1">
+            <input type="submit" class="btn btn-default navbar-inra" value="Valider réservations zone" name="action" />
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("SupprimerCreneauResa", "Reservation", new { i = Model.IndiceChildModel, j = Model.IndiceResaEquipXChild }, FormMethod.Post, new { @role = "" }))
+{
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau réservation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau réservation?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+@section Scripts
+{
+    <!-- JS includes -->
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+
+    <script type="text/javascript">
+
+        $('.datepick').datepicker({
+            dateFormat: "dd/mm/yy",
+            firstDay: 1,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "2019:2040",
+            closeText: 'Fermer',
+            prevText: 'Précédent',
+            nextText: 'Suivant',
+            currentText: 'Aujourd\'hui',
+            monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+            monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+            dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+            dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+            dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+            weekHeader: 'Sem.'
+        });
+
+        function showCalendar(parameter) {
+            var divid = document.getElementById(parameter);
+            if (divid.style.display == "") {
+                divid.style.display = "none";
+            } else {
+                divid.style.display = "";
+            }
+        }
+        @{
+            if (ViewBag.modalSupp == null)
+            {
+                ViewBag.modalSupp = "hide";
+            }
+        }
+        $('#suppModal').modal('@ViewBag.modalSupp');
+
+        /*https://stackoverflow.com/questions/11346112/can-i-lock-the-first-column-in-a-twitter-bootstrap-table
+         * $('#scroller table').each(function(){
+            var table = $(this),
+                fixedCol = table.clone(true),
+                fixedWidth = table.find('th').eq(0).width(),
+                tablePos = table.position();
+    
+            // Remove all but the first column from the cloned table
+            fixedCol.find('th').not(':eq(0)').remove();
+            fixedCol.find('tbody tr').each(function(){
+                $(this).find('td').not(':eq(0)').remove();
+            });
+    
+            // Set positioning so that cloned table overlays
+            // first column of original table
+            fixedCol.addClass('fixedCol');
+            fixedCol.css({
+                left: tablePos.left,
+                top: tablePos.top
+            });
+   
+            // Match column width with that of original table
+            fixedCol.find('th,td').css('width',fixedWidth+'px');
+    
+            $('#scroller').append(fixedCol);
+        });*/
+    </script>
+}
+

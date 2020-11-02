@@ -1,0 +1,111 @@
+﻿@model SiteReservationGestionPFL.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Création de mon compte personnel";
+}
+
+<h2>@ViewBag.Title.</h2>
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <!--<h5>Remplissez le formulaire</h5>-->
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-6">
+            @Html.LabelFor(m => m.Password, new { @class = "col-lg-5 control-label" })
+            <div class="col-lg-6">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-6">
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-lg-7 control-label" })
+            <div class="col-lg-6">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-6">
+            @Html.LabelFor(m => m.Nom, new { @class = "col-md-2 control-label" })
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.Nom, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Nom, "", new { @class = "text-danger" })
+            </div> 
+        </div>
+        <div class="col-6">
+            @Html.LabelFor(m => m.Prenom, new { @class = "col-md-2 control-label" })
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.Prenom, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Prenom, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.SelectedOrganId, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @*@Html.TextBoxFor(m => m.Organisme, new { @class = "form-control" })CHANGER POUR METTRE UNE LISTE*@
+            @Html.DropDownListFor(m => m.SelectedOrganId, Model.OrganItem)
+            @Html.ValidationMessageFor(m => m.SelectedOrganId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default navbar-inra" value="Envoyer" />
+        </div>
+    </div>
+
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="exampleModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Formulaire traité!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h6>
+                        Votre demande d'ouverture de compte est enregistrée. Vous recevrez un mail de validation de création de compte prochainement
+                    </h6>
+                </div>
+                <div class="modal-footer">
+                    @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                    <!--<button type="button" class="btn btn-primary">Understood</button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.ModalState == null)
+            {
+                ViewBag.ModalState = "hide";
+            }
+        }
+        $('#exampleModal').modal('@ViewBag.ModalState');
+        // Script action button modal OK pour rediriger l'utilisateur vers la page d'accueil
+        $('#submit').click(function () {
+                /* when the submit button in the modal is clicked, submit the form */
+                //alert('submitting');
+                //$('#formfield').submit();
+                window.location.href = "/Home/Index";
+            });
+    </script>
+}

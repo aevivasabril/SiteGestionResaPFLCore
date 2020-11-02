@@ -1,0 +1,60 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.CalendrierEquipChildViewModel
+
+
+<h5>Réservation "@Model.EquipementCalendrier.nom"</h5>
+
+<div class="container">
+    <div class="form-group row">
+        <div class="col-sm-8 col-md-8">
+            <div class="form-group row">
+                <div class="col-sm-4 col-md-4">
+                    <!--Date picker -->
+                    <div class="input-group date">
+                        @Html.Label("Date Début:  ")
+                        @Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.EquipementCalendrier.Id, @placeholder = "MM/DD/YYYY" } })
+                        @Html.ValidationMessageFor(m => m.DateDebut, "", new { @class = "text-danger" })
+                        <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")
+                    @Html.Label("Matin", new { @class = "col-md-2 control-label" })
+                    @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")
+                    @Html.Label("Après-midi", new { @class = "col-md-10 control-label" })
+                    @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-md-4">
+                    <div class="input-group date">
+                        @Html.Label("Date Fin:  ")
+                        @Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.EquipementCalendrier.Id, @placeholder = "MM/DD/YYYY" } })
+                        @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
+                        <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.DatePickerFin_Matin, "true")
+                    @Html.Label("Matin", new { @class = "col-md-2 control-label" })
+                    @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.DatePickerFin_Matin, "false")
+                    @Html.Label("Après-midi", new { @class = "col-md-10 control-label" })
+                    @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <!-- pour passer l'id equipement et l'id zone à la méthode AddReservation() -->
+        @*@Html.HiddenFor(model => model.equiID)*@
+        <div class="col-sm-4 col-md-4">
+            <input type="submit" class="btn btn-outline-success" value="Ajouter Réservation" />
+        </div>
+    </div>
+</div>
+    
+
+

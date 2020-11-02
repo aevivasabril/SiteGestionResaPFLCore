@@ -1,0 +1,90 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.ZonesReservationViewModel
+
+<!-- Ajouter un if pour vérifier que on est bien sur la partie "Voir disponibilité"-->
+@if (ViewBag.SelectEquipements == "show")
+{
+    <hr />
+    <h5>Liste des équipements pour la zone @Model.NomZone </h5>
+    <br />
+    <div class="form-group">
+        @for (int i = 0; i < Model.Equipements.Count(); i++)
+        {
+            <div class="form-row">
+                <div class="col-sm-8 col-md-8">
+                    <div class="checkbox">
+                        @Html.CheckBoxFor(m => m.Equipements[i].EstSelectionne)
+                        @Html.LabelFor(m => m.Equipements[i].EstSelectionne, Model.Equipements[i].equipement.nom + "( Num GMAO: " + Model.Equipements[i].equipement.numGmao + " )")
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6">
+                            Emplacement pour la photo
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            Emplacement pour les liens résa!
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4">
+                    <h5> Emplacement pour la vue calendrier </h5>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <hr />
+    <div class="form-group row">
+        <div class="row">
+            <table class="table table-striped">
+                <h5>Récapitulatif des équipements selectionnés pour réservation</h5>
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th scope="col">Zone</th>
+                        <th scope="col">Nom équipement</th>
+                        <th scope="col">Date début</th>
+                        <th scope="col">Date Fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.Equipements)
+                    {
+                        <tr>
+                            <td>@Model.NomZone</td>
+                            <td>@x.equipement.nom</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@if (ViewBag.Recapitulatif == "show")
+{
+    <hr />
+    <div class="form-group row">
+        <div class="row">
+            <table class="table table-striped">
+                <h5>Récapitulatif des équipements selectionnés pour réservation</h5>
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th scope="col">Zone</th>
+                        <th scope="col">Nom équipement</th>
+                        <th scope="col">Date début</th>
+                        <th scope="col">Date Fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.Equipements)
+                    {
+                        <tr>
+                            <td>@Model.NomZone</td>
+                            <td>@x.equipement.nom</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

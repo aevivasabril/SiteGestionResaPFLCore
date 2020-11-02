@@ -1,0 +1,351 @@
+﻿@using SiteReservationGestionPFL.Areas.Equipe.Data
+@model GestionUsersViewModel
+
+@{
+    ViewBag.Title = "GestionUtilisateurs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-center">Gestion Utilisateurs</h2>
+<br />
+<!-- #region table administrateurs de site + utilisateurs avec compte validée -->
+<div class="row">
+    <div class="col-sm-5 col-md-5">
+        <div class="row justify-content-center">
+            <table class="table table-striped justify-content-center">
+                <h5 class="text-center">Administrateurs du site</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Mail</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.UsersAdmin)
+                    {
+                        <tr>
+                            <td>@x.nom</td>
+                            <td>@x.prenom</td>
+                            <td>@x.Email</td>
+                            <td>@Html.ActionLink("Modifier", "AdminToUserAcces", new { id = x.Id })</td><!--Voir comme faire ce link-->
+                            @*<td>
+                                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#AddAdminModal">Modifier</button>
+                            </td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <br />
+        @using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
+        {
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="adminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Changement droits compte</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            <p class="font-weight-bold">Pour l'utilisateur:</p>
+                            <p>Nom:   @Model.UserToChange.nom</p>
+                            <p>Prenom:  @Model.UserToChange.prenom</p>
+                            <p>Mail: @Model.UserToChange.Email</p>
+                            <p class="font-weight-bold text-center"> Après confirmation cette personne aura des droits restreints du type "@ViewBag.NameRole"</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row justify-content-center">
+            <!--Rajouter le script pour ouvrir la fênetre modal-->
+            @Html.ActionLink("Ajouter un nouvel administrateur", "AddingAdmin", null, new { @class = "btn btn-default navbar-inra" })
+        </div>
+        <br />
+        @using (Html.BeginForm("AddingAdmin", "Equipe", FormMethod.Post, new { @role = "" }))
+        {
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="AddAdminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center" id="staticBackdropLabel">Sélectionnez l'utilisateur à rajouter dans le groupe ADMIN</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            @Html.DropDownListFor(m => m.UserToUpdateId, Model.UserItem)
+                            @Html.ValidationMessageFor(m => m.UserToUpdateId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modal-footer">
+                            @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="offset-sm-2 col-md-5">
+        <table class="table table-striped justify-content-center">
+            <h5 class="text-center">Utilisateurs PFL</h5>
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Mail</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model.ListUsers)
+                {
+                    <tr>
+                        <td>@x.nom</td>
+                        <td>@x.prenom</td>
+                        <td>@x.Email</td>
+                        <td>@Html.ActionLink("Supprimer", "DeleteUser", new { id = x.Id })</td><!--Voir comme faire ce link-->
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @using (Html.BeginForm("DeleteUser", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
+        {
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression compte Utilisateur</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            <p>Nom:   @Model.UserToChange.nom</p>
+                            <p>Prenom:  @Model.UserToChange.prenom</p>
+                            <p>Mail: @Model.UserToChange.Email</p>
+                            <p class="font-weight-bold text-center"> Après confirmation cette compte sera supprimée définitivement, Etês-vous sûr de vouloir continuer?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- #endregion -->
+
+<br />
+<!-- #region Demandes d'ouverture de compte -->
+<div class="row">
+    <div class="offset-sm-3 col-md-6">
+        <table class="table table-striped justify-content-center">
+            <h5 class="text-center">Demandes d'ouverture de compte</h5>
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Mail</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model.ListUsersWaiting)
+                {
+                    <tr>
+                        <td>@x.nom</td>
+                        <td>@x.prenom</td>
+                        <td>@x.Email</td>
+                        <td>
+                            @Html.ActionLink(" Valider ", "Valider", new { id = x.Id })
+
+                            @Html.ActionLink(" Refuser ", "Refuser", new { id = x.Id })
+                        </td><!--Voir comme faire ce link-->
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @using (Html.BeginForm(@Model.ActionName, "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
+    {
+        <!-- Modal pop-up d'info-->
+        <div class="modal fade" id="waitingModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+            <div class="modal-dialog navbar-inra" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center" id="staticBackdropLabel">@Model.ActionName ouverture de compte</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="modalcontent">
+                        <p class="font-weight-bold">Etês-vous sûr de vouloir "@Model.ActionName" la demande faite par cet utilisateur? : </p>
+                        <p>Nom:   @Model.UserToChange.nom</p>
+                        <p>Prenom:  @Model.UserToChange.prenom</p>
+                        <p>Mail: @Model.UserToChange.Email</p>
+                    </div>
+                    <div class="modal-footer">
+                        @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                        @*<button type="button" class="btn btn-primary">Valider</button>*@
+                        <input type="submit" class="btn btn-primary" value="Valider" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!-- #endregion -->
+
+<br />
+<!-- #region Administrateurs "logistique" du site (validation des réservations) -->
+<div class="row">
+    <div class="offset-sm-3 col-md-6">
+        <div class="row justify-content-center">
+            <table class="table table-striped">
+                <h5 class="text-center">Administrateurs logistique PFL</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Mail</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.ListAdminLogistic)
+                    {
+                        <tr>
+                            <td>@x.nom</td>
+                            <td>@x.prenom</td>
+                            <td>@x.Email</td>
+                            <td>@Html.ActionLink("Modifier", "RemoveLogisticUser", new { id = x.Id })</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @using (Html.BeginForm("RemoveLogisticUser", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
+        {
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="removeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Retirer utilisateur du groupe Administrateurs logistique</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            <p class="font-weight-bold">Pour l'utilisateur:</p>
+                            <p>Nom:   @Model.UserToChange.nom</p>
+                            <p>Prenom:  @Model.UserToChange.prenom</p>
+                            <p>Mail: @Model.UserToChange.Email</p>
+                            <p class="font-weight-bold text-center"> Après confirmation cette personne ne sera plus dans le groupe administrateurs "Logistique"</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="offset-sm-3 col-md-6 text-center">
+                <!--Rajouter le script pour ouvrir la fênetre modal-->
+                @Html.ActionLink("Ajouter un nouvel administrateur logistique", "AddingLogistic", null, new { @class = "btn btn-default navbar-inra" })
+            </div>
+        </div>
+        @using (Html.BeginForm("AddingLogistic", "Equipe", FormMethod.Post, new { @role = "" }))
+        {
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="AddAdminLogistic" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center" id="staticBackdropLabel">Sélectionnez l'utilisateur à rajouter dans le groupe ADMIN</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            @Html.DropDownListFor(m => m.AdminToLogisticId, Model.AdminItem)
+                            @Html.ValidationMessageFor(m => m.AdminToLogisticId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modal-footer">
+                            @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<!-- #endregion -->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.ModalState == null)
+            {
+                ViewBag.ModalState = "hide";
+            }
+            if(ViewBag.modalAdm == null)
+            {
+                ViewBag.modalAdm = "hide";
+            }
+            if(ViewBag.modalWait == null)
+            {
+                ViewBag.modalWait = "hide";
+            }
+            if(ViewBag.modalDelete == null)
+            {
+                ViewBag.modalDelete = "hide";
+            }
+            if(ViewBag.modalLogic == null)
+            {
+                ViewBag.modalLogic = "hide";
+            }
+            if(ViewBag.modalRemove == null)
+            {
+                ViewBag.modalRemove = "hide";
+            }
+        }
+        $('#adminModal').modal('@ViewBag.ModalState');
+        $('#AddAdminModal').modal('@ViewBag.modalAdm');
+        $('#waitingModal').modal('@ViewBag.modalWait');
+        $('#deleteModal').modal('@ViewBag.modalDelete');
+        $('#AddAdminLogistic').modal('@ViewBag.modalLogic');
+        $('#removeModal').modal('@ViewBag.modalRemove');
+    </script>
+}

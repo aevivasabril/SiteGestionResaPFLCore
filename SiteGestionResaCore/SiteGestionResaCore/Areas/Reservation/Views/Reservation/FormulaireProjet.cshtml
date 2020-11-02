@@ -1,0 +1,236 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.FormulaireProjetViewModel
+
+@{
+    ViewBag.Title = "FormulaireProjet";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h2>Etape 1: Formulaire</h2>
+<h5>Remplissez les informations concernant votre projet</h5>
+<hr />
+
+<div class="form-group justify-content-center row">
+    @using (Html.BeginForm("TrouverProjet", "Reservation", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="card">
+            <div class="card-header">
+                Copier les informations sur un projet existant
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Trouver un essai existant et copier les informations (projet + essai)</h5>
+                <div class="form-row">
+                    @Html.Label("Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345):", new { @class = "col-md-12 control-label" })
+                    <div class="col-sm-10">
+                        @Html.TextBoxFor(m => m.NumProjet, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.NumProjet, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <hr />
+                <input type="submit" class="btn navbar-inra" value="Récupérer essais pour ce projet" />
+            </div>
+        </div>
+    }
+</div>
+<hr />
+<div class="form-group row">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm("SoumettreFormulaire", "Reservation", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        <h6>INFORMATIONS PROJET</h6>
+        <hr />
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            @Html.LabelFor(m => m.TitreProjet, new { @class = "col-md-6 control-label" })
+            @Html.TextBoxFor(m => m.TitreProjet, new { @class = "col-md-7 form-control" })
+            @Html.ValidationMessageFor(m => m.TitreProjet, "", new { @class = "text-danger" })
+
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.NumProjet, new { @class = "col-md-6 control-label" })
+            <div class="col-md-12">
+                @Html.TextBoxFor(m => m.NumProjet, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.NumProjet, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                @Html.LabelFor(m => m.SelectTypeProjetId, new { @class = "col-md-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectTypeProjetId, Model.TypeProjetItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectTypeProjetId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(m => m.SelectFinancementId, new { @class = "col-md-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectFinancementId, Model.TypefinancementItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectFinancementId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-4">
+                @Html.LabelFor(m => m.SelectedOrganId, new { @class = "col-md-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectedOrganId, Model.OrganItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedOrganId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(m => m.SelectedRespProjId, new { @class = "col-md-5 col-lg-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectedRespProjId, Model.RespProjItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedRespProjId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(m => m.SelectedProvenanceId, new { @class = "col-md-5 col-lg-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectedProvenanceId, Model.ProvenanceItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedProvenanceId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.DescriptionProjet, new { @class = "col-md-6 control-label" })
+            @Html.TextBoxFor(m => m.DescriptionProjet, new { @class = "col-md-12 form-control" })
+            @Html.ValidationMessageFor(m => m.DescriptionProjet, "", new { @class = "text-danger" })
+        </div>
+
+        <hr />
+        <h6>INFORMATIONS ESSAI</h6>
+        <hr />
+        <div class="form-row">
+            @Html.LabelFor(m => m.ConfidentialiteEssai, new { @class = "col-md-6 control-label" })
+            @Html.ValidationMessageFor(m => m.ConfidentialiteEssai, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Ouvert")
+                    @Html.Label("Ouvert", new { @class = "col-md-5 control-label" })
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Restreint")
+                    @Html.Label("Restreint", new { @class = "col-md-5 control-label" })
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel")
+                    @Html.Label("Confidentiel", new { @class = "col-md-5 control-label" })
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                @Html.LabelFor(m => m.SelectedManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
+                @Html.DropDownListFor(m => m.SelectedManipulateurID, Model.ManipProjItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedManipulateurID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.SelectedProductId, new { @class = "col-md-7 control-label" })
+                @Html.DropDownListFor(m => m.SelectedProductId, Model.ProductItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedProductId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                @Html.LabelFor(m => m.PrecisionProduitIn, new { @class = "col-md-4 control-label" })
+                @Html.TextBoxFor(m => m.PrecisionProduitIn)
+                @Html.ValidationMessageFor(m => m.PrecisionProduitIn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.QuantiteProduit, new { @class = "col-md-6 control-label" })
+                @Html.TextBoxFor(m => m.QuantiteProduit)
+                @Html.ValidationMessageFor(m => m.QuantiteProduit, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                @Html.LabelFor(m => m.SelectedProveProduitId, new { @class = "col-md-4 col-lg-7 control-label" })
+                @Html.DropDownListFor(m => m.SelectedProveProduitId, Model.ProvenanceProduitItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedProveProduitId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.SelectedDestProduit, new { @class = "col-md-4 col-lg-7 control-label" })
+                @Html.DropDownListFor(m => m.SelectedDestProduit, Model.DestProduitItem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.SelectedDestProduit, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                <p>
+                    <strong>Important: </strong>si Destination produits est égal à <strong>Plan HACCP</strong> ou
+                    <strong>Test Sensoriel</strong>, les analyses par un laboratoire accrédité sont <strong>OBLIGATOIRES</strong>
+                    avant toute dégustation interne ou externe.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CommentaireEssai, new { @class = "col-md-6 control-label" })
+            @Html.TextBoxFor(m => m.CommentaireEssai, new { @class = "col-md-12 form-control" })
+            @Html.ValidationMessageFor(m => m.CommentaireEssai, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.TransportSTLO, new { @class = "col-md-6 control-label" })
+            @Html.ValidationMessageFor(m => m.TransportSTLO, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-8">
+                    @Html.RadioButtonFor(m => m.TransportSTLO, "true")
+                    @Html.Label("STLO (800L max)", new { @class = "col-md-10 control-label" })
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.TransportSTLO, "false")
+                    @Html.Label("Autre", new { @class = "col-md-5 control-label" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-2">
+                @Html.ActionLink("Annuler", "AnnulerDemande", null, new { @class = "btn btn-primary" })
+            </div>
+            <div class="offset-9 col-md-1">
+                <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
+            </div>
+        </div>
+    }
+</div>
+
+@using (Html.BeginForm("CopierProjetEssai", "Reservation", new { num = Model.NumProjet }, FormMethod.Post, new { @role = "" }))
+{
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ListeEssais" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Liste des essais pour le projet N° @Model.NumProjet: </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    @Html.DropDownListFor(m => m.SelectedEssaiId, Model.EssaiItem, new { @class = " col-md-10 form-control" })
+                    @Html.ValidationMessageFor(m => m.SelectedEssaiId, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.NumProjet, new { id = Model.NumProjet })
+                    <hr />
+                    <strong class="text-center">@ViewBag.Message</strong>
+                    <!-- On met le HiddenFor pour envoyer le num_projet vers la méthode POST "CopierProjetEssai"-->
+                </div>
+                <div class="modal-footer">
+                    @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if(ViewBag.modalListe == null)
+            {
+                ViewBag.modalListe = "hide";
+            }
+        }
+        $('#ListeEssais').modal('@ViewBag.modalListe');
+    </script>
+}
+
+
+

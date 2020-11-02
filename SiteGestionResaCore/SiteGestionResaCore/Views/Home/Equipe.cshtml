@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "Equipe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2>Espace gestion du site</h2>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/metrologie.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Métrologie</a>
+                </h5>
+                <p class="card-text">Cet option vous permet de gestionner les opérations de métrologie à appliquer sur les capteurs des pilotes répertoriés sur la base de données.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/statistiques.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Statistiques PFL</a>
+                </h5>
+                <p class="card-text">Accès aux diverses statistiques Plateforme. Fichiers excel téléchargeables.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/enquetes.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Enquetes de satisfaction</a>
+                </h5>
+                <p class="card-text">Consulter les enquêtes de satisfaction et accès aux statistiques obtenues des enquêtes repondues</p>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/utilisateur.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="/Equipe/Equipe/GestionUtilisateurs">Gestion des utilisateurs</a>
+                    @*@Html.ActionLink("Gestion des utilisateurs", "GestionUtilisateurs", "Equipe", new { area = "Equipe" }, new { @class= "btn-link"})*@
+                </h5>
+                <p class="card-text">Supprimer des anciens utilisateurs, modifier les droits de compte, valider les demandes d'ouverture... </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top h-auto m-auto" src="~/Content/Images/EquipeViewImages/planning.png" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Réservations</a>
+                </h5>
+                <p class="card-text">Valider ou refuser des réservations, consulter les réservations validés ou supprimées </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/zonesEtEquip.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Gestion des zones et des équipements</a>
+                </h5>
+                <p class="card-text">Modifier les informations sur un équipement (Fiche technique, Zone, N° GMAO....) </p>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/donnes.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Recuperation des données PcVue</a>
+                </h5>
+                <p class="card-text">Accès aux données générées pour tous les projets. Respecter la confidentialité!</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/documentation.png" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Documentation AQR</a>
+                </h5>
+                <p class="card-text">Mise à jour des documents qualité publiés dans la page</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <img class="card-img-top" src="~/Content/Images/EquipeViewImages/event.jpg" />
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a class="btn-link" href="#">Evènements</a>
+                </h5>
+                <p class="card-text">Ajouter, supprimer, modifier ou afficher dans la page d'accueil des évènements</p>
+            </div>
+        </div>
+    </div>
+</div>
+

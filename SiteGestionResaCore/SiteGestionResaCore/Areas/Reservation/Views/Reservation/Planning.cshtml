@@ -1,0 +1,129 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.EquipementsParZoneViewModel
+@{
+    ViewBag.Title = "Planning";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- calendrier pour le choix des créneaux réservation par équipement-->
+<div class="form-group row">
+    <div class="row">
+        <a class="btn-link" href="#" id="hideShow">Voir disponibilité</a>
+    </div>
+    <div class="hide" style="display:none">
+        <div class="form-group row">
+            <h2>Planning Equipement</h2>
+            <div class="row">
+                <div class="col-sm-10 col-md-10 offset-1">
+                    <div id='calendar'></div>
+                </div>
+            </div>
+            <br />
+            <hr />
+            @Html.Partial("~/Areas/Reservation/Views/Shared/_Creneau.cshtml", Model.CalendrierChildVM[2])
+            @*<div class="col-sm-10 col-md-10">
+            <h5>Réservation</h5>
+            <div class="row">
+                <div class="col-sm-4 col-md-4">
+                    <!--Date picker -->
+                    <div class="input-group date">
+                        @Html.Label("Date Début: ")
+                        @Html.EditorFor(m => m.NomZone, new { htmlAttributes = new { @class = "form-control col-5", @id = "datepickerdebut", @placeholder = "MM/DD/YYYY" } })
+                        <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.NomZone, "Matin")
+                    @Html.Label("Matin", new { @class = "col-md-4 control-label" })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.NomZone, "Après-midi")
+                    @Html.Label("Après-midi", new { @class = "col-md-8 control-label" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 col-md-4">
+                    <div class="input-group date">
+                        @Html.Label("Date Fin: ")
+                        @Html.EditorFor(m => m.NomZone, new { htmlAttributes = new { @class = "form-control col-5", @id = "datepickerfin", @placeholder = "MM/DD/YYYY" } })
+                        <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.Zones, "Matin")
+                    @Html.Label("Matin", new { @class = "col-md-4 control-label" })
+                </div>
+                <div class="col-sm-3 col-md-3">
+                    @Html.RadioButtonFor(m => m.Zones, "Après-midi")
+                    @Html.Label("Après-midi", new { @class = "col-md-8 control-label" })
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <span id="iconAdd" class="fas fa-plus-circle" style="color:green"></span>
+            <!-- îcone à cliquer pour rajouter des créneaux réservation -->
+        </div>*@
+        </div>
+        <div class="form-group row align-content-center">
+            @Html.Partial("~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml", Model.CalendrierChildVM[2])
+        </div>
+        <div id="insert" class="form-group row">
+            HOLA
+        </div>
+    </div>
+</div>
+
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.standalone.min.css" rel="stylesheet" />
+
+<!-- Quand on l'utilise en partial view on a pas besoin de rajouter l'espace SCRIPTS car la page apellant la vue partielle contient les scripts! ici je le laisse car c'est une vue pour tester-->
+@section Scripts {
+    <!-- JS includes -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.16.0/moment.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
+
+    <!-- Datepicker moment with locales -->
+    <script type="text/javascript" language="javascript" src="datetimepicker/js/moment-with-locales.js"></script>
+
+    <!-- Propeller Bootstrap datetimepicker -->
+    <script type="text/javascript" language="javascript" src="datetimepicker/js/bootstrap-datetimepicker.js"></script>
+
+
+    <script>
+        $("#hideShow").click(function () {
+            $(".hide").toggle('fast');
+        });
+        // Date picker only
+        $('#datepickerdebut').datepicker();
+        $('#datepickerfin').datepicker();
+        $('#datepickershowdebut').datepicker();
+        $('#datepickershowfin').datepicker();
+
+    </script>
+    <script>
+        let icon = document.querySelector("span");
+        icon.addEventListener('click', ajoutCreneau);
+        /* Méthode ne fonctionne pas*/
+        function ajoutCreneau() {
+            /*$.ajax({
+                type: "POST",
+                url: "/Home/JqAJAX",
+                data: JSON.stringify(Student),
+                dataType: "json",
+                contentType: 'application/json; charset=utf-8',
+                success: function (data) {
+                    alert(data.msg);
+                },
+                error: function () {
+                    alert("Error occured!!")
+                }
+            });*/
+            let insert = document.getElementById("insert");
+            insert.textContent = 'AHHHHH BAH VOILA';
+        }
+    </script>
+}

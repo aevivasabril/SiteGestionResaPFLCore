@@ -1,0 +1,137 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/* Bootstrap crée sur le site https://work.smarchal.com/twbscolor/css/e74c3cc0392becf0f1ffbbbc0 
+    pour le faire correspondre aux couleurs INRAE
+*/
+.navbar-inra {
+    background-color: #00a3a6;
+    border-color: transparent;
+}
+
+.navbar-inra .navbar-brand {
+    color: #ffffff;
+}
+
+.navbar-inra .navbar-brand:hover,
+.navbar-inra .navbar-brand:focus {
+    color: #e1cece;
+}
+
+.navbar-inra .navbar-text {
+    color: #ffffff;
+}
+
+.navbar-inra .navbar-nav > li > a {
+    color: #ffffff;
+}
+
+.navbar-inra .navbar-nav > li > a:hover,
+.navbar-inra .navbar-nav > li > a:focus {
+    color: #e1cece;
+}
+
+.navbar-inra .navbar-nav > li > .dropdown-menu {
+    background-color: #00a3a6;
+}
+
+.navbar-inra .navbar-nav > li > .dropdown-menu > li > a {
+    color: #ffffff;
+}
+
+.navbar-inra .navbar-nav > li > .dropdown-menu > li > a:hover,
+.navbar-inra .navbar-nav > li > .dropdown-menu > li > a:focus {
+    color: #e1cece;
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-nav > li > .dropdown-menu > li.divider {
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-nav .open .dropdown-menu > .active > a,
+.navbar-inra .navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-inra .navbar-nav .open .dropdown-menu > .active > a:focus {
+    color: #e1cece;
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-nav > .active > a,
+.navbar-inra .navbar-nav > .active > a:hover,
+.navbar-inra .navbar-nav > .active > a:focus {
+    color: #e1cece;
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-nav > .open > a,
+.navbar-inra .navbar-nav > .open > a:hover,
+.navbar-inra .navbar-nav > .open > a:focus {
+    color: #e1cece;
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-toggle {
+    border-color: #000000;
+}
+
+.navbar-inra .navbar-toggle:hover,
+.navbar-inra .navbar-toggle:focus {
+    background-color: #000000;
+}
+
+.navbar-inra .navbar-toggle .icon-bar {
+    background-color: #ffffff;
+}
+
+.navbar-inra .navbar-collapse,
+.navbar-inra .navbar-form {
+    border-color: #ffffff;
+}
+
+.navbar-inra .navbar-link {
+    color: #ffffff;
+}
+
+.navbar-inra .navbar-link:hover {
+    color: #e1cece;
+}
+
+@media (max-width: 767px) {
+    .navbar-inra .navbar-nav .open .dropdown-menu > li > a {
+        color: #ffffff;
+    }
+
+    .navbar-inra .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-inra .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #e1cece;
+    }
+
+    .navbar-inra .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar-inra .navbar-nav .open .dropdown-menu > .active > a:hover,
+    .navbar-inra .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #e1cece;
+        background-color: #000000;
+    }
+}

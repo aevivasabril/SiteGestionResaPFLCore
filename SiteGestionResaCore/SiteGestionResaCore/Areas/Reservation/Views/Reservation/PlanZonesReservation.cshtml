@@ -1,0 +1,266 @@
+﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.ZonesReservationViewModel
+@{
+    ViewBag.Title = "PlanZonesReservation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using SiteReservationGestionPFL.Areas.Reservation.Data
+
+<br />
+<h2>Plan des Zones pour Reservation</h2>
+<h6>Cliquez sur les zones pour afficher la liste des équipements à réserver</h6>
+<br />
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+@using (Html.BeginForm("ValiderResa", "Reservation", FormMethod.Post))
+{
+    <div class="form-group row">
+        <div class="col-sm-4 col-md-4 text-center">
+            Salles alimentaires
+            <br />
+            <div class="row">
+                <div class="col-sm-1 col-md-1 text-center"></div>
+                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.HaloirAp7) != null)
+                {
+                    <div class="col-sm-3 col-md-3 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                        @Html.ActionLink(@Model.Zones.First(x => x.Id == (int)EnumZonesPfl.HaloirAp7).nom_zone, "EquipementVsZone", new { id = 14 })
+                    </div>
+                }
+
+                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp6) != null)
+                {
+                    <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp6).nom_zone, "EquipementVsZone", new { id = 13 })
+                    </div>
+                }
+
+                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp5 ) != null)
+                {
+                    <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp5).nom_zone, "EquipementVsZone", new { id = 12 })
+                    </div>
+                }
+            </div>
+            <br />
+            <div class="row text-center border border-dark">
+                <div class="col-md-12" style="padding:25px; background-color:#cccccc">
+                    C   O   U   L   O   I   R
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4 col-md-4 text-center"></div>
+                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp9) != null)
+                {
+                    <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp9).nom_zone, "EquipementVsZone", new { id = 16 })
+                    </div>
+                }
+                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp8) != null)
+                {
+                    <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp8).nom_zone, "EquipementVsZone", new { id = 15 })
+                    </div>
+                }
+            </div>
+            <br />
+            <!--Si un model n'est pas traité dans le using Html.BeginForm alors il est pas bien envoyé au contrôleur-->
+        </div>
+        <br />
+        <div class="col-sm-1 col-md-1 col-md-offset-1 border border-dark" style="background-color:#cccccc">
+            <dl class="dl-horizontal text-center">
+                <br />
+                <dd>C</dd>
+                <dd>O</dd>
+                <dd>U</dd>
+                <dd>L</dd>
+                <dd>O</dd>
+                <dd>I</dd>
+                <dd>R</dd>
+            </dl>
+        </div>
+        <br />
+        <div class="col-sm-7 col-md-7 border border-dark text-center">
+            Plateforme
+            <div class="row">
+                <div class="col-sm-4 col-md-4 text-center">
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5 col-md-5 offset-1">
+                            @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Saumurage) != null)
+                            {
+                                <div class="row border border-dark" style="padding:5px; padding-top:25px; padding-bottom:25px; background-color:#9ed6e3">
+                                    @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Saumurage).nom_zone, "EquipementVsZone", new { id = 10 })
+                                </div>
+                            }
+                            <div class="row"></div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="row">
+                                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesMoulage) != null)
+                                {
+                                    <div class="col-sm-11 col-md-11 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesMoulage).nom_zone, "EquipementVsZone", new { id = 5 })
+                                    </div>
+                                }
+                            </div>
+                            <div class="row">
+                                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesTranchage) != null)
+                                {
+                                    <div class="col-sm-11 col-md-11 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesTranchage).nom_zone, "EquipementVsZone", new { id = 6 })
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-7 col-md-7"></div>
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Labo) != null)
+                        {
+                            <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Labo).nom_zone, "EquipementVsZone", new { id = 11 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesCuites) != null)
+                        {
+                            <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:10px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesCuites).nom_zone, "EquipementVsZone", new { id = 7 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12"></div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-6 col-md-6"></div>
+                        <div class="col-sm-6 col-md-6"></div>
+                    </div>
+                    <br />
+                </div>
+                <div class="col-sm-4 col-md-4 text-center">
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PrepLait) != null)
+                        {
+                            <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:25px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PrepLait).nom_zone, "EquipementVsZone", new { id = 3 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Membranes) != null)
+                        {
+                            <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:35px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Membranes).nom_zone, "EquipementVsZone", new { id = 4 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Innovation) != null)
+                        {
+                            <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:35px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Innovation).nom_zone, "EquipementVsZone", new { id = 8 })
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 text-center">
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.EquipMobiles) != null)
+                        {
+                            <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:10px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.EquipMobiles).nom_zone, "EquipementVsZone", new { id = 17 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Depot_Stockage) != null)
+                        {
+                            <div class="col-sm-7 col-md-7 offset-4 border border-dark" style="padding:15px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == 2).nom_zone, "EquipementVsZone", new { id = 2 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12"></div>
+                    </div>
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Concent_Sech) != null)
+                        {
+                            <div class="col-sm-9 col-md-9 offset-2 border border-dark" style="padding:10px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == 1).nom_zone, "EquipementVsZone", new { id = 1 })
+                            </div>
+                        }
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleStephan) != null)
+                        {
+                            <div class="col-sm-8 col-md-8 offset-3 border border-dark" style="padding:15px; background-color:#9ed6e3">
+                                @Html.ActionLink(Model.Zones.First(x => x.Id == 9).nom_zone, "EquipementVsZone", new { id = 9 })
+                            </div>
+                        }
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <hr />
+    <div class="form-group row">
+        <div class="col-sm-12 col-md-12">
+            <h4 class="text-center"><strong>Récapitulatif Réservation</strong></h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Zone</th>
+                        <th scope="col">Equipement</th>
+                        <th scope="col">Date Début</th>
+                        <th scope="col">Date Fin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.EquipementsParZone.Count(); i++)
+                    {
+                        for (int j = 0; j < Model.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
+                        {
+                            for (int y = 0; y < Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            {
+                                <tr>
+                                    <th>@Model.EquipementsParZone[i].NomZone</th>
+                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier.nom ( N° GMAO: @Model.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier.numGmao )</td>
+                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()</td>
+                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()</td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-2">
+            @Html.ActionLink("Annuler", "AnnulerResa", null, new { @class = "btn btn-primary" })
+        </div>
+        <div class="offset-7 col-md-1">
+            <input type="submit" class="btn btn-default navbar-inra" value="Valider réservation" name="action" />
+        </div>
+    </div>
+}

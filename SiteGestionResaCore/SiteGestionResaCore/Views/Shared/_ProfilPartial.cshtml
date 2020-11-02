@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNet.Identity
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+@if (Request.IsAuthenticated)
+{
+    <div class="card text-white bg-dark mb-3" style="width: 18rem;">
+        <!--<img class="card-img-top" src="~/Content/Images/iconeBaniere.jpg" alt="Card image cap">-->
+        <div class="card-body">
+            <h5 class="card-title">
+                <span class="fas fa-user"></span>
+                @User.Identity.GetUserName()
+            </h5>
+            <!--<p class="card-text">Accèdez à votre profil en choissisant une des options</p>-->
+        </div>
+        <ul class="list-group list-group-flush">
+            <a href="#" class="list-group-item btn-link">Mon profil</a>
+            <a href="#" class="list-group-item btn-link">Mes réservations</a>
+            <a href="#" class="list-group-item btn-link">Récupérer mes données</a>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="card text-white bg-dark mb-3" style="width: 14rem;">
+        <!--<img class="card-img-top" src="~/Content/Images/iconeBaniere.jpg" alt="Card image cap">-->
+        <div class="card-body">
+            <h5 class="card-title">
+                <span class="fas fa-user"></span>
+                User
+            </h5>
+            <p class="card-text">Connectez-vous pour accèder à toutes les fonctionnalités de votre profil</p>
+        </div>
+    </div>
+}
