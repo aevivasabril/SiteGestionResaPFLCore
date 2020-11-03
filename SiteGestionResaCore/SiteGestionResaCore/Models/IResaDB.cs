@@ -28,7 +28,7 @@ namespace SiteReservationGestionPFL.Models
 
         utilisateur ObtenirUtilisateur(int id);
 
-        IEnumerable<SelectListItem> UserItem(List<utilisateur> utilisateurs);
+        IEnumerable<SelectListItem> ListToSelectItem(List<utilisateur> utilisateurs);
 
         Task ChangeAccesToUser(int id);
 

@@ -31,29 +31,37 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
         
         // GET: Equipe/Equipe
-        public async Task<ActionResult> GestionUtilisateursAsync(GestionUsersViewModel vm)
+        public async Task<ActionResult> GestionUtilisateurs(GestionUsersViewModel vm)
         {
-            List<utilisateur> ListUsr = resaDb.ObtenirListAutres().Users;
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
             List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
 
             vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
-                ListUsers = ListUsr, 
-                ListUsersWaiting = resaDb.ObtenirListAutres().UsersWaitingValid, 
+                ListUsers = ListUsr.Users, 
+                ListUsersWaiting = ListUsr.UsersWaitingValid, 
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(), 
-                UserItem = resaDb.UserItem(ListUsr)
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin)
             };
             return View(vm);
         }
 
 
-        public ActionResult AdminToUserAcces(int? id)
+        public async Task<ActionResult> AdminToUserAcces(int? id)
         {
-            utilisateur AdmToUsr = new utilisateur();
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalState = "show";
@@ -66,7 +74,6 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         {
             resaDb.ChangeAccesToUser(id);
             return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
-            //View("GestionUtilisateurs", new GestionUsersViewModel()); // on peut pas envoyer le model vide
         }
 
         public ActionResult AddingAdmin()
@@ -85,9 +92,21 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
 
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult AddingLogistic()
+        public async Task<ActionResult> AddingLogistic()
         {
-            GestionUsersViewModel vm = new GestionUsersViewModel();
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin)
+            };
+
             ViewBag.modalLogic = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -101,12 +120,22 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
 
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult RemoveLogisticUser(int ?id)
+        public async Task<ActionResult> RemoveLogisticUser(int ?id)
         {
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
+
             ViewBag.modalRemove = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -119,10 +148,19 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
             return RedirectToAction("GestionUtilisateurs");
         }
 
-        public ActionResult Valider(int? id)
+        public async Task<ActionResult> Valider(int? id)
         {
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Valider"
             };
@@ -158,10 +196,19 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
             return RedirectToAction("GestionUtilisateurs");
         }
 
-        public ActionResult Refuser(int? id)
+        public async Task<ActionResult> Refuser(int? id)
         {
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Refuser"
             };
@@ -197,10 +244,19 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
             return RedirectToAction("GestionUtilisateurs");
         }
 
-        public ActionResult DeleteUser(int? id)
+        public async Task<ActionResult> DeleteUser(int? id)
         {
+            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
+                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalDelete = "show";
@@ -217,7 +273,6 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 await resaDb.DeleteRequestAccount(id);
                 var user = await userManager.FindByIdAsync(id.ToString());
                 //Effacer de tous les roles AspNet
-
                 await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
                 // Effacer de la BDD AspNet
                 await userManager.DeleteAsync(user);

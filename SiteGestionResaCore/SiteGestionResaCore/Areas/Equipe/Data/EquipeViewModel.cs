@@ -109,35 +109,12 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un administrateur")]
         public int AdminToLogisticId { get; set; }
 
-        /// <summary>
-        /// Créer une liste déroulante contenant les données à afficher sur une DropDownList
-        /// </summary>
+        private IEnumerable<SelectListItem> _AdminItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> AdminItem
         {
-            get
-            {
-                var allUsrs = UsersAdmin.Select(f => new SelectListItem
-                {
-                    Value = f.Id.ToString(),
-                    Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-                }); ;
-                return DefaultAdminItem.Concat(allUsrs);
-            }
-        }
-
-        /// <summary>
-        /// Premier Item par défaut de la liste déroulante
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultAdminItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Selectionner un administrateur -"
-                }, count: 1);
-            }
+            get { return _AdminItem; }
+            set { _AdminItem = value; }
         }
 
         /// <summary>

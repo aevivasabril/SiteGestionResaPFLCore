@@ -160,7 +160,7 @@ namespace SiteReservationGestionPFL.Models
         }
 
 
-        public IEnumerable<SelectListItem> UserItem(List<utilisateur> utilisateurs)
+        public IEnumerable<SelectListItem> ListToSelectItem(List<utilisateur> utilisateurs)
         {
             var DefaultUsrItem = Enumerable.Repeat(new SelectListItem
             {
@@ -195,7 +195,7 @@ namespace SiteReservationGestionPFL.Models
             // Submit the changes to the database.
             try
             {
-                // Obtenir les rôles dont l'utilisateur
+                // Obtenir les rôles attribués à l'utilisateur
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 // Vérifier qu'il ne s'agit pas d'un "MainAdmin"
                 if (allUserRoles.Contains("MainAdmin"))
@@ -221,7 +221,6 @@ namespace SiteReservationGestionPFL.Models
         public async Task AddAdminToLogisticRoleAsync(int id)
         {
             var user = await context.Users.FindAsync(id);
-
             // Submit the changes to the database.
             try
             {
@@ -235,7 +234,8 @@ namespace SiteReservationGestionPFL.Models
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Problème pour ajouter un admin dans loe groupe logistique");
+                logger.LogError(e, "Problème pour ajouter un admin dans le groupe logistique");
+                userManager.Dispose();
                 // Provide for exceptions.
             }
         }
@@ -246,17 +246,14 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="id"></param>
         public async Task RemoveLogisticRoleAsync(int id)
         {
-            string email = mailUtilisateur(id);
-
-            var query = await context.utilisateur.FindAsync(id); 
-
             try
             {
-                await userManager.RemoveFromRoleAsync(query, "Logistic");
+                await userManager.RemoveFromRoleAsync(await context.utilisateur.FindAsync(id), "Logistic");
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e, "Problème requete pour retirer les droits logistic");
+                userManager.Dispose();
                 // Provide for exceptions.
             }
         }
@@ -267,7 +264,6 @@ namespace SiteReservationGestionPFL.Models
         /// </summary>
         public async Task ChangeAccesToAdminAsync(int id)
         {
-            string email = mailUtilisateur(id);
             var user = await context.Users.FindAsync(id);
 
             /*var query = (from roleUsr in context.Users
@@ -293,7 +289,7 @@ namespace SiteReservationGestionPFL.Models
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e, "Problème requete pour ajouter l'utilisateur dans le groupe Admin");
                 userManager.Dispose();
                 // Provide for exceptions.
             }
@@ -347,20 +343,15 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="id"> id table "utilisateur"</param>
         public void ValidateAccount(int id)
         {
-            // Mettre à jour d'abord la table des "utilisateurs"
-            var query = (from usrNet in context.utilisateur
-                         where usrNet.Id == id
-                         select usrNet).First();
-            // valider ce compte
-            query.EmailConfirmed = true;
-
             try
             {
+                // Mettre à jour d'abord la table des "utilisateurs"
+                context.utilisateur.First(u => u.Id == id).EmailConfirmed = true;
                 context.SaveChanges();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                logger.LogError(e, "Problème requete pour validation de compte");
             }
         }
 
@@ -370,14 +361,15 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="id">id "utilisateur"</param>
         public Task DeleteRequestAccount(int id)
         {
-            string mail = "";
-
-            mail = mailUtilisateur(id);
-            // effacer les infos de la BDD PflStloResa
-            var query = (from usrNet in context.utilisateur
-                         where usrNet.Id == id
-                         select usrNet).First();
-            context.utilisateur.Remove(query);
+            try
+            {
+                // effacer les infos de la BDD PflStloResa
+                context.utilisateur.Remove(context.utilisateur.First(u => u.Id == id));
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Problème pour effacer la demande d'ouverture compte");
+            }
 
             return context.SaveChangesAsync();
         }
