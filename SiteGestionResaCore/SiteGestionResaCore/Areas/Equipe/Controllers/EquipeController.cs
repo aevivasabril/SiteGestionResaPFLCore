@@ -31,9 +31,19 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
         
         // GET: Equipe/Equipe
-        public ActionResult GestionUtilisateurs(GestionUsersViewModel vm)
+        public async Task<ActionResult> GestionUtilisateursAsync(GestionUsersViewModel vm)
         {
-            vm = new GestionUsersViewModel();
+            List<utilisateur> ListUsr = resaDb.ObtenirListAutres().Users;
+            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+
+            vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr, 
+                ListUsersWaiting = resaDb.ObtenirListAutres().UsersWaitingValid, 
+                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(), 
+                UserItem = resaDb.UserItem(ListUsr)
+            };
             return View(vm);
         }
 
@@ -124,14 +134,14 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> Valider(int id)
         {
-            string aspNetID;
-            IdentityUser user;
+            //string aspNetID;
+            //IdentityUser user;
 
             try
             {
                 resaDb.ValidateAccount(id);
-                aspNetID = resaDb.IdAspNetUser(id);
-                user = await userManager.FindByIdAsync(aspNetID);
+                //aspNetID = resaDb.IdAspNetUser(id);
+                var user = await userManager.FindByIdAsync(id.ToString());
 
                 // envoyer le mail à l'utilisateur concerné
                 string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -161,22 +171,20 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
 
         [HttpPost]
         public async Task<ActionResult> Refuser(int id)
-        {
-            string aspNetID;
-            IdentityUser user;
-
+        {          
             try
             {
-                aspNetID = resaDb.IdAspNetUser(id);
-                user = await userManager.FindByIdAsync(aspNetID);
+                //aspNetID = resaDb.IdAspNetUser(id);
+                //user = await userManager.FindByIdAsync(aspNetID);
                 //Effacer de la BDD pfl
-                resaDb.DeleteRequestAccount(id);
+                await resaDb.DeleteRequestAccount(id);
+                var user = await userManager.FindByIdAsync(id.ToString());
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 await userManager.RemoveFromRolesAsync(user, allUserRoles);
                 // TODO: Voir si cela se passe bien puisque on efface l'utilisateur! sinon inverser les 2 lignes
                 // Effacer de la BDD AspNet
-                await emailSender.SendEmailAsync(user.Id, "Votre compte PFL", "Bonjour,\n\nVotre demande d'ouverture de compte est refusée, nous vous prions de nous excuser pour la gêne occasionée.\nVenez nous voir ou contactez-nous si vous avez des questions.\n\n L'équipe PFL,");
+                await emailSender.SendEmailAsync(user.Email, "Votre compte PFL", "Bonjour,\n\nVotre demande d'ouverture de compte est refusée, nous vous prions de nous excuser pour la gêne occasionée.\nVenez nous voir ou contactez-nous si vous avez des questions.\n\n L'équipe PFL,");
                 await userManager.DeleteAsync(user);
 
             }
@@ -202,18 +210,15 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            string aspNetID;
-            IdentityUser user;
-
             try
             {
-                aspNetID = resaDb.IdAspNetUser(id);
-                user = await userManager.FindByIdAsync(aspNetID);
+
                 //Effacer de la BDD pfl
-                resaDb.DeleteRequestAccount(id);
+                await resaDb.DeleteRequestAccount(id);
+                var user = await userManager.FindByIdAsync(id.ToString());
                 //Effacer de tous les roles AspNet
-                var  allUserRoles = await userManager.GetRolesAsync(user);
-                await userManager.RemoveFromRolesAsync(user, allUserRoles);
+
+                await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
                 // Effacer de la BDD AspNet
                 await userManager.DeleteAsync(user);
             }

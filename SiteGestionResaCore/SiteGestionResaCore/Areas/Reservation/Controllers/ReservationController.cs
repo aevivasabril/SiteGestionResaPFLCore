@@ -41,12 +41,12 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult SoumettreFormulaire(FormulaireProjetViewModel model)
+        public async Task<ActionResult> SoumettreFormulaireAsync(FormulaireProjetViewModel model)
         {
             // NOTE: Dans le cas où on crée un nouveau projet et un nouveau essai
             // TODO: traiter le cas où on copie les données essai et projet (pas de creation de projet! mais création d'essai) voir comment vérifier cela? 
             DateTime myDateTime = DateTime.Now;
-            string IdUsr = User.Identity.GetUserId();
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             projet Proj = new projet();     // Variable "projet" pour récupérer un projet existant ou un projet qui vient d'être créé
 
             // Je laisse cette ligne car elle permette de vérifier quel champ du formulaire me génère une erreur
@@ -57,10 +57,10 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             if (ModelState.IsValid)
             {
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
-                if(resaBdd.ProjetExists(model.NumProjet))
+                if(resaDb.ProjetExists(model.NumProjet))
                 {
                     // Si l'utilisateur est propiètaire du projet ou "Admin" ou "MainAdmin" alors autoriser la création d'un essai 
-                    if(resaBdd.VerifPropieteProjet(model.NumProjet, IdUsr))
+                    if(await resaDb.VerifPropieteProjetAsync(model.NumProjet, user))
                     {
                         // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
                         this.HttpContext.AddToSession("FormulaireResa", model);
@@ -82,7 +82,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
                 {
                     // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-                    this.HttpContext.Session["FormulaireResa"] = model;
+                    this.HttpContext.AddToSession("FormulaireResa", model);
 
                     // MIS en commentaire car on l'écrira dans la base de données qu'à la fin du traitement réservation
                     //string Id = User.Identity.GetUserId(); // cela marche pour obtenir l'id  :)
@@ -105,14 +105,14 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TrouverProjet(FormulaireProjetViewModel model)
+        public async Task<ActionResult> TrouverProjetAsync(FormulaireProjetViewModel model)
         {
             // Obtenir le ID d'authentification AspNet
-            string IdUsr = User.Identity.GetUserId();
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             bool propProjetOk = false;
             // récupérer les projets pour le numéro saisie
 
-            model.ProjetValide = resaBdd.ProjetExists(model.NumProjet);
+            model.ProjetValide = resaDb.ProjetExists(model.NumProjet);
             
             if (!model.ProjetValide)
             {
@@ -120,11 +120,11 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             }
             else
             {
-                propProjetOk = resaBdd.VerifPropieteProjet(model.NumProjet, IdUsr);
+                propProjetOk = await resaDb.VerifPropieteProjetAsync(model.NumProjet, user);
                 if (propProjetOk)
                 {
                     ViewBag.Message = "";
-                    model.EssaiUtilisateur = resaBdd.ObtenirList_EssaisUser(model.NumProjet);
+                    model.EssaiUtilisateur = resaDb.ObtenirList_EssaisUser(model.NumProjet);
                 }
                 else
                 {
@@ -148,15 +148,15 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             // Obtenir les infos sur mon Projet et mon essai pour les injecter dans mon model (affichage sur la vue)
 
             // Récupérer à partir de la BDD les infos sur le projet et l'essai
-            pr = resaBdd.ObtenirProjet_pourCopie(numProjet);
-            ess = resaBdd.ObtenirEssai_pourCopie(model.SelectedEssaiId);
-            model.SelectTypeProjetId = resaBdd.IdTypeProjetPourCopie(pr.Id);
-            model.SelectFinancementId = resaBdd.IdFinancementPourCopie(pr.Id);
-            model.SelectedRespProjId = resaBdd.IdRespoProjetPourCopie(pr.Id);
-            model.SelectedProvenanceId = resaBdd.IdProvenancePourCopie(pr.Id);
-            model.SelectedProveProduitId = resaBdd.IdProvProduitPourCopie(ess.Id);
-            model.SelectedDestProduit = resaBdd.IdDestProduitPourCopie(ess.Id);
-            model.SelectedProductId = resaBdd.IdProduitInPourCopie(ess.Id);
+            pr = resaDb.ObtenirProjet_pourCopie(numProjet);
+            ess = resaDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
+            model.SelectTypeProjetId = resaDb.IdTypeProjetPourCopie(pr.id);
+            model.SelectFinancementId = resaDb.IdFinancementPourCopie(pr.id);
+            model.SelectedRespProjId = resaDb.IdRespoProjetPourCopie(pr.id);
+            model.SelectedProvenanceId = resaDb.IdProvenancePourCopie(pr.id);
+            model.SelectedProveProduitId = resaDb.IdProvProduitPourCopie(ess.id);
+            model.SelectedDestProduit = resaDb.IdDestProduitPourCopie(ess.id);
+            model.SelectedProductId = resaDb.IdProduitInPourCopie(ess.id);
 
             // Données à copier pour le projet
             model.TitreProjet = pr.titre_projet;
@@ -185,10 +185,10 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         {
             ZonesReservationViewModel vm = new ZonesReservationViewModel()
             {
-                Zones = resaBdd.ListeZones()
+                Zones = resaDb.ListeZones()
             };
             // Etablir une session avec les données à mettre à jour pour la vue principale
-            this.HttpContext.Session["ZoneReservation"] = vm;
+            this.HttpContext.AddToSession("ZoneReservation", vm);
             return View(vm);
         }
 
@@ -206,7 +206,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             CalendrierEquipChildViewModel calenChild;
 
             // 1. Obtenir la liste des equipements
-            equipements = resaBdd.ListeEquipements(id.Value);
+            equipements = resaDb.ListeEquipements(id.Value);
 
             // pour chaque equipement obtenir la liste des réservations et le sauvegarder dans la liste des reservations
             for (int i = 0; i<equipements.Count(); i++)
@@ -215,9 +215,9 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 calenChild = new CalendrierEquipChildViewModel();
                 // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
                 //reservationsSemEquipement = DonneesCalendrier(equipements[i].Id);
-                reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].Id, null, null);
+                reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null);
                 calenChild.ListResas = reservationsSemEquipement;
-                calenChild.EquipementCalendrier = resaBdd.GetEquipement(equipements[i].Id);
+                calenChild.EquipementCalendrier = resaDb.GetEquipement(equipements[i].id);
                 //calenChild.zoneID = id.Value;
                 //calenChild.NomEquip = equipements[i].nom;
                 // 3. Rajouter cela dans une liste contenant les données des équipements
@@ -230,7 +230,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             EquipementsParZoneViewModel vm = new EquipementsParZoneViewModel()
             {
                 Equipements = equipements,
-                NomZone = resaBdd.GetNomZone(id.Value),
+                NomZone = resaDb.GetNomZone(id.Value),
                 IdZone = id.Value,
                 CalendrierChildVM = PlanningEquipements
 
@@ -270,7 +270,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
                     for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
                     {
-                        if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.Id == idEquip)
+                        if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == idEquip)
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
                             reservationsEquipement = DonneesCalendrierEquipement(false, idEquip, model.DatePickerDu, model.DatePickerAu);
@@ -298,14 +298,15 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
             // Récupérer la session "EquipementZone"
-            EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+            //EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
 
             int indiceChild = 0; // Sauvegarder l'indice où se trouve le CalendrierEquipChildModel correspondant à l'id
 
             // Initialiser le calendrierChildModel de l'équipement sur le model de la vue parent avant toutes les opérations
             for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
             {     
-                if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.Id == idEquip)
+                if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == idEquip)
                 {
                     #region Compléter le model "CalendrierEquipChildViewModel" avec le model "EquipementsParZoneViewModel"
 
@@ -399,7 +400,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult SupprimerCreneauResa(int ?i, int ?j)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
-            EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             // Sauvegarde des indices qui seront utilisés dans la action POST pour répérer le créneau à supprimer 
             equipementZone.IndiceChildModel = i.Value;
             equipementZone.IndiceResaEquipXChild = j.Value;
@@ -420,8 +421,8 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult SupprimerCreneauResa(int i, int j)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
-            EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
-           
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+
             equipementZone.CalendrierChildVM[i].ResaEquipement.RemoveAt(j);
             return View("EquipementVsZone", equipementZone);
         }
@@ -435,9 +436,9 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult ValiderResaZone(EquipementsParZoneViewModel model)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
-            EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             // Récupérer la session "ZonesReservation" pour afficher le plan + les réservations des zones
-            ZonesReservationViewModel zonesReservation = (ZonesReservationViewModel)this.HttpContext.Session["ZoneReservation"];
+            ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
             //ajouter les view model equipementZone contenant les créneau dans le model des zones
             zonesReservation.EquipementsParZone.Add(equipementZone);
@@ -453,7 +454,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult AnnulerResaZone()
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
-            EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
             // Vider toutes les reservations pour tous les CalendrierChildVM
             for(int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
@@ -461,7 +462,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 equipementZone.CalendrierChildVM[i].ResaEquipement.Clear();
             }
             // Récupérer la session "ZonesReservation" pour afficher le plan + les réservations des zones
-            ZonesReservationViewModel zonesReservation = (ZonesReservationViewModel)this.HttpContext.Session["ZoneReservation"];
+            ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
             //rediriger vers la page contenant le plan PFL
             return View("PlanZonesReservation", zonesReservation);
@@ -474,11 +475,11 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult AnnulerResa()
         {
             // Récupérer la session "ZonesReservation" pour afficher le plan + les réservations des zones
-            ZonesReservationViewModel zonesReservation = (ZonesReservationViewModel)this.HttpContext.Session["ZoneReservation"];
+            ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
             zonesReservation.EquipementsParZone.Clear();
 
             // Récupérer la session "FormulaireProjet" pour revenir au formulaire
-            FormulaireProjetViewModel formulaire = (FormulaireProjetViewModel)this.HttpContext.Session["FormulaireResa"];
+            FormulaireProjetViewModel formulaire = HttpContext.GetFromSession< FormulaireProjetViewModel>("FormulaireResa");
 
             return View("FormulaireProjet", formulaire);
 
@@ -491,9 +492,9 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         public ActionResult AnnulerDemande()
         {
             //Libérer toutes les sessions ouvertes avant de quitter la vue formulaire, libérer uniquement les sessions concernées par la réservation pour éviter des pbs
-            Session.Remove("FormulaireResa");
-            Session.Remove("ZoneReservation");
-            Session.Remove("EquipementZone");
+            HttpContext.Session.Remove("FormulaireResa");
+            HttpContext.Session.Remove("ZoneReservation");
+            HttpContext.Session.Remove("EquipementZone");
 
             return RedirectToAction("Index", "Home", new { area = "" });
         }
@@ -507,12 +508,13 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             // boolean indiquant si au moins un équipement a été réservé
             bool AtLeastOneEquipment = false;
             DateTime myDateTime = DateTime.Now;
-            string IdUsr = User.Identity.GetUserId();
+            //string IdUsr = User.Identity.GetUserId();
+            var user = await userManager.FindByIdAsync(User.GetUserId());           // Utilisateur créant le projet 
             projet Proj = new projet();                                             // Variable "projet" pour récupérer un projet existant ou un projet qui vient d'être créé
             essai Essai = new essai();                                              // Variable "essai" pour récupérer un essai qui vient d'être créé
             reservation_projet resa = new reservation_projet();                     // Réservation pour un equipement 
             List<reservation_projet> resas;                                         // Liste de toutes les réservations
-            List<ApplicationUser> AspNetUser = new List<ApplicationUser>();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
+            IList<utilisateur> UsersLogistic = new List<utilisateur>();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
             string subNomEquip;
             bool IsFirstResa = true;
             DateTime dateSeuilInf = new DateTime();
@@ -532,10 +534,10 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             #region Récupération session
 
             // Récupérer la session "ZonesReservation" pour récupérer les infos sur le plan + les réservations des zones
-            ZonesReservationViewModel zonesReservation = (ZonesReservationViewModel)this.HttpContext.Session["ZoneReservation"];
+            ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
             // Récupérer les infos remplisses dans le formulaire projet/essai
-            FormulaireProjetViewModel formulaire = (FormulaireProjetViewModel)this.HttpContext.Session["FormulaireResa"];
+            FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
 
             #endregion
 
@@ -575,28 +577,28 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             if (AtLeastOneEquipment) // si au moins un équipement a été sélectionné alors on peut créer la réservation
             {
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
-                if (resaBdd.ProjetExists(formulaire.NumProjet))
+                if (resaDb.ProjetExists(formulaire.NumProjet))
                 {
-                    Proj = resaBdd.ObtenirProjet_pourCopie(formulaire.NumProjet);
+                    Proj = resaDb.ObtenirProjet_pourCopie(formulaire.NumProjet);
                 }
                 else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
                 {
-                    Proj = resaBdd.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
-                        formulaire.SelectedRespProjId, formulaire.NumProjet, formulaire.SelectedProvenanceId, formulaire.DescriptionProjet, myDateTime, IdUsr);
+                    Proj = resaDb.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
+                        formulaire.SelectedRespProjId, formulaire.NumProjet, formulaire.SelectedProvenanceId, formulaire.DescriptionProjet, myDateTime, user);
                 }
 
                 // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
-                Essai = resaBdd.CreationEssai(Proj, IdUsr, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId, formulaire.PrecisionProduitIn, formulaire.QuantiteProduit,
+                Essai = resaDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId, formulaire.PrecisionProduitIn, formulaire.QuantiteProduit,
                             formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO, formulaire.CommentaireEssai); // TODO: pas oublier de rajouter le status  (enum dans view model)     
 
                 // Remplir le message à envoyer aux admins pour notifier la réservation
-                sb_admin.Append("Bonjour,\n\nUne demande de réservation pour le projet N° : " + Proj.num_projet + " (Essai N°: " + Essai.Id + " )" + " saisie par l'utilisateur: " + Proj.mailRespProjet + " " +
+                sb_admin.Append("Bonjour,\n\nUne demande de réservation pour le projet N° : " + Proj.num_projet + " (Essai N°: " + Essai.id + " )" + " saisie par l'utilisateur: " + Proj.mailRespProjet + " " +
                                 " vient d'être rajoutée. \n\nRécapitulatif des réservations par équipement: \n\n");
                 sb_admin.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
 
                 // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
                 // possible solution pour créer une table html et la convertir en string!! https://stackoverflow.com/questions/1524105/can-i-convert-a-dynamically-created-c-sharp-table-to-a-html-string
-                sb_user.Append("Bonjour,\n\nLa demande de réservation pour le projet N° : " + formulaire.NumProjet +" (Essai N°: " + Essai.Id + " )" +
+                sb_user.Append("Bonjour,\n\nLa demande de réservation pour le projet N° : " + formulaire.NumProjet +" (Essai N°: " + Essai.id + " )" +
                     " est pris en compte. \n\nRécapitulatif des réservations par équipement: \n\n");
 
                 sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
@@ -611,7 +613,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
 
                         for (int y = 0; y < zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
                         {
-                            resa = resaBdd.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier,
+                            resa = resaDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier,
                                 Essai, zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut,
                                 zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin);
 
@@ -677,7 +679,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                         }
                     }
                     //Mettre à jour l'essai avec les dates seuil
-                    resaBdd.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
+                    resaDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
                 }
                 
                 #endregion
@@ -692,7 +694,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 {
                     try
                     {
-                        await userManager.SendEmailAsync(IdUsr, "Récapitulatif Réservation", sb_user.ToString());
+                        await emailSender.SendEmailAsync(user.Email, "Récapitulatif Réservation", sb_user.ToString());
                         success = true;
                     }
                     catch (Exception e)
@@ -712,11 +714,11 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 #region Envoi de mail notifications aux "Admin"/"Logistic"
 
                 // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
-                AspNetUser = resaBdd.ObtenirAspNetUsersLogistic();
+                UsersLogistic = await resaDb.ObtenirUsersLogisticAsync();
 
                 sb_admin.Append("\n\nL'équipe PFL.");
 
-                for (int index = 0; index < AspNetUser.Count(); index++)
+                for (int index = 0; index < UsersLogistic.Count(); index++)
                 {
                     NumberOfRetries = 5;
                     retryCount = NumberOfRetries;
@@ -726,7 +728,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                     {
                         try
                         {
-                            await userManager.SendEmailAsync(AspNetUser[index].Id, "Notification de réservation pour validation", sb_admin.ToString());
+                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Notification de réservation pour validation", sb_admin.ToString());
                             success = true;
                         }
                         catch (Exception e)
@@ -745,9 +747,9 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 #endregion
 
                 //Libérer toutes les sessions ouvertes avant de quitter la vue formulaire, libérer uniquement les sessions concernées par la réservation pour éviter des pbs
-                Session.Remove("FormulaireResa");
-                Session.Remove("ZoneReservation");
-                Session.Remove("EquipementZone");
+                HttpContext.Session.Remove("FormulaireResa");
+                HttpContext.Session.Remove("ZoneReservation");
+                HttpContext.Session.Remove("EquipementZone");
 
                 // Diriger l'utilisateur vers la vue confirmation
                 return View("Confirmation");
@@ -774,7 +776,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         protected override void Dispose(bool disposing)
         {
             // Rajouter pour éviter des pbs d'accès aux ressources resaBdd
-            resaBdd.Dispose();
+            resaDb.Dispose();
             base.Dispose(disposing);
         }
 
@@ -879,7 +881,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             for (int i = 0; i < NbJours; i++)
             {
                 // Obtenir l'emploi du temps du jour de la semaine i pour un équipement
-                ResaJour = resaBdd.ObtenirReservationsJourEssai(DateRecup, idEquipement);
+                ResaJour = resaDb.ObtenirReservationsJourEssai(DateRecup, idEquipement);
                 // ajouter à la liste de la semaine
                 ListResas.Add(ResaJour);
                 // incrementer le nombre des jours à partir du lundi

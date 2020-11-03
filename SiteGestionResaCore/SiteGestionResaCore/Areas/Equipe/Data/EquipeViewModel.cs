@@ -23,31 +23,17 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         /// </summary>
         public List<utilisateur> UsersAdmin
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _usersAdmin = new List<utilisateur>(resaBdd.ObtenirListAdmins());
-                }
-                return _usersAdmin;
-            }
+            get { return _usersAdmin; }
             set { _usersAdmin = value; }
         }
 
-        private List<utilisateur> _listUsers;
+        private List<utilisateur> _listUsers = new List<utilisateur>();
         /// <summary>
         /// Liste des utilisateurs avec un rôle 'user'
         /// </summary>
         public List<utilisateur> ListUsers
         {
-            get 
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listUsers = new List<utilisateur>(resaBdd.ObtenirListAutres().Users);
-                }
-                return _listUsers;
-            }
+            get { return _listUsers; }
             set { _listUsers = value; }
         }
 
@@ -57,31 +43,17 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         /// </summary>
         public List<utilisateur> ListUsersWaiting
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listUsersWaiting = new List<utilisateur>(resaBdd.ObtenirListAutres().UsersWaitingValid);
-                }
-                return _listUsersWaiting;
-            }
+            get { return _listUsersWaiting; }
             set { _listUsersWaiting = value; }
         }
 
-        private List<utilisateur> _ListAdminLogistic;
+        private IList<utilisateur> _ListAdminLogistic;
         /// <summary>
         /// List des utilisateurs dont le rôle est 'Admin'
         /// </summary>
-        public List<utilisateur> ListAdminLogistic
+        public IList<utilisateur> ListAdminLogistic
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _ListAdminLogistic = new List<utilisateur>(resaBdd.ObtenirListAdminsLogistiqueAsync());
-                }
-                return _ListAdminLogistic;
-            }
+            get { return _ListAdminLogistic; }
             set { _ListAdminLogistic = value; }
         }
 
@@ -91,26 +63,34 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un utilisateur")]
         public int UserToUpdateId { get; set; }
 
+        private IEnumerable<SelectListItem> _userItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false }}); 
+
+        public IEnumerable<SelectListItem> UserItem
+        {
+            get { return _userItem; }
+            set { _userItem = value; }
+        }
+
         /// <summary>
         /// Créer une liste déroulante contenant les données à afficher sur une DropDownList
         /// </summary>
-        public IEnumerable<SelectListItem> UserItem
+        /*public IEnumerable<SelectListItem> UserItem
         {
             get
             {
                 var allUsrs = ListUsers.Select(f => new SelectListItem
                 {
-                    Value = f.id.ToString(),
+                    Value = f.Id.ToString(),
                     Text = f.nom + ", "+f.prenom + "( "+ f.Email + " )"
                 });;
                 return DefaultUsrItem.Concat(allUsrs);
             }
-        }
+        }*/
 
         /// <summary>
         /// Premier Item par défaut de la liste déroulante
         /// </summary>
-        public IEnumerable<SelectListItem> DefaultUsrItem
+        /*public IEnumerable<SelectListItem> DefaultUsrItem
         {
             get
             {
@@ -120,7 +100,7 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
                     Text = "- Selectionner un utilisateur -"
                 }, count: 1);
             }
-        }
+        }*/
 
 
         /// <summary>
@@ -138,7 +118,7 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
             {
                 var allUsrs = UsersAdmin.Select(f => new SelectListItem
                 {
-                    Value = f.id.ToString(),
+                    Value = f.Id.ToString(),
                     Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
                 }); ;
                 return DefaultAdminItem.Concat(allUsrs);

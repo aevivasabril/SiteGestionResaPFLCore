@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Data;
 using SiteReservationGestionPFL.Areas.Equipe.Data;
 using SiteReservationGestionPFL.Areas.Reservation.Data;
 using System;
@@ -21,11 +22,13 @@ namespace SiteReservationGestionPFL.Models
         #region Gestion des utilisateurs
         List<utilisateur> ObtenirListAdmins();
 
-        Task<IList<utilisateur>> ObtenirListAdminsLogistiqueAsync();
+        //Task<IList<utilisateur>> ObtenirListAdminsLogistiqueAsync();
 
         listAutresUtilisateurs ObtenirListAutres();
 
         utilisateur ObtenirUtilisateur(int id);
+
+        IEnumerable<SelectListItem> UserItem(List<utilisateur> utilisateurs);
 
         Task ChangeAccesToUser(int id);
 
@@ -43,7 +46,7 @@ namespace SiteReservationGestionPFL.Models
 
         Task RemoveLogisticRoleAsync(int id);
 
-        Task<IList<utilisateur>> ObtenirAspNetUsersLogistic();
+        Task<IList<utilisateur>> ObtenirUsersLogisticAsync();
 
         #endregion
 
@@ -64,16 +67,16 @@ namespace SiteReservationGestionPFL.Models
         List<ld_destination> ObtenirList_DestinationPro();
 
         projet CreationProjet(string TitreProjet, int typeProjetId, int financId, int orgId,
-            int respProjetId, string numProj, int provProj, string description, DateTime dateCreation, string IdUser);
+            int respProjetId, string numProj, int provProj, string description, DateTime dateCreation, utilisateur User);
 
-        essai CreationEssai(projet pr, string IdUsr, DateTime myDateTime, string confidentialite, int manipId, int ProdId, string precisionProd, string QuantProd,
+        essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confidentialite, int manipId, int ProdId, string precisionProd, string QuantProd,
                         int ProvId, int destProduit, string TransStlo, string commentaire);
 
         reservation_projet CreationReservation(equipement Equip, essai Essai, DateTime dateDebut, DateTime dateFin);
 
         bool ProjetExists(string NumeroProjet);
 
-        bool VerifPropieteProjet(string numProjet, string IdAsp);
+        Task<bool> VerifPropieteProjetAsync(string numProjet, utilisateur usr);
 
         List<EssaiUtilisateur> ObtenirList_EssaisUser(string NumeroProjet);
 

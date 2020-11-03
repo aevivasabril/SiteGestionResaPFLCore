@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
@@ -69,42 +70,25 @@ namespace SiteReservationGestionPFL.Models
 
         #region Méthodes d'accès aux données pour la zone "Equipe" gestion des utilisateurs
         /// <summary>
-        /// Méthode pour obtenir la liste des personnes avec rôle "Admin"
+        /// Méthode pour obtenir la liste des personnes avec rôle "Admin" et "MainAdmin"
         /// </summary>
         /// <returns>lis des utilisateurs Admin</returns>
         public List<utilisateur> ObtenirListAdmins()
         {
-            List<utilisateur> tempAdmins = new List<utilisateur>();
-            utilisateur usr;
-
-            //obtention de tous les AspNetUsers dont le rôle est "Admin"
-            var adminId = (from role in context.Roles
-                           from roleUsr in context.Users
-                           from usrrol in context.Roles
-                           from x in context.Roles
-                           where ((role.Name == "Admin" || role.Name == "MainAdmin") && x.Id == role.Id)
-                           select roleUsr).Distinct().ToArray();
-            // adminId est convertie en Array! n'est plus une requete Linq c'est pour ça l'erreur persistant, je sais pas comme résoudre ce problème
-            /*var finale = (from resa in resaDB.utilisateur
-                          from adm in adminId
-                          where adm.Email == resa.Email
-                          select resa);*/
-            foreach (var y in adminId)
-            {
-                usr = context.utilisateur.First(r => r.Email == y.Email);
-                tempAdmins.Add(usr);
-            }
-            return tempAdmins;
+            return (from role in context.Roles
+                          from roleusr in context.Users
+                          where role.Name == "Admin" || role.Name == "MainAdmin"
+                          select roleusr).Distinct().ToList();         
         }
 
         /// <summary>
         /// méthode pour obtenir la liste des administrateurs chargés de la logistique (validation de réservations) table "utilisateur"
         /// </summary>
         /// <returns> liste des utilisateurs</returns>
-        public async Task<IList<utilisateur>> ObtenirListAdminsLogistiqueAsync()
-        {
+        //public async Task<IList<utilisateur>> ObtenirListAdminsLogistiqueAsync()
+        //{
 
-            return await userManager.GetUsersInRoleAsync("Logistic");
+            //return await userManager.GetUsersInRoleAsync("Logistic");
             //obtention de tous les AspNetUsers dont le rôle est "Admin" et "logistic"
             //var adminLogicId = (from role in context.Roles
             //                    from roleUsr in context.Users
@@ -123,9 +107,9 @@ namespace SiteReservationGestionPFL.Models
             //    tempAdminLogis.Add(usr);
             //}
             //return tempAdminLogis;
-        }
+        //}
 
-        public async Task<IList<utilisateur>> ObtenirAspNetUsersLogisticAsync()
+        public async Task<IList<utilisateur>> ObtenirUsersLogisticAsync()
         {
             return await userManager.GetUsersInRoleAsync("Logistic");
 
@@ -175,6 +159,25 @@ namespace SiteReservationGestionPFL.Models
             return (context.utilisateur.FirstOrDefault(u => u.Id == id));
         }
 
+
+        public IEnumerable<SelectListItem> UserItem(List<utilisateur> utilisateurs)
+        {
+            var DefaultUsrItem = Enumerable.Repeat(new SelectListItem
+            {
+                Value = "-1",
+                Text = "- Selectionner un utilisateur -"
+            }, count: 1);
+
+            var allUsrs = utilisateurs.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+
+            return DefaultUsrItem.Concat(allUsrs);
+        }
+
         /// <summary>
         /// Methode permettant de changer le rôle d'un "Admin" à "Utilisateur"
         /// Sauf pour le rôle "MainAdmin" AUCUN changement est permis
@@ -186,7 +189,7 @@ namespace SiteReservationGestionPFL.Models
             var user = await context.Users.FindAsync(id); 
             if(user == null)
             {
-                logger.LogError($"UTilisateur {id} non trouvé");
+                logger.LogError($"Utilisateur {id} non trouvé");
                 return;
             }
             // Submit the changes to the database.
@@ -346,10 +349,10 @@ namespace SiteReservationGestionPFL.Models
         {
             // Mettre à jour d'abord la table des "utilisateurs"
             var query = (from usrNet in context.utilisateur
-                         where usrNet.id == id
+                         where usrNet.Id == id
                          select usrNet).First();
             // valider ce compte
-            query.compte_valide = true;
+            query.EmailConfirmed = true;
 
             try
             {
@@ -407,7 +410,7 @@ namespace SiteReservationGestionPFL.Models
         public List<utilisateur> ObtenirList_UtilisateurValide()
         {
             return context.Users.Where(e => e.EmailConfirmed == true).ToList();
-            List<utilisateur> userWithAccess = new List<utilisateur>();
+            /*List<utilisateur> userWithAccess = new List<utilisateur>();
             utilisateur usr;
 
             var query = (from roleUsr in context.Users
@@ -422,7 +425,7 @@ namespace SiteReservationGestionPFL.Models
                     userWithAccess.Add(usr);
                 }
             }
-            return userWithAccess;
+            return userWithAccess;*/
         }
 
         /// <summary>
@@ -477,7 +480,7 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="IdUser"></param>
         /// <returns>Projet créé et écrit sur la base de données</returns>
         public projet CreationProjet(string TitreProjet, int typeProjetId, int financId, int orgId,
-            int respProjetId, string numProj, int provProj, string description, DateTime dateCreation, string IdUser)
+            int respProjetId, string numProj, int provProj, string description, DateTime dateCreation, utilisateur Usr)
         {
             // Déclaration des variables
             string TypeProjetName = null;
@@ -493,7 +496,7 @@ namespace SiteReservationGestionPFL.Models
                 FinancName = context.ld_financement.First(r => r.id == financId).nom_financement;
             // obtenir le mail du responsable projet 
             if (respProjetId > 0)
-                MailResponsable = context.utilisateur.First(r => r.id == respProjetId).Email;
+                MailResponsable = context.utilisateur.First(r => r.Id == respProjetId).Email;
             // obtenir nom provenance projet
             if (provProj > 0)
                 ProvenanProj = context.ld_provenance.First(r => r.id == provProj).nom_provenance;
@@ -502,7 +505,7 @@ namespace SiteReservationGestionPFL.Models
 
             projet newProjet = new projet (){ titre_projet = TitreProjet, num_projet = numProj,
                 type_projet = TypeProjetName, financement = FinancName, mailRespProjet = MailResponsable,
-                provenance = ProvenanProj, description_projet = description, date_creation = dateCreation, compte_userID = IdUser, organismeID = org.id };
+                provenance = ProvenanProj, description_projet = description, date_creation = dateCreation, compte_userID = Usr.Id.ToString(), organismeID = org.id };
 
             // ajouter dans ma BDD "projet" le nouveau projet 
             context.projet.Add(newProjet);
@@ -526,7 +529,7 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="destProduit"></param>
         /// <param name="TransStlo"></param>
         /// <param name="commentaire"></param>
-        public essai CreationEssai(projet pr, string IdUsr, DateTime myDateTime, string confident, int manipId, int ProdId, string precisionProd, string QuantProd,
+        public essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confident, int manipId, int ProdId, string precisionProd, string QuantProd,
             int ProvId, int destProduit, string TransStlo, string commentaire)
         {
             // Déclaration des variables
@@ -543,18 +546,12 @@ namespace SiteReservationGestionPFL.Models
                 DestProd = context.ld_destination.First(r => r.id == destProduit).nom_destination;
 
             // rajouter la clé étrangère (table "essai") vers l'utilisateur (manipulateurID)
-            utilisateur usr = context.utilisateur.FirstOrDefault(r => r.id == manipId);
+            utilisateur usrManip = context.utilisateur.FirstOrDefault(r => r.Id == manipId);
 
             // Créer l'essai avec les infos provenant du model (rajouter les ID des clès étrangeres)
-            essai Essai = new essai () { compte_userID = IdUsr, date_creation = myDateTime, type_produit_entrant = TypeProduit, precision_produit = precisionProd,
+            essai Essai = new essai () { compte_userID = Usr.Id.ToString(), date_creation = myDateTime, type_produit_entrant = TypeProduit, precision_produit = precisionProd,
                 quantite_produit = QuantProd, provenance_produit = ProvProd, destination_produit = DestProd, transport_stlo = Convert.ToBoolean(TransStlo),
-                status_essai = EnumStatusEssai.WaitingValidation.ToString(), commentaire = commentaire, confidentialite = confident, manipulateurID = usr.id, projetID = pr.id };
-
-
-            //Essai.utilisateur = usr;
-
-            // Rajouter la clé étrangère (table "essai") vers le projet 
-            //Essai.projet = pr;
+                status_essai = EnumStatusEssai.WaitingValidation.ToString(), commentaire = commentaire, confidentialite = confident, manipulateurID = usrManip.Id, projetID = pr.id };
 
             //Ajouter dans la BDD "essai"  le nouveau essai
             context.essai.Add(Essai);
@@ -643,19 +640,16 @@ namespace SiteReservationGestionPFL.Models
         /// <param name="numProjet">numero de projet</param>
         /// <param name="IdAsp">id table aspnetusers</param>
         /// <returns>true ou false</returns>
-        public bool VerifPropieteProjet(string numProjet, string IdAsp)
+        public async Task<bool> VerifPropieteProjetAsync(string numProjet, utilisateur usr)
         {
-            var UserManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-            // Obtenir les rôles dont l'utilisateur
-            string[] allUserRoles = userManager.GetRoles(IdAsp).ToArray();
+            IList<string> allUserRoles = await userManager.GetRolesAsync(usr);
             bool propProjOk = false;
             bool adminSiteOk = false;
-
             // Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
-            propProjOk = (from p in context.projet
-                    where p.num_projet == numProjet && p.compte_userID == IdAsp
-                    select p).Any();
-
+            propProjOk = context.projet.Where(p=>p.num_projet == numProjet).Where(p => p.id == usr.Id).Any();
+            /*propProjOk = (from p in context.projet
+                    where p.num_projet == numProjet && p.compte_userID == usr.Id.ToString()
+                    select p).Any();*/
             // Si la personne n'est pas propiètaire du projet mais qu'elle est "Admin" ou "MainAdmin"
             foreach(string roles in allUserRoles)
             {
@@ -665,7 +659,6 @@ namespace SiteReservationGestionPFL.Models
                     break;
                 }
             }
-
             return (propProjOk || adminSiteOk);
         }
 

@@ -316,7 +316,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
             {
                 var allOrgs = UsersWithAccess.Select(f => new SelectListItem
                 {
-                    Value = f.id.ToString(),
+                    Value = f.Id.ToString(),
                     Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
                 }); ;
                 return DefaultRespItem.Concat(allOrgs);

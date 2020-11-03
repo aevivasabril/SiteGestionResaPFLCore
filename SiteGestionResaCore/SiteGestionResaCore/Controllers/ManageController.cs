@@ -20,7 +20,7 @@ namespace SiteReservationGestionPFL.Controllers
         private readonly UserManager<utilisateur> userManager;
         private readonly SignInManager<utilisateur> signInManager;
         private readonly IEmailSender emailSender;
-        private object claimTypes;
+        private readonly object claimTypes;
 
         public ManageController(
             IResaDB resaDb,
@@ -50,11 +50,11 @@ namespace SiteReservationGestionPFL.Controllers
             var user =  await userManager.FindByIdAsync(User.GetUserId());
             var model = new IndexViewModel
             {
-                HasPassword = HasPassword(),
+                HasPassword = await HasPasswordAsync(),
                 PhoneNumber = await userManager.GetPhoneNumberAsync(user),
                 TwoFactor = await userManager.GetTwoFactorEnabledAsync(user),
-                Logins = await userManager.GetLoginsAsync(user),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(user)
+                Logins = await userManager.GetLoginsAsync(user)//,
+                //BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(user)
             };
             return View(model);
         }
@@ -66,10 +66,13 @@ namespace SiteReservationGestionPFL.Controllers
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey)
         {
             ManageMessageId? message;
-            var result = await userManager.RemoveLoginAsync(User.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
+            // TODO: Vérifier avec Christophe
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+            var result = await userManager.RemoveLoginAsync(user, loginProvider, providerKey);
+            //var result = await userManager.RemoveLoginAsync(User.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
-                var user = await userManager.FindByIdAsync(User.GetUserId());
+                //var user = await userManager.FindByIdAsync(User.GetUserId());
                 if (user != null)
                 {
                     await signInManager.SignInAsync(user, new AuthenticationProperties
@@ -94,32 +97,8 @@ namespace SiteReservationGestionPFL.Controllers
         }
 
         //
-        // POST: /Manage/AddPhoneNumber
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            // Generate the token and send it
-            var code = await userManager.GenerateChangePhoneNumberTokenAsync(User.GetUserId(), model.Number);
-            if (userManager.SmsService != null)
-            {
-                var message = new IdentityMessage
-                {
-                    Destination = model.Number,
-                    Body = "Your security code is: " + code
-                };
-                await userManager.SmsService.SendAsync(message);
-            }
-            return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.Number });
-        }
-
-        //
         // POST: /Manage/EnableTwoFactorAuthentication
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> EnableTwoFactorAuthentication()
         {
@@ -130,11 +109,11 @@ namespace SiteReservationGestionPFL.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
             return RedirectToAction("Index", "Manage");
-        }
+        }*/
 
         //
         // POST: /Manage/DisableTwoFactorAuthentication
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DisableTwoFactorAuthentication()
         {
@@ -145,11 +124,11 @@ namespace SiteReservationGestionPFL.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
             return RedirectToAction("Index", "Manage");
-        }
+        }*/
 
         //
         // GET: /Manage/VerifyPhoneNumber
-        public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
+        /*public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var code = await userManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
             // Send an SMS through the SMS provider to verify the phone number
@@ -179,11 +158,11 @@ namespace SiteReservationGestionPFL.Controllers
             // If we got this far, something failed, redisplay form
             ModelState.AddModelError("", "Failed to verify phone");
             return View(model);
-        }
+        }*/
 
         //
         // POST: /Manage/RemovePhoneNumber
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemovePhoneNumber()
         {
@@ -198,7 +177,7 @@ namespace SiteReservationGestionPFL.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
-        }
+        }*/
 
         //
         // GET: /Manage/ChangePassword
@@ -217,13 +196,19 @@ namespace SiteReservationGestionPFL.Controllers
             {
                 return View(model);
             }
-            var result = await userManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+            var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
+                //var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
                 if (user != null)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    // TODO: vérifier "remember browser"
+                    //await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    await signInManager.SignInAsync(user, new AuthenticationProperties
+                    {
+                        IsPersistent = false,                        
+                    });
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
@@ -246,13 +231,18 @@ namespace SiteReservationGestionPFL.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await userManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+                var user = await userManager.FindByIdAsync(User.GetUserId());
+                var result = await userManager.AddPasswordAsync(user, model.NewPassword);
                 if (result.Succeeded)
                 {
-                    var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
+                    //var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
                     if (user != null)
                     {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        //await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await signInManager.SignInAsync(user, new AuthenticationProperties
+                        {
+                            IsPersistent = false,
+                        });
                     }
                     return RedirectToAction("Index", new { Message = ManageMessageId.SetPasswordSuccess });
                 }
@@ -265,18 +255,18 @@ namespace SiteReservationGestionPFL.Controllers
 
         //
         // GET: /Manage/ManageLogins
-        public async Task<ActionResult> ManageLogins(ManageMessageId? message)
+        /*public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.Error ? "An error has occurred."
                 : "";
-            var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             if (user == null)
             {
                 return View("Error");
             }
-            var userLogins = await userManager.GetLoginsAsync(User.Identity.GetUserId());
+            var userLogins = await userManager.GetLoginsAsync(user);
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
             return View(new ManageLoginsViewModel
@@ -284,21 +274,21 @@ namespace SiteReservationGestionPFL.Controllers
                 CurrentLogins = userLogins,
                 OtherLogins = otherLogins
             });
-        }
+        }*/
 
         //
         // POST: /Manage/LinkLogin
-        [HttpPost]
+        /*[HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LinkLogin(string provider)
         {
             // Request a redirect to the external login provider to link a login for the current user
             return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
-        }
+        }*/
 
         //
         // GET: /Manage/LinkLoginCallback
-        public async Task<ActionResult> LinkLoginCallback()
+        /*public async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
@@ -307,14 +297,13 @@ namespace SiteReservationGestionPFL.Controllers
             }
             var result = await userManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
-        }
+        }*/
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _userManager != null)
+            if (disposing)
             {
-                _userManager.Dispose();
-                _userManager = null;
+                userManager?.Dispose();
             }
 
             base.Dispose(disposing);
@@ -324,25 +313,25 @@ namespace SiteReservationGestionPFL.Controllers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
-        private IAuthenticationManager AuthenticationManager
+        /*private IAuthenticationManager AuthenticationManager
         {
             get
             {
                 return HttpContext.GetOwinContext().Authentication;
             }
-        }
+        }*/
 
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                ModelState.AddModelError("", error.Description);
             }
         }
 
-        private bool HasPassword()
+        private async Task<bool> HasPasswordAsync()
         {
-            var user = userManager.FindById(User.Identity.GetUserId());
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             if (user != null)
             {
                 return user.PasswordHash != null;
@@ -350,15 +339,16 @@ namespace SiteReservationGestionPFL.Controllers
             return false;
         }
 
-        private bool HasPhoneNumber()
+        /*private async Task<bool> HasPhoneNumberAsync()
         {
-            var user = userManager.FindById(User.Identity.GetUserId());
+            //var user = userManager.FindById(User.Identity.GetUserId());
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             if (user != null)
             {
                 return user.PhoneNumber != null;
             }
             return false;
-        }
+        }*/
 
         public enum ManageMessageId
         {
