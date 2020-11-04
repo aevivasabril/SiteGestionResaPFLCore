@@ -42,8 +42,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users, 
                 ListUsersWaiting = ListUsr.UsersWaitingValid, 
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(), 
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin)
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin)
             };
             return View(vm);
         }
@@ -60,8 +60,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin),
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalState = "show";
@@ -103,8 +103,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin)
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin)
             };
 
             ViewBag.modalLogic = "show";
@@ -131,8 +131,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin),
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
 
@@ -159,8 +159,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin),
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Valider"
             };
@@ -207,8 +207,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin),
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Refuser"
             };
@@ -255,8 +255,8 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListToSelectItem(ListAdmin),
+                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
                 UserToChange = resaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalDelete = "show";

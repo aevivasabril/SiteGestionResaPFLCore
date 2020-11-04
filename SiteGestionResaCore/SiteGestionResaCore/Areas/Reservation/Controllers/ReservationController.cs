@@ -34,8 +34,36 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         // GET: Reservation/Reservation
         public ActionResult FormulaireProjet()
         {
-            //Trouver les projets que cette personne à déclaré pour les afficher dans une liste
-            FormulaireProjetViewModel vm = new FormulaireProjetViewModel { };
+            List<ld_type_projet> ListeTypeProj = resaDb.ObtenirList_TypeProjet();
+            List<ld_financement> ListFinancProj = resaDb.ObtenirList_Financement();
+            List<organisme> ListeOrga = resaDb.ObtenirListOrg();
+            List<utilisateur> listUsersAcces = resaDb.ObtenirList_UtilisateurValide();
+            List<ld_provenance> ListeProvProj = resaDb.ObtenirList_ProvenanceProjet();
+            List<ld_produit_in> ListeProdEntree = resaDb.ObtenirList_TypeProduitEntree();
+            List<ld_provenance_produit> ListProvProd = resaDb.ObtenirList_ProvenanceProduit();
+            List<ld_destination> ListDestProd = resaDb.ObtenirList_DestinationPro();
+
+            FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
+            {
+                ListeTypeProjet = ListeTypeProj,
+                TypeProjetItem = resaDb.ListTypeProjetItem(ListeTypeProj),
+                ListeFinancement = ListFinancProj,
+                TypefinancementItem = resaDb.ListFinancementItem(ListFinancProj),
+                ListeOrganismes = ListeOrga,
+                OrganItem = resaDb.ListOrgItem(ListeOrga),
+                UsersWithAccess = listUsersAcces,
+                RespProjItem = resaDb.ListRespItem(listUsersAcces),
+                ListeProvenance = ListeProvProj, 
+                ProvenanceItem = resaDb.ListProveItem(ListeProvProj),
+                ManipProjItem = resaDb.ListManipItem(listUsersAcces),
+                ListeProduitsIn = ListeProdEntree,
+                ProductItem = resaDb.ListProdEntreeItem(ListeProdEntree),
+                ListeProvenanceProduit = ListProvProd,
+                ProvenanceProduitItem = resaDb.ListProvProdItem(ListProvProd),
+                ListeDestProduit = ListDestProd,
+                DestProduitItem = resaDb.ListDestProdItem(ListDestProd)
+
+            };
             return View(vm);
         }
 

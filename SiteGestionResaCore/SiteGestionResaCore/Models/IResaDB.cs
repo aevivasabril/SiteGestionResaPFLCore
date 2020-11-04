@@ -28,7 +28,27 @@ namespace SiteReservationGestionPFL.Models
 
         utilisateur ObtenirUtilisateur(int id);
 
-        IEnumerable<SelectListItem> ListToSelectItem(List<utilisateur> utilisateurs);
+        IEnumerable<SelectListItem> ListUsersToSelectItem(List<utilisateur> utilisateurs);
+
+        IEnumerable<SelectListItem> ListEssaisToSelectItem(List<EssaiUtilisateur> essais);
+
+        IEnumerable<SelectListItem> ListTypeProjetItem(List<ld_type_projet> typeProj);
+
+        IEnumerable<SelectListItem> ListFinancementItem(List<ld_financement> financement);
+
+        IEnumerable<SelectListItem> ListOrgItem(List<organisme> organismes);
+
+        IEnumerable<SelectListItem> ListRespItem(List<utilisateur> respProj);
+
+        IEnumerable<SelectListItem> ListProveItem(List<ld_provenance> provProj);
+
+        IEnumerable<SelectListItem> ListManipItem(List<utilisateur> manipulateur);
+
+        IEnumerable<SelectListItem> ListProdEntreeItem(List<ld_produit_in> produitEnt);
+
+        IEnumerable<SelectListItem> ListProvProdItem(List<ld_provenance_produit> provProduit);
+
+        IEnumerable<SelectListItem> ListDestProdItem(List<ld_destination> destProduit);
 
         Task ChangeAccesToUser(int id);
 

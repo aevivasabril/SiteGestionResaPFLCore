@@ -17,7 +17,7 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         /// </summary>
         public utilisateur UserToChange = new utilisateur();
        
-        private List<utilisateur> _usersAdmin;
+        private List<utilisateur> _usersAdmin = new List<utilisateur>();
         /// <summary>
         /// List des utilisateurs dont le rôle est 'Admin'
         /// </summary>
@@ -37,7 +37,7 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
             set { _listUsers = value; }
         }
 
-        private List<utilisateur> _listUsersWaiting;
+        private List<utilisateur> _listUsersWaiting = new List<utilisateur>();
         /// <summary>
         /// Liste des utilisateurs en attente de validation de compte
         /// </summary>
@@ -47,7 +47,7 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
             set { _listUsersWaiting = value; }
         }
 
-        private IList<utilisateur> _ListAdminLogistic;
+        private IList<utilisateur> _ListAdminLogistic = new List<utilisateur>();
         /// <summary>
         /// List des utilisateurs dont le rôle est 'Admin'
         /// </summary>
@@ -131,12 +131,12 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Data
         /// <summary>
         /// Utilisateurs avec une compte validée
         /// </summary>
-        public List<utilisateur> Users;
+        public List<utilisateur> Users = new List<utilisateur>();
 
         /// <summary>
         /// Utilisateurs avec une compte non validée 
         /// </summary>
-        public List<utilisateur> UsersWaitingValid;
+        public List<utilisateur> UsersWaitingValid = new List<utilisateur>();
 
         /// <summary>
         /// Méthode pour séparer les 2 listes 

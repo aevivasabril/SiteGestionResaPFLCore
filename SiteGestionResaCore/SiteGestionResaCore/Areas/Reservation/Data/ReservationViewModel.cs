@@ -30,10 +30,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<EssaiUtilisateur> EssaiUtilisateur
         {
-            get
-            {
-                return _essaiUtilisateur;
-            }
+            get { return _essaiUtilisateur; }
             set { _essaiUtilisateur = value; }
         }
 
@@ -44,12 +41,20 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un Essai")]
         public int SelectedEssaiId { get; set; }
 
+        private IEnumerable<SelectListItem> _essaiItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
+        public IEnumerable<SelectListItem> EssaiItem
+        {
+            get { return _essaiItem; }
+            set { _essaiItem = value; }
+        }
+
 
         // TODO: Essayer de mettre une date de réservation plutôt que la date de création à voir si possible
         /// <summary>
         /// Création d'une liste des item avec des détails d'un essai
         /// </summary>
-        public IEnumerable<SelectListItem> EssaiItem
+        /*public IEnumerable<SelectListItem> EssaiItem
         {
             get
             {
@@ -78,7 +83,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
                     Text = "- Sélectionnez un Essai -"
                 }, count: 1);
             }
-        }
+        }*/
 
         #endregion
 
@@ -108,20 +113,13 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
 
         #region Liste pour le type de projet
 
-        private List<ld_type_projet> _listeTypeProjet;
+        private List<ld_type_projet> _listeTypeProjet = new List<ld_type_projet>();
         /// <summary>
         /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les types de projet
         /// </summary>
         public List<ld_type_projet> ListeTypeProjet
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeTypeProjet = new List<ld_type_projet>(resaBdd.ObtenirList_TypeProjet());
-                }
-                return _listeTypeProjet;
-            }
+            get { return _listeTypeProjet; }
             set { _listeTypeProjet = value; }
         }
 
@@ -131,36 +129,14 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Type de projet")]
         public int SelectTypeProjetId { get; set; }
 
-        /// <summary>
-        /// Création d'une dropdownlist pour le type de projet
-        /// </summary>
+        private IEnumerable<SelectListItem> _typeProjetItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> TypeProjetItem
         {
-            get
-            {
-                var allOrgs = ListeTypeProjet.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_type_projet
-                });
-                return DefaultTypeProjItem.Concat(allOrgs);
-            }
+            get { return _typeProjetItem; }
+            set { _typeProjetItem = value; }
         }
 
-        /// <summary>
-        /// Message par défaut entête de la liste type de projet
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultTypeProjItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Type projet -"
-                }, count: 1);
-            }
-        }
         #endregion
 
         #region Liste pour l'origine financement
@@ -171,14 +147,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<ld_financement> ListeFinancement
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeFinancement = new List<ld_financement>(resaBdd.ObtenirList_Financement());
-                }
-                return _listeFinancement;
-            }
+            get { return _listeFinancement; }
             set { _listeFinancement = value; }
         }
 
@@ -188,35 +157,12 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Origine Financement")]
         public int SelectFinancementId { get; set; }
 
-        /// <summary>
-        /// Création d'une liste Dropdownlist contenant les types de financement
-        /// </summary>
+        private IEnumerable<SelectListItem> _typeFinancItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> TypefinancementItem
         {
-            get
-            {
-                var allOrgs = ListeFinancement.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_financement
-                });
-                return DefaultFinancementItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        ///  Entête de la liste des options déroulante pour le type de financement
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultFinancementItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Type financement -"
-                }, count: 1);
-            }
+            get { return _typeFinancItem; }
+            set { _typeFinancItem = value; }
         }
 
         #endregion
@@ -229,14 +175,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<organisme> ListeOrganismes
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeOrganismes = new List<organisme>(resaBdd.ObtenirListOrg());
-                }
-                return _listeOrganismes;
-            }
+            get { return _listeOrganismes; }
             set { _listeOrganismes = value; }
         }
 
@@ -246,37 +185,13 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Nom de l'entreprise si privé")]
         public int SelectedOrganId { get; set; }
 
-        /// <summary>
-        /// Création d'une liste Dropdownlist contenant les types d'organismes
-        /// </summary>
+        private IEnumerable<SelectListItem> _organItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> OrganItem
         {
-            get
-            {
-                var allOrgs = ListeOrganismes.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_organisme
-                });
-                return DefaultOrgItem.Concat(allOrgs);
-            }
+            get { return _organItem; }
+            set { _organItem = value; }
         }
-
-        /// <summary>
-        /// Entête de la liste pour selectionner un organisme
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultOrgItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Options -"
-                }, count: 1);
-            }
-        }
-
 
         #endregion
 
@@ -288,14 +203,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<utilisateur> UsersWithAccess
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _usersWithAccess = new List<utilisateur>(resaBdd.ObtenirList_UtilisateurValide());
-                }
-                return _usersWithAccess;
-            }
+            get { return _usersWithAccess; }
             set { _usersWithAccess = value; }
         }
 
@@ -307,10 +215,19 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un responsable projet")]
         public int SelectedRespProjId { get; set; }
 
+        private IEnumerable<SelectListItem> _respProjItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
+        public IEnumerable<SelectListItem> RespProjItem
+        {
+            get { return _respProjItem; }
+            set { _respProjItem = value; }
+        }
+
+
         /// <summary>
         /// Création d'une liste des responsables projet (dropdownlist)
         /// </summary>
-        public IEnumerable<SelectListItem> RespProjItem
+        /*public IEnumerable<SelectListItem> RespProjItem
         {
             get
             {
@@ -336,7 +253,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
                     Text = "- Sélectionnez un responsable -"
                 }, count: 1);
             }
-        }
+        }*/
 
         #endregion
 
@@ -348,14 +265,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<ld_provenance> ListeProvenance
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeProvenance = new List<ld_provenance>(resaBdd.ObtenirList_ProvenanceProjet());
-                }
-                return _listeProvenance;
-            }
+            get { return _listeProvenance; }
             set { _listeProvenance = value; }
         }
 
@@ -365,35 +275,12 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Provenance projet")]
         public int SelectedProvenanceId { get; set; }
 
-        /// <summary>
-        /// Création d'une liste de provenance projet (dropdownlist)
-        /// </summary>
+        private IEnumerable<SelectListItem> _provenanceItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> ProvenanceItem
         {
-            get
-            {
-                var allOrgs = ListeProvenance.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_provenance
-                });
-                return DefaultProvItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        /// Entete liste provenance projet 
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultProvItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Options provenance projet -"
-                }, count: 1);
-            }
+            get { return _provenanceItem; }
+            set { _provenanceItem = value; }
         }
 
         #endregion
@@ -419,16 +306,24 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
         public int SelectedManipulateurID { get; set; }
 
+        private IEnumerable<SelectListItem> _manipProjItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
+        public IEnumerable<SelectListItem> ManipProjItem
+        {
+            get { return _manipProjItem; }
+            set { _manipProjItem = value; }
+        }
+
         /// <summary>
         /// Création d'une liste utilisateurs "manipulateur" de l'essai
         /// </summary>
-        public IEnumerable<SelectListItem> ManipProjItem
+        /*public IEnumerable<SelectListItem> ManipProjItem
         {
             get
             {
                 var allOrgs = UsersWithAccess.Select(f => new SelectListItem
                 {
-                    Value = f.id.ToString(),
+                    Value = f.Id.ToString(),
                     Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
                 }); ;
                 return DefaultManipItem.Concat(allOrgs);
@@ -448,7 +343,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
                     Text = "- Sélectionnez un Manipulateur -"
                 }, count: 1);
             }
-        }
+        }*/
         #endregion
 
         #region Liste des produits entrée
@@ -459,14 +354,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<ld_produit_in> ListeProduitsIn
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeProduitsIn = new List<ld_produit_in>(resaBdd.ObtenirList_TypeProduitEntree());
-                }
-                return _listeProduitsIn;
-            }
+            get { return _listeProduitsIn; }
             set { _listeProduitsIn = value; }
         }
 
@@ -476,36 +364,14 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Type de produit d'entrée")]
         public int SelectedProductId { get; set; }
 
-        /// <summary>
-        /// Création d'une liste dropdownlit pour le type produit
-        /// </summary>
+        private IEnumerable<SelectListItem> _productItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> ProductItem
         {
-            get
-            {
-                var allOrgs = ListeProduitsIn.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_produit_in
-                });
-                return DefaultProductItem.Concat(allOrgs);
-            }
+            get { return _productItem; }
+            set { _productItem = value; }
         }
 
-        /// <summary>
-        /// Entete de la liste des produits en entrée pour un essai
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultProductItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Options -"
-                }, count: 1);
-            }
-        }
 
         #endregion
         /// <summary>
@@ -528,14 +394,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<ld_provenance_produit> ListeProvenanceProduit
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeProvenanceProduit = new List<ld_provenance_produit>(resaBdd.ObtenirList_ProvenanceProduit());
-                }
-                return _listeProvenanceProduit;
-            }
+            get { return _listeProvenanceProduit; }
             set { _listeProvenanceProduit = value; }
         }
 
@@ -545,35 +404,12 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Provenance produit")]
         public int SelectedProveProduitId { get; set; }
 
-        /// <summary>
-        /// Création d'une liste dropdownlit pour selectionner la provenance produit entrée
-        /// </summary>
+        private IEnumerable<SelectListItem> _provenanceProduitItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
         public IEnumerable<SelectListItem> ProvenanceProduitItem
         {
-            get
-            {
-                var allOrgs = ListeProvenanceProduit.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_provenance_produit
-                });
-                return DefaultProvenanceProItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        /// Entete dropdownlist provenance produit
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultProvenanceProItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Options -"
-                }, count: 1);
-            }
+            get { return _provenanceProduitItem; }
+            set { _provenanceProduitItem = value; }
         }
 
         #endregion
@@ -586,14 +422,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<ld_destination> ListeDestProduit
         {
-            get
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _listeDestProduit = new List<ld_destination>(resaBdd.ObtenirList_DestinationPro());
-                }
-                return _listeDestProduit;
-            }
+            get { return _listeDestProduit; }
             set { _listeDestProduit = value; }
         }
 
@@ -603,10 +432,18 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         [Display(Name = "Destination produits ")]
         public int SelectedDestProduit { get; set; }
 
+        private IEnumerable<SelectListItem> _destProduitItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+
+        public IEnumerable<SelectListItem> DestProduitItem
+        {
+            get { return _destProduitItem; }
+            set { _destProduitItem = value; }
+        }
+
         /// <summary>
         /// Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
         /// </summary>
-        public IEnumerable<SelectListItem> DestProduitItem
+        /*public IEnumerable<SelectListItem> DestProduitItem
         {
             get
             {
@@ -632,7 +469,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
                     Text = "- Options -"
                 }, count: 1);
             }
-        }
+        }*/
 
         #endregion
 

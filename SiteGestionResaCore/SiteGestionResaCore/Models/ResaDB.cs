@@ -159,14 +159,11 @@ namespace SiteReservationGestionPFL.Models
             return (context.utilisateur.FirstOrDefault(u => u.Id == id));
         }
 
+        #region Méthodes pour la création des dropdownlist vue FormulaireProjet
 
-        public IEnumerable<SelectListItem> ListToSelectItem(List<utilisateur> utilisateurs)
+        public IEnumerable<SelectListItem> ListUsersToSelectItem(List<utilisateur> utilisateurs)
         {
-            var DefaultUsrItem = Enumerable.Repeat(new SelectListItem
-            {
-                Value = "-1",
-                Text = "- Selectionner un utilisateur -"
-            }, count: 1);
+            var DefaultUsrItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Selectionner un utilisateur -" }, count: 1);
 
             var allUsrs = utilisateurs.Select(f => new SelectListItem
             {
@@ -177,6 +174,142 @@ namespace SiteReservationGestionPFL.Models
 
             return DefaultUsrItem.Concat(allUsrs);
         }
+
+        public IEnumerable<SelectListItem> ListEssaisToSelectItem(List<EssaiUtilisateur> essais)
+        {
+            // Premier item par défaut de la dropdownlist copie d'essai
+            var DefaultEssaiItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Sélectionnez un Essai -" }, count: 1);
+            // Création d'une liste des item avec des détails d'un essai
+            var allOrgs = essais.Select(f => new SelectListItem
+            {
+                Value = f.CopieEssai.id.ToString(),
+                Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom + ", " + f.user.prenom + " - Commentaire essai: " +
+                           f.CopieEssai.commentaire + " - Type produit entrant: " + f.CopieEssai.type_produit_entrant + " -" + f.CopieEssai.quantite_produit
+            });
+            return DefaultEssaiItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListTypeProjetItem(List<ld_type_projet> typeProj)
+        {
+            // Message par défaut entête de la liste type de projet
+            var DefaultTypeProjItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Type projet -" }, count: 1);
+
+            var allOrgs = typeProj.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_type_projet
+            });
+            return DefaultTypeProjItem.Concat(allOrgs);
+
+        }
+
+        public IEnumerable<SelectListItem> ListFinancementItem(List<ld_financement> financement)
+        {
+            var DefaultFinancementItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Type financement -" }, count: 1);
+
+            var allOrgs = financement.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_financement
+            });
+            return DefaultFinancementItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListOrgItem(List<organisme> organismes)
+        {
+            // Entête de la liste pour selectionner un organisme
+            var DefaultOrgItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Options -" }, count: 1);
+
+            // Création d'une liste Dropdownlist contenant les types d'organismes
+            var allOrgs = organismes.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_organisme
+            });
+            return DefaultOrgItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListRespItem(List<utilisateur> respProj)
+        {
+            var DefaultRespItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Sélectionnez un responsable -" }, count: 1);
+
+            var allOrgs = respProj.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
+            }); ;
+            return DefaultRespItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListProveItem(List<ld_provenance> provProj)
+        {
+            // Entete liste provenance projet 
+            var DefaultProvItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Options provenance projet -" }, count: 1);
+            // Création d'une liste de provenance projet (dropdownlist)
+            var allOrgs = provProj.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_provenance
+            });
+            return DefaultProvItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListManipItem(List<utilisateur> UsersWithAccess)
+        {
+            // Entete de la liste des utilisateurs "manipulateurs" pour un essai
+            var DefaultManipItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Sélectionnez un Manipulateur -" }, count: 1);
+            // Création d'une liste utilisateurs "manipulateur" de l'essai
+            var allOrgs = UsersWithAccess.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
+            }); ;
+            return DefaultManipItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListProdEntreeItem(List<ld_produit_in> produitEnt)
+        {
+            // Entete de la liste des produits en entrée pour un essai
+            var DefaultProductItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Options -" }, count: 1);
+
+            // Création d'une liste dropdownlist pour le type produit entrée
+            var allOrgs = produitEnt.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_produit_in
+            });
+            return DefaultProductItem.Concat(allOrgs);
+        }
+
+        // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+        public IEnumerable<SelectListItem> ListProvProdItem(List<ld_provenance_produit> provProduit)
+        {
+            // Entete dropdownlist provenance produit
+            var DefaultProvenanceProItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Options -" }, count: 1);
+
+            // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+            var allOrgs = provProduit.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_provenance_produit
+            });
+            return DefaultProvenanceProItem.Concat(allOrgs);
+        }
+
+        public IEnumerable<SelectListItem> ListDestProdItem(List<ld_destination> destProduit)
+        {
+            // Entete dropdownlist destinaison produit
+            var DefaultDestProItem =  Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Options -" }, count: 1);
+            // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+            var allOrgs = destProduit.Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_destination
+            });
+            return DefaultDestProItem.Concat(allOrgs);
+        }
+
+        #endregion
 
         /// <summary>
         /// Methode permettant de changer le rôle d'un "Admin" à "Utilisateur"
