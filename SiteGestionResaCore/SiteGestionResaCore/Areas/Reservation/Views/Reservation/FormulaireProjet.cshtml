@@ -21,7 +21,7 @@
             <div class="card-body">
                 <h5 class="card-title">Trouver un essai existant et copier les informations (projet + essai)</h5>
                 <div class="form-row">
-                    @Html.Label("Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345):", new { @class = "col-md-12 control-label" })
+                    <label class="col-md-12 control-label">Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345): </label>
                     <div class="col-sm-10">
                         @Html.TextBoxFor(m => m.NumProjet, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.NumProjet, "", new { @class = "text-danger" })
@@ -98,15 +98,16 @@
             <div class="row">
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Ouvert")
-                    @Html.Label("Ouvert", new { @class = "col-md-5 control-label" })
+                    <label class="col-md-5 control-label">Ouvert</label>
                 </div>
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Restreint")
-                    @Html.Label("Restreint", new { @class = "col-md-5 control-label" })
+                    <label class="col-md-5 control-label">Restreint</label>
+
                 </div>
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel")
-                    @Html.Label("Confidentiel", new { @class = "col-md-5 control-label" })
+                    <label class="col-md-5 control-label">Confidentiel</label>
                 </div>
             </div>
         </div>
@@ -168,11 +169,12 @@
             <div class="row">
                 <div class="col-8">
                     @Html.RadioButtonFor(m => m.TransportSTLO, "true")
-                    @Html.Label("STLO (800L max)", new { @class = "col-md-10 control-label" })
+                    <label class="col-md-10 control-label">STLO (800L max)</label>
                 </div>
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.TransportSTLO, "false")
-                    @Html.Label("Autre", new { @class = "col-md-5 control-label" })
+                    <label class="col-md-5 control-label">Autre</label>
+
                 </div>
             </div>
         </div>
@@ -188,8 +190,7 @@
     }
 </div>
 
-@using (Html.BeginForm("CopierProjetEssai", "Reservation", new { num = Model.NumProjet }, FormMethod.Post, new { @role = "" }))
-{
+<form asp-action="CopierProjetEssai" asp-controller="Reservation" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ListeEssais" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
@@ -203,7 +204,7 @@
                 <div class="modal-body" id="modalcontent">
                     @Html.DropDownListFor(m => m.SelectedEssaiId, Model.EssaiItem, new { @class = " col-md-10 form-control" })
                     @Html.ValidationMessageFor(m => m.SelectedEssaiId, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.NumProjet, new { id = Model.NumProjet })
+                    @Html.HiddenFor(model => model.NumProjet)
                     <hr />
                     <strong class="text-center">@ViewBag.Message</strong>
                     <!-- On met le HiddenFor pour envoyer le num_projet vers la méthode POST "CopierProjetEssai"-->
@@ -216,7 +217,8 @@
             </div>
         </div>
     </div>
-}
+</form>
+   
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

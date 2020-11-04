@@ -158,7 +158,8 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             // Obtenir les infos sur mon Projet et mon essai pour les injecter dans mon model (affichage sur la vue)
 
             // Récupérer à partir de la BDD les infos sur le projet et l'essai
-            pr = resaDb.ObtenirProjet_pourCopie(numProjet);
+            // Vérifier cette ligne suite à migration ASP NET CORE
+            pr = resaDb.ObtenirProjet_pourCopie(model.NumProjet); // Provenant du HiddenFor ligne 207
             ess = resaDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
             model.SelectTypeProjetId = resaDb.IdTypeProjetPourCopie(pr.id);
             model.SelectFinancementId = resaDb.IdFinancementPourCopie(pr.id);
