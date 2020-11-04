@@ -257,7 +257,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
 
 
         [HttpPost]
-        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int idEquip)
+        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int equipementId)
         {
             // Initialisation des variables
             List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
@@ -280,10 +280,10 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
                     for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
                     {
-                        if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == idEquip)
+                        if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == equipementId)
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                            reservationsEquipement = DonneesCalendrierEquipement(false, idEquip, model.DatePickerDu, model.DatePickerAu);
+                            reservationsEquipement = DonneesCalendrierEquipement(false, equipementId, model.DatePickerDu, model.DatePickerAu);
                             equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
                             break;
                         }
@@ -303,7 +303,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         /// <param name="model">model view provenant de la vue partielle "_creneau"</param>
         /// <returns>Action result</returns>
         [HttpPost]
-        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int idEquip)
+        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int equipementId)
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
@@ -316,7 +316,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
             // Initialiser le calendrierChildModel de l'équipement sur le model de la vue parent avant toutes les opérations
             for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
             {     
-                if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == idEquip)
+                if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == equipementId)
                 {
                     #region Compléter le model "CalendrierEquipChildViewModel" avec le model "EquipementsParZoneViewModel"
 
@@ -428,12 +428,12 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         /// <param name="IndiceResaEquipXChild"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult SupprimerCreneauResa(int IndiceChildModel, int IndiceResaEquipXChild)
+        public ActionResult SupprimerCreneauResa(EquipementsParZoneViewModel model)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
-            equipementZone.CalendrierChildVM[IndiceChildModel].ResaEquipement.RemoveAt(IndiceResaEquipXChild);
+            equipementZone.CalendrierChildVM[model.IndiceChildModel].ResaEquipement.RemoveAt(model.IndiceResaEquipXChild);
             return View("EquipementVsZone", equipementZone);
         }
 
