@@ -506,14 +506,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Data
         /// </summary>
         public List<zone> Zones
         {
-            get 
-            {
-                using (IResaDB resaBdd = new ResaDB())
-                {
-                    _zones = new List<zone>(resaBdd.ListeZones());
-                }
-                return _zones;
-            }
+            get { return _zones;}
             set { _zones = value; }
         }
         #endregion

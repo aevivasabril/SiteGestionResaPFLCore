@@ -1,4 +1,6 @@
 ﻿@using SiteReservationGestionPFL.Areas.Equipe.Data
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 @model GestionUsersViewModel
 
 @{
@@ -42,6 +44,8 @@
         <br />
         @using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
         {
+            <form asp-action="AdminToUserAcces" asp-controller="Equipe" asp-route=@Model.UserToChange.Id>
+            </form>
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="adminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">

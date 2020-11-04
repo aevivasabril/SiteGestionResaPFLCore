@@ -73,10 +73,8 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         {
             // NOTE: Dans le cas où on crée un nouveau projet et un nouveau essai
             // TODO: traiter le cas où on copie les données essai et projet (pas de creation de projet! mais création d'essai) voir comment vérifier cela? 
-            DateTime myDateTime = DateTime.Now;
             var user = await userManager.FindByIdAsync(User.GetUserId());
-            projet Proj = new projet();     // Variable "projet" pour récupérer un projet existant ou un projet qui vient d'être créé
-
+           
             // Je laisse cette ligne car elle permette de vérifier quel champ du formulaire me génère une erreur
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
@@ -91,13 +89,7 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                     if(await resaDb.VerifPropieteProjetAsync(model.NumProjet, user))
                     {
                         // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-                        this.HttpContext.AddToSession("FormulaireResa", model);
-                        // mettre en commentaire car l'essai sera crée à la fin du processus réservation 
-                        /*Proj = resaBdd.ObtenirProjet_pourCopie(model.NumProjet);
-                        // Dans tous les cas on doit créer un essai appartenant à un nouveau projet ou un projet existant
-                        resaBdd.CreationEssai(Proj, IdUsr, myDateTime, model.SelectedManipulateurID, model.SelectedProductId, model.PrecisionProduitIn, model.QuantiteProduit,
-                                model.SelectedProvenanceId, model.SelectedDestProduit, model.TransportSTLO, model.CommentaireEssai); // ne pas oublier de rajouter le status
-                                */
+                        this.HttpContext.AddToSession("FormulaireResa", model);              
                         return RedirectToAction("PlanZonesReservation");
                     }
                     else
@@ -111,16 +103,6 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
                 {
                     // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
                     this.HttpContext.AddToSession("FormulaireResa", model);
-
-                    // MIS en commentaire car on l'écrira dans la base de données qu'à la fin du traitement réservation
-                    //string Id = User.Identity.GetUserId(); // cela marche pour obtenir l'id  :)
-                    /*Proj = resaBdd.CreationProjet(model.TitreProjet, model.ConfidentialiteProjet, model.SelectTypeProjetId, model.SelectFinancementId, model.SelectedOrganId, 
-                        model.SelectedRespProjId, model.NumProjet, model.SelectedProvenanceId, model.DescriptionProjet, myDateTime, IdUsr);
-
-                    // Creation d'essai
-                    resaBdd.CreationEssai(Proj, IdUsr, myDateTime, model.SelectedManipulateurID, model.SelectedProductId, model.PrecisionProduitIn, model.QuantiteProduit,
-                                model.SelectedProvenanceId, model.SelectedDestProduit, model.TransportSTLO, model.CommentaireEssai); // ne pas oublier de rajouter le status
-                    */
                     return RedirectToAction("PlanZonesReservation"); // changer pour envoyer direct à la vue du plan PFL
                 }
                 

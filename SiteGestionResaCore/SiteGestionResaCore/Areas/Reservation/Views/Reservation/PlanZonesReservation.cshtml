@@ -20,24 +20,24 @@
             <br />
             <div class="row">
                 <div class="col-sm-1 col-md-1 text-center"></div>
-                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.HaloirAp7) != null)
+                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.HaloirAp7) != null)
                 {
                     <div class="col-sm-3 col-md-3 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                        @Html.ActionLink(@Model.Zones.First(x => x.Id == (int)EnumZonesPfl.HaloirAp7).nom_zone, "EquipementVsZone", new { id = 14 })
+                        @Html.ActionLink(@Model.Zones.First(x => x.id == (int)EnumZonesPfl.HaloirAp7).nom_zone, "EquipementVsZone", new { id = 14 })
                     </div>
                 }
 
-                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp6) != null)
+                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp6) != null)
                 {
                     <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp6).nom_zone, "EquipementVsZone", new { id = 13 })
+                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp6).nom_zone, "EquipementVsZone", new { id = 13 })
                     </div>
                 }
 
-                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp5 ) != null)
+                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp5 ) != null)
                 {
                     <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp5).nom_zone, "EquipementVsZone", new { id = 12 })
+                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp5).nom_zone, "EquipementVsZone", new { id = 12 })
                     </div>
                 }
             </div>
@@ -50,16 +50,16 @@
             <br />
             <div class="row">
                 <div class="col-sm-4 col-md-4 text-center"></div>
-                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp9) != null)
+                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp9) != null)
                 {
                     <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp9).nom_zone, "EquipementVsZone", new { id = 16 })
+                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp9).nom_zone, "EquipementVsZone", new { id = 16 })
                     </div>
                 }
-                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp8) != null)
+                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp8) != null)
                 {
                     <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleAp8).nom_zone, "EquipementVsZone", new { id = 15 })
+                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleAp8).nom_zone, "EquipementVsZone", new { id = 15 })
                     </div>
                 }
             </div>
@@ -87,28 +87,28 @@
                     <br />
                     <div class="row">
                         <div class="col-sm-5 col-md-5 offset-1">
-                            @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Saumurage) != null)
+                            @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Saumurage) != null)
                             {
                                 <div class="row border border-dark" style="padding:5px; padding-top:25px; padding-bottom:25px; background-color:#9ed6e3">
-                                    @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Saumurage).nom_zone, "EquipementVsZone", new { id = 10 })
+                                    @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.Saumurage).nom_zone, "EquipementVsZone", new { id = 10 })
                                 </div>
                             }
                             <div class="row"></div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="row">
-                                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesMoulage) != null)
+                                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesMoulage) != null)
                                 {
                                     <div class="col-sm-11 col-md-11 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesMoulage).nom_zone, "EquipementVsZone", new { id = 5 })
+                                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesMoulage).nom_zone, "EquipementVsZone", new { id = 5 })
                                     </div>
                                 }
                             </div>
                             <div class="row">
-                                @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesTranchage) != null)
+                                @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesTranchage) != null)
                                 {
                                     <div class="col-sm-11 col-md-11 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                                        @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesTranchage).nom_zone, "EquipementVsZone", new { id = 6 })
+                                        @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesTranchage).nom_zone, "EquipementVsZone", new { id = 6 })
                                     </div>
                                 }
                             </div>
@@ -117,19 +117,19 @@
                     <br />
                     <div class="row">
                         <div class="col-sm-7 col-md-7"></div>
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Labo) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Labo) != null)
                         {
                             <div class="col-sm-4 col-md-4 border border-dark text-center" style="padding:15px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Labo).nom_zone, "EquipementVsZone", new { id = 11 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.Labo).nom_zone, "EquipementVsZone", new { id = 11 })
                             </div>
                         }
                     </div>
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesCuites) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesCuites) != null)
                         {
                             <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:10px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PatesCuites).nom_zone, "EquipementVsZone", new { id = 7 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.PatesCuites).nom_zone, "EquipementVsZone", new { id = 7 })
                             </div>
                         }
                     </div>
@@ -147,28 +147,28 @@
                 <div class="col-sm-4 col-md-4 text-center">
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PrepLait) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.PrepLait) != null)
                         {
                             <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:25px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.PrepLait).nom_zone, "EquipementVsZone", new { id = 3 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.PrepLait).nom_zone, "EquipementVsZone", new { id = 3 })
                             </div>
                         }
                     </div>
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Membranes) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Membranes) != null)
                         {
                             <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:35px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Membranes).nom_zone, "EquipementVsZone", new { id = 4 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.Membranes).nom_zone, "EquipementVsZone", new { id = 4 })
                             </div>
                         }
                     </div>
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Innovation) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Innovation) != null)
                         {
                             <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:35px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Innovation).nom_zone, "EquipementVsZone", new { id = 8 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.Innovation).nom_zone, "EquipementVsZone", new { id = 8 })
                             </div>
                         }
                     </div>
@@ -176,19 +176,19 @@
                 <div class="col-sm-4 col-md-4 text-center">
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.EquipMobiles) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.EquipMobiles) != null)
                         {
                             <div class="col-sm-10 col-md-10 offset-1 border border-dark" style="padding:10px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == (int)EnumZonesPfl.EquipMobiles).nom_zone, "EquipementVsZone", new { id = 17 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == (int)EnumZonesPfl.EquipMobiles).nom_zone, "EquipementVsZone", new { id = 17 })
                             </div>
                         }
                     </div>
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Depot_Stockage) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Depot_Stockage) != null)
                         {
                             <div class="col-sm-7 col-md-7 offset-4 border border-dark" style="padding:15px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == 2).nom_zone, "EquipementVsZone", new { id = 2 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == 2).nom_zone, "EquipementVsZone", new { id = 2 })
                             </div>
                         }
                     </div>
@@ -197,19 +197,19 @@
                         <div class="col-sm-12 col-md-12"></div>
                     </div>
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.Concent_Sech) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.Concent_Sech) != null)
                         {
                             <div class="col-sm-9 col-md-9 offset-2 border border-dark" style="padding:10px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == 1).nom_zone, "EquipementVsZone", new { id = 1 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == 1).nom_zone, "EquipementVsZone", new { id = 1 })
                             </div>
                         }
                     </div>
                     <br />
                     <div class="row">
-                        @if (Model.Zones.First(x => x.Id == (int)EnumZonesPfl.SalleStephan) != null)
+                        @if (Model.Zones.First(x => x.id == (int)EnumZonesPfl.SalleStephan) != null)
                         {
                             <div class="col-sm-8 col-md-8 offset-3 border border-dark" style="padding:15px; background-color:#9ed6e3">
-                                @Html.ActionLink(Model.Zones.First(x => x.Id == 9).nom_zone, "EquipementVsZone", new { id = 9 })
+                                @Html.ActionLink(Model.Zones.First(x => x.id == 9).nom_zone, "EquipementVsZone", new { id = 9 })
                             </div>
                         }
                     </div>
