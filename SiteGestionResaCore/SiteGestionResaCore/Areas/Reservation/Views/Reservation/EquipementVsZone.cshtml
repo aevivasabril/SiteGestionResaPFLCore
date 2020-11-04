@@ -16,7 +16,7 @@
     <div class="form-row">
         <div class="col-sm-8 col-md-8">
             <div class="checkbox">
-                <strong>@Html.Label(Model.Equipements[i].nom + "( Num GMAO: " + Model.Equipements[i].numGmao + " )" + Model.Equipements[i].Id)</strong>
+                <strong>@Html.Label(Model.Equipements[i].nom + "( Num GMAO: " + Model.Equipements[i].numGmao + " )" + Model.Equipements[i].id)</strong>
             </div>
             <div class="row">
                 <div class="col-sm-6 col-md-6">
@@ -29,29 +29,29 @@
         </div>
         <br />
         <div class="col-sm-4 col-md-4">
-            <a class="btn-link" href="#" onclick="showCalendar(@Model.Equipements[i].Id.ToString())">Voir disponibilité</a>
+            <a class="btn-link" href="#" onclick="showCalendar(@Model.Equipements[i].id.ToString())">Voir disponibilité</a>
         </div>
         <br />
         <div class="row">
             <div class="col-sm-12 col-md-12">
-                <div id="@Model.Equipements[i].Id.ToString()" class="hide" style="display:none">
+                <div id="@Model.Equipements[i].id.ToString()" class="hide" style="display:none">
                     <div class="form-group row">
                         <hr />
                         <div class="row">
                             <div class="col-sm-10 col-md-10">
-                                @using (Html.BeginForm("AfficherPlanning", "Reservation", new { idEquip = Model.CalendrierChildVM[i].EquipementCalendrier.Id }, FormMethod.Post, new { @role = "" }))
-                                {
-                                    @Html.Partial("~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml", Model.CalendrierChildVM[i])
-                                }
+                                <form asp-action="AfficherPlanning" asp-controller="Reservation" method="post">
+                                    <partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                                    @Html.HiddenFor(m => m.CalendrierChildVM[i].EquipementCalendrier.id)
+                                </form>
                             </div>
                         </div>
                     </div>
                     <hr />
                     <div id="cren-content">
-                        @using (Html.BeginForm("AjouterResa", "Reservation", new { idEquip = Model.CalendrierChildVM[i].EquipementCalendrier.Id }, FormMethod.Post, new { @role = "" }))
-                        {
-                            @Html.Partial("~/Areas/Reservation/Views/Shared/_Creneau.cshtml", Model.CalendrierChildVM[i])
-                        }
+                        <form asp-action="AjouterResa" asp-controller="Reservation" method="post">
+                            <partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                            @Html.HiddenFor(m => m.CalendrierChildVM[i].EquipementCalendrier.id)
+                        </form>
                     </div>
                 </div>
                 <hr />
@@ -97,8 +97,8 @@
 </div>
 <hr />
 <br />
-@using (Html.BeginForm("ValiderResaZone", "Reservation", FormMethod.Post))
-{
+
+<form asp-action="ValiderResaZone" asp-controller="Reservation" method="post">
     <div class="form-group row">
         <div class="col-md-2">
             @Html.ActionLink("Annuler", "AnnulerResaZone", null, new { @class = "btn btn-primary" })
@@ -107,10 +107,11 @@
             <input type="submit" class="btn btn-default navbar-inra" value="Valider réservations zone" name="action" />
         </div>
     </div>
-}
+</form>
 
-@using (Html.BeginForm("SupprimerCreneauResa", "Reservation", new { i = Model.IndiceChildModel, j = Model.IndiceResaEquipXChild }, FormMethod.Post, new { @role = "" }))
-{
+
+<!--using (Html.BeginForm("SupprimerCreneauResa", "Reservation", new { i = Model.IndiceChildModel, j = Model.IndiceResaEquipXChild }, FormMethod.Post, new { role = "" }))-->
+<form asp-action="SupprimerCreneauResa" asp-controller="Reservation" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="suppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
@@ -128,11 +129,13 @@
                     <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
                     <input type="submit" class="btn btn-primary" value="Valider" />
                 </div>
+                @Html.HiddenFor(m => m.IndiceChildModel)
+                @Html.HiddenFor(m => m.IndiceResaEquipXChild)
             </div>
         </div>
     </div>
-}
-
+</form>
+ 
 
 
 <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
@@ -185,13 +188,13 @@
                 fixedCol = table.clone(true),
                 fixedWidth = table.find('th').eq(0).width(),
                 tablePos = table.position();
-    
+
             // Remove all but the first column from the cloned table
             fixedCol.find('th').not(':eq(0)').remove();
             fixedCol.find('tbody tr').each(function(){
                 $(this).find('td').not(':eq(0)').remove();
             });
-    
+
             // Set positioning so that cloned table overlays
             // first column of original table
             fixedCol.addClass('fixedCol');
@@ -199,10 +202,10 @@
                 left: tablePos.left,
                 top: tablePos.top
             });
-   
+
             // Match column width with that of original table
             fixedCol.find('th,td').css('width',fixedWidth+'px');
-    
+
             $('#scroller').append(fixedCol);
         });*/
     </script>

@@ -424,16 +424,16 @@ namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
         /// <summary>
         /// Suppression suite à confirmation d'un créneau réservation
         /// </summary>
-        /// <param name="i"></param>
-        /// <param name="j"></param>
+        /// <param name="IndiceChildModel"></param>
+        /// <param name="IndiceResaEquipXChild"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult SupprimerCreneauResa(int i, int j)
+        public ActionResult SupprimerCreneauResa(int IndiceChildModel, int IndiceResaEquipXChild)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
-            equipementZone.CalendrierChildVM[i].ResaEquipement.RemoveAt(j);
+            equipementZone.CalendrierChildVM[IndiceChildModel].ResaEquipement.RemoveAt(IndiceResaEquipXChild);
             return View("EquipementVsZone", equipementZone);
         }
 

@@ -70,9 +70,9 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdminToUserAcces(int id)
+        public ActionResult AdminToUserAcces(int UserToChangeId)
         {
-            resaDb.ChangeAccesToUser(id);
+            resaDb.ChangeAccesToUser(UserToChangeId);
             return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
@@ -142,9 +142,9 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
 
         [HttpPost]
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult RemoveLogisticUser(int id)
+        public ActionResult RemoveLogisticUser(int UserToChangeId)
         {
-            resaDb.RemoveLogisticRoleAsync(id);
+            resaDb.RemoveLogisticRoleAsync(UserToChangeId);
             return RedirectToAction("GestionUtilisateurs");
         }
 
@@ -170,16 +170,16 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
 
         // TODO: tester les exceptions!! 
         [HttpPost]
-        public async Task<ActionResult> Valider(int id)
+        public async Task<ActionResult> Valider(int UserToChangeId)
         {
             //string aspNetID;
             //IdentityUser user;
 
             try
             {
-                resaDb.ValidateAccount(id);
+                resaDb.ValidateAccount(UserToChangeId);
                 //aspNetID = resaDb.IdAspNetUser(id);
-                var user = await userManager.FindByIdAsync(id.ToString());
+                var user = await userManager.FindByIdAsync(UserToChangeId.ToString());
 
                 // envoyer le mail à l'utilisateur concerné
                 string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -217,15 +217,15 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Refuser(int id)
+        public async Task<ActionResult> Refuser(int UserToChangeId)
         {          
             try
             {
                 //aspNetID = resaDb.IdAspNetUser(id);
                 //user = await userManager.FindByIdAsync(aspNetID);
                 //Effacer de la BDD pfl
-                await resaDb.DeleteRequestAccount(id);
-                var user = await userManager.FindByIdAsync(id.ToString());
+                await resaDb.DeleteRequestAccount(UserToChangeId);
+                var user = await userManager.FindByIdAsync(UserToChangeId.ToString());
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 await userManager.RemoveFromRolesAsync(user, allUserRoles);
@@ -264,14 +264,13 @@ namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int UserToChangeId)
         {
             try
             {
-
                 //Effacer de la BDD pfl
-                await resaDb.DeleteRequestAccount(id);
-                var user = await userManager.FindByIdAsync(id.ToString());
+                await resaDb.DeleteRequestAccount(UserToChangeId);
+                var user = await userManager.FindByIdAsync(UserToChangeId.ToString());
                 //Effacer de tous les roles AspNet
                 await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
                 // Effacer de la BDD AspNet

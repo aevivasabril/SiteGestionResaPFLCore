@@ -1,7 +1,4 @@
-﻿@using SiteReservationGestionPFL.Areas.Equipe.Data
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-@model GestionUsersViewModel
+﻿@model GestionUsersViewModel
 
 @{
     ViewBag.Title = "GestionUtilisateurs";
@@ -42,10 +39,8 @@
             </table>
         </div>
         <br />
-        @using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
-        {
-            <form asp-action="AdminToUserAcces" asp-controller="Equipe" asp-route=@Model.UserToChange.Id>
-            </form>
+        <!--using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { role = "" }))-->
+        <form asp-action="AdminToUserAcces" asp-controller="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="adminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -68,17 +63,20 @@
                             @*<button type="button" class="btn btn-primary">Valider</button>*@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
+                        <!--<input type="hidden" value="@Model.UserToChange.Id"  />-->
+                        @Html.HiddenFor(m => m.UserToChange.Id)
                     </div>
                 </div>
             </div>
-        }
+        </form>
+              
         <div class="row justify-content-center">
             <!--Rajouter le script pour ouvrir la fênetre modal-->
             @Html.ActionLink("Ajouter un nouvel administrateur", "AddingAdmin", null, new { @class = "btn btn-default navbar-inra" })
         </div>
         <br />
-        @using (Html.BeginForm("AddingAdmin", "Equipe", FormMethod.Post, new { @role = "" }))
-        {
+
+        <form asp-action="AddingAdmin" asp-controller="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="AddAdminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -102,7 +100,8 @@
                     </div>
                 </div>
             </div>
-        }
+        </form>
+
     </div>
     <div class="offset-sm-2 col-md-5">
         <table class="table table-striped justify-content-center">
@@ -128,8 +127,7 @@
             </tbody>
         </table>
 
-        @using (Html.BeginForm("DeleteUser", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
-        {
+        <form asp-action="DeleteUser" asp-controller="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -151,10 +149,12 @@
                             @*<button type="button" class="btn btn-primary">Valider</button>*@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
+                        @Html.HiddenFor(m => m.UserToChange.Id)
                     </div>
                 </div>
             </div>
-        }
+        </form>
+            
     </div>
 </div>
 <!-- #endregion -->
@@ -191,8 +191,7 @@
         </table>
     </div>
 
-    @using (Html.BeginForm(@Model.ActionName, "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
-    {
+    <form asp-action="@Model.ActionName" asp-controller="Equipe" method="post">
         <!-- Modal pop-up d'info-->
         <div class="modal fade" id="waitingModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
             <div class="modal-dialog navbar-inra" role="document">
@@ -215,10 +214,12 @@
                         @*<button type="button" class="btn btn-primary">Valider</button>*@
                         <input type="submit" class="btn btn-primary" value="Valider" />
                     </div>
+                    @Html.HiddenFor(m => m.UserToChange.Id)
                 </div>
             </div>
         </div>
-    }
+    </form>
+        
 </div>
 <!-- #endregion -->
 
@@ -250,8 +251,8 @@
                 </tbody>
             </table>
         </div>
-        @using (Html.BeginForm("RemoveLogisticUser", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { @role = "" }))
-        {
+
+        <form asp-action="RemoveLogisticUser" asp-controller="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="removeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -274,18 +275,21 @@
                             @*<button type="button" class="btn btn-primary">Valider</button>*@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
+                        @Html.HiddenFor(m => m.UserToChange.Id)
                     </div>
                 </div>
             </div>
-        }
+        </form>
+            
+        
         <div class="row">
             <div class="offset-sm-3 col-md-6 text-center">
                 <!--Rajouter le script pour ouvrir la fênetre modal-->
                 @Html.ActionLink("Ajouter un nouvel administrateur logistique", "AddingLogistic", null, new { @class = "btn btn-default navbar-inra" })
             </div>
         </div>
-        @using (Html.BeginForm("AddingLogistic", "Equipe", FormMethod.Post, new { @role = "" }))
-        {
+
+        <form asp-action="AddingLogistic" asp-controller="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="AddAdminLogistic" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -309,7 +313,8 @@
                     </div>
                 </div>
             </div>
-        }
+        </form>
+               
     </div>
 </div>
 <!-- #endregion -->
