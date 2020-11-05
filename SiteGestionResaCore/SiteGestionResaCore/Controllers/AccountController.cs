@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Services;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 
-namespace SiteReservationGestionPFL.Controllers
+namespace SiteGestionResaCore.Controllers
 {
     [Authorize]
     public class AccountController : Controller
@@ -45,8 +45,9 @@ namespace SiteReservationGestionPFL.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model)//, string returnUrl)
         {
+            string returnUrl = Request.Form["ReturnUrl"];
             if (!ModelState.IsValid)
             {
                 return View(model);
