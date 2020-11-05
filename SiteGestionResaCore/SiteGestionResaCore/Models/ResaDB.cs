@@ -54,18 +54,7 @@ namespace SiteGestionResaCore.Models
             return context.organisme.ToList();
         }
 
-        /// <summary>
-        /// Créer un nouveau utilisateur dans la BDD suite au remplissage du formulaire inscription
-        /// </summary>
-        /// <param name="Nom">nom utilisateur </param>
-        /// <param name="Prenom"> prenom utilisateur</param>
-        /// <param name="organismeId"> id de l'item organisme d'appartenance </param>
-        /// <param name="Email"> email utilisateur</param>
-        public void CreerUtilisateur(string Nom, string Prenom, int organismeId, string Email)
-        {
-            context.utilisateur.Add(new utilisateur { nom = Nom, prenom = Prenom, Email = Email, organismeID = organismeId });
-            context.SaveChanges();
-        }
+
         #endregion
 
         #region Méthodes d'accès aux données pour la zone "Equipe" gestion des utilisateurs

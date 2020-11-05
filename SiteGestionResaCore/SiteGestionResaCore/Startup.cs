@@ -33,6 +33,7 @@ namespace SiteGestionResaCore
             services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(@"data source=localhost\SQLEXPRESS14;initial catalog=PflStloResaTest;integrated security=True;MultipleActiveResultSets=True"));
 
             services.AddScoped<IResaDB, ResaDB>();
+            services.AddScoped<IAccountResaDB, AccountResaDB>();
             services.AddSingleton<IEmailSender, EmailSender>();
 
             services.AddSession();

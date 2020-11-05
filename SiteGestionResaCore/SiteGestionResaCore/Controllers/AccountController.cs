@@ -14,18 +14,18 @@ namespace SiteGestionResaCore.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly IResaDB resaDb;
+        private readonly IAccountResaDB accountResaDB;
         private readonly UserManager<utilisateur> userManager;
         private readonly SignInManager<utilisateur> signInManager;
         private readonly IEmailSender emailSender;
 
         public AccountController(
-            IResaDB resaDb,
+            IAccountResaDB accountResaDB,
             UserManager<utilisateur> userManager,
             SignInManager<utilisateur> signInManager,
             IEmailSender emailSender)
         {
-            this.resaDb = resaDb;
+            this.accountResaDB = accountResaDB;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
@@ -127,7 +127,7 @@ namespace SiteGestionResaCore.Controllers
                     {
                         //créer l'utilisateur hors les infos de gestion de compte individuelle
 
-                        resaDb.CreerUtilisateur(model.Nom, model.Prenom, model.SelectedOrganId, model.Email);
+                        accountResaDB.CreerUtilisateur(model.Nom, model.Prenom, model.SelectedOrganId, model.Email);
 
                     }
                     // viewbag pour activer le popup d'info
