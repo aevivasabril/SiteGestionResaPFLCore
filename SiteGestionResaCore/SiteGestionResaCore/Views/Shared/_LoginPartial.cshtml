@@ -1,28 +1,30 @@
-﻿@using Microsoft.AspNet.Identity
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+﻿<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-@if (Request.IsAuthenticated)
+@if (User.Identity.IsAuthenticated)
 {
-    using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "nav navbar-nav ml-auto justify-content-center" }))
-    {
+    <!--using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", class = "nav navbar-nav ml-auto justify-content-center" }))-->
+    <!--{-->
+    <form class="nav navbar-nav ml-auto justify-content-center" id="logoutForm" asp-action="LogOff" asp-controller="Account" asp-route-area="">
         @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav ml-auto justify-content-center">
             <li><a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-dark" role="button">Déconnexion</a></li>
         </ul>
-    }
+    </form>
+
+<!--}-->
 }
 else
 {
-    @*<ul class="nav navbar-nav ml-auto justify-content-center">
+@*<ul class="nav navbar-nav ml-auto justify-content-center">
         <!--utiliser dans les items liste "list-inline-item" pour la justifier et séparer entre eux-->
         <li class="list-inline-item">@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
         <li class="list-inline-item">@Html.ActionLink("Se connecter", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn btn-dark" })</li>
     </ul>*@
-    <form class="nav navbar-nav ml-auto justify-content-center">
-        <a href="/Account/Login" class="btn btn-dark" role="button">
-            Se connecter
-            <span class="fas fa-user"></span>
-        </a>
-    </form>
+<form class="nav navbar-nav ml-auto justify-content-center">
+    <a href="/Account/Login" class="btn btn-dark" role="button">
+        Se connecter
+        <span class="fas fa-user"></span>
+    </a>
+</form>
 }
