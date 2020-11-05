@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace SiteReservationGestionPFL.Areas.Reservation.Data
+namespace SiteGestionResaCore.Areas.Reservation.Data
 {
     /// <summary>
     /// class permettant de sauvegarder uniquement les dates d'une réservation

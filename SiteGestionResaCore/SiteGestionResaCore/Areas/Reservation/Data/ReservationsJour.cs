@@ -1,11 +1,11 @@
 ﻿using SiteGestionResaCore.Data;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace SiteReservationGestionPFL.Areas.Reservation.Data
+namespace SiteGestionResaCore.Areas.Reservation.Data
 {
     /// <summary>
     /// Classe qui permet d'intégrer toutes les données sur les réservations d'un jour specifique (destination vers le calendrier)

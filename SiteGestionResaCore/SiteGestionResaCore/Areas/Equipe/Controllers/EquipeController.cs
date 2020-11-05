@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Services;
-using SiteReservationGestionPFL.Areas.Equipe.Data;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Areas.Equipe.Data;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SiteReservationGestionPFL.Areas.Equipe.Controllers
+namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
     //TODO: donner l'accès uniquement aux administrateurs [Authorize (Roles ="Admin")]
     [Area("Equipe")]

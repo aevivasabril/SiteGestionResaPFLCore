@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Data;
-using SiteReservationGestionPFL.Areas.Equipe.Data;
-using SiteReservationGestionPFL.Areas.Reservation.Data;
+using SiteGestionResaCore.Areas.Equipe.Data;
+using SiteGestionResaCore.Areas.Reservation.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SiteReservationGestionPFL.Models
+namespace SiteGestionResaCore.Models
 {
     public interface IResaDB: IDisposable
     {

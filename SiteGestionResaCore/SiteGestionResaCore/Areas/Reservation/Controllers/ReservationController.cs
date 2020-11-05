@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Services;
-using SiteReservationGestionPFL.Areas.Reservation.Data;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Areas.Reservation.Data;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SiteReservationGestionPFL.Areas.Reservation.Controllers
+namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
     [Authorize]
     [Area("Reservation")]

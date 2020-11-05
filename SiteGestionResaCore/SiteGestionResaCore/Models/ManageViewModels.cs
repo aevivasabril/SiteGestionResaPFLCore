@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace SiteReservationGestionPFL.Models
+namespace SiteGestionResaCore.Models
 {
     public class IndexViewModel
     {

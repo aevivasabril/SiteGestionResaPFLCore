@@ -13,7 +13,7 @@ using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using SiteGestionResaCore.Opts;
 using SiteGestionResaCore.Services;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SiteReservationGestionPFL.Controllers
+namespace SiteGestionResaCore.Controllers
 {
     public class HomeController : Controller
     {

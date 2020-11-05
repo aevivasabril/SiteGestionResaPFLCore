@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Data;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace SiteReservationGestionPFL.Areas.Equipe.Data
+namespace SiteGestionResaCore.Areas.Equipe.Data
 {
     #region View model pour la page GestionUtilisateurs
     public class GestionUsersViewModel

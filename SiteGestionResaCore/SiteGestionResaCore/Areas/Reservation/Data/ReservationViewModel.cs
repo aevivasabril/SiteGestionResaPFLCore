@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Data;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace SiteReservationGestionPFL.Areas.Reservation.Data
+namespace SiteGestionResaCore.Areas.Reservation.Data
 {
     /// <summary>
     /// Class Serializable (ouverture d'une session pour stocker des données en local) utilisée lors de la réservation des équipements 

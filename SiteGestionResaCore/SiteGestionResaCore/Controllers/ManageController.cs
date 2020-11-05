@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Services;
-using SiteReservationGestionPFL.Models;
+using SiteGestionResaCore.Models;
 
-namespace SiteReservationGestionPFL.Controllers
+namespace SiteGestionResaCore.Controllers
 {
     [Authorize]
     public class ManageController : Controller

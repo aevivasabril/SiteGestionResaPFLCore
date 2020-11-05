@@ -1,4 +1,4 @@
-﻿@model SiteReservationGestionPFL.Areas.Reservation.Data.CalendrierEquipChildViewModel
+﻿@model SiteGestionResaCore.Areas.Reservation.Data.CalendrierEquipChildViewModel
 
 <div class="container">
     <br />
@@ -9,7 +9,7 @@
             <!--Date picker -->
             <div class="input-group date">
                 @Html.Label("Du : ")
-                @Html.EditorFor(m => m.DatePickerDu, new { htmlAttributes = new { @class = "datepick form-control col-10", @id = "datPickDu_" + Model.EquipementCalendrier.Id.ToString(), @placeholder = "MM/DD/YYYY" } })
+                @Html.EditorFor(m => m.DatePickerDu, new { htmlAttributes = new { @class = "datepick form-control col-10", @id = "datPickDu_" + Model.EquipementCalendrier.id.ToString(), @placeholder = "MM/DD/YYYY" } })
                 @Html.ValidationMessageFor(m => m.DatePickerDu, "", new { @class = "text-danger" })
                 <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
             </div>
@@ -18,7 +18,7 @@
             <!--Date picker -->
             <div class="input-group date">
                 @Html.Label("Au : ")
-                @Html.EditorFor(m => m.DatePickerAu, new { htmlAttributes = new { @class = "datepick form-control col-10", @id = "datPickAu_" + Model.EquipementCalendrier.Id.ToString(), @placeholder = "MM/DD/YYYY" } })
+                @Html.EditorFor(m => m.DatePickerAu, new { htmlAttributes = new { @class = "datepick form-control col-10", @id = "datPickAu_" + Model.EquipementCalendrier.id.ToString(), @placeholder = "MM/DD/YYYY" } })
                 @Html.ValidationMessageFor(m => m.DatePickerAu, "", new { @class = "text-danger" })
                 <!-- pour passer l'id zone de cette vue au controleur Reservation methode GetPlanning() -->
                 @Html.HiddenFor(model => model.EquipementCalendrier.zoneID)
