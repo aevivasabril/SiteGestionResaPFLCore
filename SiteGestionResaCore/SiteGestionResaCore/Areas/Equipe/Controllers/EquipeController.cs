@@ -13,6 +13,7 @@ using SiteGestionResaCore.Areas.Reservation.Data;
 
 namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
+    // Ce controleur est destiné à la gestion des utilisateurs (pour les autres options créer un autre controleur dans l'area Equipe)
     //TODO: donner l'accès uniquement aux administrateurs [Authorize (Roles ="Admin")]
     [Area("Equipe")]
     public class EquipeController : Controller
