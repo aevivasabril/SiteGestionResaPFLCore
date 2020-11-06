@@ -15,16 +15,13 @@ namespace SiteGestionResaCore.Models
         /// accès à la base de données PflStloResaTest
         /// </summary>
         private GestionResaContext context;
-        private readonly UserManager<utilisateur> userManager;
-        private readonly ILogger<ResaDB> logger;
+        private readonly ILogger<AccountResaDB> logger;
 
         public AccountResaDB(
             GestionResaContext resaDB,
-            UserManager<utilisateur> userManager,
-            ILogger<ResaDB> logger)
+            ILogger<AccountResaDB> logger)
         {
             this.context = resaDB;
-            this.userManager = userManager;
             this.logger = logger;
         }
         /// <summary>

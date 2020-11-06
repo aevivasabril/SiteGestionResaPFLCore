@@ -14,6 +14,7 @@ using SiteGestionResaCore.Data.Data;
 using SiteGestionResaCore.Opts;
 using SiteGestionResaCore.Services;
 using SiteGestionResaCore.Models;
+using SiteGestionResaCore.Areas.Reservation.Data;
 
 namespace SiteGestionResaCore
 {
@@ -34,6 +35,8 @@ namespace SiteGestionResaCore
 
             services.AddScoped<IResaDB, ResaDB>();
             services.AddScoped<IAccountResaDB, AccountResaDB>();
+            services.AddScoped<IEquipeResaDb, EquipeResaDb>();
+
             services.AddSingleton<IEmailSender, EmailSender>();
 
             services.AddSession();

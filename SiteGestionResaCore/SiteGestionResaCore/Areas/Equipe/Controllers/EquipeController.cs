@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SiteGestionResaCore.Areas.Reservation.Data;
 
 namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
@@ -16,16 +17,16 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
     [Area("Equipe")]
     public class EquipeController : Controller
     {
-        private readonly IResaDB resaDb;
+        private readonly IEquipeResaDb EquipeResaDb;
         private readonly UserManager<utilisateur> userManager;
         private readonly IEmailSender emailSender;
 
         public EquipeController(
-            IResaDB resaDb,
+            IEquipeResaDb EquipeResaDb,
             UserManager<utilisateur> userManager,
             IEmailSender emailSender)
         {
-            this.resaDb = resaDb;
+            this.EquipeResaDb = EquipeResaDb;
             this.userManager = userManager;
             this.emailSender = emailSender;
         }
@@ -33,17 +34,17 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         // GET: Equipe/Equipe
         public async Task<ActionResult> GestionUtilisateurs(GestionUsersViewModel vm)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users, 
                 ListUsersWaiting = ListUsr.UsersWaitingValid, 
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(), 
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin)
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(), 
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin)
             };
             return View(vm);
         }
@@ -51,18 +52,18 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> AdminToUserAcces(int? id)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
-                UserToChange = resaDb.ObtenirUtilisateur(id.Value)
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalState = "show";
             ViewBag.NameRole = "Utilisateur";
@@ -72,7 +73,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public ActionResult AdminToUserAcces(GestionUsersViewModel model)
         {
-            resaDb.ChangeAccesToUser(model.UserToChange.Id);
+            EquipeResaDb.ChangeAccesToUser(model.UserToChange.Id);
             return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
@@ -87,24 +88,24 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public ActionResult AddingAdmin(GestionUsersViewModel model)
         {
-            resaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
+            EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
             return RedirectToAction("GestionUtilisateurs");
         }
 
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> AddingLogistic()
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin)
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin)
             };
 
             ViewBag.modalLogic = "show";
@@ -115,25 +116,25 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public ActionResult AddingLogistic(GestionUsersViewModel model)
         {
-            resaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
+            EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
             return RedirectToAction("GestionUtilisateurs");
         }
 
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> RemoveLogisticUser(int ?id)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
-                UserToChange = resaDb.ObtenirUtilisateur(id.Value)
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
 
             ViewBag.modalRemove = "show";
@@ -144,24 +145,24 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public ActionResult RemoveLogisticUser(GestionUsersViewModel model)
         {
-            resaDb.RemoveLogisticRoleAsync(model.UserToChange.Id);
+            EquipeResaDb.RemoveLogisticRoleAsync(model.UserToChange.Id);
             return RedirectToAction("GestionUtilisateurs");
         }
 
         public async Task<ActionResult> Valider(int? id)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
-                UserToChange = resaDb.ObtenirUtilisateur(id.Value),
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Valider"
             };
             ViewBag.modalWait = "show";
@@ -177,7 +178,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
             try
             {
-                resaDb.ValidateAccount(model.UserToChange.Id);
+                EquipeResaDb.ValidateAccount(model.UserToChange.Id);
                 //aspNetID = resaDb.IdAspNetUser(id);
                 var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
 
@@ -198,18 +199,18 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> Refuser(int? id)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
-                UserToChange = resaDb.ObtenirUtilisateur(id.Value),
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Refuser"
             };
             ViewBag.modalWait = "show";
@@ -224,7 +225,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 //aspNetID = resaDb.IdAspNetUser(id);
                 //user = await userManager.FindByIdAsync(aspNetID);
                 //Effacer de la BDD pfl
-                await resaDb.DeleteRequestAccount(model.UserToChange.Id);
+                await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
                 var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
@@ -246,18 +247,18 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> DeleteUser(int? id)
         {
-            listAutresUtilisateurs ListUsr = resaDb.ObtenirListAutres();
-            List<utilisateur> ListAdmin = resaDb.ObtenirListAdmins();
+            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutres();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await resaDb.ObtenirUsersLogisticAsync(),
-                UserItem = resaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = resaDb.ListUsersToSelectItem(ListAdmin),
-                UserToChange = resaDb.ObtenirUtilisateur(id.Value)
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
+                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalDelete = "show";
             return View("GestionUtilisateurs", vm);
@@ -269,7 +270,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             try
             {
                 //Effacer de la BDD pfl
-                await resaDb.DeleteRequestAccount(model.UserToChange.Id);
+                await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
                 var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
                 //Effacer de tous les roles AspNet
                 await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
@@ -292,7 +293,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 userManager?.Dispose();
             }
             // Rajouter pour éviter des pbs d'accès aux ressources resaDb
-            resaDb.Dispose();
+            EquipeResaDb.Dispose();
             base.Dispose(disposing);
         }
         private void AddErrors(IdentityResult result)
