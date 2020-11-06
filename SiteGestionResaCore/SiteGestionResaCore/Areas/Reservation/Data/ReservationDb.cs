@@ -81,6 +81,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                           Convert.ToDateTime(dateResa.ToShortTimeString()).Date <= Convert.ToDateTime(resa.date_fin.ToShortTimeString()).Date)
                           select essa).Distinct().ToArray(); // Je pense il faut mettre distinct pour récupérer chaque réservation unique*/
 
+            //TODO: Affiner cette recherche car on aurait une liste enorme des essais
+            //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
             SubInfosEssai = (from resa in context.reservation_projet
                              from essa in context.essai
                              where resa.essaiID == essa.id

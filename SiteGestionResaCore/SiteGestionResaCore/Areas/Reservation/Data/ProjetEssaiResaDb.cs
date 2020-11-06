@@ -36,19 +36,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>true ou false</returns>
         public bool ProjetExists(string NumProjet)
         {
-            int countProj = (from proj in context.projet
-                             where proj.num_projet == NumProjet
-                             select proj).Count();
+            int countProj = context.projet.Where(p => p.num_projet == NumProjet).Count();
 
             // si compteur est égal à zéro alors le numéro de projet n'existe pas 
             if (countProj == 0)
-            {
                 return false;
-            }
             else
-            {
                 return true;
-            }
         }
 
         /// <summary>
@@ -63,11 +57,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             IList<string> allUserRoles = await userManager.GetRolesAsync(usr);
             bool propProjOk = false;
             bool adminSiteOk = false;
+            // TODO: Vérifier!!!!
             // Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
-            propProjOk = context.projet.Where(p => p.num_projet == numProjet).Where(p => p.id == usr.Id).Any();
-            /*propProjOk = (from p in context.projet
+            //propProjOk = context.projet.Where(p => p.num_projet == numProjet).Where(p => p.compte_userID == usr.Id).Any(); // PAS BON car j'ai besoin de comparer l'id user au parametre compte_userID (string)
+            propProjOk = (from p in context.projet
                     where p.num_projet == numProjet && p.compte_userID == usr.Id.ToString()
-                    select p).Any();*/
+                    select p).Any();
             // Si la personne n'est pas propiètaire du projet mais qu'elle est "Admin" ou "MainAdmin"
             foreach (string roles in allUserRoles)
             {
@@ -98,13 +93,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>projet</returns>
         public projet ObtenirProjet_pourCopie(string NumProjet)
         {
-            projet pr = new projet();
-
-            pr = (from proj in context.projet
+            //projet pr = new projet();
+            return context.projet.FirstOrDefault(p => p.num_projet == NumProjet);
+            /*pr = (from proj in context.projet
                   where proj.num_projet == NumProjet
-                  select proj).First();
+                  select proj).First();*/
 
-            return pr;
+            //return pr;
         }
 
         /// <summary>
@@ -114,13 +109,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>Essai</returns>
         public essai ObtenirEssai_pourCopie(int idEssaie)
         {
-            essai ess = new essai();
+            /*essai ess = new essai();
 
             ess = (from essai in context.essai
                    where essai.id == idEssaie
-                   select essai).First();
+                   select essai).First();*/
 
-            return ess;
+            return context.essai.FirstOrDefault(e=>e.id == idEssaie);
         }
 
         /// <summary>

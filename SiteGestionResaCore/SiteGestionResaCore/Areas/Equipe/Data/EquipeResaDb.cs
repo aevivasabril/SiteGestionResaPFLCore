@@ -36,31 +36,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// attente de validation de compte
         /// </summary>
         /// <returns>liste des utilisateurs avec compte valide, et liste de ceux qui sont en attente de valid</returns>
-        public listAutresUtilisateurs ObtenirListAutres()
+        public async Task<listAutresUtilisateurs> ObtenirListAutresAsync()
         {
             List<utilisateur> tempUsers = new List<utilisateur>();
             List<utilisateur> usrWaiting = new List<utilisateur>();
-            utilisateur usr;
 
-            //obtention de tous les AspNetUsers dont le rôle est "Admin"
-            var userId = (from role in context.Roles
-                          from roleUsr in context.Users
-                          from usrrol in context.Roles
-                          from x in context.Roles
-                          where role.Name == "Utilisateur" && x.Id == role.Id && x.Id == roleUsr.Id
-                          select roleUsr).ToArray();
+            var users = await userManager.GetUsersInRoleAsync("Utilisateur");
 
-            foreach (var y in userId)
+            foreach (var user in users)
             {
-                usr = context.utilisateur.First(r => r.Email == y.Email);
-                if (usr.EmailConfirmed == true)
-                {
-                    tempUsers.Add(usr);
-                }
+                //usr = context.utilisateur.First(r => r.Email == y.Email);
+                if (user.EmailConfirmed == true)
+                    tempUsers.Add(user);
                 else
-                {
-                    usrWaiting.Add(usr);
-                }
+                    usrWaiting.Add(user);
             }
 
             return new listAutresUtilisateurs(tempUsers, usrWaiting);
@@ -72,9 +61,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>lis des utilisateurs Admin</returns>
         public List<utilisateur> ObtenirListAdmins()
         {
+            // TODO: vérifier
             return (from role in context.Roles
                     from roleusr in context.Users
-                    where role.Name == "Admin" || role.Name == "MainAdmin"
+                    from usrrol in context.UserRoles
+                    where (role.Name == "Admin" || role.Name == "MainAdmin") && role.Id == usrrol.RoleId
                     select roleusr).Distinct().ToList();
         }
 
@@ -196,7 +187,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Submit the changes to the database.
             try
             {
-                // Obtenir les rôles dont l'utilisateur
+                // Obtenir les rôles utilisateur
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 if (!allUserRoles.Contains("Logistic"))
                 {

@@ -10,7 +10,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 {
     public interface IEquipeResaDb: IDisposable
     {
-        listAutresUtilisateurs ObtenirListAutres();
+        Task<listAutresUtilisateurs> ObtenirListAutresAsync();
 
         List<utilisateur> ObtenirListAdmins();
 
