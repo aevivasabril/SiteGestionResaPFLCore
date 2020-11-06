@@ -264,6 +264,7 @@ namespace SiteGestionResaCore.Controllers
             {           
                 userManager?.Dispose();         
             }
+            accountResaDB.Dispose();
 
             base.Dispose(disposing);
         }

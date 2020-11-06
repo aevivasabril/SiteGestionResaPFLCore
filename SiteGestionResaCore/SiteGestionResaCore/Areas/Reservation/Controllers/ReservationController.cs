@@ -17,16 +17,28 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
     [Area("Reservation")]
     public class ReservationController : Controller
     {
-        private readonly IResaDB resaDb;
+        private readonly IFormulaireResaDb formDb;
+        private readonly IProjetEssaiResaDb projetEssaiDb;
+        private readonly IZoneEquipDb zoneEquipDb;
+        private readonly IReservationDb reservationDb;
+        private readonly IEquipeResaDb equipeResaDb;
         private readonly UserManager<utilisateur> userManager;
         private readonly IEmailSender emailSender;
 
         public ReservationController(
-            IResaDB resaDb,
+            IFormulaireResaDb formDb,
+            IProjetEssaiResaDb projetEssaiDb,
+            IZoneEquipDb zoneEquipDb,
+            IReservationDb reservationDb,
+            IEquipeResaDb equipeResaDb,
             UserManager<utilisateur> userManager,
             IEmailSender emailSender)
         {
-            this.resaDb = resaDb;
+            this.formDb = formDb;
+            this.projetEssaiDb = projetEssaiDb;
+            this.zoneEquipDb = zoneEquipDb;
+            this.reservationDb = reservationDb;
+            this.equipeResaDb = equipeResaDb;
             this.userManager = userManager;
             this.emailSender = emailSender;
         }
@@ -34,34 +46,34 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         // GET: Reservation/Reservation
         public ActionResult FormulaireProjet()
         {
-            List<ld_type_projet> ListeTypeProj = resaDb.ObtenirList_TypeProjet();
-            List<ld_financement> ListFinancProj = resaDb.ObtenirList_Financement();
-            List<organisme> ListeOrga = resaDb.ObtenirListOrg();
-            List<utilisateur> listUsersAcces = resaDb.ObtenirList_UtilisateurValide();
-            List<ld_provenance> ListeProvProj = resaDb.ObtenirList_ProvenanceProjet();
-            List<ld_produit_in> ListeProdEntree = resaDb.ObtenirList_TypeProduitEntree();
-            List<ld_provenance_produit> ListProvProd = resaDb.ObtenirList_ProvenanceProduit();
-            List<ld_destination> ListDestProd = resaDb.ObtenirList_DestinationPro();
+            List<ld_type_projet> ListeTypeProj = formDb.ObtenirList_TypeProjet();
+            List<ld_financement> ListFinancProj = formDb.ObtenirList_Financement();
+            List<organisme> ListeOrga = formDb.ObtenirListOrg();
+            List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+            List<ld_provenance> ListeProvProj = formDb.ObtenirList_ProvenanceProjet();
+            List<ld_produit_in> ListeProdEntree = formDb.ObtenirList_TypeProduitEntree();
+            List<ld_provenance_produit> ListProvProd = formDb.ObtenirList_ProvenanceProduit();
+            List<ld_destination> ListDestProd = formDb.ObtenirList_DestinationPro();
 
             FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
             {
                 ListeTypeProjet = ListeTypeProj,
-                TypeProjetItem = resaDb.ListTypeProjetItem(ListeTypeProj),
+                TypeProjetItem = formDb.ListTypeProjetItem(ListeTypeProj),
                 ListeFinancement = ListFinancProj,
-                TypefinancementItem = resaDb.ListFinancementItem(ListFinancProj),
+                TypefinancementItem = formDb.ListFinancementItem(ListFinancProj),
                 ListeOrganismes = ListeOrga,
-                OrganItem = resaDb.ListOrgItem(ListeOrga),
+                OrganItem = formDb.ListOrgItem(ListeOrga),
                 UsersWithAccess = listUsersAcces,
-                RespProjItem = resaDb.ListRespItem(listUsersAcces),
+                RespProjItem = formDb.ListRespItem(listUsersAcces),
                 ListeProvenance = ListeProvProj, 
-                ProvenanceItem = resaDb.ListProveItem(ListeProvProj),
-                ManipProjItem = resaDb.ListManipItem(listUsersAcces),
+                ProvenanceItem = formDb.ListProveItem(ListeProvProj),
+                ManipProjItem = formDb.ListManipItem(listUsersAcces),
                 ListeProduitsIn = ListeProdEntree,
-                ProductItem = resaDb.ListProdEntreeItem(ListeProdEntree),
+                ProductItem = formDb.ListProdEntreeItem(ListeProdEntree),
                 ListeProvenanceProduit = ListProvProd,
-                ProvenanceProduitItem = resaDb.ListProvProdItem(ListProvProd),
+                ProvenanceProduitItem = formDb.ListProvProdItem(ListProvProd),
                 ListeDestProduit = ListDestProd,
-                DestProduitItem = resaDb.ListDestProdItem(ListDestProd)
+                DestProduitItem = formDb.ListDestProdItem(ListDestProd)
 
             };
             return View(vm);
@@ -83,10 +95,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             if (ModelState.IsValid)
             {
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
-                if(resaDb.ProjetExists(model.NumProjet))
+                if(projetEssaiDb.ProjetExists(model.NumProjet))
                 {
                     // Si l'utilisateur est propiètaire du projet ou "Admin" ou "MainAdmin" alors autoriser la création d'un essai 
-                    if(await resaDb.VerifPropieteProjetAsync(model.NumProjet, user))
+                    if(await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user))
                     {
                         // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
                         this.HttpContext.AddToSession("FormulaireResa", model);              
@@ -122,7 +134,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             bool propProjetOk = false;
             // récupérer les projets pour le numéro saisie
 
-            model.ProjetValide = resaDb.ProjetExists(model.NumProjet);
+            model.ProjetValide = projetEssaiDb.ProjetExists(model.NumProjet);
             
             if (!model.ProjetValide)
             {
@@ -130,11 +142,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             }
             else
             {
-                propProjetOk = await resaDb.VerifPropieteProjetAsync(model.NumProjet, user);
+                propProjetOk = await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user);
                 if (propProjetOk)
                 {
                     ViewBag.Message = "";
-                    model.EssaiUtilisateur = resaDb.ObtenirList_EssaisUser(model.NumProjet);
+                    model.EssaiUtilisateur = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet);
                 }
                 else
                 {
@@ -159,15 +171,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             // Récupérer à partir de la BDD les infos sur le projet et l'essai
             // Vérifier cette ligne suite à migration ASP NET CORE
-            pr = resaDb.ObtenirProjet_pourCopie(model.NumProjet); // Provenant du HiddenFor ligne 207
-            ess = resaDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
-            model.SelectTypeProjetId = resaDb.IdTypeProjetPourCopie(pr.id);
-            model.SelectFinancementId = resaDb.IdFinancementPourCopie(pr.id);
-            model.SelectedRespProjId = resaDb.IdRespoProjetPourCopie(pr.id);
-            model.SelectedProvenanceId = resaDb.IdProvenancePourCopie(pr.id);
-            model.SelectedProveProduitId = resaDb.IdProvProduitPourCopie(ess.id);
-            model.SelectedDestProduit = resaDb.IdDestProduitPourCopie(ess.id);
-            model.SelectedProductId = resaDb.IdProduitInPourCopie(ess.id);
+            pr = projetEssaiDb.ObtenirProjet_pourCopie(model.NumProjet); // Provenant du HiddenFor ligne 207
+            ess = projetEssaiDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
+            model.SelectTypeProjetId = projetEssaiDb.IdTypeProjetPourCopie(pr.id);
+            model.SelectFinancementId = projetEssaiDb.IdFinancementPourCopie(pr.id);
+            model.SelectedRespProjId = projetEssaiDb.IdRespoProjetPourCopie(pr.id);
+            model.SelectedProvenanceId = projetEssaiDb.IdProvenancePourCopie(pr.id);
+            model.SelectedProveProduitId = projetEssaiDb.IdProvProduitPourCopie(ess.id);
+            model.SelectedDestProduit = projetEssaiDb.IdDestProduitPourCopie(ess.id);
+            model.SelectedProductId = projetEssaiDb.IdProduitInPourCopie(ess.id);
 
             // Données à copier pour le projet
             model.TitreProjet = pr.titre_projet;
@@ -196,7 +208,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             ZonesReservationViewModel vm = new ZonesReservationViewModel()
             {
-                Zones = resaDb.ListeZones()
+                Zones = zoneEquipDb.ListeZones()
             };
             // Etablir une session avec les données à mettre à jour pour la vue principale
             this.HttpContext.AddToSession("ZoneReservation", vm);
@@ -217,7 +229,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             CalendrierEquipChildViewModel calenChild;
 
             // 1. Obtenir la liste des equipements
-            equipements = resaDb.ListeEquipements(id.Value);
+            equipements = zoneEquipDb.ListeEquipements(id.Value);
 
             // pour chaque equipement obtenir la liste des réservations et le sauvegarder dans la liste des reservations
             for (int i = 0; i<equipements.Count(); i++)
@@ -228,7 +240,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //reservationsSemEquipement = DonneesCalendrier(equipements[i].Id);
                 reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null);
                 calenChild.ListResas = reservationsSemEquipement;
-                calenChild.EquipementCalendrier = resaDb.GetEquipement(equipements[i].id);
+                calenChild.EquipementCalendrier = zoneEquipDb.GetEquipement(equipements[i].id);
                 //calenChild.zoneID = id.Value;
                 //calenChild.NomEquip = equipements[i].nom;
                 // 3. Rajouter cela dans une liste contenant les données des équipements
@@ -241,7 +253,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             EquipementsParZoneViewModel vm = new EquipementsParZoneViewModel()
             {
                 Equipements = equipements,
-                NomZone = resaDb.GetNomZone(id.Value),
+                NomZone = zoneEquipDb.GetNomZone(id.Value),
                 IdZone = id.Value,
                 CalendrierChildVM = PlanningEquipements
 
@@ -588,18 +600,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             if (AtLeastOneEquipment) // si au moins un équipement a été sélectionné alors on peut créer la réservation
             {
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
-                if (resaDb.ProjetExists(formulaire.NumProjet))
+                if (projetEssaiDb.ProjetExists(formulaire.NumProjet))
                 {
-                    Proj = resaDb.ObtenirProjet_pourCopie(formulaire.NumProjet);
+                    Proj = projetEssaiDb.ObtenirProjet_pourCopie(formulaire.NumProjet);
                 }
                 else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
                 {
-                    Proj = resaDb.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
+                    Proj = projetEssaiDb.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
                         formulaire.SelectedRespProjId, formulaire.NumProjet, formulaire.SelectedProvenanceId, formulaire.DescriptionProjet, myDateTime, user);
                 }
 
                 // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
-                Essai = resaDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId, formulaire.PrecisionProduitIn, formulaire.QuantiteProduit,
+                Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId, formulaire.PrecisionProduitIn, formulaire.QuantiteProduit,
                             formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO, formulaire.CommentaireEssai); // TODO: pas oublier de rajouter le status  (enum dans view model)     
 
                 // Remplir le message à envoyer aux admins pour notifier la réservation
@@ -624,7 +636,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                         for (int y = 0; y < zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
                         {
-                            resa = resaDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier,
+                            resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier,
                                 Essai, zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut,
                                 zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin);
 
@@ -690,7 +702,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         }
                     }
                     //Mettre à jour l'essai avec les dates seuil
-                    resaDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
+                    projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
                 }
                 
                 #endregion
@@ -725,7 +737,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 #region Envoi de mail notifications aux "Admin"/"Logistic"
 
                 // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
-                UsersLogistic = await resaDb.ObtenirUsersLogisticAsync();
+                UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
 
                 sb_admin.Append("\n\nL'équipe PFL.");
 
@@ -787,7 +799,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         protected override void Dispose(bool disposing)
         {
             // Rajouter pour éviter des pbs d'accès aux ressources resaBdd
-            resaDb.Dispose();
+            projetEssaiDb.Dispose();
+            zoneEquipDb.Dispose();
+            reservationDb.Dispose();
+            equipeResaDb.Dispose();
+            userManager.Dispose();
+
             base.Dispose(disposing);
         }
 
@@ -892,7 +909,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             for (int i = 0; i < NbJours; i++)
             {
                 // Obtenir l'emploi du temps du jour de la semaine i pour un équipement
-                ResaJour = resaDb.ObtenirReservationsJourEssai(DateRecup, idEquipement);
+                ResaJour = reservationDb.ObtenirReservationsJourEssai(DateRecup, idEquipement);
                 // ajouter à la liste de la semaine
                 ListResas.Add(ResaJour);
                 // incrementer le nombre des jours à partir du lundi

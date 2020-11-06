@@ -36,6 +36,10 @@ namespace SiteGestionResaCore
             services.AddScoped<IResaDB, ResaDB>();
             services.AddScoped<IAccountResaDB, AccountResaDB>();
             services.AddScoped<IEquipeResaDb, EquipeResaDb>();
+            services.AddScoped<IFormulaireResaDb, FormulaireResaDb>();
+            services.AddScoped<IProjetEssaiResaDb, ProjetEssaiResaDb>();
+            services.AddScoped<IZoneEquipDb, ZoneEquipDb>();
+            services.AddScoped<IReservationDb, ReservationDb>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
 
