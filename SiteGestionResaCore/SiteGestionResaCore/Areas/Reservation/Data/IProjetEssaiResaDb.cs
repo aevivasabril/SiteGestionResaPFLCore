@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,5 +40,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 int ProvId, int destProduit, string TransStlo, string commentaire);
 
         void UpdateEssai(essai Essai, DateTime dateInf, DateTime dateSup);
+
+        IEnumerable<SelectListItem> ListEssaisToSelectItem(List<EssaiUtilisateur> essais);
     }
 }

@@ -16,19 +16,16 @@ namespace SiteGestionResaCore.Controllers
     [Authorize]
     public class ManageController : Controller
     {
-        private readonly IResaDB resaDb;
         private readonly UserManager<utilisateur> userManager;
         private readonly SignInManager<utilisateur> signInManager;
         private readonly IEmailSender emailSender;
         private readonly object claimTypes;
 
         public ManageController(
-            IResaDB resaDb,
             UserManager<utilisateur> userManager,
             SignInManager<utilisateur> signInManager,
             IEmailSender emailSender)
         {
-            this.resaDb = resaDb;
             this.userManager = userManager;
             this.emailSender = emailSender;
             this.signInManager = signInManager;

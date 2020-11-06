@@ -17,7 +17,7 @@ namespace SiteGestionResaCore.Models
         /// </summary>
         private GestionResaContext context;
         private readonly UserManager<utilisateur> userManager;
-        private readonly ILogger<ResaDB> logger;
+        private readonly ILogger<ZoneEquipDb> logger;
 
         /// <summary>
         /// Constructeur initializant la connexion vers les 2 base de données
@@ -25,7 +25,7 @@ namespace SiteGestionResaCore.Models
         public ZoneEquipDb(
             GestionResaContext resaDB,
             UserManager<utilisateur> userManager,
-            ILogger<ResaDB> logger)
+            ILogger<ZoneEquipDb> logger)
         {
             this.context = resaDB;
             this.userManager = userManager;

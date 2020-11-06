@@ -145,8 +145,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 propProjetOk = await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user);
                 if (propProjetOk)
                 {
+                    List<EssaiUtilisateur> listEssaiUsr = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet);
                     ViewBag.Message = "";
-                    model.EssaiUtilisateur = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet);
+                    model.EssaiUtilisateur = listEssaiUsr;
+                    model.EssaiItem = projetEssaiDb.ListEssaisToSelectItem(listEssaiUsr);
                 }
                 else
                 {
