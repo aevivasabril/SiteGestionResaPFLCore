@@ -296,15 +296,6 @@ namespace SiteGestionResaCore.Controllers
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }*/
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                userManager?.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
 
 #region Helpers
         // Used for XSRF protection when adding external logins

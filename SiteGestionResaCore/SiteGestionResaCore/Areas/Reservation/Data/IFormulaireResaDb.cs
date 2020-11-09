@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
-    public interface IFormulaireResaDb: IDisposable
+    public interface IFormulaireResaDb
     {
         List<ld_type_projet> ObtenirList_TypeProjet();
 

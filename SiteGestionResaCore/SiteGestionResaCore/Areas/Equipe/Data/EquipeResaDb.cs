@@ -61,11 +61,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>lis des utilisateurs Admin</returns>
         public List<utilisateur> ObtenirListAdmins()
         {
-            // TODO: vérifier
+            //// TODO: vérifier
+            //var roles = context.Roles.Where(r => r.Name == "Admin" || r.Name == "MainAdmin");
+            //return context.Users
+            //    .Where(u => 
+            //        context.UserRoles
+            //            .Where(ur => roles.Any(r => r.Id == ur.RoleId))
+            //            .Any(ur => ur.UserId == u.Id))
+            //    .ToList()
             return (from role in context.Roles
                     from roleusr in context.Users
                     from usrrol in context.UserRoles
-                    where (role.Name == "Admin" || role.Name == "MainAdmin") && role.Id == usrrol.RoleId
+                    where (role.Name == "Admin" || role.Name == "MainAdmin") && role.Id == usrrol.RoleId && roleusr.Id == usrrol.UserId
                     select roleusr).Distinct().ToList();
         }
 
@@ -171,10 +178,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             catch (Exception e)
             {
                 logger.LogError(e, "Problème requete pour ajouter l'utilisateur dans le groupe Admin");
-                userManager.Dispose();
+                
                 // Provide for exceptions.
             }
-            userManager.Dispose();
+            
         }
 
         /// <summary>
@@ -198,7 +205,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             catch (Exception e)
             {
                 logger.LogError(e, "Problème pour ajouter un admin dans le groupe logistique");
-                userManager.Dispose();
+                
                 // Provide for exceptions.
             }
         }
@@ -216,7 +223,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             catch (Exception e)
             {
                 logger.LogError(e, "Problème requete pour retirer les droits logistic");
-                userManager.Dispose();
+                
                 // Provide for exceptions.
             }
         }
@@ -259,43 +266,5 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return context.SaveChangesAsync();
         }
 
-
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    context?.Dispose();
-                    userManager?.Dispose();
-                    // TODO: dispose managed state (managed objects).
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~EquipeResaDb()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
     }
 }

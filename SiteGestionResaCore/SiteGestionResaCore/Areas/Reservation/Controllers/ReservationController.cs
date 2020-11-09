@@ -797,19 +797,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
         #region Méthodes complémentaires 
 
-        // Disposer la comm vers la base de données
-        protected override void Dispose(bool disposing)
-        {
-            // Rajouter pour éviter des pbs d'accès aux ressources resaBdd
-            projetEssaiDb.Dispose();
-            zoneEquipDb.Dispose();
-            reservationDb.Dispose();
-            equipeResaDb.Dispose();
-            userManager.Dispose();
-
-            base.Dispose(disposing);
-        }
-
         // Méthode permettant de retourner les réservations à afficher sur le calendrier
         // uniquement pour les 7 jours de la semaine! (pour le moment) TODO: voir comment faire pour un créneaux long des dates "Du" "Au"!!
         /*public List<ReservationsJour> DonneesCalendrier(int idEquipement)

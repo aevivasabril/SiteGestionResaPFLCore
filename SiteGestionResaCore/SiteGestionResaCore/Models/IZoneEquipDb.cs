@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Models
 {
-    public interface IZoneEquipDb: IDisposable
+    public interface IZoneEquipDb
     {
         List<zone> ListeZones();
 

@@ -48,7 +48,11 @@ namespace SiteGestionResaCore
             services.Configure<EmailOptions>(Configuration.GetSection("Email"));
             services.Configure<AdminOptions>(Configuration.GetSection("MainAdmin"));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+#if DEBUG
+                .AddRazorRuntimeCompilation()
+#endif
+                ;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,11 +78,11 @@ namespace SiteGestionResaCore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute(
                     name: "area",
                     pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

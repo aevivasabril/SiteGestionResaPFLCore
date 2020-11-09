@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SiteGestionResaCore.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class MigrationInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -217,7 +217,7 @@ namespace SiteGestionResaCore.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nom = table.Column<string>(unicode: false, nullable: false),
-                    zoneID = table.Column<int>(nullable: false),
+                    zoneID = table.Column<int>(nullable: true),
                     numGmao = table.Column<string>(unicode: false, maxLength: 50, nullable: true),
                     mobile = table.Column<bool>(nullable: true)
                 },
@@ -229,7 +229,7 @@ namespace SiteGestionResaCore.Migrations
                         column: x => x.zoneID,
                         principalTable: "zone",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -391,6 +391,17 @@ namespace SiteGestionResaCore.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { 1, "3e37fefe-c76b-48ce-a0a3-0bf3ebcd23dd", "Admin", "ADMIN" },
+                    { 2, "19ef18fa-29cb-4f21-99cb-43a6b2334eb9", "Utilisateur", "UTILISATEUR" },
+                    { 3, "d7352a83-2b79-4e87-8d4a-bf84ee723b69", "MainAdmin", "MAINADMIN" },
+                    { 4, "8461f932-a89a-4f73-85c6-aed542489c29", "Logistic", "LOGISTIC" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "organisme",
                 columns: new[] { "id", "nom_organisme" },
                 values: new object[,]
@@ -400,6 +411,120 @@ namespace SiteGestionResaCore.Migrations
                     { 3, "Quescrem" },
                     { 4, "Eurial" },
                     { 5, "Actalia" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "zone",
+                columns: new[] { "id", "nom_zone" },
+                values: new object[,]
+                {
+                    { 15, "Salle alimentaire Ap8" },
+                    { 14, "Hâloir Ap7" },
+                    { 13, "Salle alimentaire Ap6" },
+                    { 12, "Salle alimentaire Ap5" },
+                    { 11, "Labo" },
+                    { 10, "Saumurage" },
+                    { 9, "Salle Stephan" },
+                    { 4, "Membranes" },
+                    { 7, "Pâtes préssées cuites" },
+                    { 6, "Pâtes molles tranchage" },
+                    { 5, "Pâtes molles moulage" },
+                    { 16, "Salle alimentaire Ap9" },
+                    { 3, "Préparation des laits" },
+                    { 2, "Dépotage & Stockage" },
+                    { 1, "Concentration & Sechage" },
+                    { 8, "Innovation" },
+                    { 17, "Equipements mobiles" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "equipement",
+                columns: new[] { "id", "mobile", "nom", "numGmao", "zoneID" },
+                values: new object[,]
+                {
+                    { 166, true, "Balance HBM 60 Kg (WE2110)", "BAL0054", 1 },
+                    { 202, true, "Machine emballage sous vide BRITEK SC800L", "EMB0001", 15 },
+                    { 208, true, "Homogénéisateur Panda", "HOMO0007", 13 },
+                    { 244, true, "Thermocook", "", 12 },
+                    { 242, false, "Hotte PSM", "", 12 },
+                    { 205, true, "Etuve biocomcept BC240 FIRLABO", "ETUV0039", 12 },
+                    { 204, true, "Chariot dosage ERECAM combidos 102T (doseuse)", "EMB0004", 12 },
+                    { 203, true, "Thermoscelleuse ERECAM semi-automatique dia:68/95/116", "EMB0003", 12 },
+                    { 168, false, "Analyseur humidité METTLER TOLEDO 71 g (HE73/01)", "BAL0059", 11 },
+                    { 240, false, "Bac de saumurage", "ECUV0015", 10 },
+                    { 170, false, "Mélangeur cuiseur stéphan", "CUISMEL0001", 9 },
+                    { 163, false, "Balance 32 Kg (KA32s)", "BAL0003", 9 },
+                    { 243, false, "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", "PILOT0022", 8 },
+                    { 226, false, "Pilote de microfiltration P3", "PILOT0015", 8 },
+                    { 224, true, "Pilote UF TAMI/Tia 8Kda mobile", "PILOT0013", 8 },
+                    { 223, false, "Pilote de traitement thermique UHT-HTST Lab 25EDH", "PILOT0011", 8 },
+                    { 221, false, "UF TAMI/tech-sep 8 kDa (13 m2)", "PILOT0009", 8 },
+                    { 217, true, "Pilote de microfiltration MFS1", "PILOT0005", 8 },
+                    { 165, true, "Balance OHAUS 2 Kg (Scout Pro SPU2001)", "BAL0011", 16 },
+                    { 215, false, "Pilote OI NF UF Prolab Milipore", "PILOT0003", 8 },
+                    { 179, false, "Armoire affinage AFV7HC Elimeca 1", "ECLIM0001", 16 },
+                    { 167, true, "Balance 60Kg PRECIA MOLEN (X112-A)", "BAL0057", 17 },
+                    { 231, true, "Pompe centrifuge 20 à 30 m3/h", "POMPE0002", 17 },
+                    { 201, true, "Mini-cuve N°5 (150L)", "ECUV0027", 17 },
+                    { 195, true, "Mini-cuve N°4 (100L)", "ECUV0020", 17 },
+                    { 194, true, "Mini-cuve N°8 (150L)", "ECUV0019", 17 },
+                    { 187, true, "Mini cuve 150L", "ECUV0007", 17 },
+                    { 186, true, "Mini-cuve N°3 (100L)", "ECUV0006", 17 },
+                    { 185, true, "Mini-cuve N°2 (100L)", "ECUV0005", 17 },
+                    { 184, true, "Mini-cuve N°6 (150L)", "ECUV0004", 17 },
+                    { 183, true, "Mini-cuve N°1 (150L)", "ECUV0003", 17 },
+                    { 181, true, "Ecrémeuse ELECREM modèle 3 (150L/h)", "ECREM0001", 17 },
+                    { 177, true, "Echangeur avec comptage", "ECH0009", 17 },
+                    { 176, true, "Echangeur avec pompe centrifuge", "ECH0007", 17 },
+                    { 175, true, "Echangeur avec pompe centrifuge(bleu)", "ECH0006", 17 },
+                    { 174, true, "Thermorégulateur vulcatherm (séchage)", "ECH0005", 17 },
+                    { 173, true, "Thermorégulateur vulcatherm (membrane)", "ECH0004", 17 },
+                    { 172, true, "Echangeur avec pompe centrifuge (regulation chaud/froid)", "ECH0002", 17 },
+                    { 171, true, "Echangeur récupérateur", "ECH0001", 17 },
+                    { 180, false, "Armoire affinage AFV7HC Elimeca 2", "ECLIM0002", 16 },
+                    { 232, true, "Pompe PCM - 5 m3/h", "POMPE0003", 17 },
+                    { 214, false, "Pilote UF TIA/PALL 0,02u (JYG)", "PILOT0002", 8 },
+                    { 199, false, "Tank GEA 550L avec agitation et groupe froid CVB", "ECUV0025", 8 },
+                    { 178, false, "Echangeur à surface raclée Contherm (ESR)", "ECH0010", 4 },
+                    { 238, false, "Ecrémeuse Elecrem (ACTALIA) 500 l/h", "ACTALIA", 3 },
+                    { 229, false, "Pilote VALOBAB (MF et UF) SKID 12EO46", "PILOT0018", 3 },
+                    { 222, false, "Stérilisateur pilote tubulaire électrique ACTINI", "PILOT0010", 3 },
+                    { 218, false, "Pilote de microfiltration MFMG", "PILOT0006", 3 },
+                    { 207, false, "Homogénéisateur 12/51H RANNIE", "HOMO0003", 3 },
+                    { 206, false, "Homogénéisateur 2 têtes RANNIE", "HOMO0002", 3 },
+                    { 188, false, "2 cuves maturation 500L", "ECUV0010", 3 },
+                    { 182, false, "Ecrémeuse Westfalia EASYCREAM", "ECREM0002", 3 },
+                    { 164, false, "Balance 300Kg (ID2 + KCS300)", "BAL0004", 3 },
+                    { 239, true, "Camion collecte", "", 2 },
+                    { 234, true, "Pompe de transfert de lait 58L/min (bleue)", "POMPE0006", 2 },
+                    { 211, false, "Ensemble NEP", "MLAV0016", 2 },
+                    { 200, false, "Cuve 2000L avec agitateur", "ECUV0026", 2 },
+                    { 228, false, "Pilote tour de sèchage MINOR", "PILOT0017", 1 },
+                    { 227, false, "Pilote de sèchage mono-disperse", "PILOT0016", 1 },
+                    { 225, false, "Pilote évaporateur à flot tombant FF-1", "PILOT0014", 1 },
+                    { 189, false, "Tank 1000L avec agitation et groupe froid", "ECUV0012", 4 },
+                    { 213, false, "Pilote ultrafiltration TIA spirale", "PILOT0001", 8 },
+                    { 216, false, "Pilote filtration engineering (OI et NF)", "PILOT0004", 4 },
+                    { 220, false, "Pilote de microfiltration GP7", "PILOT0008", 4 },
+                    { 241, false, "3 cuves fromagerie 200 Litres", "ACTALIA", 7 },
+                    { 236, false, "Presse à fromage horizontale", "PRES0003", 7 },
+                    { 235, false, "Presse à fromage verticale", "PRES0002", 7 },
+                    { 198, true, "Mini-cuve de fabrication 3(2 cuves 10 litres et 20 litres)", "ECUV0023", 7 },
+                    { 197, true, "Mini-cuve de fabrication 2(2 cuves 10 litres et 20 litres)", "ECUV0022", 7 },
+                    { 196, true, "Mini-cuve de fabrication 1(2 cuves 10 litres et 20 litres)", "ECUV0021", 7 },
+                    { 190, false, "Cuve PPC Châlon-Mégard 1000 litres", "ECUV0014", 7 },
+                    { 237, false, "Tranche-caillé", "TRAN0001", 6 },
+                    { 210, true, "Chariots porte-bassines PM (N°2)", "MANUT0012", 6 },
+                    { 209, true, "Chariots porte-bassines PM (N°1)", "MANUT002", 6 },
+                    { 169, false, "Brassoires PM", "BRAS0001", 6 },
+                    { 212, false, "Système de moulage PM et basculeur", "MOUL0001", 5 },
+                    { 193, true, "Table égouttage PM 3", "ECUV0018", 5 },
+                    { 192, true, "Table égouttage PM 2", "ECUV0017", 5 },
+                    { 191, true, "Table égouttage PM 1", "ECUV0016", 5 },
+                    { 162, false, "Balance Arpège 150k", "BAL0002", 5 },
+                    { 230, false, "Pilote UF (optimal)", "PILOT0019", 4 },
+                    { 219, false, "Pilote de microfiltration MFS19", "PILOT0007", 4 },
+                    { 233, true, "Pompe disperseur de poudre - TRIBLENDER", "POMPE0004", 17 }
                 });
 
             migrationBuilder.CreateIndex(

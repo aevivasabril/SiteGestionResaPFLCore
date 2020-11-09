@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
-    public interface IEquipeResaDb: IDisposable
+    public interface IEquipeResaDb
     {
         Task<listAutresUtilisateurs> ObtenirListAutresAsync();
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
-    public interface IReservationDb: IDisposable
+    public interface IReservationDb
     {
         reservation_projet CreationReservation(equipement Equip, essai Essai, DateTime dateDebut, DateTime dateFin);
 

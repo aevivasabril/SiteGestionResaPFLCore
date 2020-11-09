@@ -272,17 +272,6 @@ namespace SiteGestionResaCore.Controllers
             return View();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {           
-                userManager?.Dispose();         
-            }
-            accountResaDB.Dispose();
-
-            base.Dispose(disposing);
-        }
-
         #region Helpers
        
         private void AddErrors(IdentityResult result)

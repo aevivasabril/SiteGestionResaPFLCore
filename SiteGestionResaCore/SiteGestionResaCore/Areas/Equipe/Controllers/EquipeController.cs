@@ -115,9 +115,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         [HttpPost]
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult AddingLogistic(GestionUsersViewModel model)
+        public async Task<ActionResult> AddingLogisticAsync(GestionUsersViewModel model)
         {
-            EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
+            await EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
             return RedirectToAction("GestionUtilisateurs");
         }
 
@@ -144,9 +144,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         [HttpPost]
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult RemoveLogisticUser(GestionUsersViewModel model)
+        public ActionResult RemoveLogisticUser(int id)
         {
-            EquipeResaDb.RemoveLogisticRoleAsync(model.UserToChange.Id);
+            EquipeResaDb.RemoveLogisticRoleAsync(id);
             return RedirectToAction("GestionUtilisateurs");
         }
 
@@ -172,22 +172,34 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         // TODO: tester les exceptions!! 
         [HttpPost]
-        public async Task<ActionResult> Valider(GestionUsersViewModel model)
+        public async Task<ActionResult> Valider(int id)
         {
             //string aspNetID;
             //IdentityUser user;
 
             try
             {
-                EquipeResaDb.ValidateAccount(model.UserToChange.Id);
+                EquipeResaDb.ValidateAccount(id);
                 //aspNetID = resaDb.IdAspNetUser(id);
-                var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
+                var user = await userManager.FindByIdAsync(id.ToString());
 
                 // envoyer le mail à l'utilisateur concerné
                 string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var callbackUrl = Url.Action("ConfirmEmail", "Account", new { area = "", userId = user.Id, code = code }, protocol: Request.Scheme);
-                await emailSender.SendEmailAsync(user.Email, "Votre compte PFL", "Bonjour,\n\nVotre compte a été validé par nos administrateurs! \nPour finir le processus de validation, veuillez cliquer sur le lien suivant: \"" + callbackUrl + "\"" + "\n\nL'équipe PFL,");                
+                string html = @"<html>
+                                <body>
+                                    <p>
+                                Bonjour <br/>
+                                Votre compte a été validé par nos administrateurs! <br/>
+                                Pour finir le processus de validation, <a href='[CALLBACK_URL]'>veuillez cliquer ici</a><br/>
+                                    </p>
+                                <p>
+                                L'équipe PFL
+                                </p>
+                                </body>
+                                </html>";
+                await emailSender.SendEmailAsync(user.Email, "Votre compte PFL", html.Replace("[CALLBACK_URL]", callbackUrl));                
             }
             catch (Exception e)
             {
@@ -219,15 +231,15 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Refuser(GestionUsersViewModel model)
+        public async Task<ActionResult> Refuser(int id)
         {          
             try
             {
                 //aspNetID = resaDb.IdAspNetUser(id);
                 //user = await userManager.FindByIdAsync(aspNetID);
                 //Effacer de la BDD pfl
-                await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
-                var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
+                // await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
+                var user = await userManager.FindByIdAsync(id.ToString());
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 await userManager.RemoveFromRolesAsync(user, allUserRoles);
@@ -266,13 +278,13 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteUser(GestionUsersViewModel model)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             try
             {
                 //Effacer de la BDD pfl
-                await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
-                var user = await userManager.FindByIdAsync(model.UserToChange.Id.ToString());
+                //await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
+                var user = await userManager.FindByIdAsync(id.ToString());
                 //Effacer de tous les roles AspNet
                 await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
                 // Effacer de la BDD AspNet
@@ -287,16 +299,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return RedirectToAction("GestionUtilisateurs");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                userManager?.Dispose();
-            }
-            // Rajouter pour éviter des pbs d'accès aux ressources resaDb
-            EquipeResaDb.Dispose();
-            base.Dispose(disposing);
-        }
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

@@ -19,36 +19,32 @@ namespace SiteGestionResaCore.Services
         }
         public async Task SendEmailAsync(string email, string subject, string body)
         {
-            var message = new MimeMessage();
-            
-                message.From.Add(MailboxAddress.Parse(options.Value.From));
-            message.To.Add(MailboxAddress.Parse(email));
-            message.Subject = subject;
-            var bodyBuilder = new BodyBuilder();
-            if (body.IndexOf("<html", StringComparison.InvariantCultureIgnoreCase) > -1)
-            {
-                bodyBuilder.HtmlBody = body;
-            }
-            else
-            {
-                bodyBuilder.TextBody = body;
-            }
-            //if (attachments?.Any() == true)
-            //{
-            //    foreach (var (data, name) in attachments)
-            //    {
-            //        bodyBuilder.Attachments.Add(name, data);
-            //    }
-            //}
-            message.Body = bodyBuilder.ToMessageBody();
+            // Configure the client:
+            System.Net.Mail.SmtpClient client =
+                new System.Net.Mail.SmtpClient(options.Value.SMTP);
 
-            using (var client = new SmtpClient())
-            {
-                await client.ConnectAsync(options.Value.SMTP, 587, true).ConfigureAwait(false);
-                await client.AuthenticateAsync(options.Value.UserName, options.Value.Password).ConfigureAwait(false);
-                await client.SendAsync(message).ConfigureAwait(false);
-                await client.DisconnectAsync(true).ConfigureAwait(false);
-            }
+            client.Port = 587;
+            client.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+
+            // Creatte the credentials:
+            System.Net.NetworkCredential credentials =
+                new System.Net.NetworkCredential(options.Value.UserName, options.Value.Password);
+
+            client.EnableSsl = true;
+            client.Credentials = credentials;
+
+            // Create the message:
+            var mail =
+                new System.Net.Mail.MailMessage(options.Value.From, email);
+
+            mail.IsBodyHtml = true;
+            mail.Subject = subject;
+            mail.Body = body;
+
+            // Send:
+            await client.SendMailAsync(mail);
         }
     }
 }

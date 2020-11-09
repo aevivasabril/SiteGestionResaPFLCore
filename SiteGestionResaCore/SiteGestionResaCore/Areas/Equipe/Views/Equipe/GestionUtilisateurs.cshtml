@@ -40,7 +40,7 @@
         </div>
         <br />
         <!--using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { role = "" }))-->
-        <form asp-action="AdminToUserAcces" asp-controller="Equipe" method="post">
+        <form asp-action="AdminToUserAcces" asp-controller="Equipe" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="adminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -76,7 +76,7 @@
         </div>
         <br />
 
-        <form asp-action="AddingAdmin" asp-controller="Equipe" method="post">
+        <form asp-action="AddingAdmin" asp-controller="Equipe" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="AddAdminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -127,7 +127,7 @@
             </tbody>
         </table>
 
-        <form asp-action="DeleteUser" asp-controller="Equipe" method="post">
+        <form asp-action="DeleteUser" asp-controller="Equipe" asp-area="Equipe" asp-route-id="@Model.UserToChange.Id" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -191,7 +191,7 @@
         </table>
     </div>
 
-    <form asp-action="@Model.ActionName" asp-controller="Equipe" method="post">
+    <form asp-action="@Model.ActionName" asp-controller="Equipe" asp-area="Equipe" asp-route-id="@Model.UserToChange.Id" method="post">
         <!-- Modal pop-up d'info-->
         <div class="modal fade" id="waitingModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
             <div class="modal-dialog navbar-inra" role="document">
@@ -214,7 +214,7 @@
                         @*<button type="button" class="btn btn-primary">Valider</button>*@
                         <input type="submit" class="btn btn-primary" value="Valider" />
                     </div>
-                    @Html.HiddenFor(m => m.UserToChange.Id)
+                    @*@Html.HiddenFor(m => m.UserToChange.Id)*@
                 </div>
             </div>
         </div>
@@ -252,7 +252,7 @@
             </table>
         </div>
 
-        <form asp-action="RemoveLogisticUser" asp-controller="Equipe" method="post">
+        <form asp-action="RemoveLogisticUser" asp-controller="Equipe" asp-route-id="@Model.UserToChange.Id" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="removeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -275,7 +275,7 @@
                             @*<button type="button" class="btn btn-primary">Valider</button>*@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
-                        @Html.HiddenFor(m => m.UserToChange.Id)
+                        @*@Html.HiddenFor(m => m.UserToChange.Id)*@
                     </div>
                 </div>
             </div>
@@ -285,11 +285,11 @@
         <div class="row">
             <div class="offset-sm-3 col-md-6 text-center">
                 <!--Rajouter le script pour ouvrir la fênetre modal-->
-                @Html.ActionLink("Ajouter un nouvel administrateur logistique", "AddingLogistic", null, new { @class = "btn btn-default navbar-inra" })
+                <a class="btn btn-default navbar-inra" asp-action="AddingLogistic" asp-area="Equipe" asp-controller="Equipe">Ajouter un nouvel administrateur logistique</a>
             </div>
         </div>
 
-        <form asp-action="AddingLogistic" asp-controller="Equipe" method="post">
+        <form asp-action="AddingLogistic" asp-controller="Equipe" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="AddAdminLogistic" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">

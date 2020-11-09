@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
-    public interface IProjetEssaiResaDb: IDisposable
+    public interface IProjetEssaiResaDb
     {
         bool ProjetExists(string NumeroProjet);
 

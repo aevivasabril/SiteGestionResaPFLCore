@@ -13,7 +13,7 @@ namespace SiteGestionResaCore.Data
 
         public int id { get; set; }
         public string nom { get; set; }
-        public int zoneID { get; set; }
+        public int? zoneID { get; set; }
         public string numGmao { get; set; }
         public bool? mobile { get; set; }
 

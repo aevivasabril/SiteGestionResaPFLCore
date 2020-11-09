@@ -9,7 +9,7 @@ namespace SiteGestionResaCore.Models
     /// Interface contenant les méthodes d'accès aux données pour le contrôleur AccountController
     /// pour création de compte
     /// </summary>
-    public interface IAccountResaDB: IDisposable
+    public interface IAccountResaDB
     {
         void CreerUtilisateur(string nom, string prenom, int organismeId, string email);
     }
