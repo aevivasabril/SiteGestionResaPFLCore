@@ -31,8 +31,8 @@ namespace SiteGestionResaCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddIdentity<utilisateur,IdentityRole<int>>().AddEntityFrameworkStores<GestionResaContext>().AddUserManager<UserManager<utilisateur>>().AddRoleManager<RoleManager<IdentityRole<int>>>().AddDefaultTokenProviders();
-            services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(@"data source=localhost\SQLEXPRESS14;initial catalog=PflStloResaTest;integrated security=True;MultipleActiveResultSets=True"));
-
+            services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("SqlServer")));
+            
             //services.AddScoped<IResaDB, ResaDB>();
             services.AddScoped<IAccountResaDB, AccountResaDB>();
             services.AddScoped<IEquipeResaDb, EquipeResaDb>();
