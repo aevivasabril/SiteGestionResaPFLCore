@@ -175,7 +175,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             projet pro = context.projet.FirstOrDefault(u => u.id == IdProjet);
             if (pro.mailRespProjet != null)
             {
-                idResp = (from resp in context.utilisateur
+                idResp = (from resp in context.Users
                           from proj in context.projet
                           where (proj.id == IdProjet) && (proj.mailRespProjet == resp.Email)
                           select resp.Id).First();
@@ -311,7 +311,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 FinancName = context.ld_financement.First(r => r.id == financId).nom_financement;
             // obtenir le mail du responsable projet 
             if (respProjetId > 0)
-                MailResponsable = context.utilisateur.First(r => r.Id == respProjetId).Email;
+                MailResponsable = context.Users.First(r => r.Id == respProjetId).Email;
             // obtenir nom provenance projet
             if (provProj > 0)
                 ProvenanProj = context.ld_provenance.First(r => r.id == provProj).nom_provenance;
@@ -371,7 +371,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 DestProd = context.ld_destination.First(r => r.id == destProduit).nom_destination;
 
             // rajouter la clé étrangère (table "essai") vers l'utilisateur (manipulateurID)
-            utilisateur usrManip = context.utilisateur.FirstOrDefault(r => r.Id == manipId);
+            utilisateur usrManip = context.Users.FirstOrDefault(r => r.Id == manipId);
 
             // Créer l'essai avec les infos provenant du model (rajouter les ID des clès étrangeres)
             essai Essai = new essai()

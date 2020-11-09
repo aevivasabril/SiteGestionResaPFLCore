@@ -33,7 +33,7 @@ namespace SiteGestionResaCore.Models
         /// <param name="Email"> email utilisateur</param>
         public void CreerUtilisateur(string Nom, string Prenom, int organismeId, string Email)
         {
-            context.utilisateur.Add(new utilisateur { nom = Nom, prenom = Prenom, Email = Email, organismeID = organismeId });
+            context.Users.Add(new utilisateur { nom = Nom, prenom = Prenom, Email = Email, organismeID = organismeId });
             context.SaveChanges();
         }
 

@@ -35,7 +35,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         // GET: Equipe/Equipe
         public async Task<ActionResult> GestionUtilisateurs(GestionUsersViewModel vm)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             vm = new GestionUsersViewModel()
@@ -53,7 +53,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> AdminToUserAcces(int? id)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
@@ -96,7 +96,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> AddingLogistic()
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
@@ -124,7 +124,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> RemoveLogisticUser(int ?id)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
@@ -152,7 +152,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> Valider(int? id)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
@@ -200,7 +200,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> Refuser(int? id)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()
@@ -248,7 +248,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         public async Task<ActionResult> DeleteUser(int? id)
         {
-            listAutresUtilisateurs ListUsr = EquipeResaDb.ObtenirListAutresAsync();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
             GestionUsersViewModel vm = new GestionUsersViewModel()

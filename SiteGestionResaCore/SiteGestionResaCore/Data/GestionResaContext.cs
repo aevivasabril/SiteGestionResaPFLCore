@@ -30,7 +30,6 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<organisme> organisme { get; set; }
         public virtual DbSet<projet> projet { get; set; }
         public virtual DbSet<reservation_projet> reservation_projet { get; set; }
-        public virtual DbSet<utilisateur> utilisateur { get; set; }
         public virtual DbSet<zone> zone { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -240,9 +239,7 @@ namespace SiteGestionResaCore.Data.Data
                     .IsUnicode(false);
             });
 
-            OnModelCreatingPartial(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

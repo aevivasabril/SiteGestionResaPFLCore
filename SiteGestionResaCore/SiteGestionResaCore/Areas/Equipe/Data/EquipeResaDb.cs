@@ -100,7 +100,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>utilisateur</returns>
         public utilisateur ObtenirUtilisateur(int id)
         {
-            return (context.utilisateur.FirstOrDefault(u => u.Id == id));
+            return (context.Users.FirstOrDefault(u => u.Id == id));
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             try
             {
-                await userManager.RemoveFromRoleAsync(await context.utilisateur.FindAsync(id), "Logistic");
+                await userManager.RemoveFromRoleAsync(await context.Users.FindAsync(id), "Logistic");
             }
             catch (Exception e)
             {
@@ -230,7 +230,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             try
             {
                 // Mettre à jour d'abord la table des "utilisateurs"
-                context.utilisateur.First(u => u.Id == id).EmailConfirmed = true;
+                context.Users.First(u => u.Id == id).EmailConfirmed = true;
                 context.SaveChanges();
             }
             catch (Exception e)
@@ -249,7 +249,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             try
             {
                 // effacer les infos de la BDD PflStloResa
-                context.utilisateur.Remove(context.utilisateur.First(u => u.Id == id));
+                context.Users.Remove(context.Users.First(u => u.Id == id));
             }
             catch (Exception e)
             {

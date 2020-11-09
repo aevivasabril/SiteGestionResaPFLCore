@@ -30,7 +30,7 @@ namespace SiteGestionResaCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentity<utilisateur,IdentityRole<int>>();
+            services.AddIdentity<utilisateur,IdentityRole<int>>().AddEntityFrameworkStores<GestionResaContext>().AddUserManager<UserManager<utilisateur>>().AddRoleManager<RoleManager<IdentityRole<int>>>().AddDefaultTokenProviders();
             services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(@"data source=localhost\SQLEXPRESS14;initial catalog=PflStloResaTest;integrated security=True;MultipleActiveResultSets=True"));
 
             //services.AddScoped<IResaDB, ResaDB>();
