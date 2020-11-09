@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Services;
 using SiteGestionResaCore.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Areas.Reservation.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace SiteGestionResaCore.Controllers
 {
@@ -18,17 +21,20 @@ namespace SiteGestionResaCore.Controllers
         private readonly UserManager<utilisateur> userManager;
         private readonly SignInManager<utilisateur> signInManager;
         private readonly IEmailSender emailSender;
+        private readonly IFormulaireResaDb formulaireResaDb;
 
         public AccountController(
             IAccountResaDB accountResaDB,
             UserManager<utilisateur> userManager,
             SignInManager<utilisateur> signInManager,
-            IEmailSender emailSender)
+            IEmailSender emailSender, 
+            IFormulaireResaDb formulaireResaDb)
         {
             this.accountResaDB = accountResaDB;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
+            this.formulaireResaDb = formulaireResaDb;
         }
 
         //
@@ -84,13 +90,21 @@ namespace SiteGestionResaCore.Controllers
         }
 
 
-       
+
         //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
         {
-            RegisterViewModel vm = new RegisterViewModel { };
+            var allOrgs = formulaireResaDb.ObtenirListOrg().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_organisme
+            });
+            RegisterViewModel vm = new RegisterViewModel 
+            {
+                OrganItem = allOrgs
+            };
             return View(vm);
         }
 
@@ -103,7 +117,7 @@ namespace SiteGestionResaCore.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new utilisateur { UserName = model.Email, Email = model.Email };
+                var user = new utilisateur { UserName = model.Email, Email = model.Email, nom = model.Nom, prenom= model.Prenom, organismeID = model.SelectedOrganId };
                 var result = await userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
@@ -127,7 +141,7 @@ namespace SiteGestionResaCore.Controllers
                     {
                         //créer l'utilisateur hors les infos de gestion de compte individuelle
 
-                        accountResaDB.CreerUtilisateur(model.Nom, model.Prenom, model.SelectedOrganId, model.Email);
+                        //accountResaDB.CreerUtilisateur(model.Nom, model.Prenom, model.SelectedOrganId, model.Email);
 
                     }
                     // viewbag pour activer le popup d'info
@@ -246,7 +260,7 @@ namespace SiteGestionResaCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> LogOff()
         {
-            await HttpContext.SignOutAsync("Cookie");
+            await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 

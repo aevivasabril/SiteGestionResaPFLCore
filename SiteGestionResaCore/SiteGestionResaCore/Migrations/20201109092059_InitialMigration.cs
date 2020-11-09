@@ -390,6 +390,18 @@ namespace SiteGestionResaCore.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.InsertData(
+                table: "organisme",
+                columns: new[] { "id", "nom_organisme" },
+                values: new object[,]
+                {
+                    { 1, "Inrae" },
+                    { 2, "Agrocampus Ouest" },
+                    { 3, "Quescrem" },
+                    { 4, "Eurial" },
+                    { 5, "Actalia" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",

@@ -46,6 +46,7 @@ namespace SiteGestionResaCore
             services.AddSession();
             services.AddOptions();
             services.Configure<EmailOptions>(Configuration.GetSection("Email"));
+            services.Configure<AdminOptions>(Configuration.GetSection("MainAdmin"));
 
             services.AddControllersWithViews();
         }

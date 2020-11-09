@@ -41,12 +41,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un Essai")]
         public int SelectedEssaiId { get; set; }
 
-        private IEnumerable<SelectListItem> _essaiItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
 
         public IEnumerable<SelectListItem> EssaiItem
         {
-            get { return _essaiItem; }
-            set { _essaiItem = value; }
+            get; 
+            set; 
         }
 
 

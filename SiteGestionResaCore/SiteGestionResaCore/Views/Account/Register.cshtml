@@ -54,7 +54,9 @@
         @Html.LabelFor(m => m.SelectedOrganId, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @*@Html.TextBoxFor(m => m.Organisme, new { @class = "form-control" })CHANGER POUR METTRE UNE LISTE*@
-            @Html.DropDownListFor(m => m.SelectedOrganId, Model.OrganItem)
+            <select asp-for="SelectedOrganId" asp-items="@Model.OrganItem" class="form-control">
+                <option value="-1">- Selectionner un organisme -</option>
+            </select>
             @Html.ValidationMessageFor(m => m.SelectedOrganId, "", new { @class = "text-danger" })
         </div>
     </div>

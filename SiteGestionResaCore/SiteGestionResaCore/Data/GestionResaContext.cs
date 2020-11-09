@@ -239,6 +239,14 @@ namespace SiteGestionResaCore.Data.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
+            new organisme { nom_organisme = "Quescrem", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5} });
+
+            modelBuilder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>[] { new IdentityRole<int> { Name="Admin", Id = 1, NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString()},
+                new IdentityRole<int> { Name = "Utilisateur", Id = 2 , NormalizedName="UTILISATEUR", ConcurrencyStamp = Guid.NewGuid().ToString()}, 
+                new IdentityRole<int> { Name = "MainAdmin", Id = 3, NormalizedName="MAINADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() }, 
+                new IdentityRole<int> { Name="Logistic", Id = 4, NormalizedName="LOGISTIC", ConcurrencyStamp = Guid.NewGuid().ToString()} });
+
             base.OnModelCreating(modelBuilder);
         }
     }

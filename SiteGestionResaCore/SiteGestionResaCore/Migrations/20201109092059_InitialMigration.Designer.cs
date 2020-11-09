@@ -10,7 +10,7 @@ using SiteGestionResaCore.Data.Data;
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    [Migration("20201109083442_InitialMigration")]
+    [Migration("20201109092059_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -396,6 +396,33 @@ namespace SiteGestionResaCore.Migrations
                     b.HasKey("id");
 
                     b.ToTable("organisme");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            nom_organisme = "Inrae"
+                        },
+                        new
+                        {
+                            id = 2,
+                            nom_organisme = "Agrocampus Ouest"
+                        },
+                        new
+                        {
+                            id = 3,
+                            nom_organisme = "Quescrem"
+                        },
+                        new
+                        {
+                            id = 4,
+                            nom_organisme = "Eurial"
+                        },
+                        new
+                        {
+                            id = 5,
+                            nom_organisme = "Actalia"
+                        });
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.projet", b =>
