@@ -233,25 +233,5 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             }
         }
 
-
-        /// <summary>
-        /// Méthode pour refuser la demande d'ouverture de compte (effacer la personne de la BDD table "utilisateur")
-        /// </summary>
-        /// <param name="id">id "utilisateur"</param>
-        public Task DeleteRequestAccount(int id)
-        {
-            try
-            {
-                // effacer les infos de la BDD PflStloResa
-                context.Users.Remove(context.Users.First(u => u.Id == id));
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, "Problème pour effacer la demande d'ouverture compte");
-            }
-
-            return context.SaveChangesAsync();
-        }
-
     }
 }

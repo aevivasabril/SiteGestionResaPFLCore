@@ -28,6 +28,5 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         void ValidateAccount(int id);
 
-        Task DeleteRequestAccount(int id);
     }
 }

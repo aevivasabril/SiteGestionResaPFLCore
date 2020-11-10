@@ -331,10 +331,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         {          
             try
             {
-                //aspNetID = resaDb.IdAspNetUser(id);
-                //user = await userManager.FindByIdAsync(aspNetID);
                 //Effacer de la BDD pfl
-                // await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
                 var user = await userManager.FindByIdAsync(id.ToString());
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
@@ -391,7 +388,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             try
             {
                 //Effacer de la BDD pfl
-                //await EquipeResaDb.DeleteRequestAccount(model.UserToChange.Id);
                 var user = await userManager.FindByIdAsync(id.ToString());
                 //Effacer de tous les roles AspNet
                 await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
