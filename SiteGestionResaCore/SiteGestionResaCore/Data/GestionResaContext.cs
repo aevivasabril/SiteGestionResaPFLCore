@@ -31,9 +31,24 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<projet> projet { get; set; }
         public virtual DbSet<reservation_projet> reservation_projet { get; set; }
         public virtual DbSet<zone> zone { get; set; }
+        public virtual DbSet<enquete> enquete { get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<enquete>(entity =>
+            {
+                entity.Property(e => e.date_envoi_enquete)
+                    .IsRequired()
+                    .IsUnicode(false);
+                        
+                entity.HasOne(d => d.essai)
+                    .WithOne(p => p.enquete)
+                    .HasForeignKey<enquete>(d => d.essaiId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_enquete_essai");
+            });
+
             modelBuilder.Entity<equipement>(entity =>
             {
                 entity.Property(e => e.nom)

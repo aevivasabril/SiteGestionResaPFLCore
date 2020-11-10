@@ -33,9 +33,12 @@ namespace SiteGestionResaCore.Data
         public string confidentialite { get; set; }
         public DateTime? date_inf_confidentiel { get; set; }
         public DateTime? date_sup_confidentiel { get; set; }
+        public int? enqueteId { get; set; }
 
         public virtual utilisateur manipulateur { get; set; }
         public virtual projet projet { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
+
+        public virtual enquete enquete { get; set; }
     }
 }
