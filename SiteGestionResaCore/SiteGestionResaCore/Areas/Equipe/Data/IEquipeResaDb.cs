@@ -18,7 +18,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         utilisateur ObtenirUtilisateur(int id);
 
-        Task ChangeAccesToUser(int id);
+        Task ChangeAccesToUserAsync(int id);
 
         Task ChangeAccesToAdminAsync(int id);
 

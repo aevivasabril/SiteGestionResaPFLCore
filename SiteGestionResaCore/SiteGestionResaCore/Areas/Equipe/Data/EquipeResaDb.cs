@@ -102,7 +102,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Sauf pour le rôle "MainAdmin" AUCUN changement est permis
         /// </summary>
         /// <param name="id"> id utilisateur key</param>
-        public async Task ChangeAccesToUser(int id)
+        public async Task ChangeAccesToUserAsync(int id)
         {
             //User manager pour accèder aux opérations sur la table AspNet
             var user = await context.Users.FindAsync(id);
@@ -150,7 +150,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             try
             {
                 // Obtenir les rôles dont l'utilisateur
-                IList<string> allUserRoles = await userManager.GetRolesAsync(user);
+                var allUserRoles = await userManager.GetRolesAsync(user);
                 // Vérifier qu'il ne s'agit pas d'un "MainAdmin"
                 if (allUserRoles.Contains("MainAdmin"))
                 {

@@ -97,9 +97,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public ActionResult AdminToUserAcces(GestionUsersViewModel model)
+        public async Task<ActionResult> AdminToUserAccesAsync(int id)
         {
-            EquipeResaDb.ChangeAccesToUser(model.UserToChange.Id);
+            await EquipeResaDb.ChangeAccesToUserAsync(id);
             return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
@@ -135,9 +135,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         //TODO: dévélopper la méthode post et faire le test une fois que on aura crée et validé autre compte
         [HttpPost]
-        public ActionResult AddingAdmin(GestionUsersViewModel model)
+        public async Task<ActionResult> AddingAdminAsync(GestionUsersViewModel model)
         {
-            EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
+            await EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
             return RedirectToAction("GestionUtilisateurs");
         }
 
@@ -263,7 +263,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
             try
             {
-                EquipeResaDb.ValidateAccount(id);
+                //EquipeResaDb.ValidateAccount(id);
                 //aspNetID = resaDb.IdAspNetUser(id);
                 var user = await userManager.FindByIdAsync(id.ToString());
 
@@ -274,9 +274,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 string html = @"<html>
                                 <body>
                                     <p>
-                                Bonjour <br/>
-                                Votre compte a été validé par nos administrateurs! <br/>
-                                Pour finir le processus de validation, <a href='[CALLBACK_URL]'>veuillez cliquer ici</a><br/>
+                                    Bonjour,  <br>
+                                    Votre compte a été validé par nos administrateurs! <br/>
+                                    Pour finir le processus de validation, <a href='[CALLBACK_URL]'>veuillez cliquer ici</a><br/>
                                     </p>
                                 <p>
                                 L'équipe PFL

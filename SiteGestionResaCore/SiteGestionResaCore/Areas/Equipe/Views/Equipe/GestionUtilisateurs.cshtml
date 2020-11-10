@@ -40,7 +40,7 @@
         </div>
         <br />
         <!--using (Html.BeginForm("AdminToUserAcces", "Equipe", new { id = Model.UserToChange.Id }, FormMethod.Post, new { role = "" }))-->
-        <form asp-action="AdminToUserAcces" asp-controller="Equipe" asp-area="Equipe" method="post">
+        <form asp-action="AdminToUserAcces" asp-controller="Equipe" asp-route-id="@Model.UserToChange.Id" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
             <div class="modal fade" id="adminModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
@@ -64,7 +64,7 @@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
                         <!--<input type="hidden" value="@Model.UserToChange.Id"  />-->
-                        @Html.HiddenFor(m => m.UserToChange.Id)
+                        
                     </div>
                 </div>
             </div>
@@ -167,6 +167,7 @@
     <div class="offset-sm-3 col-md-6">
         <table class="table table-striped justify-content-center">
             <h5 class="text-center">Demandes d'ouverture de compte</h5>
+            <h6 class="text-center">Suite à validation d'un utilisateur, il restera affiché ici jusqu'à ce qu'il confirme son email.</h6>
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">Nom</th>
