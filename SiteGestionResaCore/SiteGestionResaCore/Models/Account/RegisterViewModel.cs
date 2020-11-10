@@ -61,26 +61,7 @@ namespace SiteGestionResaCore.Models
         [Range(1, 100, ErrorMessage = "Selectionnez un organisme")]
         public int SelectedOrganId { get; set; }
 
-        public IEnumerable<SelectListItem> OrganItem
-        {
-            get;
-            set;
-        }
+        public IEnumerable<SelectListItem> OrganItem { get; set; }
        
-
-        /// <summary>
-        /// entete de la liste des organismes d'appartenance 
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultOrgItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Selectionner un organisme -"
-                }, count: 1);
-            }
-        }
     }
 }

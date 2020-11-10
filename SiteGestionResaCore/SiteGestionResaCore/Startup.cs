@@ -49,9 +49,9 @@ namespace SiteGestionResaCore
             services.Configure<AdminOptions>(Configuration.GetSection("MainAdmin"));
 
             services.AddControllersWithViews()
-#if DEBUG
-                .AddRazorRuntimeCompilation()
-#endif
+            #if DEBUG
+                .AddRazorRuntimeCompilation() // Si on est en debug et que on fait des changements sur une vue en cliquant f5 on peut recharger la page!
+            #endif
                 ;
         }
 

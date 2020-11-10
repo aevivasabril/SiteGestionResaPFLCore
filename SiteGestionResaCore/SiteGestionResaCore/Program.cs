@@ -28,6 +28,7 @@ namespace SiteGestionResaCore
                 {
                     await db.Database.MigrateAsync();// Vérifie les changements sur la BDD prod et dev et le mettre à jour 
                 
+                    // Me rajouter dans les rôles Admin et MainAdmin par défaut
                     IOptions<AdminOptions> options = scope.ServiceProvider.GetRequiredService<IOptions<AdminOptions>>();
                     var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<utilisateur>>();
                     if(await UserManager.FindByEmailAsync(options.Value.email) == null)
