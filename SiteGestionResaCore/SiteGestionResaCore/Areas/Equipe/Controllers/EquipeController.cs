@@ -216,9 +216,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         [HttpPost]
         [Authorize(Roles = "MainAdmin")]
-        public ActionResult RemoveLogisticUser(int id)
+        public async Task<ActionResult> RemoveLogisticUserAsync(int id)
         {
-            EquipeResaDb.RemoveLogisticRoleAsync(id);
+            await EquipeResaDb.RemoveLogisticRoleAsync(id);
             return RedirectToAction("GestionUtilisateurs");
         }
 
