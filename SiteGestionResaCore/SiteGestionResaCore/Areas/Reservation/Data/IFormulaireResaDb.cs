@@ -24,23 +24,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         List<ld_produit_in> ObtenirList_TypeProduitEntree();
 
         List<ld_destination> ObtenirList_DestinationPro();
-
-        IEnumerable<SelectListItem> ListTypeProjetItem(List<ld_type_projet> typeProj);
-
-        IEnumerable<SelectListItem> ListFinancementItem(List<ld_financement> financement);
-
-        IEnumerable<SelectListItem> ListOrgItem(List<organisme> organismes);
-
-        IEnumerable<SelectListItem> ListRespItem(List<utilisateur> respProj);
-
-        IEnumerable<SelectListItem> ListProveItem(List<ld_provenance> provProj);
-
-        IEnumerable<SelectListItem> ListManipItem(List<utilisateur> manipulateur);
-
-        IEnumerable<SelectListItem> ListProdEntreeItem(List<ld_produit_in> produitEnt);
-
-        IEnumerable<SelectListItem> ListProvProdItem(List<ld_provenance_produit> provProduit);
-
-        IEnumerable<SelectListItem> ListDestProdItem(List<ld_destination> destProduit);
+        
     }
 }

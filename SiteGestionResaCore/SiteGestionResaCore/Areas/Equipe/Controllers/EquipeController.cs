@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using SiteGestionResaCore.Areas.Reservation.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
@@ -38,14 +39,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users, 
                 ListUsersWaiting = ListUsr.UsersWaitingValid, 
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(), 
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin)
+                UserItem = UsersItem,
+                AdminItem = AdminItem
             };
             return View(vm);
         }
@@ -56,14 +69,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserItem = UsersItem,
+                AdminItem = AdminItem,
                 UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalState = "show";
@@ -78,9 +103,32 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
-        public ActionResult AddingAdmin()
+        public async Task<ActionResult> AddingAdminAsync()
         {
-            GestionUsersViewModel vm = new GestionUsersViewModel();
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
             ViewBag.modalAdm = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -99,14 +147,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin)
+                UserItem = UsersItem,
+                AdminItem = AdminItem
             };
 
             ViewBag.modalLogic = "show";
@@ -127,14 +187,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserItem = UsersItem,
+                AdminItem = AdminItem,
                 UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
 
@@ -155,14 +227,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserItem = UsersItem,
+                AdminItem = AdminItem,
                 UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Valider"
             };
@@ -215,14 +299,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserItem = UsersItem,
+                AdminItem = AdminItem,
                 UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
                 ActionName = "Refuser"
             };
@@ -263,14 +359,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
 
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
             GestionUsersViewModel vm = new GestionUsersViewModel()
             {
                 UsersAdmin = ListAdmin,
                 ListUsers = ListUsr.Users,
                 ListUsersWaiting = ListUsr.UsersWaitingValid,
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                UserItem = EquipeResaDb.ListUsersToSelectItem(ListUsr.Users),
-                AdminItem = EquipeResaDb.ListUsersToSelectItem(ListAdmin),
+                UserItem = UsersItem,
+                AdminItem = AdminItem,
                 UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
             };
             ViewBag.modalDelete = "show";

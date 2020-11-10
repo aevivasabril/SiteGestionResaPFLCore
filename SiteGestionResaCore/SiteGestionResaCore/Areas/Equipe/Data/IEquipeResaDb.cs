@@ -16,8 +16,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         Task<IList<utilisateur>> ObtenirUsersLogisticAsync();
 
-        IEnumerable<SelectListItem> ListUsersToSelectItem(List<utilisateur> utilisateurs);
-
         utilisateur ObtenirUtilisateur(int id);
 
         Task ChangeAccesToUser(int id);

@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SiteGestionResaCore.Data;
-using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
@@ -112,7 +108,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste pour le type de projet
 
-        private List<ld_type_projet> _listeTypeProjet = new List<ld_type_projet>();
+        /*private List<ld_type_projet> _listeTypeProjet = new List<ld_type_projet>();
         /// <summary>
         /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les types de projet
         /// </summary>
@@ -120,7 +116,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeTypeProjet; }
             set { _listeTypeProjet = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item selectionné pour le type projet
@@ -128,19 +124,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Display(Name = "Type de projet")]
         public int SelectTypeProjetId { get; set; }
 
-        private IEnumerable<SelectListItem> _typeProjetItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> TypeProjetItem
-        {
-            get { return _typeProjetItem; }
-            set { _typeProjetItem = value; }
-        }
+        public IEnumerable<SelectListItem> TypeProjetItem { get; set; }
 
         #endregion
 
         #region Liste pour l'origine financement
 
-        private List<ld_financement> _listeFinancement;
+        /*private List<ld_financement> _listeFinancement;
         /// <summary>
         /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les types de financement
         /// </summary>
@@ -148,7 +138,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeFinancement; }
             set { _listeFinancement = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item selectionnée pour le type de financement
@@ -168,7 +158,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des organismes
 
-        private List<organisme> _listeOrganismes;
+        /*private List<organisme> _listeOrganismes;
         /// <summary>
         /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les noms des organismes STLO
         /// </summary>
@@ -176,7 +166,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeOrganismes; }
             set { _listeOrganismes = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item selectionné pour le organisme
@@ -196,7 +186,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des utilisateurs pour selection du responsable projet (uniquement utilisateurs avec un compte valide)
 
-        private List<utilisateur> _usersWithAccess;
+        /*private List<utilisateur> _usersWithAccess;
         /// <summary>
         /// Liste des utilisateurs avec un compte valide
         /// </summary>
@@ -204,7 +194,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _usersWithAccess; }
             set { _usersWithAccess = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item de la liste des responsables projet
@@ -258,7 +248,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des options provenance projet
 
-        private List<ld_provenance> _listeProvenance;
+        /*private List<ld_provenance> _listeProvenance;
         /// <summary>
         /// Liste des options pour provenance projet à partir de la base de données 
         /// </summary>
@@ -266,7 +256,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeProvenance; }
             set { _listeProvenance = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item de la liste provenance projet
@@ -347,7 +337,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des produits entrée
 
-        private List<ld_produit_in> _listeProduitsIn;
+        /*private List<ld_produit_in> _listeProduitsIn;
         /// <summary>
         /// Liste des options pour le type produit en entrée à partir de la base de données 
         /// </summary>
@@ -355,7 +345,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeProduitsIn; }
             set { _listeProduitsIn = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item de la liste type produit d'entrée essai
@@ -387,7 +377,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des provenances produits
 
-        private List<ld_provenance_produit> _listeProvenanceProduit;
+        /*private List<ld_provenance_produit> _listeProvenanceProduit;
         /// <summary>
         /// Liste des options pour indiquer la provenance du produit en entrée à partir de la base de données 
         /// </summary>
@@ -395,7 +385,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeProvenanceProduit; }
             set { _listeProvenanceProduit = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item de la liste provenance du produit d'entrée essai
@@ -415,7 +405,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste destination produits
 
-        private List<ld_destination> _listeDestProduit;
+        /*private List<ld_destination> _listeDestProduit;
         /// <summary>
         /// Liste des options pour la destinaison des produits sortie à partir de la base de données
         /// </summary>
@@ -423,7 +413,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             get { return _listeDestProduit; }
             set { _listeDestProduit = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id d'un item de la liste destinaison produit sortie essai
@@ -489,162 +479,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
     }
 
-    #region Model view pour la vue "PlanZonesReservation"
-    /// <summary>
-    /// View model pour la vue de selection des zones pour réservation
-    /// </summary>
-    public class ZonesReservationViewModel
-    {
-        #region Sélection des zones pour réservation 
-
-        public EnumZonesPfl EnumZones { get; set; }
-
-        private List<zone> _zones;
-        /// <summary>
-        /// Liste des zones de la plateforme récupérés à partir de la base de données
-        /// </summary>
-        public List<zone> Zones
-        {
-            get { return _zones;}
-            set { _zones = value; }
-        }
-        #endregion
-
-        private List<EquipementsParZoneViewModel> _equipementsParZone = new List<EquipementsParZoneViewModel>();
-        /// <summary>
-        /// Liste des équipements par zone déterminée à complèter après click sur une des zones
-        /// </summary>
-        public List<EquipementsParZoneViewModel> EquipementsParZone
-        {
-            get
-            {
-                return _equipementsParZone;
-            }
-            set { _equipementsParZone = value; }
-        }
-    }
-
-    #endregion
-
-    #region Model View pour la vue "EquipementsVsZone"
-    /// <summary>
-    /// View model qui répresente les équipements contenus dans une zone specifique
-    /// </summary>
-    public class EquipementsParZoneViewModel
-    {
-        /// <summary>
-        /// Nom de la zone à reserver
-        /// </summary>
-        public string NomZone { get; set; }
-
-        private List<equipement> _equipements;
-        /// <summary>
-        /// Liste des équipements par zone déterminée à complèter après click sur une des zones
-        /// </summary>
-        public List<equipement> Equipements
-        {
-            get
-            {
-                return _equipements;
-            }
-            set { _equipements = value; }
-        }
-
-        /// <summary>
-        /// Id de la zone à réserver
-        /// </summary>
-        public int IdZone { get; set; }
-
-        /// <summary>
-        /// création du model child pour le passer à la vue partielle _CalendrierEquipement (tous les réservations par équipement)
-        /// </summary>
-        public List<CalendrierEquipChildViewModel> CalendrierChildVM { get; set; }
-
-        public int IndiceChildModel { get; set; }
-
-        public int IndiceResaEquipXChild { get; set; }
-
-    }
-
-    #endregion
-
-    #region Model view pour les vues partielles "_Creneaux" et "_CalendrierEquipement"
-
-    /// <summary>
-    /// View model representant les infos sur les réservations d'un équipement specifique
-    /// </summary>
-    public class CalendrierEquipChildViewModel
-    {
-        /// <summary>
-        /// informations détaillées pour chaque jour pour une semaine ou pour une durée déterminée par l'utilisateur
-        /// </summary>
-        public List<ReservationsJour> ListResas = new List<ReservationsJour>();
-
-        /// <summary>
-        /// Objet Equipement pour affichage et applications des opérations de réservation
-        /// </summary>
-        public equipement EquipementCalendrier { get; set; }
-
-        /// <summary>
-        /// Date debut à afficher pour le planning équipement 
-        /// </summary>
-        [Required]
-        [Display(Name = "Du : ")]
-        public DateTime? DatePickerDu { get; set; }
-
-        /// <summary>
-        /// Date fin pour afficher le planning equipement 
-        /// </summary>
-        [Required]
-        [Display(Name = "Au : ")]
-        public DateTime? DatePickerAu { get; set; }
-
-        /// <summary>
-        /// Date debut pour créneau réservation
-        /// </summary>
-        [Required]
-        [Display(Name = "Date Debut : ")]
-        public DateTime? DateDebut { get; set; }
-
-        /// <summary>
-        /// Date fin pour créneau réservation
-        /// </summary>
-        [Required]
-        [Display(Name = "Date Fin : ")]
-        public DateTime? DateFin { get; set; }
-
-        /// <summary>
-        /// Définition créneau pour chaque datepicker (réservation)
-        /// </summary>
-        [Required]
-        [Display(Name = "Créneau début")]
-        public bool? DatePickerDebut_Matin { get; set; }
-
-        [Required]
-        [Display(Name = "Créneau fin")]
-        public bool? DatePickerFin_Matin { get; set; }
-
-
-        private List<ReservationTemp> _resaEquipement = new List<ReservationTemp>();
-        /// <summary>
-        /// Reservation saisie pour l'équipement 
-        /// </summary>
-        public List<ReservationTemp> ResaEquipement
-        {
-            get
-            {
-                return _resaEquipement;
-            }
-            set { _resaEquipement = value; }
-        }
-
-    }
-
-    #endregion
-
-
     #region Enum pour établir des valeurs définis
-    
+
     public enum EnumStatusEssai
     {
         WaitingValidation,
@@ -664,7 +500,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         PatesMoulage = 5,
         PatesTranchage = 6,
         Labo = 11,
-        PatesCuites = 7, 
+        PatesCuites = 7,
         PrepLait = 3,
         Membranes = 4,
         Innovation = 8,
@@ -681,5 +517,4 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         Confidentiel
     }
     #endregion
-
 }

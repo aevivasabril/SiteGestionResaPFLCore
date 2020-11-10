@@ -63,45 +63,8 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un utilisateur")]
         public int UserToUpdateId { get; set; }
 
-        private IEnumerable<SelectListItem> _userItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false }}); 
-
-        public IEnumerable<SelectListItem> UserItem
-        {
-            get { return _userItem; }
-            set { _userItem = value; }
-        }
-
-        /// <summary>
-        /// Créer une liste déroulante contenant les données à afficher sur une DropDownList
-        /// </summary>
-        /*public IEnumerable<SelectListItem> UserItem
-        {
-            get
-            {
-                var allUsrs = ListUsers.Select(f => new SelectListItem
-                {
-                    Value = f.Id.ToString(),
-                    Text = f.nom + ", "+f.prenom + "( "+ f.Email + " )"
-                });;
-                return DefaultUsrItem.Concat(allUsrs);
-            }
-        }*/
-
-        /// <summary>
-        /// Premier Item par défaut de la liste déroulante
-        /// </summary>
-        /*public IEnumerable<SelectListItem> DefaultUsrItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Selectionner un utilisateur -"
-                }, count: 1);
-            }
-        }*/
-
+        public IEnumerable<SelectListItem> UserItem { get; set; }
+                     
 
         /// <summary>
         /// Id de l'administrateur selectionné pour l'ajout dans le rôle "Logistic"
@@ -109,13 +72,8 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un administrateur")]
         public int AdminToLogisticId { get; set; }
 
-        private IEnumerable<SelectListItem> _AdminItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+        public IEnumerable<SelectListItem> AdminItem { get; set; }
 
-        public IEnumerable<SelectListItem> AdminItem
-        {
-            get { return _AdminItem; }
-            set { _AdminItem = value; }
-        }
 
         /// <summary>
         /// Nom de l'ActionResult à utiliser sur un utilisateur (refuser ou valider)

@@ -87,8 +87,10 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body" id="modalcontent">
-                            @Html.DropDownListFor(m => m.UserToUpdateId, Model.UserItem)
+                        <div class="modal-body" id="modalcontent">                           
+                            <select asp-for="UserToUpdateId" asp-items="@Model.UserItem" class="form-control">
+                                <option value="-1">- Selectionner un utilisateur -</option>
+                            </select>
                             @Html.ValidationMessageFor(m => m.UserToUpdateId, "", new { @class = "text-danger" })
                         </div>
                         <div class="modal-footer">
@@ -301,7 +303,9 @@
                             </button>
                         </div>
                         <div class="modal-body" id="modalcontent">
-                            @Html.DropDownListFor(m => m.AdminToLogisticId, Model.AdminItem)
+                            <select asp-for="AdminToLogisticId" asp-items="@Model.AdminItem" class="form-control">
+                                <option value="-1">- Selectionner un utilisateur -</option>
+                            </select>
                             @Html.ValidationMessageFor(m => m.AdminToLogisticId, "", new { @class = "text-danger" })
                         </div>
                         <div class="modal-footer">

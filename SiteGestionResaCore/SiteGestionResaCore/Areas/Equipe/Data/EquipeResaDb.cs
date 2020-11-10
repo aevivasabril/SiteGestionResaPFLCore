@@ -86,20 +86,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         }
 
-        public IEnumerable<SelectListItem> ListUsersToSelectItem(List<utilisateur> utilisateurs)
-        {
-            var DefaultUsrItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Selectionner un utilisateur -" }, count: 1);
-
-            var allUsrs = utilisateurs.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-
-            return DefaultUsrItem.Concat(allUsrs);
-        }
-
+       
         /// <summary>
         /// obtenir un utilisateur à partir de son ID
         /// </summary>

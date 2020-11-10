@@ -57,29 +57,39 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 @Html.LabelFor(m => m.SelectTypeProjetId, new { @class = "col-md-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectTypeProjetId, Model.TypeProjetItem, new { @class = "form-control" })
+                <select asp-for="SelectTypeProjetId" asp-items="@Model.TypeProjetItem" class="form-control">
+                    <option value="-1">- Type de projet -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectTypeProjetId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-md-4">
                 @Html.LabelFor(m => m.SelectFinancementId, new { @class = "col-md-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectFinancementId, Model.TypefinancementItem, new { @class = "form-control" })
+                <select asp-for="SelectFinancementId" asp-items="@Model.TypefinancementItem" class="form-control">
+                    <option value="-1">- Type de financement -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectFinancementId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-md-4">
                 @Html.LabelFor(m => m.SelectedOrganId, new { @class = "col-md-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectedOrganId, Model.OrganItem, new { @class = "form-control" })
+                <select asp-for="SelectedOrganId" asp-items="@Model.OrganItem" class="form-control">
+                    <option value="-1">- Organisme -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedOrganId, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
                 @Html.LabelFor(m => m.SelectedRespProjId, new { @class = "col-md-5 col-lg-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectedRespProjId, Model.RespProjItem, new { @class = "form-control" })
+                <select asp-for="SelectedRespProjId" asp-items="@Model.RespProjItem" class="form-control">
+                    <option value="-1">- Responsable projet -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedRespProjId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-md-6">
                 @Html.LabelFor(m => m.SelectedProvenanceId, new { @class = "col-md-5 col-lg-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectedProvenanceId, Model.ProvenanceItem, new { @class = "form-control" })
+                <select asp-for="SelectedProvenanceId" asp-items="@Model.ProvenanceItem" class="form-control">
+                    <option value="-1">- Provenance projet -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedProvenanceId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -114,7 +124,9 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 @Html.LabelFor(m => m.SelectedManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
-                @Html.DropDownListFor(m => m.SelectedManipulateurID, Model.ManipProjItem, new { @class = "form-control" })
+                <select asp-for="SelectedManipulateurID" asp-items="@Model.ManipProjItem" class="form-control">
+                    <option value="-1">- Manipulateur essai -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedManipulateurID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -122,7 +134,9 @@
         <div class="form-row">
             <div class="form-group col-md-5">
                 @Html.LabelFor(m => m.SelectedProductId, new { @class = "col-md-7 control-label" })
-                @Html.DropDownListFor(m => m.SelectedProductId, Model.ProductItem, new { @class = "form-control" })
+                <select asp-for="SelectedProductId" asp-items="@Model.ProductItem" class="form-control">
+                    <option value="-1">- Produit d'entrée -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedProductId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-md-7">
@@ -139,14 +153,18 @@
             </div>
             <div class="form-group col-md-7">
                 @Html.LabelFor(m => m.SelectedProveProduitId, new { @class = "col-md-4 col-lg-7 control-label" })
-                @Html.DropDownListFor(m => m.SelectedProveProduitId, Model.ProvenanceProduitItem, new { @class = "form-control" })
+                <select asp-for="SelectedProveProduitId" asp-items="@Model.ProvenanceProduitItem" class="form-control">
+                    <option value="-1">- Provenance produit entrée -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedProveProduitId, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-5">
                 @Html.LabelFor(m => m.SelectedDestProduit, new { @class = "col-md-4 col-lg-7 control-label" })
-                @Html.DropDownListFor(m => m.SelectedDestProduit, Model.DestProduitItem, new { @class = "form-control" })
+                <select asp-for="SelectedDestProduit" asp-items="@Model.DestProduitItem" class="form-control">
+                    <option value="-1">- Destinaison produit sortie -</option>
+                </select>
                 @Html.ValidationMessageFor(m => m.SelectedDestProduit, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-md-7">
@@ -202,7 +220,9 @@
                     </button>
                 </div>
                 <div class="modal-body" id="modalcontent">
-                    @Html.DropDownListFor(m => m.SelectedEssaiId, Model.EssaiItem, new { @class = " col-md-10 form-control" })
+                    <select asp-for="SelectedEssaiId" asp-items="@Model.EssaiItem" class="col-md-10 form-control">
+                        <option value="-1">- Liste des essais -</option>
+                    </select>
                     @Html.ValidationMessageFor(m => m.SelectedEssaiId, "", new { @class = "text-danger" })
                     @Html.HiddenFor(model => model.NumProjet)
                     <hr />

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
@@ -46,34 +47,79 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         // GET: Reservation/Reservation
         public ActionResult FormulaireProjet()
         {
-            List<ld_type_projet> ListeTypeProj = formDb.ObtenirList_TypeProjet();
-            List<ld_financement> ListFinancProj = formDb.ObtenirList_Financement();
-            List<organisme> ListeOrga = formDb.ObtenirListOrg();
             List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
-            List<ld_provenance> ListeProvProj = formDb.ObtenirList_ProvenanceProjet();
-            List<ld_produit_in> ListeProdEntree = formDb.ObtenirList_TypeProduitEntree();
-            List<ld_provenance_produit> ListProvProd = formDb.ObtenirList_ProvenanceProduit();
-            List<ld_destination> ListDestProd = formDb.ObtenirList_DestinationPro();
+
+            var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_type_projet
+            });
+
+            var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_financement
+            });
+
+            // Création d'une liste Dropdownlist contenant les types d'organismes
+            var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_organisme
+            });
+
+            var usersList = listUsersAcces.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
+            });
+
+            // Création d'une liste de provenance projet (dropdownlist)
+            var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_provenance
+            });
+
+            // Création d'une liste utilisateurs "manipulateur" de l'essai
+            var usersManip = listUsersAcces.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
+            });
+
+            // Création d'une liste dropdownlist pour le type produit entrée
+            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_produit_in
+            });
+
+            // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_provenance_produit
+            });
+
+            // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_destination
+            });
 
             FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
             {
-                ListeTypeProjet = ListeTypeProj,
-                TypeProjetItem = formDb.ListTypeProjetItem(ListeTypeProj),
-                ListeFinancement = ListFinancProj,
-                TypefinancementItem = formDb.ListFinancementItem(ListFinancProj),
-                ListeOrganismes = ListeOrga,
-                OrganItem = formDb.ListOrgItem(ListeOrga),
-                UsersWithAccess = listUsersAcces,
-                RespProjItem = formDb.ListRespItem(listUsersAcces),
-                ListeProvenance = ListeProvProj, 
-                ProvenanceItem = formDb.ListProveItem(ListeProvProj),
-                ManipProjItem = formDb.ListManipItem(listUsersAcces),
-                ListeProduitsIn = ListeProdEntree,
-                ProductItem = formDb.ListProdEntreeItem(ListeProdEntree),
-                ListeProvenanceProduit = ListProvProd,
-                ProvenanceProduitItem = formDb.ListProvProdItem(ListProvProd),
-                ListeDestProduit = ListDestProd,
-                DestProduitItem = formDb.ListDestProdItem(ListDestProd)
+                TypeProjetItem = typeProj,
+                TypefinancementItem = finanItem,
+                OrganItem = allOrgs,
+                RespProjItem = usersList,
+                ProvenanceItem = provProj,
+                ManipProjItem = usersManip,
+                ProductItem = prodEntree,
+                ProvenanceProduitItem = provProd,
+                DestProduitItem = destProd
 
             };
             return View(vm);
