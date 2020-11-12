@@ -30,12 +30,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         }
 
         // TODO: à vérifier
-        public reservation_projet CreationReservation(equipement Equip, essai Essai, DateTime dateDebut, DateTime dateFin)
+        public reservation_projet CreationReservation(int EquipId, essai Essai, DateTime dateDebut, DateTime dateFin)
         {
             //string sqlFormattedDateDebut = dateDebut.ToString("yyyy-MM-dd HH:mm:ss.fff");
             //string sqlFormattedDateFin = dateFin.ToString("yyyy-MM-dd HH:mm:ss.fff");
             // Rajouter uniquement les ID's vers les autres tables (clé étrangere)
-            reservation_projet resa = new reservation_projet() { equipementID = Equip.id, essaiID = Essai.id, date_debut = dateDebut, date_fin = dateFin };
+            reservation_projet resa = new reservation_projet() { equipementID = EquipId, essaiID = Essai.id, date_debut = dateDebut, date_fin = dateFin };
 
             // Rajouter la clé étrangere (table equipement) vers 
             // Add this existing equipment to the new reservation_projet's "equipements" collection

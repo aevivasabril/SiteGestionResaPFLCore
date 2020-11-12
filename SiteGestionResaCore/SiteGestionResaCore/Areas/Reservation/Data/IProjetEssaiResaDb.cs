@@ -41,6 +41,5 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         void UpdateEssai(essai Essai, DateTime dateInf, DateTime dateSup);
 
-        IEnumerable<SelectListItem> ListEssaisToSelectItem(List<EssaiUtilisateur> essais);
     }
 }

@@ -8,7 +8,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 {
     public interface IReservationDb
     {
-        reservation_projet CreationReservation(equipement Equip, essai Essai, DateTime dateDebut, DateTime dateFin);
+        reservation_projet CreationReservation(int EquipId, essai Essai, DateTime dateDebut, DateTime dateFin);
 
         ReservationsJour ObtenirReservationsJourEssai(DateTime dateResa, int IdEquipement);
     }

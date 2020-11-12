@@ -20,16 +20,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public bool ProjetValide { get; set; }
 
-        private List<EssaiUtilisateur> _essaiUtilisateur = new List<EssaiUtilisateur>();
-        /// <summary>
-        /// Liste des essais + manipulateur
-        /// </summary>
-        public List<EssaiUtilisateur> EssaiUtilisateur
-        {
-            get { return _essaiUtilisateur; }
-            set { _essaiUtilisateur = value; }
-        }
-
         /// <summary>
         /// Id de l'essai selectionné à partir du dropdownlist 
         /// </summary>
@@ -38,47 +28,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public int SelectedEssaiId { get; set; }
 
 
-        public IEnumerable<SelectListItem> EssaiItem
-        {
-            get; 
-            set; 
-        }
-
-
-        // TODO: Essayer de mettre une date de réservation plutôt que la date de création à voir si possible
-        /// <summary>
-        /// Création d'une liste des item avec des détails d'un essai
-        /// </summary>
-        /*public IEnumerable<SelectListItem> EssaiItem
-        {
-            get
-            {
-                    
-                var allOrgs = EssaiUtilisateur.Select(f => new SelectListItem
-                {
-                    Value = f.CopieEssai.id.ToString(),
-                    Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom +", "+ f.user.prenom + " - Commentaire essai: " +
-                           f.CopieEssai.commentaire + " - Type produit entrant: "+ f.CopieEssai.type_produit_entrant + " -" + f.CopieEssai.quantite_produit
-                }); 
-                return DefaultEssaiItem.Concat(allOrgs);
-                
-            }
-        }
-
-        /// <summary>
-        /// Premier item par défaut de la dropdownlist copie d'essai
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultEssaiItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Sélectionnez un Essai -"
-                }, count: 1);
-            }
-        }*/
+        public IEnumerable<SelectListItem> EssaiItem { get; set; }
 
         #endregion
 
@@ -89,13 +39,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Titre du projet
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Champ 'Titre projet' requis")]
         [Display(Name = "Titre Projet*")]
         [RegularExpression(@"^[\w][^\/;\\.!:*?,]*$", ErrorMessage = "Le format est incorrect, evitez les caractères suivants:  /;\\.!:*?,")]
         public string TitreProjet { get; set; }
 
         // Numero du projet au format (12-345)
-        [Required]
+        [Required(ErrorMessage = "Champ 'Numéro de projet' requis")]
         [Display(Name = "Numéro de projet* (Ex format: 12-345)")] // il faut respecter le numéro 
         [RegularExpression(@"^[0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
         public string NumProjet { get; set; }
@@ -107,16 +57,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public string DescriptionProjet { get; set; }
 
         #region Liste pour le type de projet
-
-        /*private List<ld_type_projet> _listeTypeProjet = new List<ld_type_projet>();
-        /// <summary>
-        /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les types de projet
-        /// </summary>
-        public List<ld_type_projet> ListeTypeProjet
-        {
-            get { return _listeTypeProjet; }
-            set { _listeTypeProjet = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item selectionné pour le type projet
@@ -130,43 +70,17 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste pour l'origine financement
 
-        /*private List<ld_financement> _listeFinancement;
-        /// <summary>
-        /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les types de financement
-        /// </summary>
-        public List<ld_financement> ListeFinancement
-        {
-            get { return _listeFinancement; }
-            set { _listeFinancement = value; }
-        }*/
-
         /// <summary>
         /// Id d'un item selectionnée pour le type de financement
         /// </summary>
         [Display(Name = "Origine Financement")]
         public int SelectFinancementId { get; set; }
 
-        private IEnumerable<SelectListItem> _typeFinancItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> TypefinancementItem
-        {
-            get { return _typeFinancItem; }
-            set { _typeFinancItem = value; }
-        }
+        public IEnumerable<SelectListItem> TypefinancementItem { get; set;}
 
         #endregion
 
         #region Liste des organismes
-
-        /*private List<organisme> _listeOrganismes;
-        /// <summary>
-        /// Liste obtenu à partir d'une table dans la base de données contenant les valeurs pour les noms des organismes STLO
-        /// </summary>
-        public List<organisme> ListeOrganismes
-        {
-            get { return _listeOrganismes; }
-            set { _listeOrganismes = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item selectionné pour le organisme
@@ -174,27 +88,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Display(Name = "Nom de l'entreprise si privé")]
         public int SelectedOrganId { get; set; }
 
-        private IEnumerable<SelectListItem> _organItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> OrganItem
-        {
-            get { return _organItem; }
-            set { _organItem = value; }
-        }
+        public IEnumerable<SelectListItem> OrganItem { get; set;}
 
         #endregion
 
         #region Liste des utilisateurs pour selection du responsable projet (uniquement utilisateurs avec un compte valide)
-
-        /*private List<utilisateur> _usersWithAccess;
-        /// <summary>
-        /// Liste des utilisateurs avec un compte valide
-        /// </summary>
-        public List<utilisateur> UsersWithAccess
-        {
-            get { return _usersWithAccess; }
-            set { _usersWithAccess = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item de la liste des responsables projet
@@ -204,59 +102,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un responsable projet")]
         public int SelectedRespProjId { get; set; }
 
-        private IEnumerable<SelectListItem> _respProjItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> RespProjItem
-        {
-            get { return _respProjItem; }
-            set { _respProjItem = value; }
-        }
-
-
-        /// <summary>
-        /// Création d'une liste des responsables projet (dropdownlist)
-        /// </summary>
-        /*public IEnumerable<SelectListItem> RespProjItem
-        {
-            get
-            {
-                var allOrgs = UsersWithAccess.Select(f => new SelectListItem
-                {
-                    Value = f.Id.ToString(),
-                    Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
-                }); ;
-                return DefaultRespItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        /// Entête de la liste pour selectionner un organisme
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultRespItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Sélectionnez un responsable -"
-                }, count: 1);
-            }
-        }*/
+        public IEnumerable<SelectListItem> RespProjItem { get; set; }
 
         #endregion
 
         #region Liste des options provenance projet
-
-        /*private List<ld_provenance> _listeProvenance;
-        /// <summary>
-        /// Liste des options pour provenance projet à partir de la base de données 
-        /// </summary>
-        public List<ld_provenance> ListeProvenance
-        {
-            get { return _listeProvenance; }
-            set { _listeProvenance = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item de la liste provenance projet
@@ -264,13 +114,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Display(Name = "Provenance projet")]
         public int SelectedProvenanceId { get; set; }
 
-        private IEnumerable<SelectListItem> _provenanceItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> ProvenanceItem
-        {
-            get { return _provenanceItem; }
-            set { _provenanceItem = value; }
-        }
+        public IEnumerable<SelectListItem> ProvenanceItem { get; set; }
 
         #endregion
 
@@ -283,7 +127,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Confidentialité du projet (restreint, ouvert ou confidentiel)
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Champ 'Confidentialité' requis")]
         [Display(Name = "Confidentialité: *")]
         public string ConfidentialiteEssai { get; set; }
 
@@ -295,57 +139,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
         public int SelectedManipulateurID { get; set; }
 
-        private IEnumerable<SelectListItem> _manipProjItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+        public IEnumerable<SelectListItem> ManipProjItem { get; set; }
 
-        public IEnumerable<SelectListItem> ManipProjItem
-        {
-            get { return _manipProjItem; }
-            set { _manipProjItem = value; }
-        }
-
-        /// <summary>
-        /// Création d'une liste utilisateurs "manipulateur" de l'essai
-        /// </summary>
-        /*public IEnumerable<SelectListItem> ManipProjItem
-        {
-            get
-            {
-                var allOrgs = UsersWithAccess.Select(f => new SelectListItem
-                {
-                    Value = f.Id.ToString(),
-                    Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
-                }); ;
-                return DefaultManipItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        /// Entete de la liste des utilisateurs "manipulateurs" pour un essai
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultManipItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Sélectionnez un Manipulateur -"
-                }, count: 1);
-            }
-        }*/
         #endregion
 
         #region Liste des produits entrée
-
-        /*private List<ld_produit_in> _listeProduitsIn;
-        /// <summary>
-        /// Liste des options pour le type produit en entrée à partir de la base de données 
-        /// </summary>
-        public List<ld_produit_in> ListeProduitsIn
-        {
-            get { return _listeProduitsIn; }
-            set { _listeProduitsIn = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item de la liste type produit d'entrée essai
@@ -353,14 +151,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Display(Name = "Type de produit d'entrée")]
         public int SelectedProductId { get; set; }
 
-        private IEnumerable<SelectListItem> _productItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> ProductItem
-        {
-            get { return _productItem; }
-            set { _productItem = value; }
-        }
-
+        public IEnumerable<SelectListItem> ProductItem { get; set; }
 
         #endregion
         /// <summary>
@@ -377,43 +168,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des provenances produits
 
-        /*private List<ld_provenance_produit> _listeProvenanceProduit;
-        /// <summary>
-        /// Liste des options pour indiquer la provenance du produit en entrée à partir de la base de données 
-        /// </summary>
-        public List<ld_provenance_produit> ListeProvenanceProduit
-        {
-            get { return _listeProvenanceProduit; }
-            set { _listeProvenanceProduit = value; }
-        }*/
-
         /// <summary>
         /// Id d'un item de la liste provenance du produit d'entrée essai
         /// </summary>
         [Display(Name = "Provenance produit")]
         public int SelectedProveProduitId { get; set; }
 
-        private IEnumerable<SelectListItem> _provenanceProduitItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
+        public IEnumerable<SelectListItem> ProvenanceProduitItem { get; set; }
 
-        public IEnumerable<SelectListItem> ProvenanceProduitItem
-        {
-            get { return _provenanceProduitItem; }
-            set { _provenanceProduitItem = value; }
-        }
 
         #endregion
 
         #region Liste destination produits
-
-        /*private List<ld_destination> _listeDestProduit;
-        /// <summary>
-        /// Liste des options pour la destinaison des produits sortie à partir de la base de données
-        /// </summary>
-        public List<ld_destination> ListeDestProduit
-        {
-            get { return _listeDestProduit; }
-            set { _listeDestProduit = value; }
-        }*/
 
         /// <summary>
         /// Id d'un item de la liste destinaison produit sortie essai
@@ -421,51 +187,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         [Display(Name = "Destination produits ")]
         public int SelectedDestProduit { get; set; }
 
-        private IEnumerable<SelectListItem> _destProduitItem = new SelectList(new[] { new SelectListItem { Text = " ", Value = " ", Selected = false } });
-
-        public IEnumerable<SelectListItem> DestProduitItem
-        {
-            get { return _destProduitItem; }
-            set { _destProduitItem = value; }
-        }
-
-        /// <summary>
-        /// Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
-        /// </summary>
-        /*public IEnumerable<SelectListItem> DestProduitItem
-        {
-            get
-            {
-                var allOrgs = ListeDestProduit.Select(f => new SelectListItem
-                {
-                    Value = f.id.ToString(),
-                    Text = f.nom_destination
-                });
-                return DefaultDestProItem.Concat(allOrgs);
-            }
-        }
-
-        /// <summary>
-        /// Entete dropdownlist destinaison produit
-        /// </summary>
-        public IEnumerable<SelectListItem> DefaultDestProItem
-        {
-            get
-            {
-                return Enumerable.Repeat(new SelectListItem
-                {
-                    Value = "-1",
-                    Text = "- Options -"
-                }, count: 1);
-            }
-        }*/
+        public IEnumerable<SelectListItem> DestProduitItem { get; set; }
 
         #endregion
 
         /// <summary>
         /// string à true ou false pour indiquer si le transport depend du STLO ou Autre
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Champ 'Transport' requis")]
         [Display(Name = "Transport assuré par*: ")]
         public string TransportSTLO { get; set; }
 

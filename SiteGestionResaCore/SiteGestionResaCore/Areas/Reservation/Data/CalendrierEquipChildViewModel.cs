@@ -5,9 +5,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
 {
-    #region Model View pour la vue "EquipementsVsZone"
-
-    #endregion
 
     #region Model view pour les vues partielles "_Creneaux" et "_CalendrierEquipement"
 
@@ -24,8 +21,23 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Objet Equipement pour affichage et applications des opérations de réservation
         /// </summary>
-        public equipement EquipementCalendrier { get; set; }
+        //public EquipementViewModel EquipementCalendrier { get; set; }
 
+        #region Informations sur l'équipement concerné
+
+        // id equipement calendrier view model
+        public int idEquipement { get; set; }
+
+        // nom equipement calendrier view model
+        public string nomEquipement { get; set; }
+
+        // num GMAO calendrier view model
+        public string numGmaoEquipement { get; set; }
+
+        // TODO: vois si ce serait utile (je pense que non!) zone id calendrier view model
+        public int zoneIDEquipement { get; set; }
+
+        #endregion  
         /// <summary>
         /// Date debut à afficher pour le planning équipement 
         /// </summary>

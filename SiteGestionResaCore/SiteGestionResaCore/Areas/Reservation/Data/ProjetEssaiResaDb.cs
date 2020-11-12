@@ -412,21 +412,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             context.SaveChanges();
         }
 
-        public IEnumerable<SelectListItem> ListEssaisToSelectItem(List<EssaiUtilisateur> essais)
-        {
-            // Premier item par défaut de la dropdownlist copie d'essai
-            var DefaultEssaiItem = Enumerable.Repeat(new SelectListItem { Value = "-1", Text = "- Sélectionnez un Essai -" }, count: 1);
-            // Création d'une liste des item avec des détails d'un essai
-            var allOrgs = essais.Select(f => new SelectListItem
-            {
-                Value = f.CopieEssai.id.ToString(),
-                Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom + ", " + f.user.prenom + " - Commentaire essai: " +
-                           f.CopieEssai.commentaire + " - Type produit entrant: " + f.CopieEssai.type_produit_entrant + " -" + f.CopieEssai.quantite_produit
-            });
-            return DefaultEssaiItem.Concat(allOrgs);
-        }
-
-
-        
+               
     }
 }

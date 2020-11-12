@@ -221,7 +221,7 @@
                 </div>
                 <div class="modal-body" id="modalcontent">
                     <select asp-for="SelectedEssaiId" asp-items="@Model.EssaiItem" class="col-md-10 form-control">
-                        <option value="-1">- Liste des essais -</option>
+                        <option value="-1">- Sélectionnez un essai -</option>
                     </select>
                     @Html.ValidationMessageFor(m => m.SelectedEssaiId, "", new { @class = "text-danger" })
                     @Html.HiddenFor(model => model.NumProjet)

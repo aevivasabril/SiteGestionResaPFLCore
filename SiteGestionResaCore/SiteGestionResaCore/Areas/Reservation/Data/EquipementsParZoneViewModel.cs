@@ -18,7 +18,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public string NomZone { get; set; }
 
-        private List<equipement> _equipements;
+        /*private List<equipement> _equipements;
         /// <summary>
         /// Liste des équipements par zone déterminée à complèter après click sur une des zones
         /// </summary>
@@ -29,7 +29,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 return _equipements;
             }
             set { _equipements = value; }
-        }
+        }*/
 
         /// <summary>
         /// Id de la zone à réserver

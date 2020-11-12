@@ -11,12 +11,12 @@
 
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
-@for (int i = 0; i < Model.Equipements.Count(); i++)
+@for (int i = 0; i < Model.CalendrierChildVM.Count(); i++)
 {
     <div class="form-row">
         <div class="col-sm-8 col-md-8">
             <div class="checkbox">
-                <strong>@Html.Label(Model.Equipements[i].nom + "( Num GMAO: " + Model.Equipements[i].numGmao + " )" + Model.Equipements[i].id)</strong>
+                <strong>@Html.Label(Model.CalendrierChildVM[i].nomEquipement + "( Num GMAO: " + Model.CalendrierChildVM[i].numGmaoEquipement + " )" + Model.CalendrierChildVM[i].idEquipement)</strong>
             </div>
             <div class="row">
                 <div class="col-sm-6 col-md-6">
@@ -29,19 +29,19 @@
         </div>
         <br />
         <div class="col-sm-4 col-md-4">
-            <a class="btn-link" href="#" onclick="showCalendar(@Model.Equipements[i].id.ToString())">Voir disponibilité</a>
+            <a class="btn-link" href="#" onclick="showCalendar(@Model.CalendrierChildVM[i].idEquipement.ToString())">Voir disponibilité</a>
         </div>
         <br />
         <div class="row">
             <div class="col-sm-12 col-md-12">
-                <div id="@Model.Equipements[i].id.ToString()" class="hide" style="display:none">
+                <div id="@Model.CalendrierChildVM[i].idEquipement.ToString()" class="hide" style="display:none">
                     <div class="form-group row">
                         <hr />
                         <div class="row">
                             <div class="col-sm-10 col-md-10">
                                 <form asp-action="AfficherPlanning" asp-controller="Reservation" method="post">
                                     <partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                                    @Html.HiddenFor(m => m.CalendrierChildVM[i].EquipementCalendrier.id, new { equipementId = Model.CalendrierChildVM[i].EquipementCalendrier.id})
+                                    @Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement})
                                 </form>
                             </div>
                         </div>
@@ -50,7 +50,7 @@
                     <div id="cren-content">
                         <form asp-action="AjouterResa" asp-controller="Reservation" method="post">
                             <partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                            @Html.HiddenFor(m => m.CalendrierChildVM[i].EquipementCalendrier.id, new { equipementId = Model.CalendrierChildVM[i].EquipementCalendrier.id })
+                            @Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })
                         </form>
                     </div>
                 </div>
@@ -77,12 +77,12 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Equipements.Count(); i++)
+                @for (int i = 0; i < Model.CalendrierChildVM.Count(); i++)
                 {
                     for (int j = 0; j < Model.CalendrierChildVM[i].ResaEquipement.Count(); j++)
                     {
                         <tr>
-                            <th scope="row">@Model.Equipements[i].nom (N° GMAO: @Model.Equipements[i].numGmao )</th>
+                            <th scope="row">@Model.CalendrierChildVM[i].nomEquipement (N° GMAO: @Model.CalendrierChildVM[i].numGmaoEquipement)</th>
                             <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_debut.ToShortDateString()</td>
                             <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_fin.ToShortDateString()</td>
                             <td>@Model.CalendrierChildVM[i].ResaEquipement[j].date_debut.ToShortTimeString()</td>

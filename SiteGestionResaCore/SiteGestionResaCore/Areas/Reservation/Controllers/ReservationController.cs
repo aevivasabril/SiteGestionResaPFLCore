@@ -178,11 +178,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Obtenir le ID d'authentification AspNet
             var user = await userManager.FindByIdAsync(User.GetUserId());
             bool propProjetOk = false;
+            bool projetValideOk = false;
             // récupérer les projets pour le numéro saisie
 
-            model.ProjetValide = projetEssaiDb.ProjetExists(model.NumProjet);
+            projetValideOk = projetEssaiDb.ProjetExists(model.NumProjet);
             
-            if (!model.ProjetValide)
+            if (!projetValideOk)
             {
                 ViewBag.Message = " Ce numéro de projet n'existe pas";
             }
@@ -191,10 +192,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 propProjetOk = await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user);
                 if (propProjetOk)
                 {
-                    List<EssaiUtilisateur> listEssaiUsr = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet);
                     ViewBag.Message = "";
-                    model.EssaiUtilisateur = listEssaiUsr;
-                    model.EssaiItem = projetEssaiDb.ListEssaisToSelectItem(listEssaiUsr);
+                    // Création d'une liste des item avec des détails d'un essai
+                    model.EssaiItem = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet).Select(f => new SelectListItem
+                    {
+                        Value = f.CopieEssai.id.ToString(),
+                        Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom +
+                        ", " + f.user.prenom + " - Commentaire essai: " + f.CopieEssai.commentaire +
+                        " - Type produit entrant: " + f.CopieEssai.type_produit_entrant + " -" + f.CopieEssai.quantite_produit
+                    });
+
                 }
                 else
                 {
@@ -288,7 +295,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //reservationsSemEquipement = DonneesCalendrier(equipements[i].Id);
                 reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null);
                 calenChild.ListResas = reservationsSemEquipement;
-                calenChild.EquipementCalendrier = zoneEquipDb.GetEquipement(equipements[i].id);
+                calenChild.idEquipement = equipements[i].id;
+                calenChild.nomEquipement = equipements[i].nom;
+                calenChild.numGmaoEquipement = equipements[i].numGmao;
+                calenChild.zoneIDEquipement = equipements[i].zoneID.Value;
+                //calenChild.EquipementCalendrier = zoneEquipDb.GetEquipement(equipements[i].id);
                 //calenChild.zoneID = id.Value;
                 //calenChild.NomEquip = equipements[i].nom;
                 // 3. Rajouter cela dans une liste contenant les données des équipements
@@ -300,7 +311,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Initialisation du view model pour la vue avec les valeurs obtenus ci-dessus
             EquipementsParZoneViewModel vm = new EquipementsParZoneViewModel()
             {
-                Equipements = equipements,
+                //Equipements = equipements,
                 NomZone = zoneEquipDb.GetNomZone(id.Value),
                 IdZone = id.Value,
                 CalendrierChildVM = PlanningEquipements
@@ -341,7 +352,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
                     for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
                     {
-                        if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == equipementId)
+                        if (equipementZone.CalendrierChildVM[i].idEquipement == equipementId)
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
                             reservationsEquipement = DonneesCalendrierEquipement(false, equipementId, model.DatePickerDu, model.DatePickerAu);
@@ -377,11 +388,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Initialiser le calendrierChildModel de l'équipement sur le model de la vue parent avant toutes les opérations
             for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
             {     
-                if (equipementZone.CalendrierChildVM[i].EquipementCalendrier.id == equipementId)
+                if (equipementZone.CalendrierChildVM[i].idEquipement== equipementId)
                 {
                     #region Compléter le model "CalendrierEquipChildViewModel" avec le model "EquipementsParZoneViewModel"
 
-                    model.EquipementCalendrier = equipementZone.CalendrierChildVM[i].EquipementCalendrier;
+                    model.idEquipement = equipementZone.CalendrierChildVM[i].idEquipement;
+                    model.nomEquipement = equipementZone.CalendrierChildVM[i].nomEquipement;
+                    model.numGmaoEquipement = equipementZone.CalendrierChildVM[i].numGmaoEquipement;
+                    model.zoneIDEquipement = equipementZone.CalendrierChildVM[i].zoneIDEquipement;
+                    //model.EquipementCalendrier = equipementZone.CalendrierChildVM[i].EquipementCalendrier;
                     //model.equiID = idEquip;
                     //model.NomEquip = resaBdd.GetNomEquipement(idEquip);
                     model.ListResas = equipementZone.CalendrierChildVM[i].ListResas;
@@ -684,7 +699,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                         for (int y = 0; y < zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
                         {
-                            resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier,
+                            resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].idEquipement,
                                 Essai, zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut,
                                 zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin);
 
@@ -693,7 +708,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                             #region Creation d'un string contenant le récap réservation
 
-                            subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier.nom;
+                            subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement;
                             if (subNomEquip.Length >= 50)
                             {
                                 subNomEquip = subNomEquip.Substring(0, 50);
@@ -708,7 +723,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 }
                             }
 
-                            subNomEquip += " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].EquipementCalendrier.numGmao + " )";
+                            subNomEquip += " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
 
                             sb_user.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
                                 zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(), 
