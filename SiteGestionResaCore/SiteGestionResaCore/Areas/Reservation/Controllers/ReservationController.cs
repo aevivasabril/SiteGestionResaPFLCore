@@ -329,7 +329,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
 
         [HttpPost]
-        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int equipementId)
+        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
         {
             // Initialisation des variables
             List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
@@ -352,10 +352,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
                     for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
                     {
-                        if (equipementZone.CalendrierChildVM[i].idEquipement == equipementId)
+                        if (equipementZone.CalendrierChildVM[i].idEquipement == id)
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                            reservationsEquipement = DonneesCalendrierEquipement(false, equipementId, model.DatePickerDu, model.DatePickerAu);
+                            reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu, model.DatePickerAu);
                             equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
                             break;
                         }
@@ -375,7 +375,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="model">model view provenant de la vue partielle "_creneau"</param>
         /// <returns>Action result</returns>
         [HttpPost]
-        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int equipementId)
+        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int id)
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
@@ -388,7 +388,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Initialiser le calendrierChildModel de l'équipement sur le model de la vue parent avant toutes les opérations
             for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
             {     
-                if (equipementZone.CalendrierChildVM[i].idEquipement== equipementId)
+                if (equipementZone.CalendrierChildVM[i].idEquipement== id)
                 {
                     #region Compléter le model "CalendrierEquipChildViewModel" avec le model "EquipementsParZoneViewModel"
 

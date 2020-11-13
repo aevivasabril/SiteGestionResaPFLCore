@@ -11,7 +11,8 @@
                     <!--Date picker -->
                     <div class="input-group date">
                         @Html.Label("Date Début:  ")
-                        @Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })
+                        <input class="form-control" name="DateDebut" asp-for="@Model.DateDebut" type="date" />
+                        @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
                         @Html.ValidationMessageFor(m => m.DateDebut, "", new { @class = "text-danger" })
                         <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
                     </div>
@@ -31,7 +32,8 @@
                 <div class="col-sm-4 col-md-4">
                     <div class="input-group date">
                         @Html.Label("Date Fin:  ")
-                        @Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })
+                        <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
+                        @*@Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
                         @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
                         <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
                     </div>
@@ -55,6 +57,7 @@
         </div>
     </div>
 </div>
-    
+
+
 
 

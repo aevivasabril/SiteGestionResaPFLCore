@@ -42,6 +42,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Date debut à afficher pour le planning équipement 
         /// </summary>
         [Required]
+        [DataType(DataType.Date)]
+        //[DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Display(Name = "Du : ")]
         public DateTime? DatePickerDu { get; set; }
 
@@ -49,6 +51,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Date fin pour afficher le planning equipement 
         /// </summary>
         [Required]
+        [DataType(DataType.Date)]
+        //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Display(Name = "Au : ")]
         public DateTime? DatePickerAu { get; set; }
 
@@ -56,6 +60,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Date debut pour créneau réservation
         /// </summary>
         [Required]
+        [DataType(DataType.Date)]
         [Display(Name = "Date Debut : ")]
         public DateTime? DateDebut { get; set; }
 
@@ -63,6 +68,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Date fin pour créneau réservation
         /// </summary>
         [Required]
+        [DataType(DataType.Date)]
         [Display(Name = "Date Fin : ")]
         public DateTime? DateFin { get; set; }
 

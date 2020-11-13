@@ -39,18 +39,18 @@
                         <hr />
                         <div class="row">
                             <div class="col-sm-10 col-md-10">
-                                <form asp-action="AfficherPlanning" asp-controller="Reservation" method="post">
+                                <form asp-action="AfficherPlanning" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
                                     <partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                                    @Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement})
+                                    @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
                                 </form>
                             </div>
                         </div>
                     </div>
                     <hr />
                     <div id="cren-content">
-                        <form asp-action="AjouterResa" asp-controller="Reservation" method="post">
+                        <form asp-action="AjouterResa" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
                             <partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                            @Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })
+                            @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
                         </form>
                     </div>
                 </div>
@@ -138,15 +138,16 @@
  
 
 
-<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+@*<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />*@
 
 @section Scripts
 {
     <!-- JS includes -->
-    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    @*<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>*@
     <script type="text/javascript">
 
-        $('.datepick').datepicker({
+        //$('.datepick').datepicker();
+        /*$('.datepick').datepicker({
             dateFormat: "dd/mm/yy",
             firstDay: 1,
             changeMonth: true,
@@ -162,7 +163,7 @@
             dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
             dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
             weekHeader: 'Sem.'
-        });
+        });*/
 
         function showCalendar(parameter) {
             var divid = document.getElementById(parameter);
