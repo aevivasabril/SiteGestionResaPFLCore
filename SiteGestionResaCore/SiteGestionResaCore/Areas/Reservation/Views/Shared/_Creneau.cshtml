@@ -18,12 +18,14 @@
                     </div>
                 </div>
                 <div class="col-sm-3 col-md-3">
-                    @Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")
+                    <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="true" />
+                    @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")*@
                     <label class="col-md-2 control-label">Matin</label>
                     @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-sm-3 col-md-3">
-                    @Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")
+                    <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="false" />
+                    @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")*@
                     <label class="col-md-10 control-label">Après-midi</label>
                     @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
                 </div>
@@ -39,12 +41,14 @@
                     </div>
                 </div>
                 <div class="col-sm-3 col-md-3">
-                    @Html.RadioButtonFor(m => m.DatePickerFin_Matin, "true")
+                    <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
+                    @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "true")*@
                     <label class="col-md-2 control-label">Matin</label>
                     @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-sm-3 col-md-3">
-                    @Html.RadioButtonFor(m => m.DatePickerFin_Matin, "false")
+                    <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
+                    @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "false")*@
                     <label class="col-md-10 control-label">Après-midi</label>
                     @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
                 </div>

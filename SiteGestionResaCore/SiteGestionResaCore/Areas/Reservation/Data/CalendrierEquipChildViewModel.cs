@@ -77,11 +77,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required]
         [Display(Name = "Créneau début")]
-        public bool? DatePickerDebut_Matin { get; set; }
+        public string DatePickerDebut_Matin { get; set; }
 
         [Required]
         [Display(Name = "Créneau fin")]
-        public bool? DatePickerFin_Matin { get; set; }
+        public string DatePickerFin_Matin { get; set; }
 
 
         private List<ReservationTemp> _resaEquipement = new List<ReservationTemp>();

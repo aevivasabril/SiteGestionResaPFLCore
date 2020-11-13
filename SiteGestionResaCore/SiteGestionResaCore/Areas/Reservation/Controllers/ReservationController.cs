@@ -416,7 +416,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 if (equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value == equipementZone.CalendrierChildVM[indiceChild].DateFin.Value)
                 {
-                    if (model.DatePickerDebut_Matin == false && model.DatePickerFin_Matin == true)
+                    if ((Convert.ToBoolean(model.DatePickerDebut_Matin) == false) && (Convert.ToBoolean(model.DatePickerFin_Matin) == true))
                     {
                         ModelState.AddModelError("", "Si la date début et la date fin sont égales, la réservation ne peut pas commencer l'après-midi et finir le matin");
                         goto ENDT;
@@ -433,7 +433,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Etablir l'heure de début et de fin selon les créneaux choisis (Matin ou après-midi)
                     #region Définition des dates réservation avec l'heure selon le créneau choisi
                     // Definition date debut
-                    if (model.DatePickerDebut_Matin == true) // definir l'heure de début à 7h
+                    // TODO: Vérifier que la comparaison marche!
+                    if (Convert.ToBoolean(model.DatePickerDebut_Matin) == true) // definir l'heure de début à 7h
                     {
                         debutToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Year,
                             equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Day, 7, 0, 0, DateTimeKind.Local);
@@ -444,7 +445,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                                 equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Day, 13, 0, 0, DateTimeKind.Local);
                     }
                     // Definition date fin
-                    if (model.DatePickerFin_Matin == true)
+                    if (Convert.ToBoolean(model.DatePickerFin_Matin) == true)
                     {
                         finToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Year,
                             equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Day, 12, 0, 0, DateTimeKind.Local);
@@ -690,7 +691,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
 
 
-                // Créations des réservations par équipement
+                // Créations des réservations par équipement 
                 for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
                 {
                     for (int j = 0; j < zonesReservation.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
