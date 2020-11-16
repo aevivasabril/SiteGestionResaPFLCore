@@ -18,11 +18,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public List<ReservationsJour> ListResas = new List<ReservationsJour>();
 
-        /// <summary>
-        /// Objet Equipement pour affichage et applications des opérations de réservation
-        /// </summary>
-        //public EquipementViewModel EquipementCalendrier { get; set; }
-
         #region Informations sur l'équipement concerné
 
         // id equipement calendrier view model

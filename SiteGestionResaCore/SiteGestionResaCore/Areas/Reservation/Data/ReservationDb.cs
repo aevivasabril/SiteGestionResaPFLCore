@@ -165,7 +165,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         #region Bloquer l'équipement si la dateResa est dans les dates seuils rétrouvées
 
-                        if ((IsEquipInZone == true) && (dateResa.CompareTo(dateSeuilInf) >= 0) && (dateResa.CompareTo(dateSeuilSup) <= 0)) // si l'équipement est dans la zone
+                        if ((IsEquipInZone == true) && (dateResa.CompareTo(dateSeuilInf) >= 0) && (dateResa.CompareTo(dateSeuilSup) <= 0)) // si l'équipement est dans la zone et que la date enqueté est dans le seuil
                         {
                             if (dateResa.CompareTo(dateSeuilInf) == 0) // début
                             {

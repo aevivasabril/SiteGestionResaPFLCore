@@ -6,47 +6,50 @@
 <div class="container">
     <div class="form-group row">
         <div class="col-sm-8 col-md-8">
-            <div class="form-group row">
-                <div class="col-sm-4 col-md-4">
+            <div class="form-row">
+                <div class="form-group col-sm-4 col-md-4">
                     <!--Date picker -->
-                    <div class="input-group date">
-                        @Html.Label("Date Début:  ")
-                        <input class="form-control" name="DateDebut" asp-for="@Model.DateDebut" type="date" />
-                        @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
-                        @Html.ValidationMessageFor(m => m.DateDebut, "", new { @class = "text-danger" })
-                        <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
-                    </div>
+                    @Html.Label("Date Début:  ")
+                    <input class="form-control" name="DateDebut" asp-for="@Model.DateDebut" type="date" />
+                    @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
+                    @Html.ValidationMessageFor(m => m.DateDebut, "", new { @class = "text-danger" })
+                    <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
                 </div>
-                <div class="col-sm-3 col-md-3">
+                <div class="form-group col-sm-3 col-md-3">
+                    <br />
                     <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="true" />
                     @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")*@
                     <label class="col-md-2 control-label">Matin</label>
                     @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
                 </div>
-                <div class="col-sm-3 col-md-3">
+                <div class="form-group col-sm-3 col-md-3">
+                    <br />
                     <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="false" />
                     @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")*@
                     <label class="col-md-10 control-label">Après-midi</label>
                     @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-4 col-md-4">
-                    <div class="input-group date">
-                        @Html.Label("Date Fin:  ")
-                        <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
-                        @*@Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
-                        @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
-                        <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
-                    </div>
+
+            <div class="form-row">
+                <div class="form-group col-sm-4 col-md-4">
+                    @Html.Label("Date Fin:  ")
+                    <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
+                    @*@Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
+                    @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
+                    <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
                 </div>
-                <div class="col-sm-3 col-md-3">
+                <div class="form-group col-sm-3 col-md-3">
+                    <br />
                     <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
                     @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "true")*@
                     <label class="col-md-2 control-label">Matin</label>
                     @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
                 </div>
-                <div class="col-sm-3 col-md-3">
+                <div class="form-group col-sm-3 col-md-3">
+                    <br />
                     <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
                     @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "false")*@
                     <label class="col-md-10 control-label">Après-midi</label>

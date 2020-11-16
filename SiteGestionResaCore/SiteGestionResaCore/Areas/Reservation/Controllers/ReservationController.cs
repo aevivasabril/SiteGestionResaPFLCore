@@ -157,7 +157,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         return View("FormulaireProjet", model);
                     }
                 }
-                else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
+                else // si le projet n'existe pas alors l'ajouter dans la session
                 {
                     // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
                     this.HttpContext.AddToSession("FormulaireResa", model);
@@ -357,6 +357,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
                             reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu, model.DatePickerAu);
                             equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
+
+                            // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
+                            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
                             break;
                         }
                     }
@@ -379,7 +383,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
-            // Récupérer la session "EquipementZone"
+            // Récupérer la session "EquipementZone" https://stackoverflow.com/questions/27517912/persisting-information-between-two-view-requests-in-mvc (VOIR CE LIEN)
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             //EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
 
@@ -466,6 +470,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         date_fin = finToSave
                     });
 
+                    // Voir ce qu'il se passe ici!! 
+                    this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
+                    //EquipementsParZoneViewModel equip = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
                     #endregion
                 }
                 
@@ -487,6 +495,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         public ActionResult SupprimerCreneauResa(int ?i, int ?j)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
+            // TODO: Vérifier que je récupère bien tout le model complet!! 
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             // Sauvegarde des indices qui seront utilisés dans la action POST pour répérer le créneau à supprimer 
             equipementZone.IndiceChildModel = i.Value;
@@ -494,6 +503,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             // variable pour "afficher" le modal pop up de confirmation de suppression
             ViewBag.modalSupp = "show";
+            
+            // Garder la maj dans la session
+            this.HttpContext.AddToSession("EquipementZone", equipementZone);
 
             return View("EquipementVsZone", equipementZone);
         }
@@ -511,6 +523,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
             equipementZone.CalendrierChildVM[model.IndiceChildModel].ResaEquipement.RemoveAt(model.IndiceResaEquipXChild);
+
+            // Sauvegarder la maj de la session
+            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
             return View("EquipementVsZone", equipementZone);
         }
 
@@ -530,6 +546,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             //ajouter les view model equipementZone contenant les créneau dans le model des zones
             zonesReservation.EquipementsParZone.Add(equipementZone);
 
+            // Sauvegarder la mise à jour de la session
+            this.HttpContext.AddToSession("ZoneReservation", zonesReservation);
+
+
             //rediriger vers la page contenant le plan PFL
             return View("PlanZonesReservation", zonesReservation);
         }
@@ -548,6 +568,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 equipementZone.CalendrierChildVM[i].ResaEquipement.Clear();
             }
+
+            // Sauvegarder la mise à jour de la session
+            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
             // Récupérer la session "ZonesReservation" pour afficher le plan + les réservations des zones
             ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
@@ -564,6 +588,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Récupérer la session "ZonesReservation" pour afficher le plan + les réservations des zones
             ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
             zonesReservation.EquipementsParZone.Clear();
+
+            // Sauvegarder la mise à jour de la session
+            this.HttpContext.AddToSession("ZoneReservation", zonesReservation);
 
             // Récupérer la session "FormulaireProjet" pour revenir au formulaire
             FormulaireProjetViewModel formulaire = HttpContext.GetFromSession< FormulaireProjetViewModel>("FormulaireResa");
