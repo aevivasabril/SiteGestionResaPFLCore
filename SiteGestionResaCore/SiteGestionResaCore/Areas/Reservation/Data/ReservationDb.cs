@@ -130,7 +130,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             {
                                 if (EquipementPlanning.zoneID.Equals(EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp5) ||
                                     EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp8) ||
-                                    EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp9))
+                                    EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
                                 {
                                     // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
                                     Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
@@ -214,7 +214,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
-                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
+                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
                             Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
