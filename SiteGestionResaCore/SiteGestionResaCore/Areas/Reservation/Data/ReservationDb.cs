@@ -91,7 +91,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Résupérer les essais où la date enquêté est bien dans la plage de déroulement
             foreach (var es in SubInfosEssai)
             {
-                foreach (var resEs in es.reservation_projet)
+                //foreach (var resEs in es.reservation_projet)
+                foreach (var resEs in context.reservation_projet.Where(r => r.essaiID == es.id))
                 {
                     if ((dateResa.CompareTo(resEs.date_debut) >= 0) && // si dateResa est superieur à resEs.date_debut ou égal 
                         (dateResa.CompareTo(resEs.date_fin) <= 0))  // si dateResa est inferieur à resEs.date_fin ou égal
@@ -124,10 +125,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         #region Recherche des dates superieur et inferieur pour chaque essai
 
-                        foreach (var resa in ess.reservation_projet)
+                        foreach (var resa in context.reservation_projet.Where(r => r.essaiID == ess.id))
                         {
-                            if (resa.equipement.zoneID == EquipementPlanning.zoneID) // si l'équipement objet du "planning" est dans la zone concerné alors il faut le bloquer
+                            if (resa.equipement.zoneID == EquipementPlanning.zoneID) // si l'équipement objet du "planning" est dans la zone concerné
                             {
+                                // Cas 1: l'équipement est dans une des zones dont le conflit ne fait pas partie
                                 if (EquipementPlanning.zoneID.Equals(EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp5) ||
                                     EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp8) ||
                                     EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
@@ -135,7 +137,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
                                     Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
                                 }
-                                else // pour toutes les autres zones calculer la date seuil inferieur et superieur parmi toutes les réservations
+                                else // Cas 2: pour toutes les autres zones, calculer la date seuil inferieur et superieur parmi toutes les réservations(blocage de la zone)
                                 {
                                     if (IsFirstSearchOnEssai == true) // Executer que lors de la premiere réservation de la liste 
                                     {
@@ -208,13 +210,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         #endregion
 
                         break;
-                    case "Confidentiel": // Blocage de toute la plateforme sauf pour les salles alimentaires (5 zones)
+                    case "Confidentiel": // Blocage de toute la plateforme sauf pour les salles alimentaires (5 zones) et la zone equipements mobiles
 
                         #region Confidentialité "confidentiel" 
 
                         if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
-                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
+                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
                             Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
@@ -309,7 +311,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             ReservationsJour Resas = new ReservationsJour();
 
-            foreach (var resa in ess.reservation_projet)
+            foreach (var resa in context.reservation_projet.Where(r => r.essaiID == ess.id))
             {
                 if ((resa.equipementID == IdEquipement) && ((dateResa.CompareTo(resa.date_debut) >= 0) && (dateResa.CompareTo(resa.date_fin) <= 0)))
                 //((Convert.ToDateTime(dateResa.ToShortDateString()).Date >= Convert.ToDateTime(resa.date_debut.ToShortDateString()).Date) &&
