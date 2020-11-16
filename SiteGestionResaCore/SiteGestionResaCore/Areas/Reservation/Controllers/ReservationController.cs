@@ -49,65 +49,29 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
 
-            var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_type_projet
-            });
+            var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet});
 
-            var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_financement
-            });
+            var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement});
 
             // Création d'une liste Dropdownlist contenant les types d'organismes
-            var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_organisme
-            });
+            var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme});
 
-            var usersList = listUsersAcces.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
-            });
+            var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"});
 
             // Création d'une liste de provenance projet (dropdownlist)
-            var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_provenance
-            });
+            var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance});
 
             // Création d'une liste utilisateurs "manipulateur" de l'essai
-            var usersManip = listUsersAcces.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"
-            });
+            var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"});
 
             // Création d'une liste dropdownlist pour le type produit entrée
-            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_produit_in
-            });
+            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in});
 
             // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
-            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_provenance_produit
-            });
+            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit});
 
             // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
-            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem
-            {
-                Value = f.id.ToString(),
-                Text = f.nom_destination
-            });
+            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
 
             FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
             {
@@ -219,40 +183,79 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             projet pr = new projet();
             essai ess = new essai();
 
-            // nouveau model au propre pour éviter les problèmes d'initialisation? TODO voir si cela marche
-            //FormulaireProjetViewModel vm = new FormulaireProjetViewModel { }; // cela ne sert à rien finalement
+            #region Initialisation du model avec les listes formulaire
 
-            // Obtenir les infos sur mon Projet et mon essai pour les injecter dans mon model (affichage sur la vue)
+            List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+
+            var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet });
+
+            var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement });
+
+            // Création d'une liste Dropdownlist contenant les types d'organismes
+            var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme });
+
+            var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+
+            // Création d'une liste de provenance projet (dropdownlist)
+            var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance });
+
+            // Création d'une liste utilisateurs "manipulateur" de l'essai
+            var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+
+            // Création d'une liste dropdownlist pour le type produit entrée
+            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
+
+            // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
+
+            // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
+
+            FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
+            {
+                TypeProjetItem = typeProj,
+                TypefinancementItem = finanItem,
+                OrganItem = allOrgs,
+                RespProjItem = usersList,
+                ProvenanceItem = provProj,
+                ManipProjItem = usersManip,
+                ProductItem = prodEntree,
+                ProvenanceProduitItem = provProd,
+                DestProduitItem = destProd
+
+            };
+
+            #endregion
 
             // Récupérer à partir de la BDD les infos sur le projet et l'essai
             // Vérifier cette ligne suite à migration ASP NET CORE
             pr = projetEssaiDb.ObtenirProjet_pourCopie(model.NumProjet); // Provenant du HiddenFor ligne 207
             ess = projetEssaiDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
-            model.SelectTypeProjetId = projetEssaiDb.IdTypeProjetPourCopie(pr.id);
-            model.SelectFinancementId = projetEssaiDb.IdFinancementPourCopie(pr.id);
-            model.SelectedRespProjId = projetEssaiDb.IdRespoProjetPourCopie(pr.id);
-            model.SelectedProvenanceId = projetEssaiDb.IdProvenancePourCopie(pr.id);
-            model.SelectedProveProduitId = projetEssaiDb.IdProvProduitPourCopie(ess.id);
-            model.SelectedDestProduit = projetEssaiDb.IdDestProduitPourCopie(ess.id);
-            model.SelectedProductId = projetEssaiDb.IdProduitInPourCopie(ess.id);
+            vm.SelectTypeProjetId = projetEssaiDb.IdTypeProjetPourCopie(pr.id);
+            vm.SelectFinancementId = projetEssaiDb.IdFinancementPourCopie(pr.id);
+            vm.SelectedRespProjId = projetEssaiDb.IdRespoProjetPourCopie(pr.id);
+            vm.SelectedProvenanceId = projetEssaiDb.IdProvenancePourCopie(pr.id);
+            vm.SelectedProveProduitId = projetEssaiDb.IdProvProduitPourCopie(ess.id);
+            vm.SelectedDestProduit = projetEssaiDb.IdDestProduitPourCopie(ess.id);
+            vm.SelectedProductId = projetEssaiDb.IdProduitInPourCopie(ess.id);
 
             // Données à copier pour le projet
-            model.TitreProjet = pr.titre_projet;
-            model.NumProjet = pr.num_projet;
-            model.SelectedOrganId = pr.organismeID.GetValueOrDefault();
-            model.DescriptionProjet = pr.description_projet;
+            vm.TitreProjet = pr.titre_projet;
+            vm.NumProjet = pr.num_projet;
+            vm.SelectedOrganId = pr.organismeID.GetValueOrDefault();
+            vm.DescriptionProjet = pr.description_projet;
 
             // Données à copier pour l'essai
-            model.ConfidentialiteEssai = ess.confidentialite;
-            model.PrecisionProduitIn = ess.precision_produit;
-            model.QuantiteProduit = ess.quantite_produit;
-            model.CommentaireEssai = ess.commentaire;
-            model.TransportSTLO = ess.transport_stlo.ToString();
-            model.SelectedManipulateurID = ess.manipulateurID;
+            vm.ConfidentialiteEssai = ess.confidentialite;
+            vm.PrecisionProduitIn = ess.precision_produit;
+            vm.QuantiteProduit = ess.quantite_produit;
+            vm.CommentaireEssai = ess.commentaire;
+            vm.TransportSTLO = ess.transport_stlo.ToString();
+            vm.SelectedManipulateurID = ess.manipulateurID;
 
             ModelState.Clear();
 
-            return View("FormulaireProjet", model);
+            return View("FormulaireProjet", vm);
         }
 
         /// <summary>
@@ -640,8 +643,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             var success = false;
 
             // Pour faire un tableau bien organisé : https://docs.microsoft.com/fr-fr/dotnet/api/system.string.format?view=netcore-3.1
-            var sb_user = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'utilisateur
-            var sb_admin = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'administrateur
+            //var sb_user = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'utilisateur
+            //var sb_admin = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'administrateur
+
+            string messUser;
+            string mssLogis;
 
             #endregion
 
@@ -706,17 +712,39 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO, formulaire.CommentaireEssai); // TODO: pas oublier de rajouter le status  (enum dans view model)     
 
                 // Remplir le message à envoyer aux admins pour notifier la réservation
-                sb_admin.Append("Bonjour,\n\nUne demande de réservation pour le projet N° : " + Proj.num_projet + " (Essai N°: " + Essai.id + " )" + " saisie par l'utilisateur: " + Proj.mailRespProjet + " " +
-                                " vient d'être rajoutée. \n\nRécapitulatif des réservations par équipement: \n\n");
-                sb_admin.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
+                //sb_admin.Append("Bonjour,\n\nUne demande de réservation pour le projet N° : " + Proj.num_projet + " (Essai N°: " + Essai.id + " )" + " saisie par l'utilisateur: " + Proj.mailRespProjet + " " +
+                                //" vient d'être rajoutée. \n\nRécapitulatif des réservations par équipement: \n\n");
+                mssLogis = @"<html>
+                            <body> 
+                            <p> Bonjour, <br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
+                            " saisie par l'utilisateur: " + Proj.mailRespProjet + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> " 
+                            + "</p>";
+                //sb_admin.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
+
+                mssLogis += @"<table>
+                                <tr>
+                                    <th> Equipement </th>
+                                    <th> Date début </th>
+	                                <th> Date fin </th>
+                                </tr>";
+
 
                 // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
                 // possible solution pour créer une table html et la convertir en string!! https://stackoverflow.com/questions/1524105/can-i-convert-a-dynamically-created-c-sharp-table-to-a-html-string
-                sb_user.Append("Bonjour,\n\nLa demande de réservation pour le projet N° : " + formulaire.NumProjet +" (Essai N°: " + Essai.id + " )" +
-                    " est pris en compte. \n\nRécapitulatif des réservations par équipement: \n\n");
-
-                sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
-
+                //sb_user.Append("Bonjour,\n\nLa demande de réservation pour le projet N° : " + formulaire.NumProjet +" (Essai N°: " + Essai.id + " )" +
+                    //" est pris en compte. \n\nRécapitulatif des réservations par équipement: \n\n");
+                messUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
+                            " est pris en compte. " + "Récapitulatif des réservations par équipement: <br> "
+                            + "</p>";
+                //sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
+                messUser+= @"<table>
+                                <tr>
+                                    <th> Equipement </th>
+                                    <th> Date début </th>
+	                                <th> Date fin </th>
+                                </tr>";
 
                 // Créations des réservations par équipement 
                 for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
@@ -736,8 +764,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                             #region Creation d'un string contenant le récap réservation
 
-                            subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement;
-                            if (subNomEquip.Length >= 50)
+                            //subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement;
+                            /*if (subNomEquip.Length >= 50)
                             {
                                 subNomEquip = subNomEquip.Substring(0, 50);
                             }
@@ -749,18 +777,28 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 {
                                     subNomEquip += " ";
                                 }
-                            }
+                            }*/
 
-                            subNomEquip += " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
+                            subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
 
-                            sb_user.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
-                                zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(), 
-                                zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
+                            //sb_user.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
+                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(), 
+                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
 
+                            mssLogis += @" <tr> <td>" + subNomEquip 
+                                + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                + "   </td> </tr>";
+
+
+                            messUser += @" <tr> <td>" + subNomEquip 
+                                + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                + "   </td> </tr>";
                             // Rajouter dans le mail notification pour les admins
-                            sb_admin.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
-                                zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(),
-                                zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
+                            //sb_admin.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
+                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(),
+                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
 
                             #endregion
                         }
@@ -776,19 +814,19 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
                         {
                             IsFirstResa = false;
-                            dateSeuilInf = resa.date_debut;
-                            dateSeuilSup = resa.date_fin;
+                            dateSeuilInf = reservation.date_debut;
+                            dateSeuilSup = reservation.date_fin;
                         }
                         else
                         {
                             // Recherche des dates superieur et inferieur sur toutes les réservations
-                            if ( resa.date_debut.CompareTo(dateSeuilInf) <= 0 ) // (resa.date_debut <= dateSeuilInf)
+                            if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0 ) // (resa.date_debut <= dateSeuilInf)
                             {
-                                dateSeuilInf = resa.date_debut;
+                                dateSeuilInf = reservation.date_debut;
                             }
-                            if ( resa.date_fin.CompareTo(dateSeuilSup) >= 0 )  // (resa.date_fin >= dateSeuilSup)
+                            if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0 )  // (resa.date_fin >= dateSeuilSup)
                             {
-                                dateSeuilSup = resa.date_fin;
+                                dateSeuilSup = reservation.date_fin;
                             }
                         }
                     }
@@ -800,7 +838,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                 #region Envoi du mail récapitulatif à l'utilisateur
                 // Envoyer le mail récapitulatif utilisateur
-                sb_user.Append("\n\nVotre demande sera traitée dans le plus brefs delai.\n\nL'équipe PFL.");
+                //sb_user.Append("\n\nVotre demande sera traitée dans le plus brefs delai.\n\nL'équipe PFL.");
+
+                messUser += @"</table>                               
+                                <p>
+                                <br>Votre demande sera traitée dans le plus brefs delai.<br><br>
+	                                L'équipe PFL,
+                                </p>
+                                </body>
+                                </html>";
 
                 // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
 
@@ -808,7 +854,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 {
                     try
                     {
-                        await emailSender.SendEmailAsync(user.Email, "Récapitulatif Réservation", sb_user.ToString());
+                        await emailSender.SendEmailAsync(user.Email, "Récapitulatif Réservation", messUser);
                         success = true;
                     }
                     catch (Exception e)
@@ -830,7 +876,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
                 UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
 
-                sb_admin.Append("\n\nL'équipe PFL.");
+                //sb_admin.Append("\n\nL'équipe PFL.");
+                mssLogis += @"</table>                               
+                                <p>
+                                <br>L'équipe PFL,
+                                </p>
+                                </body>
+                                </html>";
 
                 for (int index = 0; index < UsersLogistic.Count(); index++)
                 {
@@ -842,7 +894,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     {
                         try
                         {
-                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Notification de réservation pour validation", sb_admin.ToString());
+                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Notification de réservation pour validation", mssLogis);
                             success = true;
                         }
                         catch (Exception e)
