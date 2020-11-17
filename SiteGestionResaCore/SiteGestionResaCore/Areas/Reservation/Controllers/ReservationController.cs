@@ -643,8 +643,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             var success = false;
 
             // Pour faire un tableau bien organisé : https://docs.microsoft.com/fr-fr/dotnet/api/system.string.format?view=netcore-3.1
-            //var sb_user = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'utilisateur
-            //var sb_admin = new System.Text.StringBuilder(); // Model de mail récapitulatif pour l'administrateur
 
             string messUser;
             string mssLogis;
@@ -712,22 +710,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO, formulaire.CommentaireEssai); // TODO: pas oublier de rajouter le status  (enum dans view model)     
 
                 // Remplir le message à envoyer aux admins pour notifier la réservation
-                //sb_admin.Append("Bonjour,\n\nUne demande de réservation pour le projet N° : " + Proj.num_projet + " (Essai N°: " + Essai.id + " )" + " saisie par l'utilisateur: " + Proj.mailRespProjet + " " +
-                                //" vient d'être rajoutée. \n\nRécapitulatif des réservations par équipement: \n\n");
+                
                 mssLogis = @"<html>
                             <body> 
                             <p> Bonjour, <br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
                             " saisie par l'utilisateur: " + Proj.mailRespProjet + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> " 
                             + "</p>";
-                //sb_admin.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
 
                 mssLogis += @"<table>
                                 <tr>
+                                    <th> Zone </th>
                                     <th> Equipement </th>
                                     <th> Date début </th>
 	                                <th> Date fin </th>
                                 </tr>";
-
 
                 // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
                 // possible solution pour créer une table html et la convertir en string!! https://stackoverflow.com/questions/1524105/can-i-convert-a-dynamically-created-c-sharp-table-to-a-html-string
@@ -741,6 +737,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
                 messUser+= @"<table>
                                 <tr>
+                                    <th> Zone </th>
                                     <th> Equipement </th>
                                     <th> Date début </th>
 	                                <th> Date fin </th>
@@ -764,41 +761,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                             #region Creation d'un string contenant le récap réservation
 
-                            //subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement;
-                            /*if (subNomEquip.Length >= 50)
-                            {
-                                subNomEquip = subNomEquip.Substring(0, 50);
-                            }
-                            else
-                            {
-                                // Complèter avec des espaces la longeur pour avoir un nom avec 50 caracteres
-                                int diff = 50 - subNomEquip.Length;
-                                for(int p= 0; p < diff; p++)
-                                {
-                                    subNomEquip += " ";
-                                }
-                            }*/
-
                             subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
 
-                            //sb_user.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
-                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(), 
-                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
-
-                            mssLogis += @" <tr> <td>" + subNomEquip 
+                            mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone 
+                                + "   </td>" + "<td>   " + subNomEquip
                                 + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
                                 + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                 + "   </td> </tr>";
 
 
-                            messUser += @" <tr> <td>" + subNomEquip 
+                            messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
+                                + "   </td>" + "<td>   " + subNomEquip
                                 + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
                                 + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                 + "   </td> </tr>";
-                            // Rajouter dans le mail notification pour les admins
-                            //sb_admin.Append(String.Format("{0,0} {1,70} {2,35}\n", subNomEquip,
-                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString(),
-                                //zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()));
 
                             #endregion
                         }
