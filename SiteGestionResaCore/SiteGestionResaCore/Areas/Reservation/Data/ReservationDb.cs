@@ -91,7 +91,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Résupérer les essais où la date enquêté est bien dans la plage de déroulement
             foreach (var es in SubInfosEssai)
             {
-                //foreach (var resEs in es.reservation_projet)
                 foreach (var resEs in context.reservation_projet.Where(r => r.essaiID == es.id))
                 {
                     if ((dateResa.CompareTo(resEs.date_debut) >= 0) && // si dateResa est superieur à resEs.date_debut ou égal 
@@ -133,7 +132,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         foreach (var resa in context.reservation_projet.Where(r => r.essaiID == ess.id))
                         {
-                            if (resa.equipement.zoneID == EquipementPlanning.zoneID) // si l'équipement objet du "planning" est dans la zone concerné
+                            if (context.equipement.Where(e=>e.id == resa.equipementID).First().zoneID.Value == EquipementPlanning.zoneID) // si l'équipement objet du "planning" est dans la zone concerné
                             {
                                 // Cas 1: l'équipement est dans une des zones dont le conflit ne fait pas partie
                                 if (EquipementPlanning.zoneID.Equals(EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp5) ||
@@ -158,7 +157,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         {
                                             dateSeuilInf = resa.date_debut;
                                         }
-                                        if (resa.date_debut.CompareTo(dateSeuilSup) >= 0)  // resa.date_fin >= dateSeuilSup)
+                                        if (resa.date_fin.CompareTo(dateSeuilSup) >= 0)  // resa.date_fin >= dateSeuilSup)
                                         {
                                             dateSeuilSup = resa.date_fin;
                                         }
@@ -173,9 +172,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         #region Bloquer l'équipement si la dateResa est dans les dates seuils rétrouvées
 
-                        if ((IsEquipInZone == true) && (dateResa.CompareTo(dateSeuilInf) >= 0) && (dateResa.CompareTo(dateSeuilSup) <= 0)) // si l'équipement est dans la zone et que la date enqueté est dans le seuil
+                        if ( (IsEquipInZone == true) && ( DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(dateSeuilInf.ToShortDateString()) ) 
+                            && ( DateTime.Parse(dateResa.ToShortDateString()) <= DateTime.Parse(dateSeuilSup.ToShortDateString()) ) ) // si l'équipement est dans la zone et que la date enqueté est dans le seuil
                         {
-                            if (dateResa.CompareTo(dateSeuilInf) == 0) // début
+                            if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(dateSeuilInf.ToShortDateString()) ) // début
                             {
                                 // Regarder pour définir le créneau
                                 if (dateSeuilInf.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
@@ -189,7 +189,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     Resas.InfosResaAprem.Add(resaInfo);
                                 }
                             }
-                            else if (dateResa.CompareTo(dateSeuilSup) == 0) // fin
+                            else if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(dateSeuilSup.ToShortDateString()) ) // fin
                             {
                                 // Regarder pour définir le créneau
                                 if (dateSeuilSup.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
@@ -229,11 +229,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         }
                         else
                         {
-                            if ((dateResa.CompareTo(ess.date_inf_confidentiel.Value) >= 0) && (dateResa.CompareTo(ess.date_sup_confidentiel.Value) <= 0))
+                            //bool t = (DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(ess.date_sup_confidentiel.Value.ToShortDateString()));
+                            if ((DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(ess.date_inf_confidentiel.Value.ToShortDateString()))   //Bonne manière de comparer les dates converties en shortstring!
+                                && (DateTime.Parse(dateResa.ToShortDateString()) <= DateTime.Parse(ess.date_sup_confidentiel.Value.ToShortDateString())))
                             {
                                 // Créer une réservation uniquement pour avoir l'accès à l'essai (A modifier)
                                 ResaAGarder = new reservation_projet { equipementID = IdEquipement, essaiID = ess.id, date_debut = ess.date_inf_confidentiel.Value, date_fin = ess.date_sup_confidentiel.Value, essai = ess };
-                                if (dateResa.ToShortDateString().CompareTo(ess.date_inf_confidentiel.Value.ToShortDateString()) == 0) // début
+                                
+                                if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(ess.date_inf_confidentiel.Value.ToShortDateString()) ) // début
                                 {
                                     // Regarder pour définir le créneau
                                     if (ess.date_inf_confidentiel.Value.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
@@ -247,7 +250,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         Resas.InfosResaAprem.Add(resaInfo);
                                     }
                                 }
-                                else if (dateResa.ToShortDateString().CompareTo(ess.date_sup_confidentiel.Value.ToShortDateString()) == 0) // fin
+                                else if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(ess.date_sup_confidentiel.Value.ToShortDateString()) ) // fin
                                 {
                                     // Regarder pour définir le créneau
                                     if (ess.date_sup_confidentiel.Value.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
@@ -319,11 +322,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             foreach (var resa in context.reservation_projet.Where(r => r.essaiID == ess.id))
             {
-                if ((resa.equipementID == IdEquipement) && ((dateResa.CompareTo(resa.date_debut) >= 0) && (dateResa.CompareTo(resa.date_fin) <= 0)))
+                if ( (resa.equipementID == IdEquipement) && ( DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString()) )
+                    && ( DateTime.Parse(dateResa.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()) ) )
                 //((Convert.ToDateTime(dateResa.ToShortDateString()).Date >= Convert.ToDateTime(resa.date_debut.ToShortDateString()).Date) &&
                 //(Convert.ToDateTime(dateResa.ToShortDateString()).Date <= (Convert.ToDateTime(resa.date_fin.ToShortDateString()).Date)))) // Si l'équipement à afficher est impliqué dans l'essai
                 {
-                    if (dateResa.ToShortDateString().CompareTo(resa.date_debut.ToShortDateString()) == 0) // si dateResa égal à resa.date_debut
+                    if (DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(resa.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
                     {
                         // Regarder pour définir le créneau
                         if (resa.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
@@ -337,7 +341,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             Resas.InfosResaAprem.Add(resaInfo);
                         }
                     }
-                    else if (dateResa.ToShortDateString().CompareTo(resa.date_fin.ToShortDateString()) == 0) // si dateResa égal à resa.date_fin
+                    else if (DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(resa.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
                     {
                         // Regarder pour définir le créneau
                         if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
