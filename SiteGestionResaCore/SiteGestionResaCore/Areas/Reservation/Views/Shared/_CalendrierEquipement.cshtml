@@ -64,7 +64,14 @@
                             <td style="background-color:@y.CouleurFondMatin.ToString()">
                                 @foreach (var i in y.InfosResaMatin)
                                 {
-                                    <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                    if(i.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                    {
+                                        <a><strong>[Projet - @i.confidentialite.ToString()] (Responsable: @i.mailRespProjet)</strong></a>
+                                    }
+                                    else
+                                    {
+                                        <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                    } 
                                 }
                             </td>
                         }
@@ -85,7 +92,14 @@
                             <td style="background-color:@y.CouleurFondAprem.ToString()">
                                 @foreach (var i in y.InfosResaAprem)
                                 {
-                                    <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                    if(i.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                    {
+                                        <a><strong>[Projet - @i.confidentialite.ToString()] (Responsable: @i.mailRespProjet)</strong></a>
+                                    }
+                                    else
+                                    {
+                                        <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                    } 
                                 }
                             </td>
                         }
