@@ -64,7 +64,7 @@
                             <td style="background-color:@y.CouleurFondMatin.ToString()">
                                 @foreach (var i in y.InfosResaMatin)
                                 {
-                                    <a><strong>[@i.essai.projet.num_projet - @i.essai.confidentialite.ToString()] @i.essai.projet.titre_projet (Responsable: @i.essai.projet.mailRespProjet)</strong></a>
+                                    <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
                                 }
                             </td>
                         }
@@ -85,7 +85,7 @@
                             <td style="background-color:@y.CouleurFondAprem.ToString()">
                                 @foreach (var i in y.InfosResaAprem)
                                 {
-                                    <a><strong>[@i.essai.projet.num_projet - @i.essai.confidentialite.ToString()] @i.essai.projet.titre_projet (Responsable: @i.essai.projet.mailRespProjet)</strong></a>
+                                    <a><strong>[@i.num_projet - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
                                 }
                             </td>
                         }

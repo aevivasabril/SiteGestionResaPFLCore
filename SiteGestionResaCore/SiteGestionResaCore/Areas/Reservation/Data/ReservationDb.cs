@@ -106,13 +106,19 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             foreach (var ess in InfosEssai)
             {
+                // Obtenir le projet pour cet essai
+                var proj = context.projet.First(p => p.id == ess.projetID);
+                // informations sur l'essai + projet qui seront affichés sur le calendrier
+                ReservationInfos resaInfo = new ReservationInfos { confidentialite = ess.confidentialite, mailRespProjet = proj.mailRespProjet,
+                                    num_projet = proj.num_projet , titre_projet = proj.titre_projet};
+                
                 switch (ess.confidentialite)
                 {
                     case "Ouvert": // Dans ce cas: je regarde si mon équipement est concerné par cet essai et je bloque uniquement l'équipement
 
                         #region Confidentialité ouverte
 
-                        Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
+                        Resas = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
 
                         #endregion
 
@@ -135,7 +141,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
                                 {
                                     // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
-                                    Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
+                                    Resas = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
                                 }
                                 else // Cas 2: pour toutes les autres zones, calculer la date seuil inferieur et superieur parmi toutes les réservations(blocage de la zone)
                                 {
@@ -174,13 +180,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 // Regarder pour définir le créneau
                                 if (dateSeuilInf.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
                                 {
-                                    Resas.InfosResaAprem.Add(ResaAGarder);
+                                    Resas.InfosResaAprem.Add(resaInfo);
                                     //Resas.InfosResaMatin.Add(null); // Matin vide
                                 }
                                 else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                                 {
-                                    Resas.InfosResaMatin.Add(ResaAGarder);
-                                    Resas.InfosResaAprem.Add(ResaAGarder);
+                                    Resas.InfosResaMatin.Add(resaInfo);
+                                    Resas.InfosResaAprem.Add(resaInfo);
                                 }
                             }
                             else if (dateResa.CompareTo(dateSeuilSup) == 0) // fin
@@ -188,20 +194,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 // Regarder pour définir le créneau
                                 if (dateSeuilSup.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
                                 {
-                                    Resas.InfosResaMatin.Add(ResaAGarder);
+                                    Resas.InfosResaMatin.Add(resaInfo);
                                     //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
                                 }
                                 else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
                                 {
-                                    Resas.InfosResaMatin.Add(ResaAGarder);
-                                    Resas.InfosResaAprem.Add(ResaAGarder);
+                                    Resas.InfosResaMatin.Add(resaInfo);
+                                    Resas.InfosResaAprem.Add(resaInfo);
                                 }
                             }
                             else
                             {
                                 // Ajouter cette résa sur le créneau matin et aprèm 
-                                Resas.InfosResaMatin.Add(ResaAGarder);
-                                Resas.InfosResaAprem.Add(ResaAGarder);
+                                Resas.InfosResaMatin.Add(resaInfo);
+                                Resas.InfosResaAprem.Add(resaInfo);
                             }
                             IsEquipInZone = false;
                         }
@@ -219,7 +225,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
-                            Resas = ResaConfidentialiteOuverte(ess, IdEquipement, dateResa);
+                            Resas = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
                         }
                         else
                         {
@@ -232,13 +238,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     // Regarder pour définir le créneau
                                     if (ess.date_inf_confidentiel.Value.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
                                     {
-                                        Resas.InfosResaAprem.Add(ResaAGarder);
+                                        Resas.InfosResaAprem.Add(resaInfo);
                                         //Resas.InfosResaMatin.Add(null); // Matin vide
                                     }
                                     else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                                     {
-                                        Resas.InfosResaMatin.Add(ResaAGarder);
-                                        Resas.InfosResaAprem.Add(ResaAGarder);
+                                        Resas.InfosResaMatin.Add(resaInfo);
+                                        Resas.InfosResaAprem.Add(resaInfo);
                                     }
                                 }
                                 else if (dateResa.ToShortDateString().CompareTo(ess.date_sup_confidentiel.Value.ToShortDateString()) == 0) // fin
@@ -246,20 +252,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     // Regarder pour définir le créneau
                                     if (ess.date_sup_confidentiel.Value.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
                                     {
-                                        Resas.InfosResaMatin.Add(ResaAGarder);
+                                        Resas.InfosResaMatin.Add(resaInfo);
                                         //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
                                     }
                                     else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
                                     {
-                                        Resas.InfosResaMatin.Add(ResaAGarder);
-                                        Resas.InfosResaAprem.Add(ResaAGarder);
+                                        Resas.InfosResaMatin.Add(resaInfo);
+                                        Resas.InfosResaAprem.Add(resaInfo);
                                     }
                                 }
                                 else
                                 {
                                     // Ajouter cette résa sur le créneau matin et aprèm 
-                                    Resas.InfosResaMatin.Add(ResaAGarder);
-                                    Resas.InfosResaAprem.Add(ResaAGarder);
+                                    Resas.InfosResaMatin.Add(resaInfo);
+                                    Resas.InfosResaAprem.Add(resaInfo);
                                 }
                             }
                         }
@@ -307,7 +313,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region méthodes externes
 
-        public ReservationsJour ResaConfidentialiteOuverte(essai ess, int IdEquipement, DateTime dateResa)
+        public ReservationsJour ResaConfidentialiteOuverte(essai ess, ReservationInfos resaInfo, int IdEquipement, DateTime dateResa)
         {
             ReservationsJour Resas = new ReservationsJour();
 
@@ -322,13 +328,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         // Regarder pour définir le créneau
                         if (resa.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
                         {
-                            Resas.InfosResaAprem.Add(resa);
+                            Resas.InfosResaAprem.Add(resaInfo);
                             //Resas.InfosResaMatin.Add(null); // Matin vide
                         }
                         else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                         {
-                            Resas.InfosResaMatin.Add(resa);
-                            Resas.InfosResaAprem.Add(resa);
+                            Resas.InfosResaMatin.Add(resaInfo);
+                            Resas.InfosResaAprem.Add(resaInfo);
                         }
                     }
                     else if (dateResa.ToShortDateString().CompareTo(resa.date_fin.ToShortDateString()) == 0) // si dateResa égal à resa.date_fin
@@ -336,20 +342,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         // Regarder pour définir le créneau
                         if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
                         {
-                            Resas.InfosResaMatin.Add(resa);
+                            Resas.InfosResaMatin.Add(resaInfo);
                             //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
                         }
                         else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
                         {
-                            Resas.InfosResaMatin.Add(resa);
-                            Resas.InfosResaAprem.Add(resa);
+                            Resas.InfosResaMatin.Add(resaInfo);
+                            Resas.InfosResaAprem.Add(resaInfo);
                         }
                     }
                     else // date à l'intérieur du seuil de réservation
                     {
                         // Ajouter cette résa sur le créneau matin et aprèm 
-                        Resas.InfosResaMatin.Add(resa);
-                        Resas.InfosResaAprem.Add(resa);
+                        Resas.InfosResaMatin.Add(resaInfo);
+                        Resas.InfosResaAprem.Add(resaInfo);
                     }
 
                 }

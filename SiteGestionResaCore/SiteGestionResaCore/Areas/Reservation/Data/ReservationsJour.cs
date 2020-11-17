@@ -17,8 +17,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public  ReservationsJour ()
         {
-            InfosResaMatin = new List<reservation_projet>();
-            InfosResaAprem = new List<reservation_projet>();
+            InfosResaMatin = new List<ReservationInfos>();
+            InfosResaAprem = new List<ReservationInfos>();
         }
 
         /// <summary>
@@ -34,12 +34,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Reservations pour le jour en question (Matin) 
         /// </summary>
-        public List<reservation_projet> InfosResaMatin { get; set; }
+        public List<ReservationInfos> InfosResaMatin { get; set; }
 
         /// <summary>
         /// Reservations pour le jour en question (Aprèm) 
         /// </summary>
-        public List<reservation_projet> InfosResaAprem { get; set; }
+        public List<ReservationInfos> InfosResaAprem { get; set; }
 
         // TODO: Créer le tableau !!!! maintenance pour le jour en question 
         //maintenance [] InfosMaintenance { get; set; }

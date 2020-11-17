@@ -350,7 +350,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // TODO: vérifier que cela fonctionne!
             if (ModelState.IsValid) // Vérification uniquement des datePicker pour l'affichage du calendrier
             {
-                if (model.DatePickerDu <= model.DatePickerAu)
+                if (model.DatePickerDu.Value <= model.DatePickerAu.Value)
                 {
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
                     for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
@@ -358,7 +358,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         if (equipementZone.CalendrierChildVM[i].idEquipement == id)
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                            reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu, model.DatePickerAu);
+                            reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu.Value, model.DatePickerAu.Value);
                             equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
 
                             // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
@@ -838,11 +838,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                 #region Envoi du mail récapitulatif à l'utilisateur
                 // Envoyer le mail récapitulatif utilisateur
-                //sb_user.Append("\n\nVotre demande sera traitée dans le plus brefs delai.\n\nL'équipe PFL.");
-
                 messUser += @"</table>                               
                                 <p>
-                                <br>Votre demande sera traitée dans le plus brefs delai.<br><br>
+                                <br>Votre demande sera traitée dans les plus brefs délais.<br><br>
 	                                L'équipe PFL,
                                 </p>
                                 </body>
@@ -1008,7 +1006,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     if (dow == DayOfWeek.Sunday) TodayDate = TodayDate.AddDays(-6);
 
                     NbJours = 7;
-                    DateRecup = TodayDate;
+                    //DateRecup = TodayDate;
+                    // Ajouter l'heure (à 7h00) car sinon on va avoir un problème pour faire la comparaison lors de la récupération des "essai"
+                    DateRecup = new DateTime(TodayDate.Year, TodayDate.Month, TodayDate.Day, 7, 0, 0, DateTimeKind.Local);
                     break;
                 case false:
                     // Calculer la difference des jours entre la date debut d'affichage et la date fin d'affichage
