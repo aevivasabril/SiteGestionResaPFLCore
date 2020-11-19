@@ -133,7 +133,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
-        //TODO: dévélopper la méthode post et faire le test une fois que on aura crée et validé autre compte
         [HttpPost]
         public async Task<ActionResult> AddingAdminAsync(GestionUsersViewModel model)
         {
@@ -336,7 +335,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 // Retirer des rôles
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 await userManager.RemoveFromRolesAsync(user, allUserRoles);
-                // TODO: Voir si cela se passe bien puisque on efface l'utilisateur! sinon inverser les 2 lignes
                 // Effacer de la BDD AspNet
                 await emailSender.SendEmailAsync(user.Email, "Votre compte PFL", "Bonjour,\n\nVotre demande d'ouverture de compte est refusée, nous vous prions de nous excuser pour la gêne occasionée.\nVenez nous voir ou contactez-nous si vous avez des questions.\n\n L'équipe PFL,");
                 await userManager.DeleteAsync(user);
