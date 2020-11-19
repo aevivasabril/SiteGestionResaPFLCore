@@ -382,7 +382,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="model">model view provenant de la vue partielle "_creneau"</param>
         /// <returns>Action result</returns>
         [HttpPost]
-        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int id)
+        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int id) // model presque "vide" (contient les datetime)
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
@@ -390,9 +390,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             //EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
 
-            int indiceChild = 0; // Sauvegarder l'indice où se trouve le CalendrierEquipChildModel correspondant à l'id
+            int indiceChild = 0; // Sauvegarder l'indice où se trouve le CalendrierEquipChildModel correspondant à l'id           
 
-            // Initialiser le calendrierChildModel de l'équipement sur le model de la vue parent avant toutes les opérations
+            // Initialiser le calendrierChildModel "model" de l'équipement sur le model de la vue parent avant toutes les opérations
             for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
             {     
                 if (equipementZone.CalendrierChildVM[i].idEquipement== id)
@@ -465,6 +465,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     #endregion
 
                     #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
+
+                    #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
+
+                    bool isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, id);
+                    
+                    if( !isResaOkToAdd )
+                    {
+                        ModelState.AddModelError("", "L'équipement : " + reservationDb.ObtenirNomEquipement(id) + " est indisponible aux dates choisies. Veuillez rectifier votre réservation");
+                        goto ENDT;
+                    }
+                   
+                    #endregion
 
                     // ajouter dans la liste des créneaux réservation progressivement
                     equipementZone.CalendrierChildVM[indiceChild].ResaEquipement.Add(new ReservationTemp
