@@ -15,6 +15,7 @@ using SiteGestionResaCore.Opts;
 using SiteGestionResaCore.Services;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Areas.Reservation.Data;
+using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 
 namespace SiteGestionResaCore
 {
@@ -40,6 +41,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IProjetEssaiResaDb, ProjetEssaiResaDb>();
             services.AddScoped<IZoneEquipDb, ZoneEquipDb>();
             services.AddScoped<IReservationDb, ReservationDb>();
+            services.AddScoped<IResaAValiderDb, ResaAValiderDb>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
 
