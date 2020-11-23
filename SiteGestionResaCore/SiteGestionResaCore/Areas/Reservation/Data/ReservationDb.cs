@@ -354,6 +354,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             // TODO: lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
             // sont differents mais dans la même zone (réservations validées ou à valider)
+            // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
             if (resasRest.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
                 estRestreintDispo = true;
 
@@ -406,9 +407,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                     estConfidentielDispo = true;
             }
             
-
-            /*if (essaiConf.Count() == 0) // si aucune réservation "confidentiel sur cet equipement et sur ces dates alors l'utilisateur peut réserver
-                estConfidentielEquipDispo = true;*/
 
             #endregion
 
