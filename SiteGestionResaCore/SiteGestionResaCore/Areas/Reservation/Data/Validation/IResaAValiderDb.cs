@@ -7,6 +7,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 {
     public interface IResaAValiderDb
     {
+        List<InfosEssai> InfosEssaiAffichage();
         List<InfosEssai> ResasAValider();
     }
 }

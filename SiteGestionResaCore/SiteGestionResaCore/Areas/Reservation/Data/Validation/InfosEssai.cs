@@ -28,6 +28,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         public string TypeProduitEntrant { get; set; }
         public bool TransportStlo { get; set; }
 
+        public bool ConflitExist { get; set; }
+
         public List<InfosReservation> Reservations { get; set; }
 
         public string NomProjet { get; set; }

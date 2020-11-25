@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Services;
 
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
@@ -35,8 +36,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             ResasPourValidationViewModel ResaVm = new ResasPourValidationViewModel()
             {
-                resasAValider = resaAValiderDb.ResasAValider()
+                resasAValider = resaAValiderDb.InfosEssaiAffichage()
             };
+
             return View(ResaVm);
         }
     }

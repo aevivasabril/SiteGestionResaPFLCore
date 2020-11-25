@@ -36,7 +36,7 @@
                             <td>@x.NumProjet</td><!--Voir comme faire ce link-->
                             <td><a href="#">Equipements réservés</a></td>
                             <td>
-                                @if(x.InfosConflits.Count()!=0)
+                                @if(x.ConflitExist== true)
                                 {
                                     <a href="#">Voir conflit</a>
                                 }
