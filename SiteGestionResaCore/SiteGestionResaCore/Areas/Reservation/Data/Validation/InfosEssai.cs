@@ -10,16 +10,22 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
     /// </summary>
     public class InfosEssai
     {
+        public InfosEssai()
+        {
+            Reservations  = new List<InfosReservation>();
+            InfosConflits = new List<InfosConflit>();
+        }
+        // id essai
         public int id { get; set; }
-        public int NumEssai { get; set; }
+        //public int NumEssai { get; set; }
         public DateTime DateCreation { get; set; }
         public string MailManipulateur { get; set; }
         public string MailUser { get; set; }
-        public int MyProperty { get; set; }
         public string Commentaire { get; set; }
         public string Confidentialite { get; set; }
         public string TypeProduitEntrant { get; set; }
         public bool TransportStlo { get; set; }
+
         public List<InfosReservation> Reservations { get; set; }
 
         public string NomProjet { get; set; }
