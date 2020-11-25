@@ -15,7 +15,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             Reservations  = new List<InfosReservation>();
             InfosConflits = new List<InfosConflit>();
         }
-        // id essai
+        /// <summary>
+        /// id essai
+        /// </summary>
         public int id { get; set; }
         //public int NumEssai { get; set; }
         public DateTime DateCreation { get; set; }

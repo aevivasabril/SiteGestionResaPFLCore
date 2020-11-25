@@ -7,7 +7,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 {
     public class ResasPourValidationViewModel
     {
-        public List<AffichageResasAValider> resasAValider { get; set; }
+        public List<InfosEssai> resasAValider { get; set; }
 
     }
 }

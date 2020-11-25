@@ -25,50 +25,40 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         /// 
         /// </summary>
         /// <returns>Liste des réservations avec leurs infos pour affichage</returns>
-        public List<AffichageResasAValider> ResasAValider()
+        public List<InfosEssai> ResasAValider()
         {
             // TODO: Valider la requete en ajoutant une réservation restreint en conflit!
-            AffichageResasAValider Essai = new AffichageResasAValider();
-            InfosReservation infosResas = new InfosReservation();
-            InfosEssai infosEss = new InfosEssai();
-            InfosConflit infosConfInterne = new InfosConflit();
-            List<AffichageResasAValider> list = new List<AffichageResasAValider>();
+            
+            List<InfosConflit> ListConflit = new List<InfosConflit>();
+            List<InfosReservation> ListResas = new List<InfosReservation>();
+            List<InfosEssai> list = new List<InfosEssai>();
 
             // Récuperer tous les "essai" en attente de validation
             var essais = resaDB.essai.Where(e => e.status_essai == EnumStatusEssai.WaitingValidation.ToString()).Distinct().ToList();
             
             foreach(var essai in essais)
             {
-                // récupérer les infos nécessaires sur chaque essai
-                infosEss.Commentaire = essai.commentaire;
-                infosEss.Confidentialite = essai.confidentialite;
-                infosEss.DateCreation = essai.date_creation;
-                infosEss.id = essai.id;
-                infosEss.MailManipulateur = resaDB.Users.First( u => u.Id == essai.manipulateurID).Email;
-                infosEss.MailUser = resaDB.Users.First(u=>u.Id == Convert.ToInt32(essai.compte_userID)).Email;
-                infosEss.TransportStlo = essai.transport_stlo;
-                infosEss.TypeProduitEntrant = essai.type_produit_entrant;
-                // récupérr les infos sur le projet associé
-                infosEss.NomProjet = resaDB.projet.First(p=> p.id == essai.projetID).titre_projet;
-                infosEss.NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet;
+                
                 // récupérer toutes les réservations du projet 
                 var reservations = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).Distinct().ToList();
                 // pour chaque réservation récupérer les infos importantes et les rajouter à la liste
                 foreach(var resa in reservations)
                 {
-                    infosResas.DateDebut = resa.date_debut;
-                    infosResas.DateFin = resa.date_fin;
-                    infosResas.NomEquipement = resaDB.equipement.First(e=> e.id == resa.equipementID).nom;
-                    infosResas.ZoneEquipement = (from zon in resaDB.zone
-                                                from equi in resaDB.equipement
-                                                where zon.id == equi.zoneID && equi.id == resa.equipementID
-                                                select zon.nom_zone).First();
+                    // Recupere les données réservation à afficher
+                    InfosReservation infosResas = new InfosReservation() { DateDebut = resa.date_debut, DateFin = resa.date_fin, 
+                                                            NomEquipement = resaDB.equipement.First(e => e.id == resa.equipementID).nom,
+                                                            ZoneEquipement = (from zon in resaDB.zone
+                                                                              from equi in resaDB.equipement
+                                                                              where zon.id == equi.zoneID && equi.id == resa.equipementID
+                                                                              select zon.nom_zone).First()
+                                                            };
                     //id de la zone où se trouve la réservation
                     int zoneIdresa = (from zon in resaDB.zone
                                   from equi in resaDB.equipement
                                   where zon.id == equi.zoneID && equi.id == resa.equipementID
                                   select zon.id).First();
-                    infosEss.Reservations.Add(infosResas);
+                    // ajouter les infons réservation à la liste
+                    ListResas.Add(infosResas);
 
                     // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) alors trouver les infos de chaque réservation ayant un conflit
                     // requete jointure ne fonctionne pas sur entity framework
@@ -91,25 +81,30 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                    DateDeb = n.date_debut,
                                    DateFin = n.date_fin,
                                    NomEquipement = e.nom,
-                                   ZoneEquipement = z.nom_zone
+                                   ZoneEquipement = z.nom_zone,
+                                   idResa = n.id
                                });
 
                     foreach(var x in Reg)
                     {
-                        
-                        infosConfInterne.MailResponsablePrj = x.MailResponsablePrj;
-                        infosConfInterne.NomEquipement = x.NomEquipement;
-                        infosConfInterne.NumProjet = x.NumProjet;
-                        infosConfInterne.ZoneEquipement = x.ZoneEquipement;
-                        infosConfInterne.DateDeb = x.DateDeb;
-                        infosConfInterne.DateFin = x.DateFin;
-
-                        infosEss.InfosConflits.Add(infosConfInterne);
-                                               
+                        if(!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
+                        {
+                            InfosConflit infosConfInterne = new InfosConflit() { IdResa = x.idResa, DateDeb = x.DateDeb, DateFin = x.DateFin, 
+                                                                                MailResponsablePrj = x.MailResponsablePrj, NomEquipement = x.NomEquipement,
+                                                                                NumProjet = x.NumProjet, ZoneEquipement = x.ZoneEquipement};
+                            ListConflit.Add(infosConfInterne);
+                        }// sinon on rajoute rien à la liste                                                                        
                     }
                 }
-                Essai.InfosEssai = infosEss;
-                list.Add(Essai);
+                // Initializer l'objet contenant toutes les infos des essais
+                InfosEssai infosEss = new InfosEssai() { id = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire, Confidentialite = essai.confidentialite,
+                                                        MailManipulateur = resaDB.Users.First(u => u.Id == essai.manipulateurID).Email, 
+                                                        MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email,
+                                                        TransportStlo = essai.transport_stlo, TypeProduitEntrant = essai.type_produit_entrant, 
+                                                        NomProjet = resaDB.projet.First(p => p.id == essai.projetID).titre_projet, 
+                                                        NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet,
+                                                        InfosConflits = ListConflit, Reservations = ListResas };
+                list.Add(infosEss);
             }
 
             return list;

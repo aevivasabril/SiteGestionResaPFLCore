@@ -19,7 +19,7 @@
                         <th scope="col">Informations essai(lien)</th>
                         <th scope="col">Nom Projet(lien)</th>
                         <th scope="col">N° projet</th>
-                        <th scope="col">Equipements réservés</th>
+                        <th scope="col">Equipements réservés(ouverture pop-up)</th>
                         <th scope="col">Conflit(lien)</th>
                         <th scope="col">Date création</th>
                         <th scope="col">Saisie par</th>
@@ -30,10 +30,23 @@
                     @foreach (var x in Model.resasAValider)
                     {
                         <tr>
-                            @*<td>@x.nom</td>
-                            <td>@x.prenom</td>
-                            <td>@x.Email</td>
-                            <td>@Html.ActionLink("Modifier", "AdminToUserAcces", new { id = x.Id })</td>*@<!--Voir comme faire ce link-->
+                            <td>@x.id</td>
+                            <td><a href="#">Voir essai @x.Commentaire</a></td>
+                            <td><a href="#">@x.NomProjet</a></td>
+                            <td>@x.NumProjet</td><!--Voir comme faire ce link-->
+                            <td><a href="#">Equipements réservés</a></td>
+                            <td>
+                                @if(x.InfosConflits.Count()!=0)
+                                {
+                                    <a href="#">Voir conflit</a>
+                                }
+                            </td>
+                            <td>@x.DateCreation</td>
+                            <td>@x.MailUser</td>
+                            <td>
+                                <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.id">Valider</a>
+                                <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.id">Refuser</a>
+                            </td>
                         </tr>
                     }
                 </tbody>
