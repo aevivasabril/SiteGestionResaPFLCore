@@ -68,36 +68,71 @@
                 </button>
             </div>
             <div class="modal-body" id="modalcontent">
-                <table class="table table-sm">
+                <table class="table table-sm table-borderless">
                     <thead>
-                        <tr>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row"></th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <th scope="row">N° Essai</th>
+                            <td>@Model.infosEssai.id</td>
                         </tr>
                         <tr>
-                            <th scope="row"></th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <th scope="row">Date Création</th>
+                            <td>@Model.infosEssai.DateCreation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email manipulateur essai</th>
+                            <td>@Model.infosEssai.MailManipulateur</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type de produit entrant</th>
+                            <td>@Model.infosEssai.TypeProduitEntrant</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Demande saisie par</th>
+                            <td>@Model.infosEssai.MailUser</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Descriptif essai</th>
+                            <td>@Model.infosEssai.Commentaire</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Confidentialité essai</th>
+                            <td>@Model.infosEssai.Confidentialite</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Transport assuré par</th>
+                            @if (Model.infosEssai.TransportStlo == true)
+                            {
+                                <td>STLO</td>
+                            }
+                            else
+                            {
+                                <td>Autre</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th scope="row">Précision produit</th>
+                            <td>@Model.infosEssai.PrecisionProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Quantité produit</th>
+                            <td>@Model.infosEssai.QuantiteProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Provenance produit</th>
+                            <td>@Model.infosEssai.ProveProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Destination produit</th>
+                            <td>@Model.infosEssai.PrecisionProd</td>
                         </tr>
                     </tbody>
                 </table>
 
             </div>
             <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
-                @*<button type="button" class="btn btn-primary">Valider</button>*@
-                <input type="submit" class="btn btn-primary" value="Valider" />
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>           
             </div>
         </div>
     </div>
