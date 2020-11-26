@@ -123,6 +123,26 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return infos;
 
         }
+
+        public List<InfosReservation> InfosReservations(int idEssai)
+        {
+            List<InfosReservation> ListResas = new List<InfosReservation>();
+            // récupérer toutes les réservations du projet 
+            var reservations = resaDB.reservation_projet.Where(r => r.essaiID == idEssai).Distinct().ToList();
+
+            foreach(var x in reservations)
+            {
+                InfosReservation resa = new InfosReservation() {DateDebut = x.date_debut, DateFin = x.date_fin,
+                    NomEquipement = resaDB.equipement.First(e=>e.id == x.equipementID).nom, 
+                    ZoneEquipement =    (from zon in resaDB.zone
+                                        from equi in resaDB.equipement
+                                        where zon.id == equi.zoneID && equi.id == x.equipementID
+                                        select zon.nom_zone).First()
+                };
+                ListResas.Add(resa);
+            }
+            return ListResas;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -153,7 +173,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                                                               from equi in resaDB.equipement
                                                                               where zon.id == equi.zoneID && equi.id == resa.equipementID
                                                                               select zon.nom_zone).First()
-                                                            };
+                    };
                     //id de la zone où se trouve la réservation
                     int zoneIdresa = (from zon in resaDB.zone
                                   from equi in resaDB.equipement

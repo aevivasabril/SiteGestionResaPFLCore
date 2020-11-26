@@ -8,8 +8,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
     public interface IResaAValiderDb
     {
         List<InfosAffichage> ResasAValider();
-        InfosEssai ObtenirInfosEssai(int id);
+        InfosEssai ObtenirInfosEssai(int idEssai);
         Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync();
         InfosProjet ObtenirInfosProjet(int id);
+        List<InfosReservation> InfosReservations(int idEssai);
     }
 }

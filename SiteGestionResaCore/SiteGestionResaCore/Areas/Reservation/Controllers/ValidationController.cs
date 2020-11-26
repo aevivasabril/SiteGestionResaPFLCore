@@ -46,7 +46,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
                 infosEssai = new InfosEssai(),
-                infosProj = new InfosProjet()
+                infosProj = new InfosProjet(),
+                Reservations = new List<InfosReservation>()
+                
             };
             
             return View(ResaVm);
@@ -63,7 +65,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
                 infosEssai = resaAValiderDb.ObtenirInfosEssai(id),
-                infosProj = new InfosProjet()
+                infosProj = new InfosProjet(),
+                Reservations = new List<InfosReservation>()
             };
             ViewBag.modalEssai = "show";
             return View("ReservationsAValider", vm);
@@ -75,9 +78,23 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
                 infosEssai = new InfosEssai(),
-                infosProj = resaAValiderDb.ObtenirInfosProjet(id)
+                infosProj = resaAValiderDb.ObtenirInfosProjet(id),
+                Reservations = new List<InfosReservation>()
             };
             ViewBag.modalProj = "show";
+            return View("ReservationsAValider", vm);
+        }
+
+        public async Task<IActionResult> ConsulterResasProjetAsync(int id)
+        {
+            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                infosEssai = new InfosEssai(),
+                infosProj = new InfosProjet(),
+                Reservations = resaAValiderDb.InfosReservations(id)
+            };
+            ViewBag.modalResas = "show";
             return View("ReservationsAValider", vm);
         }
     }

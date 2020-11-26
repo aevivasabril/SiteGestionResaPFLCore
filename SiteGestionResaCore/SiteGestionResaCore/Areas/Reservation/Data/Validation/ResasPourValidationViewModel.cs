@@ -13,5 +13,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 
         public InfosProjet infosProj { get; set; }
 
+        public List<InfosReservation> Reservations { get; set; }
+
     }
 }
