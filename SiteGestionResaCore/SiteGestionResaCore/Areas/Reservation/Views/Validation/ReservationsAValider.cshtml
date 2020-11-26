@@ -31,12 +31,14 @@
                     {
                         <tr>
                             <td>@x.id</td>
-                            <td><a href="#">Voir essai @x.Commentaire</a></td>
+
+                            <td><a asp-action="VoirInfosEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.id">Voir essai @x.Commentaire</a></td>
+
                             <td><a href="#">@x.NomProjet</a></td>
                             <td>@x.NumProjet</td><!--Voir comme faire ce link-->
                             <td><a href="#">Equipements réservés</a></td>
                             <td>
-                                @if(x.ConflitExist== true)
+                                @if (x.ConflitExist == true)
                                 {
                                     <a href="#">Voir conflit</a>
                                 }
@@ -51,8 +53,69 @@
                     }
                 </tbody>
             </table>
-        </div>                    
+        </div>
 
     </div>
 </div>
+<!-- Modal pour affichage des infos "essai"-->
+<div class="modal fade" id="EssaiModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Informations essai N° @Model.infosEssai.id</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row"></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
 
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                @*<button type="button" class="btn btn-primary">Valider</button>*@
+                <input type="submit" class="btn btn-primary" value="Valider" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a href="#">Revenir à la page précedente</a>
+</div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.modalEssai == null)
+            {
+                ViewBag.modalEssai = "hide";
+            }         
+        }
+        $('#EssaiModal').modal('@ViewBag.modalEssai');       
+    </script>
+}

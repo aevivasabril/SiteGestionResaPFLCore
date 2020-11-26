@@ -27,19 +27,44 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             this.emailSender = emailSender;
             this.resaAValiderDb = resaAValiderDb;
         }
+        /// <summary>
+        /// Affichage page pour sélection des sous rubriques
+        /// </summary>
+        /// <returns></returns>
         public IActionResult MenuConsultation()
         {
             return View();
         }
 
-        public IActionResult ReservationsAValider()
+        /// <summary>
+        /// Action pour afficher la page "Réservations à valider"
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> ReservationsAValiderAsync()
         {
             ResasPourValidationViewModel ResaVm = new ResasPourValidationViewModel()
             {
-                resasAValider = resaAValiderDb.InfosEssaiAffichage()
+                resasAValider = await resaAValiderDb.InfosAffichageAsync(),
+                infosEssai = new InfosEssai()
             };
-
+            
             return View(ResaVm);
+        }
+
+        /// <summary>
+        /// Action 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> VoirInfosEssaiAsync(int? id)
+        {
+            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.InfosAffichageAsync(),
+                infosEssai = resaAValiderDb.InfosEssai(id.Value)
+            };
+            ViewBag.modalEssai = "show";
+            return View("ReservationsAValider", vm);
         }
     }
 }
