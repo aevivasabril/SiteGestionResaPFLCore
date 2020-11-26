@@ -44,8 +44,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             ResasPourValidationViewModel ResaVm = new ResasPourValidationViewModel()
             {
-                resasAValider = await resaAValiderDb.InfosAffichageAsync(),
-                infosEssai = new InfosEssai()
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                infosEssai = new InfosEssai(),
+                infosProj = new InfosProjet()
             };
             
             return View(ResaVm);
@@ -56,14 +57,27 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> VoirInfosEssaiAsync(int? id)
+        public async Task<IActionResult> VoirInfosEssaiAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
             {
-                resasAValider = await resaAValiderDb.InfosAffichageAsync(),
-                infosEssai = resaAValiderDb.InfosEssai(id.Value)
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                infosEssai = resaAValiderDb.ObtenirInfosEssai(id),
+                infosProj = new InfosProjet()
             };
             ViewBag.modalEssai = "show";
+            return View("ReservationsAValider", vm);
+        }
+
+        public async Task<IActionResult> VoirInfosProjetAsync(int id)
+        {
+            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                infosEssai = new InfosEssai(),
+                infosProj = resaAValiderDb.ObtenirInfosProjet(id)
+            };
+            ViewBag.modalProj = "show";
             return View("ReservationsAValider", vm);
         }
     }

@@ -17,8 +17,7 @@
                     <tr>
                         <th scope="col">N° Essai</th>
                         <th scope="col">Informations essai(lien)</th>
-                        <th scope="col">Nom Projet(lien)</th>
-                        <th scope="col">N° projet</th>
+                        <th scope="col">N° projet(lien)</th>
                         <th scope="col">Equipements réservés(ouverture pop-up)</th>
                         <th scope="col">Conflit(lien)</th>
                         <th scope="col">Date création</th>
@@ -30,12 +29,11 @@
                     @foreach (var x in Model.resasAValider)
                     {
                         <tr>
-                            <td>@x.id</td>
+                            <td>@x.idEssai</td>
 
-                            <td><a asp-action="VoirInfosEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.id">Voir essai @x.Commentaire</a></td>
+                            <td><a asp-action="VoirInfosEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Infos essai</a></td>
 
-                            <td><a href="#">@x.NomProjet</a></td>
-                            <td>@x.NumProjet</td><!--Voir comme faire ce link-->
+                            <td><a asp-action="VoirInfosProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NumProjet</a></td>
                             <td><a href="#">Equipements réservés</a></td>
                             <td>
                                 @if (x.ConflitExist == true)
@@ -46,8 +44,8 @@
                             <td>@x.DateCreation</td>
                             <td>@x.MailUser</td>
                             <td>
-                                <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.id">Valider</a>
-                                <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.id">Refuser</a>
+                                <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Valider</a>
+                                <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Refuser</a>
                             </td>
                         </tr>
                     }
@@ -138,6 +136,67 @@
     </div>
 </div>
 
+<div class="modal fade" id="ProjModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Informations projet <strong>@Model.infosProj.TitreProjet</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Numéro projet </th>
+                            <td>@Model.infosProj.NumProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type projet</th>
+                            <td>@Model.infosProj.TypeProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Financement projet</th>
+                            <td>@Model.infosProj.Financement</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Organisme</th>
+                            <td>@Model.infosProj.Organisme</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email responsable projet</th>
+                            <td>@Model.infosProj.MailRespProj</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Provenance projet</th>
+                            <td>@Model.infosProj.Provenance</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description projet</th>
+                            <td>@Model.infosProj.Description</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date création projet</th>
+                            <td>@Model.infosProj.DateCreation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Projet saisie par </th>
+                            <td>@Model.infosProj.MailUsrSaisie</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row justify-content-center">
     <a href="#">Revenir à la page précedente</a>
 </div>
@@ -149,8 +208,13 @@
             if (ViewBag.modalEssai == null)
             {
                 ViewBag.modalEssai = "hide";
-            }         
+            }      
+            if (ViewBag.modalProj == null)
+            {
+                ViewBag.modalProj = "hide";
+            }       
         }
-        $('#EssaiModal').modal('@ViewBag.modalEssai');       
+        $('#EssaiModal').modal('@ViewBag.modalEssai');     
+        $('#ProjModal').modal('@ViewBag.modalProj');  
     </script>
 }

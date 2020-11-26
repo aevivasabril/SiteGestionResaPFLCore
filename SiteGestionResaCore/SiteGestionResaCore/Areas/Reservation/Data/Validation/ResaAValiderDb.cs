@@ -21,7 +21,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             this.resaDB = resaDB;
         }
         //TODO: configurer les méthodes à async!
-        public async Task<IList<InfosAffichage>> InfosAffichageAsync()
+        public async Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync()
         {
             List<InfosAffichage> list = new List<InfosAffichage>();
             bool conflitExiste = false;
@@ -76,18 +76,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                     }
                 }
 
-                InfosAffichage infosEss = new InfosAffichage() { id = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire,                   
+                InfosAffichage infosEss = new InfosAffichage() { idEssai = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire,                   
                                                         MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email, 
                                                         NomProjet = resaDB.projet.First(p => p.id == essai.projetID).titre_projet, 
-                                                        NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet, ConflitExist = conflitExiste/*,
-                                                        InfosConflits = ListConflit, Reservations = ListResas*/ };
+                                                        NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet, ConflitExist = conflitExiste,
+                                                        idProj = essai.projetID};
                 list.Add(infosEss);
             }
 
             return list;
         }
 
-        public InfosEssai InfosEssai(int idEssai)
+        public InfosEssai ObtenirInfosEssai(int idEssai)
         {            
             var essai = resaDB.essai.First(e=>e.id == idEssai);
 
@@ -107,6 +107,21 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                 TypeProduitEntrant = essai.type_produit_entrant
             };
             return Infos;
+        }
+
+        public InfosProjet ObtenirInfosProjet(int id)
+        {
+            var proj = resaDB.projet.First(p => p.id == id);
+
+            InfosProjet infos = new InfosProjet()
+            {
+                DateCreation = proj.date_creation, Description = proj.description_projet, Financement = proj.financement, MailRespProj = proj.mailRespProjet,
+                MailUsrSaisie = resaDB.Users.First(p=>p.Id == Convert.ToInt32(proj.compte_userID)).Email, NumProjet = proj.num_projet, 
+                Organisme = resaDB.organisme.First(o=>o.id== proj.organismeID).nom_organisme, Provenance = proj.provenance, TitreProjet = proj.titre_projet,
+                TypeProjet = proj.type_projet
+            };
+            return infos;
+
         }
         /// <summary>
         /// 

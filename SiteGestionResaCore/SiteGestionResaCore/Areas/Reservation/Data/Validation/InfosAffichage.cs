@@ -18,7 +18,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         /// <summary>
         /// id essai
         /// </summary>
-        public int id { get; set; }
+        public int idEssai { get; set; }
         //public int NumEssai { get; set; }
         public DateTime DateCreation { get; set; }
         //public string MailManipulateur { get; set; }
@@ -34,6 +34,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 
         public string NomProjet { get; set; }
         public string NumProjet { get; set; }
+        public int idProj { get; set; }
 
         //public List<InfosConflit> InfosConflits { get; set; }
     }
