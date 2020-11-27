@@ -278,6 +278,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             }
             return changeIsOk;
         }
+
+        public essai ObtenirEssai(int idEssai)
+        {
+            return resaDB.essai.First(e => e.id == idEssai);
+        }
         /// <summary>
         /// 
         /// </summary>

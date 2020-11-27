@@ -134,16 +134,57 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         [HttpPost]
         public async Task<IActionResult> ValiderEssaiAsync(ResasPourValidationViewModel vm)
         {
+            // Retry pour envoi mail
+            string message;
+            int NumberOfRetries = 5;
+            var retryCount = NumberOfRetries;
+            var success = false;
+
             bool isValidOk = resaAValiderDb.ValiderEssai(vm.IdEss);
             if(isValidOk)
             {
                 ViewBag.SuccessMessage = "Ok";
                 ViewBag.Action = "Validation";
+
+                #region envoi de mail validation
+                var essai = resaAValiderDb.ObtenirEssai(vm.IdEss);
+                var proj = resaAValiderDb.ObtenirInfosProjet(essai.projetID);
+                message = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> Votre demande de réservation pour le projet N° : <b> " + proj.NumProjet + "</b> (Essai N°: " + essai.id + " ) " +
+                             " vient d'être validée."
+                            + "</p><p>L'équipe PFL, </p> </body></html>" ;
+
+                // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                retryCount = NumberOfRetries;
+                success = false;
+
+                while (!success && retryCount > 0)
+                {
+                    try
+                    {
+                        await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID).Result.Email, "Notification de validation essai", message);
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retryCount--;
+
+                        if (retryCount == 0)
+                        {
+                            ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                            goto ENDT;
+                        }
+                    }
+                }
+                #endregion
             }
             else
             {
                 ModelState.AddModelError("", "Problème lors de la validation réservation. Veuillez essayer ultérieurement");               
             }
+
+        ENDT:
             vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
             vm.InfosEssai = new InfosEssai();
             vm.InfosProj = new InfosProjet();
@@ -172,6 +213,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         [HttpPost]
         public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm)
         {
+            // Retry pour envoi mail
+            string message;
+            int NumberOfRetries = 5;
+            var retryCount = NumberOfRetries;
+            var success = false;
+
             if (ModelState.IsValid)
             {
                 bool isRefusOk = resaAValiderDb.RefuserEssai(vm.IdEss, vm.RaisonRefus);
@@ -179,6 +226,39 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 {
                     ViewBag.SuccessMessage = "Ok";
                     ViewBag.Action = "Refus";
+
+                    #region envoi de mail validation
+                    var essai = resaAValiderDb.ObtenirEssai(vm.IdEss);
+                    var proj = resaAValiderDb.ObtenirInfosProjet(essai.projetID);
+                    message = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> Votre demande de réservation pour le projet N° : <b> " + proj.NumProjet + "</b> (Essai N°: " + essai.id + " ) " +
+                                 " est refusée par notre équipe. Raison du refus: " + essai.raison_refus 
+                                + ".<br> Nous nous excusons du désagrément, pour toute question n'hesitez pas à nous contacter.</p><p>L'équipe PFL, </p> </body></html>";
+
+                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                    retryCount = NumberOfRetries;
+                    success = false;
+
+                    while (!success && retryCount > 0)
+                    {
+                        try
+                        {
+                            await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID).Result.Email, "Notification de refus essai", message);
+                            success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            retryCount--;
+
+                            if (retryCount == 0)
+                            {
+                                ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                goto ENDT;
+                            }
+                        }
+                    }
+                    #endregion
                 }
                 else
                 {
@@ -189,6 +269,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 ViewBag.modalRefus = "show";
             }
+
+        ENDT:
             vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
             vm.InfosEssai = new InfosEssai();
             vm.InfosProj = new InfosProjet();
