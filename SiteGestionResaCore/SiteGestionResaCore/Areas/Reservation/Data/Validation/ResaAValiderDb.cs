@@ -206,6 +206,25 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return ListConflit;
         }
 
+        public InfosProjet ObtenirInfosProjetFromEssai(int idEssai)
+        {
+            var proj = resaDB.projet.First(p=>p.id == resaDB.essai.First(e => e.id == idEssai).projetID);
+
+            InfosProjet infos = new InfosProjet()
+            {
+                DateCreation = proj.date_creation,
+                Description = proj.description_projet,
+                Financement = proj.financement,
+                MailRespProj = proj.mailRespProjet,
+                MailUsrSaisie = resaDB.Users.First(p => p.Id == Convert.ToInt32(proj.compte_userID)).Email,
+                NumProjet = proj.num_projet,
+                Organisme = resaDB.organisme.First(o => o.id == proj.organismeID).nom_organisme,
+                Provenance = proj.provenance,
+                TitreProjet = proj.titre_projet,
+                TypeProjet = proj.type_projet
+            };
+            return infos;
+        }
         /// <summary>
         /// 
         /// </summary>

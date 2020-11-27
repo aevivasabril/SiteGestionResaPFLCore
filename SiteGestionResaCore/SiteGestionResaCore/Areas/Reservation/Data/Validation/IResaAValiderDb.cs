@@ -13,5 +13,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         InfosProjet ObtenirInfosProjet(int id);
         List<InfosReservation> InfosReservations(int idEssai);
         List<InfosConflit> InfosConflits(int idEssai);
+        InfosProjet ObtenirInfosProjetFromEssai(int idEssai);
     }
 }

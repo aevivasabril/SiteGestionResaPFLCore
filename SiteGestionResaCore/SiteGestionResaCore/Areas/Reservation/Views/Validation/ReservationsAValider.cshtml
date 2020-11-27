@@ -54,7 +54,7 @@
     </div>
 </div>
 <!-- Modal pour affichage des infos "essai"-->
-<div class="modal fade" id="EssaiModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+<div class="modal fade" id="EssaiModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
     <div class="modal-dialog modal-lg navbar-inra">
         <div class="modal-content">
             <div class="modal-header">
@@ -135,7 +135,7 @@
 </div>
 
 <!-- Modal pour affichage des infos "projet"-->
-<div class="modal fade" id="ProjModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+<div class="modal fade" id="ProjModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
     <div class="modal-dialog modal-lg navbar-inra">
         <div class="modal-content">
             <div class="modal-header">
@@ -197,7 +197,7 @@
 </div>
 
 <!-- Modal pour affichage des infos "Reservations"-->
-<div class="modal fade" id="ResaModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+<div class="modal fade" id="ResaModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
     <div class="modal-dialog modal-xl navbar-inra">
         <div class="modal-content">
             <div class="modal-header">
@@ -238,7 +238,7 @@
 </div>
 
 <!-- Modal pour affichage des infos "Conflits"-->
-<div class="modal fade" id="ConflitModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+<div class="modal fade" id="ConflitModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
     <div class="modal-dialog modal-xl navbar-inra">
         <div class="modal-content">
             <div class="modal-header">
@@ -284,6 +284,68 @@
     </div>
 </div>
 
+<!-- Modal pour affichage de la confirmation "Validation"-->
+<form asp-action="ValiderEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ValidEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Validation de réservation </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold">
+                        Etês-vous sûr de vouloir valider la réservation pour l'essai
+                        N° @Model.IdEss (projet N° @Model.InfosProj.NumProjet)?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <input type="submit" class="btn btn-primary" value="Oui" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal pour affichage de la confirmation "Validation"-->
+<form asp-action="RefuserEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="RefusEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Refus réservation </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Etês-vous sûr de refuser la réservation pour l'essai
+                        N° @Model.IdEss (projet N° @Model.InfosProj.NumProjet)?
+                    </p>
+                    <p>Indiquez le(s) raison(s) du refus: </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.RaisonRefus, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.RaisonRefus, "", new { @class = "text-danger" })
+                        @*@Html.HiddenFor(m => m.IdEss)*@
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 <div class="row justify-content-center">
     <a href="#">Revenir à la page précedente</a>
 </div>
@@ -308,10 +370,20 @@
             {
                 ViewBag.modalConflit = "hide";
             }
+            if (ViewBag.modalValid == null)
+            {
+                ViewBag.modalValid = "hide";
+            }
+            if (ViewBag.modalRefus == null)
+            {
+                ViewBag.modalRefus = "hide";
+            }
         }
         $('#EssaiModal').modal('@ViewBag.modalEssai');
         $('#ProjModal').modal('@ViewBag.modalProj');
         $('#ResaModal').modal('@ViewBag.modalResas');
         $('#ConflitModal').modal('@ViewBag.modalConflit');
+        $('#ValidEssa').modal('@ViewBag.modalValid');
+        $('#RefusEssa').modal('@ViewBag.modalRefus');
     </script>
 }

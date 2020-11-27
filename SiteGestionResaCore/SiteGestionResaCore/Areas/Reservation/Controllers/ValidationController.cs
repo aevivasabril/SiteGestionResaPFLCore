@@ -115,5 +115,72 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ViewBag.modalConflit = "show";
             return View("ReservationsAValider", vm);
         }
+
+        public async Task<IActionResult> ValiderEssaiAsync(int id)
+        {
+            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                InfosEssai = new InfosEssai(),
+                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
+                Reservations = new List<InfosReservation>(),
+                InfosConflits = new List<InfosConflit>(),
+                IdEss = id
+            };
+            ViewBag.modalValid = "show";
+            return View("ReservationsAValider", vm);
+        }
+
+        [HttpPost]
+        public IActionResult ValiderEssaiAsync(ResasPourValidationViewModel vm, int id)
+        {
+            /*ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                InfosEssai = new InfosEssai(),
+                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
+                Reservations = new List<InfosReservation>(),
+                InfosConflits = new List<InfosConflit>(),
+                IdEss = id
+            };*/
+            return View("ReservationsAValider", vm);
+        }
+
+        public async Task<IActionResult> RefuserEssaiAsync(int id)
+        {
+            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            {
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
+                InfosEssai = new InfosEssai(),
+                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
+                Reservations = new List<InfosReservation>(),
+                InfosConflits = new List<InfosConflit>(),
+                IdEss = id
+            };
+            ViewBag.modalRefus = "show";
+            return View("ReservationsAValider", vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm, int id)
+        {
+            if (ModelState.IsValid)
+            {
+                
+            }
+            else
+            {
+                vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
+                vm.InfosEssai = new InfosEssai();
+                vm.InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id); //obtenir les infos projet à partir de l'id essai
+                vm.Reservations = new List<InfosReservation>();
+                vm.InfosConflits = new List<InfosConflit>();
+                vm.IdEss = id;
+
+                ViewBag.modalRefus = "show";
+                return View("ReservationsAValider", vm); // Si error alors on recharge la page pour montrer les messages
+            }
+            return View();
+        }
     }
 }

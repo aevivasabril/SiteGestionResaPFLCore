@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,6 +23,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         {
             get { return _idEss; }
             set { _idEss = value; }
+        }
+
+        private string _raisonRefus;
+        [Required(ErrorMessage = "Champ 'Raison refus' requis")]
+        public string RaisonRefus
+        {
+            get { return _raisonRefus; }
+            set { _raisonRefus = value; }
         }
 
     }
