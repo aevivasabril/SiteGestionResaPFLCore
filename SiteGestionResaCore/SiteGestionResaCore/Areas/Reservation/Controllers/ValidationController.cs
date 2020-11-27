@@ -40,9 +40,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// Action pour afficher la page "Réservations à valider"
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> ReservationsAValiderAsync()
+        public async Task<IActionResult> ReservationsAValiderAsync(ResasPourValidationViewModel ResaVm)
         {
-            ResasPourValidationViewModel ResaVm = new ResasPourValidationViewModel()
+            ResaVm = new ResasPourValidationViewModel()
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
                 InfosEssai = new InfosEssai(),
@@ -122,7 +122,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
                 InfosEssai = new InfosEssai(),
-                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
+                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai je l'utilise pour l'affichage!
                 Reservations = new List<InfosReservation>(),
                 InfosConflits = new List<InfosConflit>(),
                 IdEss = id
@@ -132,17 +132,25 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         }
 
         [HttpPost]
-        public IActionResult ValiderEssaiAsync(ResasPourValidationViewModel vm, int id)
+        public async Task<IActionResult> ValiderEssaiAsync(ResasPourValidationViewModel vm)
         {
-            /*ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            bool isValidOk = resaAValiderDb.ValiderEssai(vm.IdEss);
+            if(isValidOk)
             {
-                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                InfosEssai = new InfosEssai(),
-                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
-                Reservations = new List<InfosReservation>(),
-                InfosConflits = new List<InfosConflit>(),
-                IdEss = id
-            };*/
+                ViewBag.SuccessMessage = "Ok";
+                ViewBag.Action = "Validation";
+            }
+            else
+            {
+                ModelState.AddModelError("", "Problème lors de la validation réservation. Veuillez essayer ultérieurement");               
+            }
+            vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
+            vm.InfosEssai = new InfosEssai();
+            vm.InfosProj = new InfosProjet();
+            vm.Reservations = new List<InfosReservation>();
+            vm.InfosConflits = new List<InfosConflit>();
+            vm.IdEss = vm.IdEss;
+
             return View("ReservationsAValider", vm);
         }
 
@@ -162,25 +170,33 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm, int id)
+        public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                
+                bool isRefusOk = resaAValiderDb.RefuserEssai(vm.IdEss, vm.RaisonRefus);
+                if (isRefusOk)
+                {
+                    ViewBag.SuccessMessage = "Ok";
+                    ViewBag.Action = "Refus";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Problème pour refuser la réservation. Veuillez essayer ultérieurement");
+                }
             }
             else
             {
-                vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
-                vm.InfosEssai = new InfosEssai();
-                vm.InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id); //obtenir les infos projet à partir de l'id essai
-                vm.Reservations = new List<InfosReservation>();
-                vm.InfosConflits = new List<InfosConflit>();
-                vm.IdEss = id;
-
                 ViewBag.modalRefus = "show";
-                return View("ReservationsAValider", vm); // Si error alors on recharge la page pour montrer les messages
             }
-            return View();
+            vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
+            vm.InfosEssai = new InfosEssai();
+            vm.InfosProj = new InfosProjet();
+            vm.Reservations = new List<InfosReservation>();
+            vm.InfosConflits = new List<InfosConflit>();
+            vm.IdEss = vm.IdEss;
+
+            return View("ReservationsAValider", vm);
         }
     }
 }

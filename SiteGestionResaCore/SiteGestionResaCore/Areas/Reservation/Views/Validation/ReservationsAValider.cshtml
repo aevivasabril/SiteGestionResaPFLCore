@@ -7,7 +7,10 @@
 <br />
 <h1>Reservations à valider</h1>
 <br />
-
+ @if(ViewBag.SuccessMessage == "Ok")
+ {
+     <p class="text-center" style="color:green"><strong> @ViewBag.Action essai pris(e) en compte!</strong> </p>
+ }
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
         <div class="row justify-content-center">
@@ -285,7 +288,7 @@
 </div>
 
 <!-- Modal pour affichage de la confirmation "Validation"-->
-<form asp-action="ValiderEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
+<form asp-action="ValiderEssai" asp-controller="Validation" asp-area="Reservation" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ValidEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog modal-sm navbar-inra">
@@ -300,6 +303,7 @@
                     <p class="font-weight-bold">
                         Etês-vous sûr de vouloir valider la réservation pour l'essai
                         N° @Model.IdEss (projet N° @Model.InfosProj.NumProjet)?
+                        @Html.HiddenFor(m => m.IdEss)
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -312,7 +316,7 @@
 </form>
 
 <!-- Modal pour affichage de la confirmation "Validation"-->
-<form asp-action="RefuserEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
+<form asp-action="RefuserEssai" asp-controller="Validation" asp-area="Reservation" method="post">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="RefusEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -334,7 +338,7 @@
                     <div class="form-group">
                         @Html.TextAreaFor(m => m.RaisonRefus, new { @class = "col-md-12 form-control" })
                         @Html.ValidationMessageFor(m => m.RaisonRefus, "", new { @class = "text-danger" })
-                        @*@Html.HiddenFor(m => m.IdEss)*@
+                        @Html.HiddenFor(m => m.IdEss)
                     </div>
                 </div>
                 <div class="modal-footer">

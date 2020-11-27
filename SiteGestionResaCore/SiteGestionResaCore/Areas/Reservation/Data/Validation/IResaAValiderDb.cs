@@ -14,5 +14,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         List<InfosReservation> InfosReservations(int idEssai);
         List<InfosConflit> InfosConflits(int idEssai);
         InfosProjet ObtenirInfosProjetFromEssai(int idEssai);
+        bool ValiderEssai(int idEssai);
+        bool RefuserEssai(int idEssai, string raisonRefus);
     }
 }

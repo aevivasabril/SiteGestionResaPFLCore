@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 {
@@ -14,11 +15,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
     public class ResaAValiderDb : IResaAValiderDb
     {
         private readonly GestionResaContext resaDB;
+        private readonly ILogger<ResaAValiderDb> logger;
 
         public ResaAValiderDb(
-            GestionResaContext resaDB)
+            GestionResaContext resaDB, 
+            ILogger<ResaAValiderDb> logger)
         {
             this.resaDB = resaDB;
+            this.logger = logger;
         }
         //TODO: configurer les méthodes à async!
         public async Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync()
@@ -224,6 +228,55 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                 TypeProjet = proj.type_projet
             };
             return infos;
+        }
+
+        public bool ValiderEssai(int idEssai)
+        {
+            bool changeIsOk = false;
+            int retry = 0;
+
+            var essai = resaDB.essai.First(e => e.id == idEssai);
+            essai.date_validation = DateTime.Today;
+            essai.status_essai = EnumStatusEssai.Validate.ToString();
+            while(retry < 3 && changeIsOk != true)
+            {
+                try
+                {
+                    resaDB.SaveChanges();
+                    changeIsOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Erreur lors de la validation de l'essai N° :" + idEssai);
+                    retry++;
+                }
+            }
+            return changeIsOk;           
+        }
+
+        public bool RefuserEssai(int idEssai, string raisonRefus)
+        {
+            bool changeIsOk = false;
+            int retry = 0;
+
+            var essai = resaDB.essai.First(e => e.id == idEssai);
+            essai.status_essai = EnumStatusEssai.Refuse.ToString();
+            essai.resa_refuse = true;
+            essai.raison_refus = (DateTime.Now.ToString() + ": " + raisonRefus);
+            while (retry < 3 && changeIsOk != true)
+            {
+                try
+                {
+                    resaDB.SaveChanges();
+                    changeIsOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Erreur lors de la validation de l'essai N° :" + idEssai);
+                    retry++;
+                }
+            }
+            return changeIsOk;
         }
         /// <summary>
         /// 
