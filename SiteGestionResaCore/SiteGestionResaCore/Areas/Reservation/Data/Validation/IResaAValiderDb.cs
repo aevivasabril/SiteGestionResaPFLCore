@@ -12,5 +12,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync();
         InfosProjet ObtenirInfosProjet(int id);
         List<InfosReservation> InfosReservations(int idEssai);
+        List<InfosConflit> InfosConflits(int idEssai);
     }
 }

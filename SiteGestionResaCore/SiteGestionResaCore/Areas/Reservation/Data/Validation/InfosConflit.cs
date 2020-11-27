@@ -19,5 +19,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         public DateTime DateFin { get; set; }
 
         public int IdResa { get; set; }
+
+        public int IdEss { get; set; }
     }
 }

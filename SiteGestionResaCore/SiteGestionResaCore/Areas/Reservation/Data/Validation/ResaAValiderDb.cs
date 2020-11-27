@@ -143,6 +143,69 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             }
             return ListResas;
         }
+
+        public List<InfosConflit> InfosConflits(int idEssai)
+        {
+            List<InfosConflit> ListConflit = new List<InfosConflit>();
+            // récupérer toutes les réservations du projet 
+            var reservations = resaDB.reservation_projet.Where(r => r.essaiID == idEssai).Distinct().ToList();
+            // pour chaque réservation récupérer les infos importantes et les rajouter à la liste
+            foreach (var resa in reservations)
+            {
+                //id de la zone où se trouve la réservation
+                int zoneIdresa = (from zon in resaDB.zone
+                                  from equi in resaDB.equipement
+                                  where zon.id == equi.zoneID && equi.id == resa.equipementID
+                                  select zon.id).First();
+
+                // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) alors trouver les infos de chaque réservation ayant un conflit
+                // requete jointure ne fonctionne pas sur entity framework
+                var Reg = (from proj in resaDB.projet
+                           join ess in resaDB.essai on proj.id equals ess.projetID into t1
+                           from m in t1.DefaultIfEmpty()
+                           join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
+                           from n in t2.DefaultIfEmpty()
+                           join equi in resaDB.equipement on n.equipementID equals equi.id into t3
+                           from e in t3.DefaultIfEmpty()
+                           join zo in resaDB.zone on e.zoneID equals zo.id into t4
+                           from z in t4.DefaultIfEmpty()
+                           where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != idEssai
+                           && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
+                               (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
+                           select new
+                           {
+                               MailResponsablePrj = proj.mailRespProjet,
+                               NumProjet = proj.num_projet,
+                               DateDeb = n.date_debut,
+                               DateFin = n.date_fin,
+                               NomEquipement = e.nom,
+                               ZoneEquipement = z.nom_zone,
+                               idResa = n.id, 
+                               idEss = m.id
+                           });
+
+                foreach (var x in Reg)
+                {
+                    if (!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
+                    {
+                        InfosConflit infosConfInterne = new InfosConflit()
+                        {
+                            IdResa = x.idResa,
+                            DateDeb = x.DateDeb,
+                            DateFin = x.DateFin,
+                            MailResponsablePrj = x.MailResponsablePrj,
+                            NomEquipement = x.NomEquipement,
+                            NumProjet = x.NumProjet,
+                            ZoneEquipement = x.ZoneEquipement, 
+                            IdEss = x.idEss
+                        };
+                        ListConflit.Add(infosConfInterne);
+                    }// sinon on rajoute rien à la liste                                                                        
+                }
+            }          
+            return ListConflit;
+        }
+
         /// <summary>
         /// 
         /// </summary>
