@@ -236,7 +236,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             int retry = 0;
 
             var essai = resaDB.essai.First(e => e.id == idEssai);
-            essai.date_validation = DateTime.Today;
+            essai.date_validation = DateTime.Now;
             essai.status_essai = EnumStatusEssai.Validate.ToString();
             while(retry < 3 && changeIsOk != true)
             {
@@ -261,8 +261,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 
             var essai = resaDB.essai.First(e => e.id == idEssai);
             essai.status_essai = EnumStatusEssai.Refuse.ToString();
+            essai.date_validation = DateTime.Now;
             essai.resa_refuse = true;
-            essai.raison_refus = (DateTime.Now.ToString() + ": " + raisonRefus);
+            essai.raison_refus = raisonRefus;
             while (retry < 3 && changeIsOk != true)
             {
                 try
