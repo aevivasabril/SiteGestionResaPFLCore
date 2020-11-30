@@ -79,9 +79,17 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             DateTime DatEnqFinMatin = new DateTime(dateResa.Year, dateResa.Month, dateResa.Day, 12, 0, 0, DateTimeKind.Local); // date fin matin
             DateTime DatEnqFinAprem = new DateTime(dateResa.Year, dateResa.Month, dateResa.Day, 18, 0, 0, DateTimeKind.Local); // date fin aprèm          
 
-            //TODO: Affiner cette recherche car on aurait une liste enorme des essais
-            //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
-            SubInfosEssai = (from resa in context.reservation_projet
+            // Si jour égal à samedi ou dimanche pas besoin de appliquer toute la méthode de recherche!
+            // Traduire le nom du jour en cours de l'anglais au Français
+            dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
+            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats);
+
+            if (Resas.NomJour == "samedi" || Resas.NomJour == "dimanche")
+                goto ENDT;
+
+                //TODO: Affiner cette recherche car on aurait une liste enorme des essais
+                //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
+                SubInfosEssai = (from resa in context.reservation_projet
                              from essa in context.essai
                              where resa.essaiID == essa.id && 
                              (essa.status_essai == EnumStatusEssai.Validate.ToString() || 
@@ -280,11 +288,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             #region Gestion nom du jour et couleurs pour l'affichage
 
+        ENDT:
             // Obtenir le nom du jour 
             Resas.JourResa = dateResa; // enregistrer la date en question
-                                       // Traduire le nom du jour en cours de l'anglais au Français
-            dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
-            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats);
+            
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "maintenance" 
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "métrologie" 
 
