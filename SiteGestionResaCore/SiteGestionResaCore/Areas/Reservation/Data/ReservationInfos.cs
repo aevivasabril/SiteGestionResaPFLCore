@@ -17,5 +17,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public string titre_projet { get; set; }
 
         public string mailRespProjet { get; set; }
+
+        public int numEssai { get; set; }
+
+        /// <summary>
+        /// Vérifier le status pour définir la couleur!
+        /// </summary>
+        public string StatusEssai { get; set; }
+
     }
 }
