@@ -5,10 +5,37 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<hr />
+<br />
 <h4>Liste des équipements pour la zone @Model.NomZone </h4>
 <br />
-
+<div class="offset-1 col-md-8">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center">Code couleur calendrier</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#ffd191" disabled="True">Orange</button>
+                    <label>Conflit entre 2 essais "Restreint"</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#fdc0be" disabled="True">Rouge</button>
+                    <label>Réservation essai validée</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#fbeed9" disabled="True">Beige</button>
+                    <label>Essai en attente de validation</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#a2d9d4" disabled="True">Vert</button>
+                    <label>Disponible</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 
 @for (int i = 0; i < Model.CalendrierChildVM.Count(); i++)

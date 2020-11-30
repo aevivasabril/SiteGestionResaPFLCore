@@ -72,29 +72,38 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             reservation_projet ResaAGarder = new reservation_projet();                              // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
             bool IsEquipInZone = false;
             equipement EquipementPlanning = context.equipement.First(x => x.id == IdEquipement);     // Equipement à enqueter
-            //string datResa = dateResa.ToShortDateString();
-            // Requete vers la base de données pour obtenir tous les essais qui ont lieu ce jour 
-            /*InfosEssai = (from resa in resaDB.reservation_projet
-                         from essa in resaDB.essai
-                         where resa.essaiID == essa.id &&
-                         (Convert.ToDateTime(datResa).Date >= Convert.ToDateTime(resa.date_debut.ToShortDateString()).Date &&
-                          Convert.ToDateTime(dateResa.ToShortTimeString()).Date <= Convert.ToDateTime(resa.date_fin.ToShortTimeString()).Date)
-                          select essa).Distinct().ToArray(); // Je pense il faut mettre distinct pour récupérer chaque réservation unique*/
 
-            //TODO: Affiner cette recherche car on aurait une liste enorme des essais
-            //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
-            SubInfosEssai = (from resa in context.reservation_projet
+            // CORRECTION: initialisation des dateTime pour trouver les réservations se chevauchant (4 dates differentes)
+            DateTime DatEnqDebMatin = dateResa; // date debut matin
+            DateTime DatEnqDebAprem = new DateTime(dateResa.Year, dateResa.Month, dateResa.Day, 13, 0, 0, DateTimeKind.Local); // date début aprèm
+            DateTime DatEnqFinMatin = new DateTime(dateResa.Year, dateResa.Month, dateResa.Day, 12, 0, 0, DateTimeKind.Local); // date fin matin
+            DateTime DatEnqFinAprem = new DateTime(dateResa.Year, dateResa.Month, dateResa.Day, 18, 0, 0, DateTimeKind.Local); // date fin aprèm          
+
+            // Si jour égal à samedi ou dimanche pas besoin de appliquer toute la méthode de recherche!
+            // Traduire le nom du jour en cours de l'anglais au Français
+            dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
+            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats);
+
+            if (Resas.NomJour == "samedi" || Resas.NomJour == "dimanche")
+                goto ENDT;
+
+                //TODO: Affiner cette recherche car on aurait une liste enorme des essais
+                //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
+                SubInfosEssai = (from resa in context.reservation_projet
                              from essa in context.essai
-                             where resa.essaiID == essa.id
+                             where resa.essaiID == essa.id && 
+                             (essa.status_essai == EnumStatusEssai.Validate.ToString() || 
+                             essa.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                              select essa).Distinct().ToArray();
 
             // Résupérer les essais où la date enquêté est bien dans la plage de déroulement
             foreach (var es in SubInfosEssai)
             {
-                foreach (var resEs in context.reservation_projet.Where(r => r.essaiID == es.id))
+                var res = context.reservation_projet.Where(r => r.essaiID == es.id).ToList();
+                foreach (var resEs in res)
                 {
-                    if ((dateResa.CompareTo(resEs.date_debut) >= 0) && // si dateResa est superieur à resEs.date_debut ou égal 
-                        (dateResa.CompareTo(resEs.date_fin) <= 0))  // si dateResa est inferieur à resEs.date_fin ou égal
+                    if( (DatEnqDebMatin >= resEs.date_debut || DatEnqDebAprem >= resEs.date_debut) &&
+                        (DatEnqFinMatin <= resEs.date_fin || DatEnqFinAprem <= resEs.date_fin) )
                     {
                         InfosEssai.Add(es);
                         break;
@@ -109,7 +118,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 var proj = context.projet.First(p => p.id == ess.projetID);
                 // informations sur l'essai + projet qui seront affichés sur le calendrier
                 ReservationInfos resaInfo = new ReservationInfos { confidentialite = ess.confidentialite, mailRespProjet = proj.mailRespProjet,
-                                    num_projet = proj.num_projet , titre_projet = proj.titre_projet};
+                                    num_projet = proj.num_projet , titre_projet = proj.titre_projet, StatusEssai = ess.status_essai, numEssai = ess.id};
                 
                 switch (ess.confidentialite)
                 {
@@ -279,26 +288,45 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             #region Gestion nom du jour et couleurs pour l'affichage
 
+        ENDT:
             // Obtenir le nom du jour 
             Resas.JourResa = dateResa; // enregistrer la date en question
-                                       // Traduire le nom du jour en cours de l'anglais au Français
-            dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
-            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats);
+            
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "maintenance" 
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "métrologie" 
 
             if (Resas.NomJour != "samedi" && Resas.NomJour != "dimanche")
             {
+                // si plus d'une réservation à ce jour alors conflit entre 2 résas "Restreint"
+                if(Resas.InfosResaMatin.Count() > 1) // réservations restreint
+                    Resas.CouleurFondMatin = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
+
+                if(Resas.InfosResaAprem.Count() > 1)
+                    Resas.CouleurFondAprem = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
+
+                if(Resas.InfosResaMatin.Count() == 1)
+                {
+                    if(Resas.InfosResaMatin[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                        Resas.CouleurFondMatin = "#fdc0be"; // rouge (validée et occupée)
+                    else if(Resas.InfosResaMatin[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                        Resas.CouleurFondMatin = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
+                }
+
+                // si pas de chevauchement des résas alors vérifier le status projet
+                if (Resas.InfosResaAprem.Count() == 1)
+                {
+                    if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                        Resas.CouleurFondAprem = "#fdc0be"; // rouge (validée et occupée)
+                    else if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                        Resas.CouleurFondAprem = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
+                }
+
+              
                 // CODE COULEUR DISPO SUR: https://encycolorpedia.fr/
                 // Definir les couleurs de fond pour indiquer si le créneau est occupé ou pas
-                if (Resas.InfosResaMatin.Count() > 0) // si au moins une réservation le matin alors matinée occupée
-                    Resas.CouleurFondMatin = "#fdc0be"; // rouge
-                else
+                if (Resas.InfosResaMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
                     Resas.CouleurFondMatin = "#a2d9d4"; // matin dispo (Vert)
-
-                if (Resas.InfosResaAprem.Count() > 0) // si au moins une réservation l'aprèm alors aprèm occupée
-                    Resas.CouleurFondAprem = "#fdc0be"; // rouge
-                else
+                if (Resas.InfosResaAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
                     Resas.CouleurFondAprem = "#a2d9d4"; // Aprèm libre (Vert)
             }
             else // si jour samedi ou dimanche alors mettre en fond gris
