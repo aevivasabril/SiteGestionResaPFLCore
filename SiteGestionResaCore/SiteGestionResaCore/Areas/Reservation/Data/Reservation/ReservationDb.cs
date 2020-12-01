@@ -82,9 +82,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Si jour égal à samedi ou dimanche pas besoin de appliquer toute la méthode de recherche!
             // Traduire le nom du jour en cours de l'anglais au Français
             dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
-            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats);
+            string jourName = dateResa.ToString("dddd", dateTimeFormats);
 
-            if (Resas.NomJour == "samedi" || Resas.NomJour == "dimanche")
+            if (jourName == "samedi" || jourName == "dimanche")
                 goto ENDT;
                 
                 //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
@@ -290,7 +290,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         ENDT:
             // Obtenir le nom du jour 
             Resas.JourResa = dateResa; // enregistrer la date en question
-            
+            Resas.NomJour = dateResa.ToString("dddd", dateTimeFormats); // Reecrire le nom du jour car lors de l'appel de la méthode ResaConfidentialiteOuverte()
+                                                                        // Resas est réinitialisé!
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "maintenance" 
             // TODO: Requete vers la base de données pour obtenir toutes les réservations du type "métrologie" 
 
