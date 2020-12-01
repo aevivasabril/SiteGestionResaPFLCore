@@ -1,0 +1,256 @@
+﻿@model SiteGestionResaCore.Areas.Reservation.Data.Consultation.ConsultationViewModel
+@{
+    ViewData["Title"] = "ResasValidees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<h1>Réservations validées </h1>
+<br />
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <div class="row justify-content-center">
+            <table class="table table-striped justify-content-center">
+                <h5 class="text-center">Liste des essais validées</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Projet</th>
+                        <th scope="col">Numéro projet</th>
+                        <th scope="col">Responsable projet</th>
+                        <th scope="col">Infos Essai</th>
+                        <th scope="col">Equipements réservées</th>
+                        <th scope="col">Date création</th>
+                        <th scope="col">Date de validation</th>
+                        <th scope="col">Confidentialité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.ResasValid)
+                    {
+                        <tr>
+                            <td><a asp-action="VoirInfosProj" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NomProjet</a></td>
+                            <td>@x.NumProjet</td>
+                            <td>@x.MailRespProj</td>
+                            <td><a asp-action="VoirInfosEssai" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idEssai">Infos Essai</a></td>
+                            <td><a asp-action="VoirReservations" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
+                            <td>@x.DateSaisieEssai</td>
+                            <td>@x.DateValidation</td>
+                            <td>@x.Confidentialit</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a href="/Reservation/Validation/MenuConsultation">Revenir à la page précedente</a>
+</div>
+
+<!-- Modal pour affichage des infos "projet"-->
+<div class="modal fade" id="ProjModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Informations projet <strong>@Model.InfosProjet.TitreProjet</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Numéro projet </th>
+                            <td>@Model.InfosProjet.NumProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type projet</th>
+                            <td>@Model.InfosProjet.TypeProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Financement projet</th>
+                            <td>@Model.InfosProjet.Financement</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Organisme</th>
+                            <td>@Model.InfosProjet.Organisme</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email responsable projet</th>
+                            <td>@Model.InfosProjet.MailRespProj</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Provenance projet</th>
+                            <td>@Model.InfosProjet.Provenance</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description projet</th>
+                            <td>@Model.InfosProjet.Description</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date création projet</th>
+                            <td>@Model.InfosProjet.DateCreation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Projet créé par </th>
+                            <td>@Model.InfosProjet.MailUsrSaisie</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div class="modal fade" id="EssaiModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Informations essai N° @Model.InfosEssai.id</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">N° Essai</th>
+                            <td>@Model.InfosEssai.id</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date Création</th>
+                            <td>@Model.InfosEssai.DateCreation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email manipulateur essai</th>
+                            <td>@Model.InfosEssai.MailManipulateur</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type de produit entrant</th>
+                            <td>@Model.InfosEssai.TypeProduitEntrant</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Demande saisie par</th>
+                            <td>@Model.InfosEssai.MailUser</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Descriptif essai</th>
+                            <td>@Model.InfosEssai.Commentaire</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Confidentialité essai</th>
+                            <td>@Model.InfosEssai.Confidentialite</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Transport assuré par</th>
+                            @if (Model.InfosEssai.TransportStlo == true)
+                            {
+                                <td>STLO</td>
+                            }
+                            else
+                            {
+                                <td>Autre</td>
+                            }
+                        </tr>
+                        <tr>
+                            <th scope="row">Précision produit</th>
+                            <td>@Model.InfosEssai.PrecisionProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Quantité produit</th>
+                            <td>@Model.InfosEssai.QuantiteProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Provenance produit</th>
+                            <td>@Model.InfosEssai.ProveProd</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Destination produit</th>
+                            <td>@Model.InfosEssai.PrecisionProd</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour affichage des infos "Reservations"-->
+<div class="modal fade" id="ResaModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Equipements réservés</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col">Zone</th>
+                            <th scope="col">Nom Equipement</th>
+                            <th scope="col">Date Début</th>
+                            <th scope="col">Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.Reservations)
+                        {
+                            <tr>
+                                <td>@r.ZoneEquipement</td>
+                                <td>@r.NomEquipement</td>
+                                <td>@r.DateDebut</td>
+                                <td>@r.DateFin</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.modalProj == null)
+            {
+                ViewBag.modalProj = "hide";
+            }
+            if (ViewBag.modalEssai == null)
+            {
+                ViewBag.modalEssai = "hide";
+            }
+            if (ViewBag.modalResas == null)
+            {
+                ViewBag.modalResas = "hide";
+            }
+        }       
+        $('#ProjModal').modal('@ViewBag.modalProj');
+        $('#EssaiModal').modal('@ViewBag.modalEssai');
+        $('#ResaModal').modal('@ViewBag.modalResas');
+    </script>
+}
