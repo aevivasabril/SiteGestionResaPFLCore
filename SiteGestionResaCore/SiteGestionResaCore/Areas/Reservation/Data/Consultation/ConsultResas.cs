@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
 {
+    /// <summary>
+    /// Classe d'accès aux infos d'une réservation validée
+    /// </summary>
     public class ConsultResas : IConsultResas
     {
         private readonly GestionResaContext resaDB;
@@ -23,7 +26,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         /// <summary>
         /// méthode pour récupérer les infos sur les essais validées par les admins
         /// </summary>
-        /// <returns></returns>
+        /// <returns>liste des infos à afficher pour les réservations validées</returns>
         public IList<InfosResasValid> ObtInfEssaiValidees()
         {
             List<InfosResasValid> list = new List<InfosResasValid>();

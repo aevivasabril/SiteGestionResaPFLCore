@@ -27,6 +27,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             this.resaAValider = resaAValiderDB;
         }
 
+        /// <summary>
+        /// Affichage des réservations validées
+        /// </summary>
+        /// <returns></returns>
         public IActionResult ResasValidees()
         {
             ConsultationViewModel model = new ConsultationViewModel()
@@ -39,6 +43,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Action pour afficher les infos sur le projet d'un essai sur la liste
+        /// </summary>
+        /// <param name="id">id projet</param>
+        /// <returns></returns>
         public IActionResult VoirInfosProj(int id)
         {
             ConsultationViewModel model = new ConsultationViewModel()
@@ -52,6 +61,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ResasValidees", model);
         }
 
+        /// <summary>
+        /// Action pour afficher les infos sur un essai de la liste 
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
         public IActionResult VoirInfosEssai(int id)
         {
             ConsultationViewModel model = new ConsultationViewModel()
@@ -65,6 +79,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ResasValidees", model);
         }
 
+        /// <summary>
+        /// Action pour afficher les réservations d'un essai sur la liste
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
         public IActionResult VoirReservations(int id)
         {
             ConsultationViewModel model = new ConsultationViewModel()
