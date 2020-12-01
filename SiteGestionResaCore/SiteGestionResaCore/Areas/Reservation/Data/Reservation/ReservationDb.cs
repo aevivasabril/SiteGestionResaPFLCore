@@ -86,8 +86,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             if (Resas.NomJour == "samedi" || Resas.NomJour == "dimanche")
                 goto ENDT;
-
-                //TODO: Affiner cette recherche car on aurait une liste enorme des essais
+                
                 //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
                 SubInfosEssai = (from resa in context.reservation_projet
                              from essa in context.essai

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
@@ -12,6 +13,9 @@ using SiteGestionResaCore.Services;
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
     [Area("Reservation")]
+    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Logistic")]
+    [Authorize(Roles = "MainAdmin")]
     public class ValidationController : Controller
     {
         private readonly UserManager<utilisateur> userManager;
@@ -55,9 +59,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         }
 
         /// <summary>
-        /// Action 
+        /// Action pour charger les infos sur un essai de la liste 
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id essai</param>
         /// <returns></returns>
         public async Task<IActionResult> VoirInfosEssaiAsync(int id)
         {
@@ -73,6 +77,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action pour charger les infos sur le projet d'un essai de la liste
+        /// </summary>
+        /// <param name="id">id projet</param>
+        /// <returns></returns>
         public async Task<IActionResult> VoirInfosProjetAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
@@ -87,6 +96,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action pour charges les infos sur les réservations d'un essai
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> ConsulterResasProjetAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
@@ -101,6 +115,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action pour charger les autres réservations en conflit avec un essai
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
         public async Task<IActionResult> VoirConflitEssaiAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
@@ -116,6 +135,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action pour charger les infos sur l'essai à valider
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
         public async Task<IActionResult> ValiderEssaiAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
@@ -131,6 +155,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action post qui permet de traiter la validation d'un essai après confirmation de l'utilisateur
+        /// </summary>
+        /// <param name="vm"> view model vue</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> ValiderEssaiAsync(ResasPourValidationViewModel vm)
         {
@@ -195,6 +224,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action pour charger les infos sur un essai à refuser
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> RefuserEssaiAsync(int id)
         {
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
@@ -210,6 +244,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("ReservationsAValider", vm);
         }
 
+        /// <summary>
+        /// Action post qui permet de traiter le refus d'un essai après confirmation de l'utilisateur
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm)
         {

@@ -24,7 +24,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             this.resaDB = resaDB;
             this.logger = logger;
         }
+
         //TODO: configurer les méthodes à async!
+        /// <summary>
+        /// Methode permettant d'obtenir diverses infos sur chaque essai pour 
+        /// affichage sur la page principal de réservations à valider
+        /// </summary>
+        /// <returns>Liste des infos pour affichage</returns>
         public async Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync()
         {
             List<InfosAffichage> list = new List<InfosAffichage>();
@@ -91,6 +97,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return list;
         }
 
+        /// <summary>
+        /// Obtenir les infos affichage essai à partir d'un id essai
+        /// </summary>
+        /// <param name="idEssai"></param>
+        /// <returns></returns>
         public InfosEssai ObtenirInfosEssai(int idEssai)
         {            
             var essai = resaDB.essai.First(e=>e.id == idEssai);
@@ -113,6 +124,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return Infos;
         }
 
+        /// <summary>
+        /// Obtenir des infos sur un projet à partir son Id
+        /// </summary>
+        /// <param name="id">id projet</param>
+        /// <returns></returns>
         public InfosProjet ObtenirInfosProjet(int id)
         {
             var proj = resaDB.projet.First(p => p.id == id);
@@ -128,6 +144,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 
         }
 
+        /// <summary>
+        /// Obtenir toutes les réservations pour un essai
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <returns>liste des réservations</returns>
         public List<InfosReservation> InfosReservations(int idEssai)
         {
             List<InfosReservation> ListResas = new List<InfosReservation>();
@@ -148,6 +169,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return ListResas;
         }
 
+        /// <summary>
+        /// Méthode pour calculer les possibles conflits pour un essai
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <returns>Liste des infos sur les réservations en conflit</returns>
         public List<InfosConflit> InfosConflits(int idEssai)
         {
             List<InfosConflit> ListConflit = new List<InfosConflit>();
@@ -210,6 +236,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return ListConflit;
         }
 
+        /// <summary>
+        /// Obtenir infos sur un projet à partir d'un essai id
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <returns>InfosProjet</returns>
         public InfosProjet ObtenirInfosProjetFromEssai(int idEssai)
         {
             var proj = resaDB.projet.First(p=>p.id == resaDB.essai.First(e => e.id == idEssai).projetID);
@@ -230,6 +261,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return infos;
         }
 
+        /// <summary>
+        /// Validation d'un essai sur la BDD
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <returns> true ou false</returns>
         public bool ValiderEssai(int idEssai)
         {
             bool changeIsOk = false;
@@ -254,6 +290,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return changeIsOk;           
         }
 
+        /// <summary>
+        /// Refuser un essai  sur la BDD
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <param name="raisonRefus">raison du refus saisie par l'administrateur</param>
+        /// <returns> true ou false</returns>
         public bool RefuserEssai(int idEssai, string raisonRefus)
         {
             bool changeIsOk = false;
@@ -280,97 +322,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             return changeIsOk;
         }
 
+        /// <summary>
+        /// Récupérer un "essai" 
+        /// </summary>
+        /// <param name="idEssai">id essai</param>
+        /// <returns>essai</returns>
         public essai ObtenirEssai(int idEssai)
         {
             return resaDB.essai.First(e => e.id == idEssai);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>Liste des réservations avec leurs infos pour affichage</returns>
-        public List<InfosAffichage> ResasAValider()
-        {
-            // TODO: Valider la requete en ajoutant une réservation restreint en conflit!
-            
-            List<InfosConflit> ListConflit = new List<InfosConflit>();
-            List<InfosReservation> ListResas = new List<InfosReservation>();
-            List<InfosAffichage> list = new List<InfosAffichage>();
-
-            // Récuperer tous les "essai" en attente de validation
-            var essais = resaDB.essai.Where(e => e.status_essai == EnumStatusEssai.WaitingValidation.ToString()).Distinct().ToList();
-            
-            foreach(var essai in essais)
-            {
-                
-                // récupérer toutes les réservations du projet 
-                var reservations = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).Distinct().ToList();
-                // pour chaque réservation récupérer les infos importantes et les rajouter à la liste
-                foreach(var resa in reservations)
-                {
-                    // Recupere les données réservation à afficher
-                    InfosReservation infosResas = new InfosReservation() { DateDebut = resa.date_debut, DateFin = resa.date_fin, 
-                                                            NomEquipement = resaDB.equipement.First(e => e.id == resa.equipementID).nom,
-                                                            ZoneEquipement = (from zon in resaDB.zone
-                                                                              from equi in resaDB.equipement
-                                                                              where zon.id == equi.zoneID && equi.id == resa.equipementID
-                                                                              select zon.nom_zone).First()
-                    };
-                    //id de la zone où se trouve la réservation
-                    int zoneIdresa = (from zon in resaDB.zone
-                                  from equi in resaDB.equipement
-                                  where zon.id == equi.zoneID && equi.id == resa.equipementID
-                                  select zon.id).First();
-                    // ajouter les infons réservation à la liste
-                    ListResas.Add(infosResas);
-
-                    // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) alors trouver les infos de chaque réservation ayant un conflit
-                    // requete jointure ne fonctionne pas sur entity framework
-                    var Reg = (from proj in resaDB.projet
-                               join ess in resaDB.essai on proj.id equals ess.projetID into t1
-                               from m in t1.DefaultIfEmpty()
-                               join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
-                               from n in t2.DefaultIfEmpty()
-                               join equi in resaDB.equipement on n.equipementID equals equi.id into t3
-                               from e in t3.DefaultIfEmpty()
-                               join zo in resaDB.zone on e.zoneID equals zo.id into t4
-                               from z in t4.DefaultIfEmpty()
-                               where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != essai.id
-                               && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
-                                   (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin) ) && (z.id == zoneIdresa)
-                               select new 
-                               {
-                                   MailResponsablePrj = proj.mailRespProjet,
-                                   NumProjet = proj.num_projet,
-                                   DateDeb = n.date_debut,
-                                   DateFin = n.date_fin,
-                                   NomEquipement = e.nom,
-                                   ZoneEquipement = z.nom_zone,
-                                   idResa = n.id
-                               });
-
-                    foreach(var x in Reg)
-                    {
-                        if(!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
-                        {
-                            InfosConflit infosConfInterne = new InfosConflit() { IdResa = x.idResa, DateDeb = x.DateDeb, DateFin = x.DateFin, 
-                                                                                MailResponsablePrj = x.MailResponsablePrj, NomEquipement = x.NomEquipement,
-                                                                                NumProjet = x.NumProjet, ZoneEquipement = x.ZoneEquipement};
-                            ListConflit.Add(infosConfInterne);
-                        }// sinon on rajoute rien à la liste                                                                        
-                    }
-                }
-                // Initializer l'objet contenant toutes les infos des essais
-                /*InfosEssai infosEss = new InfosEssai() { id = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire, Confidentialite = essai.confidentialite,
-                                                        MailManipulateur = resaDB.Users.First(u => u.Id == essai.manipulateurID).Email, 
-                                                        MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email,
-                                                        TransportStlo = essai.transport_stlo, TypeProduitEntrant = essai.type_produit_entrant, 
-                                                        NomProjet = resaDB.projet.First(p => p.id == essai.projetID).titre_projet, 
-                                                        NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet,
-                                                        InfosConflits = ListConflit, Reservations = ListResas };*/
-                //list.Add(infosEss);
-            }
-
-            return list;
-        }
+        }       
     }
 }
