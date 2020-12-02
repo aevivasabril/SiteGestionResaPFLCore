@@ -10,14 +10,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
     /// <summary>
     /// Classe d'accès aux infos d'une réservation validée
     /// </summary>
-    public class ConsultResas : IConsultResas
+    public class ConsultResasDB : IConsultResasDB
     {
         private readonly GestionResaContext resaDB;
-        private readonly ILogger<ConsultResas> logger;
+        private readonly ILogger<ConsultResasDB> logger;
 
-        public ConsultResas(
+        public ConsultResasDB(
             GestionResaContext resaDB,
-            ILogger<ConsultResas> logger)
+            ILogger<ConsultResasDB> logger)
         {
             this.resaDB = resaDB;
             this.logger = logger;

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
 {
-    public interface IConsultResas
+    public interface IConsultResasDB
     {
         IList<InfosResasValid> ObtInfEssaiValidees();
     }

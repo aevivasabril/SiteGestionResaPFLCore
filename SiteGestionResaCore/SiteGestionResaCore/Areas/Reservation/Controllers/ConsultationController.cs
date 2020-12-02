@@ -14,12 +14,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
     public class ConsultationController : Controller
     {
         private readonly UserManager<utilisateur> userManager;
-        private readonly IConsultResas consultDB;
+        private readonly IConsultResasDB consultDB;
         private readonly IResaAValiderDb resaAValider;
 
         public ConsultationController(
             UserManager<utilisateur> userManager,
-            IConsultResas consultDB,
+            IConsultResasDB consultDB,
             IResaAValiderDb resaAValiderDB)
         {
             this.userManager = userManager;

@@ -1,0 +1,46 @@
+﻿@model MyReservationsViewModel
+@{
+    ViewData["Title"] = "MesReservations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Mes Reservations</h1>
+<h4> Vous trouverez la liste des réservations saisies par vous</h4>
+<h6 class="text-center"> Vous pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>
+<br />
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <div class="row justify-content-center">
+            <table class="table table-striped justify-content-center">
+                <h5 class="text-center">Vos réservations</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">N° Essai</th>
+                        <th scope="col">Informations essai</th>
+                        <th scope="col">Titre projet</th>
+                        <th scope="col">N° projet</th>
+                        <th scope="col">Equipements réservés</th>
+                        <th scope="col">Date création</th>
+                        <th scope="col">Status essai</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.ResasUser)
+                    {
+                        <tr>
+                            <td>@x.IdEssai</td>
+                            <td><a asp-action="" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
+                            <td>@x.TitreProj</td>
+                            <td>@x.NumProjet</td>
+                            <td><a asp-action="" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
+                            <td>@x.DateCreation</td>
+                            <td>@x.StatusEssai</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
