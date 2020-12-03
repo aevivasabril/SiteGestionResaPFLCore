@@ -1,0 +1,115 @@
+﻿@model SiteGestionResaCore.Areas.User.Data.ResasUser.ResEssaiChildViewModel
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="form-group row">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm("SoumettreFormulaire", "Reservation", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {            
+        <h6>INFORMATIONS ESSAI</h6>
+        <hr />
+        <div class="form-row">
+            @Html.LabelFor(m => m.ConfidentialiteEssai, new { @class = "col-md-6 control-label" })
+            @Html.ValidationMessageFor(m => m.ConfidentialiteEssai, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Ouvert")
+                    <label class="col-md-5 control-label">Ouvert</label>
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Restreint")
+                    <label class="col-md-5 control-label">Restreint</label>
+
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel")
+                    <label class="col-md-5 control-label">Confidentiel</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                @Html.LabelFor(m => m.SelectedManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
+                <select asp-for="SelectedManipulateurID" asp-items="@Model.ManipProjItem" class="form-control">
+                    <option value="-1">- Manipulateur essai -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedManipulateurID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.SelectedProductId, new { @class = "col-md-7 control-label" })
+                <select asp-for="SelectedProductId" asp-items="@Model.ProductItem" class="form-control">
+                    <option value="-1">- Produit d'entrée -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedProductId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                @Html.LabelFor(m => m.PrecisionProduitIn, new { @class = "col-md-4 control-label" })
+                @Html.TextBoxFor(m => m.PrecisionProduitIn)
+                @Html.ValidationMessageFor(m => m.PrecisionProduitIn, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.QuantiteProduit, new { @class = "col-md-6 control-label" })
+                @Html.TextBoxFor(m => m.QuantiteProduit)
+                @Html.ValidationMessageFor(m => m.QuantiteProduit, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                @Html.LabelFor(m => m.SelectedProveProduitId, new { @class = "col-md-4 col-lg-7 control-label" })
+                <select asp-for="SelectedProveProduitId" asp-items="@Model.ProvenanceProduitItem" class="form-control">
+                    <option value="-1">- Provenance produit entrée -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedProveProduitId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-5">
+                @Html.LabelFor(m => m.SelectedDestProduit, new { @class = "col-md-4 col-lg-7 control-label" })
+                <select asp-for="SelectedDestProduit" asp-items="@Model.DestProduitItem" class="form-control">
+                    <option value="-1">- Destinaison produit sortie -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedDestProduit, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-7">
+                <p>
+                    <strong>Important: </strong>si Destination produits est égal à <strong>Plan HACCP</strong> ou
+                    <strong>Test Sensoriel</strong>, les analyses par un laboratoire accrédité sont <strong>OBLIGATOIRES</strong>
+                    avant toute dégustation interne ou externe.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CommentaireEssai, new { @class = "col-md-6 control-label" })
+            @Html.TextBoxFor(m => m.CommentaireEssai, new { @class = "col-md-12 form-control" })
+            @Html.ValidationMessageFor(m => m.CommentaireEssai, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.TransportSTLO, new { @class = "col-md-6 control-label" })
+            @Html.ValidationMessageFor(m => m.TransportSTLO, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-8">
+                    @Html.RadioButtonFor(m => m.TransportSTLO, "true")
+                    <label class="col-md-10 control-label">STLO (800L max)</label>
+                </div>
+                <div class="col-4">
+                    @Html.RadioButtonFor(m => m.TransportSTLO, "false")
+                    <label class="col-md-5 control-label">Autre</label>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-2">
+                @Html.ActionLink("Annuler", "AnnulerDemande", null, new { @class = "btn btn-primary" })
+            </div>
+            <div class="offset-9 col-md-1">
+                <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
+            </div>
+        </div>
+    }
+</div>

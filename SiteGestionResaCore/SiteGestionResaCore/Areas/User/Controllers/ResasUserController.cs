@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Areas.User.Data;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Data;
@@ -16,24 +18,125 @@ namespace SiteGestionResaCore.Areas.User.Controllers
     {
         private readonly UserManager<utilisateur> userManager;
         private readonly IResasUserDB resasUserDB;
+        private readonly IFormulaireResaDb formDb;
+        private readonly IProjetEssaiResaDb projetEssaiDb;
 
         public ResasUserController(
             UserManager<utilisateur> userManager, 
-            IResasUserDB resasUserDB)
+            IResasUserDB resasUserDB,
+            IFormulaireResaDb formDb,
+            IProjetEssaiResaDb projetEssaiDb)
         {
             this.userManager = userManager;
             this.resasUserDB = resasUserDB;
+            this.formDb = formDb;
+            this.projetEssaiDb = projetEssaiDb;
         }
+
         public async Task<IActionResult> MesReservationsAsync()
         {
-            // trouver l'utilisateur connecté
+            // Obtenir les infos de l'utilisateur authentifié
             var user = await userManager.FindByIdAsync(User.GetUserId());
+
+            /*projet pr = new projet();
+            essai ess = new essai();
+
+            List<ResEssaiChildViewModel> ListVMChild = new List<ResEssaiChildViewModel>();
+
+            #region Récupérer les infos projet pour affichage dans le formulaire de modif
+            List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+            // Création d'une liste utilisateurs "manipulateur" de l'essai
+            var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+            // Création d'une liste dropdownlist pour le type produit entrée
+            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
+            // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
+            // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
+            
+            #endregion*/
+
+            // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
+            MyReservationsViewModel vm = new MyReservationsViewModel()
+            {
+                ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, 0),
+                ChildVmModifEssai = new ResEssaiChildViewModel()
+            };
+
+            // TODO: à mettre dans l'action pour traiter le bouton affichage!
+            /*foreach(var viewm in vm.ResasUser)
+            {
+                ess = resasUserDB.ObtenirEssaiPourModif(viewm.IdEssai);
+
+                ResEssaiChildViewModel childVM = new ResEssaiChildViewModel()
+                {
+                    ManipProjItem = usersManip,
+                    ProductItem = prodEntree,
+                    ProvenanceProduitItem = provProd,
+                    DestProduitItem = destProd,
+                    ConfidentialiteEssai = ess.confidentialite,
+                    PrecisionProduitIn = ess.precision_produit,
+                    QuantiteProduit = ess.quantite_produit,
+                    CommentaireEssai = ess.commentaire,
+                    TransportSTLO = ess.transport_stlo.ToString(),
+                    SelectedManipulateurID = ess.manipulateurID,
+                    SelectedProveProduitId = projetEssaiDb.IdProvProduitPourCopie(ess.id),
+                    SelectedDestProduit = projetEssaiDb.IdDestProduitPourCopie(ess.id),
+                    SelectedProductId = projetEssaiDb.IdProduitInPourCopie(ess.id)
+            };
+
+                ListVMChild.Add(childVM);
+            }*/
+            return View(vm);
+        }
+
+        public async Task<IActionResult> OuvrirEssaiXModifAsync(int id)
+        {
+            essai ess = new essai(); // Variable pour récupération d'essai
+
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());           
+
+            #region Récupérer les infos projet pour affichage dans le formulaire de modif
+            List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+            // Création d'une liste utilisateurs "manipulateur" de l'essai
+            var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+            // Création d'une liste dropdownlist pour le type produit entrée
+            var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
+            // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+            var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
+            // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+            var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
+            #endregion
+
+            ess = resasUserDB.ObtenirEssaiPourModif(id);
+
+            // initialiser le childmodel utilisé dans la vue partielle (affichage des infos essai)
+            ResEssaiChildViewModel childVM = new ResEssaiChildViewModel()
+            {
+                ManipProjItem = usersManip,
+                ProductItem = prodEntree,
+                ProvenanceProduitItem = provProd,
+                DestProduitItem = destProd,
+                ConfidentialiteEssai = ess.confidentialite,
+                PrecisionProduitIn = ess.precision_produit,
+                QuantiteProduit = ess.quantite_produit,
+                CommentaireEssai = ess.commentaire,
+                TransportSTLO = ess.transport_stlo.ToString(),
+                SelectedManipulateurID = ess.manipulateurID,
+                SelectedProveProduitId = projetEssaiDb.IdProvProduitPourCopie(ess.id),
+                SelectedDestProduit = projetEssaiDb.IdDestProduitPourCopie(ess.id),
+                SelectedProductId = projetEssaiDb.IdProduitInPourCopie(ess.id)
+            };
 
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
-                ResasUser = resasUserDB.ObtenirResasUser(user.Id)
+                // afficher les infos essai selectionné propiète style=display:none ou "" (none pas d'affichage et "" affichage)
+                ResasUser = resasUserDB.ObtenirResasUser(user.Id, "", id),
+                ChildVmModifEssai = childVM
             };
-            return View(vm);
+            
+            return View("MesReservations", vm);
         }
     }
 }

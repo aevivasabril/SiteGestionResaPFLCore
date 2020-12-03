@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Reservation.Data;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
@@ -20,18 +21,23 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             this.resaDB = resaDB;
             this.logger = logger;
         }
-        public List<InfosResasUser> ObtenirResasUser(int IdUsr)
+        /// <summary>
+        /// Obtenir les essais crées par l'utilisateur authentifié
+        /// </summary>
+        /// <param name="IdUsr">id utilisateur</param>
+        /// <param name="openPartial">valeur pour le paramètre activant la vue partielle _ModifEssai : style=display:OpenPartial</param>
+        /// <param name="IdEssai"> id essai dont l'ouverture de vue partielle est demandée</param>
+        /// <returns></returns>
+        public List<InfosResasUser> ObtenirResasUser(int IdUsr, string openPartial, int IdEssai)
         {
             List<InfosResasUser> List = new List<InfosResasUser>();
-            DateTime dateBegin = new DateTime();
+            InfosResasUser infos = new InfosResasUser();
             string StatusEssai = "";
 
             var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr.ToString()).ToList();
 
             foreach(var i in essaiUsr)
             {
-
-
                 // récupérer le projet auquel appartient l'essai
                 var proj = resaDB.projet.First(p => p.id == i.projetID);
 
@@ -88,16 +94,38 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         break;
                 }
 
-
-
-                // une fois toutes les infos recueillis alors les ajouter dans InfosResasUser
-                InfosResasUser infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                // Vérifier si il faut afficher le partial view pour un des essais
+                if(openPartial == null && IdEssai == 0) // pas d'affichage nécessaire
+                {
+                    infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = "none"};                 
+                }
+                else 
+                { 
+                    if(i.id == IdEssai) // montrer la vue partielle de cet essai
+                    {
+                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = openPartial};
+                    }
+                    else // montrer uniquement la vue partielle de l'essai demandé 
+                    {
+                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = "none"};
+                    }
+                }
+
                 List.Add(infos);
             }
 
             return List;
+        }
+
+        public essai ObtenirEssaiPourModif(int IdEssai)
+        {
+            return resaDB.essai.FirstOrDefault(e => e.id == IdEssai);
         }
     }
 }

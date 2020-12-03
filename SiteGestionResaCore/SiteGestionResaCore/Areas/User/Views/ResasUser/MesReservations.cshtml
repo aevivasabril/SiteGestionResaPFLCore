@@ -3,18 +3,16 @@
     ViewData["Title"] = "MesReservations";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<br />
 <h1>Mes Reservations</h1>
-<h4> Vous trouverez la liste des réservations saisies par vous</h4>
-<h6 class="text-center"> Vous pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>
 <br />
 
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
         <div class="row justify-content-center">
             <table class="table table-striped justify-content-center">
-                <h5 class="text-center">Vos réservations</h5>
-                <thead class="thead-dark">
+                <h5 class="text-center">Pour modifier cliquez sur le lien</h5>
+                <thead class="thead-light">
                     <tr>
                         <th scope="col">N° Essai</th>
                         <th scope="col">Informations essai</th>
@@ -30,7 +28,7 @@
                     {
                         <tr>
                             <td>@x.IdEssai</td>
-                            <td><a asp-action="" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
+                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
                             <td>@x.TitreProj</td>
                             <td>@x.NumProjet</td>
                             <td><a asp-action="" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
@@ -44,3 +42,24 @@
 
     </div>
 </div>
+
+<hr />
+<!--Ajout d'une vue partielle pour la modification des infos essai, ouverte après clic sur le lien "Infos essai" et fermeture lors du clic fermer-->
+@for (int x = 0; x < Model.ResasUser.Count(); x++)
+{
+    <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartial">
+        <div class="form-group row">
+            <hr />
+            <div class="row">
+                <div class="col-sm-10 col-md-10">
+                    <form asp-action="OuvrirModif" asp-controller="ResasUser" asp-area="User" method="post">
+                        @*<partial name="~/Areas/User/Views/Shared/_ModifEssai.cshtml"></partial>*@   
+                        <p>@Model.ResasUser[x].IdEssai</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+}
+<h6 class="text-right"> Note: vous ne pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>

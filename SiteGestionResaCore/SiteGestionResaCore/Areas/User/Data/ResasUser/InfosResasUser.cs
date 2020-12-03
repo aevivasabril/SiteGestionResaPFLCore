@@ -11,7 +11,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         public string CommentEssai { get; set; }
         public DateTime DateCreation { get; set; }
         public string StatusEssai { get; set; }
-        //public bool IsOnlyConsultation { get; set; }
+        public string OpenPartial { get; set; }
 
         public string NumProjet { get; set; }
         public string TitreProj { get; set; }

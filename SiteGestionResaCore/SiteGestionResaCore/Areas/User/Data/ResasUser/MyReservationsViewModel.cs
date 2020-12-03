@@ -10,5 +10,7 @@ namespace SiteGestionResaCore.Areas.User.Data
     public class MyReservationsViewModel
     {
         public List<InfosResasUser> ResasUser { get; set; }
+
+        public ResEssaiChildViewModel ChildVmModifEssai { get; set; }
     }
 }
