@@ -88,6 +88,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             // initialiser le childmodel utilisé dans la vue partielle (affichage des infos essai)
             ResEssaiChildViewModel childVM = new ResEssaiChildViewModel()
             {
+                IdEssai = id,
                 ManipProjItem = usersManip,
                 ProductItem = prodEntree,
                 ProvenanceProduitItem = provProd,
@@ -113,6 +114,12 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             };
             
             return View("MesReservations", vm);
+        }
+
+        [HttpPost]
+        public IActionResult EnregistrerInfosEssai(ResEssaiChildViewModel reVM, int id)
+        {
+            return View();
         }
     }
 }

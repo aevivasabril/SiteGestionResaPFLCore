@@ -4,27 +4,29 @@
 *@
 @if (Model.IsEssaiModifiable == true)
 {
-    <h6>Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements</h6>
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <h6>INFORMATIONS ESSAI</h6>
+    <h6 style="color:red" class="text-center">Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements. Attention: une fois cliqué le bouton, les changements seront pris en compte!</h6>
     <hr />
     <div class="form-row">
-        @Html.LabelFor(m => m.ConfidentialiteEssai, new { @class = "col-md-6 control-label" })
+        @Html.LabelFor(m => m.ConfidentialiteEssai, new { @class = "col-md-4 control-label" })
         @Html.ValidationMessageFor(m => m.ConfidentialiteEssai, "", new { @class = "text-danger" })
-        <div class="row">
-            <div class="col-4">
-                @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Ouvert")
-                <label class="col-md-5 control-label">Ouvert</label>
-            </div>
-            <div class="col-4">
-                @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Restreint")
-                <label class="col-md-5 control-label">Restreint</label>
-
-            </div>
-            <div class="col-4">
-                @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel")
-                <label class="col-md-5 control-label">Confidentiel</label>
-            </div>
+        <div class="form-row">
+                <div class="col-4">
+                    <label asp-for="@Model.ConfidentialiteEssai" class="col-md-3 radio-inline">
+                        <input asp-for="@Model.ConfidentialiteEssai" name="ConfidentialiteEssai" value="Ouvert" type="radio">Ouvert
+                    </label>
+                </div>
+                <div class="col-4">
+                    <label asp-for="@Model.ConfidentialiteEssai" class="col-md-4 radio-inline">
+                        <input asp-for="@Model.ConfidentialiteEssai" name="ConfidentialiteEssai" value="Restreint" type="radio">Restreint
+                    </label>
+                </div>
+                <div class="col-4">
+                    <label asp-for="@Model.ConfidentialiteEssai" class="col-md-5 radio-inline">
+                        <input asp-for="@Model.ConfidentialiteEssai" name="ConfidentialiteEssai" value="Confidentiel" type="radio">Confidentiel
+                    </label>
+                    @*@Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel") changement car avec radiobutton on reçoit pas de valeur *@
+                </div>
         </div>
     </div>
     <div class="form-row">
@@ -47,14 +49,14 @@
         </div>
         <div class="form-group col-md-7">
             @Html.LabelFor(m => m.PrecisionProduitIn, new { @class = "col-md-4 control-label" })
-            @Html.TextBoxFor(m => m.PrecisionProduitIn)
+            <input name="PrecisionProduitIn" asp-for="@Model.PrecisionProduitIn" type="text" />
             @Html.ValidationMessageFor(m => m.PrecisionProduitIn, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-5">
             @Html.LabelFor(m => m.QuantiteProduit, new { @class = "col-md-6 control-label" })
-            @Html.TextBoxFor(m => m.QuantiteProduit)
+            <input name="QuantiteProduit" asp-for="@Model.QuantiteProduit" type="text" />
             @Html.ValidationMessageFor(m => m.QuantiteProduit, "", new { @class = "text-danger" })
         </div>
         <div class="form-group col-md-7">
@@ -76,32 +78,33 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.CommentaireEssai, new { @class = "col-md-6 control-label" })
-        @Html.TextBoxFor(m => m.CommentaireEssai, new { @class = "col-md-12 form-control" })
+        <input name="CommentaireEssai" asp-for="@Model.CommentaireEssai" type="text" class="col-md-10" />
         @Html.ValidationMessageFor(m => m.CommentaireEssai, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-row">
         @Html.LabelFor(m => m.TransportSTLO, new { @class = "col-md-6 control-label" })
         @Html.ValidationMessageFor(m => m.TransportSTLO, "", new { @class = "text-danger" })
-        <div class="row">
+        <div class="form-row">
             <div class="col-8">
-                @Html.RadioButtonFor(m => m.TransportSTLO, "true")
-                <label class="col-md-10 control-label">STLO (800L max)</label>
+                <label asp-for="@Model.TransportSTLO" class="col-md-8 radio-inline">
+                    <input asp-for="@Model.TransportSTLO" name="TransportSTLO" value="true" type="radio">STLO (800L max)
+                </label>
             </div>
             <div class="col-4">
-                @Html.RadioButtonFor(m => m.TransportSTLO, "false")
-                <label class="col-md-5 control-label">Autre</label>
-
+                <label asp-for="@Model.TransportSTLO" class="col-md-6 radio-inline">
+                    <input asp-for="@Model.TransportSTLO" name="TransportSTLO" value="false" type="radio">Autre
+                </label>
             </div>
         </div>
     </div>
 
     <div class="form-group row">
         <div class="col-md-2">
-            @Html.ActionLink("Annuler", "AnnulerDemande", null, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Abandoner", "MesReservations", null, new { @class = "btn btn-primary" })
         </div>
         <div class="offset-9 col-md-1">
-            <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
+            <input type="submit" value="Enregistrer" class="btn btn-default navbar-inra" />
         </div>
     </div>
 }
@@ -174,6 +177,6 @@ else
             </div>
         </div>
     </div>
-    
+
 }
 

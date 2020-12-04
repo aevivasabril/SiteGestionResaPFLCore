@@ -14,6 +14,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         #region Liste des personnes en charge de la manip
 
+        public int IdEssai { get; set; }
         /// <summary>
         /// Confidentialité du projet (restreint, ouvert ou confidentiel)
         /// </summary>
