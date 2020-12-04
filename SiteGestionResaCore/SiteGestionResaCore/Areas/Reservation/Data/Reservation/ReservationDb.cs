@@ -32,31 +32,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         // TODO: à vérifier
         public reservation_projet CreationReservation(int EquipId, essai Essai, DateTime dateDebut, DateTime dateFin)
         {
-            //string sqlFormattedDateDebut = dateDebut.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            //string sqlFormattedDateFin = dateFin.ToString("yyyy-MM-dd HH:mm:ss.fff");
             // Rajouter uniquement les ID's vers les autres tables (clé étrangere)
             reservation_projet resa = new reservation_projet() { equipementID = EquipId, essaiID = Essai.id, date_debut = dateDebut, date_fin = dateFin };
 
-            // Rajouter la clé étrangere (table equipement) vers 
-            // Add this existing equipment to the new reservation_projet's "equipements" collection
-            //resa.equipement = Equip; // ERREURRRRR: :( Cette ligne me créé un déuxième équipement dans la table équipement 
-            //resa.equipementID = Equip.id;
-
-            // Ajouter la réference vers l'essai
-            //resa.essai = Essai;
             // Ajouter dans ma BDD "reservation_projet"
             context.reservation_projet.Add(resa);
 
             context.SaveChanges();
 
-            // TODO: Temporaire
-            /*var query = (from res in resaDB.reservation_projet
-                         where (res.equipement.id == 163)
-                         select res).ToArray();*/
-
             return resa;
-
-
         }
 
         // VOIR si cette méthode marche

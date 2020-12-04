@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -92,6 +93,22 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// </summary>
         [Display(Name = "Commentaire Essai")]
         public string CommentaireEssai { get; set; }
+
+        public bool IsEssaiModifiable { get; set; }
+        #endregion
+
+        #region Infos "Essai" uniquement lecture
+
+
+        private InfosEssai infosEssai = new InfosEssai();
+
+        public InfosEssai InfosEssai
+        {
+            get { return infosEssai; }
+            set { infosEssai = value; }
+        }
+
+        //public InfosEssai infosEssai { get; set; }
 
         #endregion
     }

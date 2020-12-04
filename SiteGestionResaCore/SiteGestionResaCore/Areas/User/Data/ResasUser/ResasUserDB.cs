@@ -39,43 +39,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             foreach(var i in essaiUsr)
             {
                 // récupérer le projet auquel appartient l'essai
-                var proj = resaDB.projet.First(p => p.id == i.projetID);
-
-                // TODO: A SEPARER DANS UNE AUTRE METHODE! :
-
-                /*bool isEssaiModifiable = false; // boolean pour indiquer si on ajoute ou pas de lien pour voir les infos
-                bool isOnlyConsultation = false;
-
-                // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
-                var resas = resaDB.reservation_projet.Where(r => r.essaiID == i.id).ToList();
-
-                bool IsFirstSearch = true;
-                foreach (var x in resas)
-                {
-                    if(i.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                    {
-                        // la date début de l'essai est déjà calculé
-                        dateBegin = i.date_inf_confidentiel.Value;
-                    }
-                    else
-                    {
-                        // Pour tous les autres cas, retrouver la date à laquel commence l'essai (date la plus récente)
-                        if(IsFirstSearch == true)
-                        {
-                            dateBegin = x.date_debut;
-                        }
-                        else
-                        {
-                            if (dateBegin > x.date_debut)
-                                dateBegin = x.date_debut;
-                        }
-                    }
-                }
-
-                // vérifier si la date la plus récente a lieu plus tard qu'aujourd'hui
-               if(dateBegin.Date > DateTime.Now.Date)
-                    isEssaiModifiable = true;*/
-
+                var proj = resaDB.projet.First(p => p.id == i.projetID);                
                 switch (i.status_essai)
                 {
                     case "Canceled":
@@ -116,16 +80,58 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = "none"};
                     }
                 }
-
                 List.Add(infos);
             }
-
             return List;
         }
 
         public essai ObtenirEssaiPourModif(int IdEssai)
         {
             return resaDB.essai.FirstOrDefault(e => e.id == IdEssai);
+        }
+
+        public bool IsEssaiModifiable(int IdEssai)
+        {
+            DateTime dateBegin = new DateTime();
+
+            var essai = resaDB.essai.First(e=>e.id == IdEssai);
+            // si l'essai est refusé ou annulé alors essai non modifiable
+            if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
+                return false;
+            else // Essais modifiables mais uniquement si l'essai n'est pas passé
+            {
+                // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
+                var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
+
+                bool IsFirstSearch = true;
+                if (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                {
+                    // la date début de l'essai est déjà calculé
+                    dateBegin = essai.date_inf_confidentiel.Value;
+                }
+                else
+                {
+                    foreach (var x in resas)
+                    {
+
+                        // Pour tous les autres cas, retrouver la date à laquel commence l'essai (date la plus récente)
+                        if (IsFirstSearch == true)
+                        {
+                            dateBegin = x.date_debut;
+                        }
+                        else
+                        {
+                            if (dateBegin > x.date_debut)
+                                dateBegin = x.date_debut;
+                        }
+                    }
+                }               
+                // vérifier si la date la plus récente a lieu plus tard qu'aujourd'hui
+                if (dateBegin.Date > DateTime.Now.Date) // pour comparer uniquement la date dd/mm/yy
+                    return true;
+                else
+                    return false;
+            }          
         }
     }
 }

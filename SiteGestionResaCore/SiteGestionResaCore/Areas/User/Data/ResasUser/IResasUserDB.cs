@@ -11,5 +11,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         List<InfosResasUser> ObtenirResasUser(int IdUsr, string openPartial, int IdEssai);
 
         essai ObtenirEssaiPourModif(int IdEssai);
+
+        bool IsEssaiModifiable(int IdEssai);
     }
 }
