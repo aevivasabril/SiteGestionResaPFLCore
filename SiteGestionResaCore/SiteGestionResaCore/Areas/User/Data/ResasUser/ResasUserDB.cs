@@ -256,5 +256,156 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             };
             return Infos;
         }
+
+        public bool UpdateConfidentialiteEss(essai ess, string confidentialite)
+        {   
+            try
+            {
+                ess.confidentialite = confidentialite;
+                resaDB.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de confidentialité pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateManipID(essai ess, int selecManipulateurID)
+        {
+            try
+            {
+                ess.manipulateurID = selecManipulateurID;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ manipulateur ID pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool compareTypeProdEntree(string TypeProdEntrant, int SelProductId)
+        {
+            return resaDB.ld_produit_in.First(t => t.nom_produit_in == TypeProdEntrant).id == SelProductId;
+        }
+
+        public bool UpdateProdEntree(essai essa, int prodEntId)
+        {
+            try
+            {
+                essa.type_produit_entrant = resaDB.ld_produit_in.First(p=>p.id == prodEntId).nom_produit_in;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Produit entrée' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdatePrecisionProd(essai essa, string precision)
+        {
+            try
+            {
+                essa.precision_produit = precision;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'précision produit' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateQuantiteProd(essai essa, string quantite)
+        {
+            try
+            {
+                essa.quantite_produit = quantite;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'quantite Produit' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool compareProvProd(string provProduit, int SelProvId)
+        {
+            return resaDB.ld_provenance_produit.First(p => p.nom_provenance_produit == provProduit).id == SelProvId;
+        }
+
+        public bool UpdateProvProd(essai essa, int SelectProvProduitId)
+        {
+            try
+            {
+                essa.provenance_produit = resaDB.ld_provenance_produit.First(p=>p.id == SelectProvProduitId).nom_provenance_produit;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Provenance Produit' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool compareDestProd(string destination_produit, int selectDestProduit)
+        {
+            return resaDB.ld_destination.First(d => d.nom_destination == destination_produit).id == selectDestProduit;
+        }
+
+        public bool UpdateDestProd(essai essa, int SelectDestProduit)
+        {
+            try
+            {
+                essa.destination_produit = resaDB.ld_destination.First(d => d.id == SelectDestProduit).nom_destination;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Destination produit' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateTransport(essai essa, string TranspSTLO)
+        {
+            try
+            {
+                essa.transport_stlo = Convert.ToBoolean(TranspSTLO);
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Transport' pour un essai");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateComment(essai essa, string commentEssai)
+        {
+            try
+            {
+                essa.commentaire = commentEssai;
+                resaDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Commentaire' pour un essai");
+                return false;
+            }
+            return true;
+        }
+    }
     }
 }

@@ -76,8 +76,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             {                
                 infos = resasUserDB.ObtenirInfosEssai(id);
             }
-
-           
+            
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
                 // afficher les infos essai selectionné propiète style=display:none ou "" (none pas d'affichage et "" affichage)
@@ -106,6 +105,119 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         [HttpPost]
         public IActionResult EnregistrerInfosEssai(MyReservationsViewModel reVM, int id)
         {
+            bool isChangeOk = false;
+            // Voir selon les infos saisies s'il y a une différence avec les infos actuelles
+            // vérifier si la confidentialité a changé
+            var essa = resasUserDB.ObtenirEssaiPourModif(id);
+            if (essa.confidentialite != reVM.ConfidentialiteEss)
+            {
+                isChangeOk = resasUserDB.UpdateConfidentialiteEss(essa, reVM.ConfidentialiteEss);
+                if(!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'confidentialité', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+            // vérifier si le manipulateur essai a changé
+            if(essa.manipulateurID!=reVM.SelecManipulateurID && reVM.SelecManipulateurID != -1 && reVM.SelecManipulateurID != 0)
+            {
+                isChangeOk = resasUserDB.UpdateManipID(essa, reVM.SelecManipulateurID);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'manipulateur ID', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // vérifier si le produit entrée a changé
+            if (!resasUserDB.compareTypeProdEntree(essa.type_produit_entrant, reVM.SelectProductId) 
+                && reVM.SelectProductId != -1 && reVM.SelecManipulateurID != 0) //option par défaut
+            {
+                isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // TODO: vérifier cette méthode / vérifier si la précision du produit peut-être incluse
+            if(essa.precision_produit != reVM.PrecisionProdIn && reVM.PrecisionProdIn != null) // car si on change pas il sera null
+            {
+                isChangeOk = resasUserDB.UpdatePrecisionProd(essa, reVM.PrecisionProdIn);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'precision produit', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // vérifier si la quantité de produit a changée
+            if (essa.quantite_produit != reVM.QuantProduit && reVM.QuantProduit != null)
+            {
+                isChangeOk = resasUserDB.UpdateQuantiteProd(essa, reVM.QuantProduit);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'quantité produit', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // vérifier la provenance produit
+            if (!resasUserDB.compareProvProd(essa.provenance_produit, reVM.SelectProvProduitId) && reVM.SelectProvProduitId != -1 && reVM.SelectProvProduitId != 0) //option par défaut
+            {
+                isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // vérifier la Destination produit
+            if (!resasUserDB.compareDestProd(essa.destination_produit, reVM.SelectDestProduit) && reVM.SelectDestProduit != -1 && reVM.SelectDestProduit != 0) //option par défaut
+            {
+                isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // Vérifier si le mode de transport a changé
+            if(essa.transport_stlo.ToString() != reVM.TranspSTLO)
+            {
+                isChangeOk = resasUserDB.UpdateTransport(essa, reVM.TranspSTLO);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'transport', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+
+            // Vérifier si le Commentaire essai a changé
+            if (essa.commentaire != reVM.CommentEssai && reVM.CommentEssai != null)
+            {
+                isChangeOk = resasUserDB.UpdateComment(essa, reVM.CommentEssai);
+                if (!isChangeOk)
+                {
+                    // TODO: tester!
+                    ModelState.AddModelError("", "Problème lors de la maj 'Commentaire essai', reesayez ultérieurement.");
+                    goto ENDT;
+                }
+            }
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "L'essai N° " + id + " a été mis à jour! ";
+        ENDT:
             return View("MesReservations");
         }
     }

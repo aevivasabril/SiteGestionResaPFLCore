@@ -27,5 +27,29 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         int IdProduitInToCopie(int IdEssai);
 
         ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai);
+
+        bool UpdateConfidentialiteEss(essai ess, string confidentialite);
+
+        bool UpdateManipID(essai ess, int selecManipulateurID);
+
+        bool compareTypeProdEntree(string TypeProdEntrant, int SelProductId);
+
+        bool UpdateProdEntree(essai essa, int prodEntId);
+
+        bool UpdatePrecisionProd(essai essa, string precision);
+
+        bool UpdateQuantiteProd(essai essa, string quantite);
+
+        bool compareProvProd(string provProduit, int SelProvId);
+
+        bool UpdateProvProd(essai essa, int SelectProvProduitId);
+
+        bool compareDestProd(string destination_produit, int selectDestProduit);
+
+        bool UpdateDestProd(essai essa, int SelectDestProduit);
+
+        bool UpdateTransport(essai essa, string TranspSTLO);
+
+        bool UpdateComment(essai essa, string commentEssai);
     }
 }
