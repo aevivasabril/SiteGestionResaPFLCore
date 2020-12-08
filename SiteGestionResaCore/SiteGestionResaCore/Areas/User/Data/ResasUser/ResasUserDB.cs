@@ -133,5 +133,128 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                     return false;
             }          
         }
+
+        /// <summary>
+        /// Obtenir liste des options type de produit d'entrée
+        /// </summary>
+        /// <returns> liste des options produit entrée</returns>
+        public List<ld_produit_in> ListProduitEntree()
+        {
+            return resaDB.ld_produit_in.ToList();
+        }
+
+        /// <summary>
+        /// Obtenir liste des options provenance produit
+        /// </summary>
+        /// <returns>List<ld_provenance_produit></returns>
+        public List<ld_provenance_produit> ListProveProduit()
+        {
+            return resaDB.ld_provenance_produit.ToList();
+        }
+
+        /// <summary>
+        /// Obtenir liste des options destinaition produit sortie
+        /// </summary>
+        /// <returns></returns>
+        public List<ld_destination> ListDestinationPro()
+        {
+            return resaDB.ld_destination.ToList();
+        }
+
+        /// <summary>
+        /// obtenir l'id provenance produit
+        /// </summary>
+        /// <param name="IdEssai"> id essai</param>
+        /// <returns> id prov produit</returns>
+        public int IdProvProduitToCopie(int IdEssai)
+        {
+            int idProvPro;
+            essai ess = resaDB.essai.FirstOrDefault(u => u.id == IdEssai);
+            if (ess.provenance_produit != null)
+            {
+                idProvPro = (from prov in resaDB.ld_provenance_produit
+                             from essai in resaDB.essai
+                             where (essai.id == IdEssai) && (essai.provenance_produit == prov.nom_provenance_produit)
+                             select prov.id).First();
+            }
+            else
+            {
+                idProvPro = -1;
+            }
+            return idProvPro;
+        }
+
+        /// <summary>
+        /// obtenir id option destinaison produit sortie
+        /// </summary>
+        /// <param name="IdEssai"> id essai</param>
+        /// <returns>id destinaison produit</returns>
+        public int IdDestProduitToCopie(int IdEssai)
+        {
+            int idProvProd;
+            essai es = resaDB.essai.FirstOrDefault(u => u.id == IdEssai);
+            if (es.destination_produit != null)
+            {
+                idProvProd = (from dest in resaDB.ld_destination
+                              from essai in resaDB.essai
+                              where (essai.id == IdEssai) && (essai.destination_produit == dest.nom_destination)
+                              select dest.id).First();
+            }
+            else
+            {
+                idProvProd = -1;
+            }
+            return idProvProd;
+        }
+
+        /// <summary>
+        /// Obtenir id produit entrée
+        /// </summary>
+        /// <param name="IdEssai"></param>
+        /// <returns>id produit entrée</returns>
+        public int IdProduitInToCopie(int IdEssai)
+        {
+            int idProdIn;
+            essai es = resaDB.essai.FirstOrDefault(u => u.id == IdEssai);
+            if (es.type_produit_entrant != null)
+            {
+                idProdIn = (from prod in resaDB.ld_produit_in
+                            from essai in resaDB.essai
+                            where (essai.id == IdEssai) && (essai.type_produit_entrant == prod.nom_produit_in)
+                            select prod.id).First();
+            }
+            else
+            {
+                idProdIn = -1;
+            }
+            return idProdIn;
+        }
+
+        /// <summary>
+        /// Obtenir les infos affichage essai à partir d'un id essai
+        /// </summary>
+        /// <param name="idEssai"></param>
+        /// <returns></returns>
+        public ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai)
+        {
+            var essai = resaDB.essai.First(e => e.id == idEssai);
+
+            ConsultInfosEssaiChilVM Infos = new ConsultInfosEssaiChilVM
+            {
+                id = essai.id,
+                Commentaire = essai.commentaire,
+                Confidentialite = essai.confidentialite,
+                DateCreation = essai.date_creation,
+                DestProd = essai.destination_produit,
+                MailManipulateur = resaDB.Users.First(u => u.Id == essai.manipulateurID).Email,
+                MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email,
+                PrecisionProd = essai.precision_produit,
+                ProveProd = essai.provenance_produit,
+                QuantiteProd = essai.quantite_produit,
+                TransportStlo = essai.transport_stlo,
+                TypeProduitEntrant = essai.type_produit_entrant
+            };
+            return Infos;
+        }
     }
 }

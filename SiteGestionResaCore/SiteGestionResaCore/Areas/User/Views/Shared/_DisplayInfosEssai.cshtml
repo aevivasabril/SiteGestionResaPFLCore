@@ -1,0 +1,72 @@
+﻿@model SiteGestionResaCore.Areas.User.Data.ResasUser.ConsultInfosEssaiChilVM
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div class="card col-md-7 offset-3">
+    <br />
+    <h5 class="card-title text-center">Informations Essai N° @Model.id (Informations non modifiables)</h5>
+    <br />
+    <table class="table table-sm table-borderless">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Date Création</th>
+                <td>@Model.DateCreation</td>
+            </tr>
+            <tr>
+                <th scope="row">Email manipulateur essai</th>
+                <td>@Model.MailManipulateur</td>
+            </tr>
+            <tr>
+                <th scope="row">Type de produit entrant</th>
+                <td>@Model.TypeProduitEntrant</td>
+            </tr>
+            <tr>
+                <th scope="row">Demande saisie par</th>
+                <td>@Model.MailUser</td>
+            </tr>
+            <tr>
+                <th scope="row">Descriptif essai</th>
+                <td>@Model.Commentaire</td>
+            </tr>
+            <tr>
+                <th scope="row">Confidentialité essai</th>
+                <td>@Model.Confidentialite</td>
+            </tr>
+            <tr>
+                <th scope="row">Transport assuré par</th>
+                @if (Model.TransportStlo == true)
+                {
+                    <td>STLO</td>
+                }
+                else
+                {
+                    <td>Autre</td>
+                }
+            </tr>
+            <tr>
+                <th scope="row">Précision produit</th>
+                <td>@Model.PrecisionProd</td>
+            </tr>
+            <tr>
+                <th scope="row">Quantité produit</th>
+                <td>@Model.QuantiteProd</td>
+            </tr>
+            <tr>
+                <th scope="row">Provenance produit</th>
+                <td>@Model.ProveProd</td>
+            </tr>
+            <tr>
+                <th scope="row">Destination produit</th>
+                <td>@Model.DestProd</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="form-group row">
+        <div class="offset-5 col-md-2">
+            @Html.ActionLink("Fermer", "MesReservations", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>

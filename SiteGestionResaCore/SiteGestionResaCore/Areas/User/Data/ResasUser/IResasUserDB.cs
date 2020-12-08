@@ -13,5 +13,19 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         essai ObtenirEssaiPourModif(int IdEssai);
 
         bool IsEssaiModifiable(int IdEssai);
+
+        List<ld_produit_in> ListProduitEntree();
+
+        List<ld_provenance_produit> ListProveProduit();
+
+        List<ld_destination> ListDestinationPro();
+
+        int IdProvProduitToCopie(int IdEssai);
+
+        int IdDestProduitToCopie(int IdEssai);
+
+        int IdProduitInToCopie(int IdEssai);
+
+        ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai);
     }
 }
