@@ -125,9 +125,10 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                                 dateBegin = x.date_debut;
                         }
                     }
-                }               
-                // vérifier si la date la plus récente a lieu plus tard qu'aujourd'hui
-                if (dateBegin.Date > DateTime.Now.Date) // pour comparer uniquement la date dd/mm/yy
+                }
+                TimeSpan diff = dateBegin - DateTime.Now.Date;
+                // vérifier si la date la plus récente a lieu plus tard une semaine avant
+                if (diff.TotalDays >= 7) // pour comparer uniquement la date dd/mm/yy
                     return true;
                 else
                     return false;
