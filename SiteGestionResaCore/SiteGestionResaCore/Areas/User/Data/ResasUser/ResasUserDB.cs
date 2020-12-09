@@ -401,11 +401,10 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             }
             catch (Exception e)
             {
-                logger.LogError(e.ToString(), "Problème lors de la MAJ 'Commentaire' pour un essai");
+                logger.LogError(e.ToString(), "Problème lors de la MAJ '' pour un essai");
                 return false;
             }
             return true;
         }
-    }
     }
 }
