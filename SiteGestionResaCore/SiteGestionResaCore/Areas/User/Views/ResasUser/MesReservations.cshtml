@@ -49,16 +49,17 @@
 </div>
 
 <div class="form-group row">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <!--Ajout d'une vue partielle pour la modification des infos essai, ouverte après clic sur le lien "Infos essai" et fermeture lors du clic fermer-->
     <div class="col-md-12">
         @for (int x = 0; x < Model.ResasUser.Count(); x++)
         {
             <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartial">
                 <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
                 @if (Model.IsEssaiModifiable == true)
                 {
-                    <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="Model.ResasUser[x].IdEssai" method="post">
+                    <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
                         @*<partial name="~/Areas/User/Views/Shared/_ModifEssai.cshtml" for="@Model.ChildVmModifEssai"></partial>*@
                         <h6>INFORMATIONS ESSAI</h6>
                         <h6 style="color:red" class="text-center">Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements. Attention: une fois cliqué le bouton, les changements seront pris en compte!</h6>
@@ -68,20 +69,7 @@
                             @Html.ValidationMessageFor(m => m.ConfidentialiteEss, "", new { @class = "text-danger" })
                             <div class="form-row">
                                 <div class="col-4">
-                                    <label asp-for="@Model.ConfidentialiteEss" class="col-md-3 radio-inline">
-                                        <input asp-for="@Model.ConfidentialiteEss" name="ConfidentialiteEss" value="Ouvert" type="radio">Ouvert
-                                    </label>
-                                </div>
-                                <div class="col-4">
-                                    <label asp-for="@Model.ConfidentialiteEss" class="col-md-4 radio-inline">
-                                        <input asp-for="@Model.ConfidentialiteEss" name="ConfidentialiteEss" value="Restreint" type="radio">Restreint
-                                    </label>
-                                </div>
-                                <div class="col-4">
-                                    <label asp-for="@Model.ConfidentialiteEss" class="col-md-5 radio-inline">
-                                        <input asp-for="@Model.ConfidentialiteEss" name="ConfidentialiteEss" value="Confidentiel" type="radio">Confidentiel
-                                    </label>
-                                    @*@Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel") changement car avec radiobutton on reçoit pas de valeur *@
+                                    <label class="col-md-3 radio-inline">@Model.ConfidentialiteEss</label>
                                 </div>
                             </div>
                         </div>

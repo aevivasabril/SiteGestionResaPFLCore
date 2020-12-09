@@ -103,49 +103,72 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         }
 
         [HttpPost]
-        public IActionResult EnregistrerInfosEssai(MyReservationsViewModel reVM, int id)
+        public async Task<IActionResult> EnregistrerInfosEssaiAsync(MyReservationsViewModel reVM, int id)
         {
             bool isChangeOk = false;
             // Voir selon les infos saisies s'il y a une différence avec les infos actuelles
-            // vérifier si la confidentialité a changé
             var essa = resasUserDB.ObtenirEssaiPourModif(id);
-            if (essa.confidentialite != reVM.ConfidentialiteEss)
-            {
-                isChangeOk = resasUserDB.UpdateConfidentialiteEss(essa, reVM.ConfidentialiteEss);
-                if(!isChangeOk)
-                {
-                    // TODO: tester!
-                    ModelState.AddModelError("", "Problème lors de la maj 'confidentialité', reesayez ultérieurement.");
-                    goto ENDT;
-                }
-            }
-            // vérifier si le manipulateur essai a changé
-            if(essa.manipulateurID!=reVM.SelecManipulateurID && reVM.SelecManipulateurID != -1 && reVM.SelecManipulateurID != 0)
-            {
-                isChangeOk = resasUserDB.UpdateManipID(essa, reVM.SelecManipulateurID);
-                if (!isChangeOk)
-                {
-                    // TODO: tester!
-                    ModelState.AddModelError("", "Problème lors de la maj 'manipulateur ID', reesayez ultérieurement.");
-                    goto ENDT;
-                }
-            }
 
-            // vérifier si le produit entrée a changé
-            if (!resasUserDB.compareTypeProdEntree(essa.type_produit_entrant, reVM.SelectProductId) 
-                && reVM.SelectProductId != -1 && reVM.SelecManipulateurID != 0) //option par défaut
-            {
-                isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
-                if (!isChangeOk)
+            #region vérifier si le manipulateur essai a changé
+
+            if (reVM.SelecManipulateurID != -1 && reVM.SelecManipulateurID != 0)
+            {         
+                if (essa.manipulateurID != reVM.SelecManipulateurID)
                 {
-                    // TODO: tester!
-                    ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
-                    goto ENDT;
+                    isChangeOk = resasUserDB.UpdateManipID(essa, reVM.SelecManipulateurID);
+                    if (!isChangeOk)
+                    {
+                        // TODO: tester!
+                        ModelState.AddModelError("", "Problème lors de la maj 'manipulateur ID', reesayez ultérieurement.");
+                        goto ENDT;
+                    }
                 }
             }
+            else
+            {
+                // TODO: tester!
+                ModelState.AddModelError("", "Vous devez avoir un manipulateur essai, Modifications essai N° " + id +  " non pris en compte. Repetez l'opération.");
+                goto ENDT;
+            }
+            
+            #endregion
 
+            #region Vérifier le produit entrant
+            if (reVM.SelectProductId != -1 && reVM.SelectProductId != 0)
+            {
+                if(essa.type_produit_entrant == null) //  valeur null n'existe pas dans la bdd donc on met à jour la valeur de l'essai
+                {
+                    isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
+                    if (!isChangeOk)
+                    {
+                        // TODO: tester!
+                        ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
+                        goto ENDT;
+                    }
+                }
+                else
+                {
+                    // vérifier si le produit entrée a changé
+                    if (!resasUserDB.compareTypeProdEntree(essa.type_produit_entrant, reVM.SelectProductId)) 
+                    {
+
+                        isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
+                        if (!isChangeOk)
+                        {
+                            // TODO: tester!
+                            ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
+                            goto ENDT;
+                        }
+
+                    }
+                }
+            }
+            #endregion
+
+            #region Vérifier la précision produit
             // TODO: vérifier cette méthode / vérifier si la précision du produit peut-être incluse
-            if(essa.precision_produit != reVM.PrecisionProdIn && reVM.PrecisionProdIn != null) // car si on change pas il sera null
+            if( (essa.precision_produit == null && reVM.PrecisionProdIn != null) || (essa.precision_produit != null && reVM.PrecisionProdIn == null) ||
+                (essa.precision_produit != reVM.PrecisionProdIn) ) // valeur dans essai à null et l'utilisateur souhaite mettre quelque chose 
             {
                 isChangeOk = resasUserDB.UpdatePrecisionProd(essa, reVM.PrecisionProdIn);
                 if (!isChangeOk)
@@ -154,10 +177,14 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     ModelState.AddModelError("", "Problème lors de la maj 'precision produit', reesayez ultérieurement.");
                     goto ENDT;
                 }
-            }
+            } 
+            
+            #endregion
 
+            #region Vérifir la quantité de produit
             // vérifier si la quantité de produit a changée
-            if (essa.quantite_produit != reVM.QuantProduit && reVM.QuantProduit != null)
+            if((essa.quantite_produit == null && reVM.QuantProduit != null) || (essa.quantite_produit != null && reVM.QuantProduit == null) ||
+                (essa.quantite_produit != reVM.QuantProduit) )
             {
                 isChangeOk = resasUserDB.UpdateQuantiteProd(essa, reVM.QuantProduit);
                 if (!isChangeOk)
@@ -167,33 +194,75 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     goto ENDT;
                 }
             }
+            
+            #endregion
 
+            #region Vérifier la provenance produit
             // vérifier la provenance produit
-            if (!resasUserDB.compareProvProd(essa.provenance_produit, reVM.SelectProvProduitId) && reVM.SelectProvProduitId != -1 && reVM.SelectProvProduitId != 0) //option par défaut
+            if (reVM.SelectProvProduitId != -1 && reVM.SelectProvProduitId != 0)
             {
-                isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
-                if (!isChangeOk)
+                if(essa.provenance_produit == null) // la valeur null n'existe pas dans la liste de provenance produit
                 {
-                    // TODO: tester!
-                    ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
-                    goto ENDT;
+                    isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
+                    if (!isChangeOk)
+                    {
+                        // TODO: tester!
+                        ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
+                        goto ENDT;
+                    }
                 }
+                else // si la valeur n'est pas null alors comparer avec la nouvelle valeur choisie
+                {
+                    if (!resasUserDB.compareProvProd(essa.provenance_produit, reVM.SelectProvProduitId)) //option par défaut
+                    {
+                        isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
+                        if (!isChangeOk)
+                        {
+                            // TODO: tester!
+                            ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
+                            goto ENDT;
+                        }
+                    }
+                }
+                
             }
+            #endregion
 
-            // vérifier la Destination produit
-            if (!resasUserDB.compareDestProd(essa.destination_produit, reVM.SelectDestProduit) && reVM.SelectDestProduit != -1 && reVM.SelectDestProduit != 0) //option par défaut
+            #region Verifier la destination produit
+
+            if (reVM.SelectDestProduit != -1 && reVM.SelectDestProduit != 0)
             {
-                isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
-                if (!isChangeOk)
+                if(essa.destination_produit == null)
                 {
-                    // TODO: tester!
-                    ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
-                    goto ENDT;
+                    isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
+                    if (!isChangeOk)
+                    {
+                        // TODO: tester!
+                        ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
+                        goto ENDT;
+                    }
+                }
+                else
+                {
+                    // vérifier la Destination produit
+                    if (!resasUserDB.compareDestProd(essa.destination_produit, reVM.SelectDestProduit)) //option par défaut
+                    {
+                        isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
+                        if (!isChangeOk)
+                        {
+                            // TODO: tester!
+                            ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
+                            goto ENDT;
+                        }
+                    }
                 }
             }
+            #endregion
+
+            #region Vérifier le transport désiré
 
             // Vérifier si le mode de transport a changé
-            if(essa.transport_stlo.ToString() != reVM.TranspSTLO)
+            if (essa.transport_stlo != Convert.ToBoolean(reVM.TranspSTLO))
             {
                 isChangeOk = resasUserDB.UpdateTransport(essa, reVM.TranspSTLO);
                 if (!isChangeOk)
@@ -203,9 +272,12 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     goto ENDT;
                 }
             }
+            #endregion
 
+            #region Vérifier le commentaire essai
             // Vérifier si le Commentaire essai a changé
-            if (essa.commentaire != reVM.CommentEssai && reVM.CommentEssai != null)
+            if ((essa.commentaire == null && reVM.CommentEssai != null) || (essa.commentaire != null && reVM.CommentEssai == null) ||
+                (essa.commentaire != reVM.CommentEssai))
             {
                 isChangeOk = resasUserDB.UpdateComment(essa, reVM.CommentEssai);
                 if (!isChangeOk)
@@ -215,10 +287,18 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     goto ENDT;
                 }
             }
+                
+            #endregion
+
             ViewBag.AfficherMessage = true;
-            ViewBag.Message = "L'essai N° " + id + " a été mis à jour! ";
+            ViewBag.Message = "L'essai N° " + id + " a été mis à jour! ";           
+
         ENDT:
-            return View("MesReservations");
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+            reVM.ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, 0);
+
+            return View("MesReservations", reVM);
         }
     }
 }
