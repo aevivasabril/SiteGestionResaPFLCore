@@ -61,7 +61,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                from e in t3.DefaultIfEmpty()
                                join zo in resaDB.zone on e.zoneID equals zo.id into t4
                                from z in t4.DefaultIfEmpty()
-                               where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != essai.id
+                               where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != essai.id &&
+                               (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
                                && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
                                    (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
                                select new
@@ -190,6 +191,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 
                 // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) alors trouver les infos de chaque réservation ayant un conflit
                 // requete jointure ne fonctionne pas sur entity framework
+                // eviter de vérifier les conflits sur des autres essais refusés ou annulés
                 var Reg = (from proj in resaDB.projet
                            join ess in resaDB.essai on proj.id equals ess.projetID into t1
                            from m in t1.DefaultIfEmpty()
@@ -199,7 +201,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                            from e in t3.DefaultIfEmpty()
                            join zo in resaDB.zone on e.zoneID equals zo.id into t4
                            from z in t4.DefaultIfEmpty()
-                           where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != idEssai
+                           where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != idEssai && 
+                           ( m.status_essai != EnumStatusEssai.Refuse.ToString() ) && ( m.status_essai != EnumStatusEssai.Canceled.ToString() )
                            && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
                                (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
                            select new
