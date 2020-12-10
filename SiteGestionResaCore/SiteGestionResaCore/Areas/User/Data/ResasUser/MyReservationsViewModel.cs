@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,10 +28,7 @@ namespace SiteGestionResaCore.Areas.User.Data
             set { _consultInfosEssai = value; }
         }
 
-        //public InfosEssai infosEssai { get; set; }
-
         #endregion
-
 
         #region Champs "Essai" pour modification
 
@@ -115,5 +114,15 @@ namespace SiteGestionResaCore.Areas.User.Data
         public string CommentEssai { get; set; }
 
         #endregion
+
+        private List<InfosResasEquipement> _equipementsReserves = new List<InfosResasEquipement>();
+
+        public List<InfosResasEquipement> EquipementsReserves
+        {
+            get { return _equipementsReserves; }
+            set { _equipementsReserves = value; }
+        }
+
+        //public List<InfosResasEquipement> EquipementsReserves { get; set; }
     }
 }

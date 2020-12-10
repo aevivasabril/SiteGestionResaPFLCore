@@ -1,0 +1,28 @@
+﻿@model IEnumerable<SiteGestionResaCore.Models.EquipementsReserves.InfosResasEquipement>
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="card col-md-10 offset-1">
+    <table class="table table-sm table-borderless">
+        <thead>
+            <tr>
+                <th scope="col">Zone</th>
+                <th scope="col">Nom Equipement</th>
+                <th scope="col">Date Début</th>
+                <th scope="col">Date Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.ZoneEquipement</td>
+                    <td>@r.NomEquipement</td>
+                    <td>@r.DateDebut</td>
+                    <td>@r.DateFin</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+    

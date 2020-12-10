@@ -1,4 +1,5 @@
 ﻿using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 {
     public interface IResasUserDB
     {
-        List<InfosResasUser> ObtenirResasUser(int IdUsr, string openPartial, int IdEssai);
+        List<InfosResasUser> ObtenirResasUser(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai);
 
         essai ObtenirEssaiPourModif(int IdEssai);
 
@@ -51,5 +52,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         bool UpdateTransport(essai essa, string TranspSTLO);
 
         bool UpdateComment(essai essa, string commentEssai);
+
+        List<InfosResasEquipement> ResasEssai(int id);
     }
 }

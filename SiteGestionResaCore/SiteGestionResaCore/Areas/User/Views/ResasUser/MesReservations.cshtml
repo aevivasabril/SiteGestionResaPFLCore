@@ -36,7 +36,7 @@
                             <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
                             <td>@x.TitreProj</td>
                             <td>@x.NumProjet</td>
-                            <td><a asp-action="" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
+                            <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
                             <td>@x.DateCreation</td>
                             <td>@x.StatusEssai</td>
                         </tr>
@@ -47,16 +47,15 @@
 
     </div>
 </div>
-
+<!--Ouvrir la fênetre pour affichage et modification des infos "essai"-->
 <div class="form-group row">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <!--Ajout d'une vue partielle pour la modification des infos essai, ouverte après clic sur le lien "Infos essai" et fermeture lors du clic fermer-->
     <div class="col-md-12">
         @for (int x = 0; x < Model.ResasUser.Count(); x++)
         {
-            <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartial">
+            <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartialEssai">
                 <hr />
-
                 @if (Model.IsEssaiModifiable == true)
                 {
                     <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
@@ -163,5 +162,33 @@
         }
     </div>
 </div>
+<div class="form-group row">
+    <div class="col-md-12">
+        @for (int x = 0; x < Model.ResasUser.Count(); x++)
+        {
+            <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenReservations">
+                <form asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
+                    <br />
+                    <h5 class="text-center">Equipements réservés pour l'essai N° @Model.ResasUser[x].IdEssai </h5>
+                    <br />
+                    <partial name="_InfoEquipemReserves" for="@Model.EquipementsReserves"></partial>
+                    <br />
+                    @if (Model.IsEssaiModifiable == true)
+                    {
+                        <div class="col-sm-3 col-md-3 col-lg-3 offset-4">
+                            <input type="submit" class="btn btn-outline-success" value="Modifier equipements réservés" />
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-center" style="color:orange"><strong>Oups! trop tard! <span class="fas fa-sad-tear"></span> la modification des réservations équipements doit être fait minimum une semaine avant...</strong></p>
+                    }
 
-<h6 class="text-right"> Note: vous ne pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>
+                    <hr />
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+@*<h6 class="text-right"><strong>Note:</strong> vous ne pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>*@

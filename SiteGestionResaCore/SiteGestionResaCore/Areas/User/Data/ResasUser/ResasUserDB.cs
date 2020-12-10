@@ -2,6 +2,7 @@
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +26,10 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// Obtenir les essais crées par l'utilisateur authentifié
         /// </summary>
         /// <param name="IdUsr">id utilisateur</param>
-        /// <param name="openPartial">valeur pour le paramètre activant la vue partielle _ModifEssai : style=display:OpenPartial</param>
+        /// <param name="OpenPartialEssai">valeur pour le paramètre activant la vue partielle _ModifEssai : style=display:OpenPartial</param>
         /// <param name="IdEssai"> id essai dont l'ouverture de vue partielle est demandée</param>
         /// <returns></returns>
-        public List<InfosResasUser> ObtenirResasUser(int IdUsr, string openPartial, int IdEssai)
+        public List<InfosResasUser> ObtenirResasUser(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai)
         {
             List<InfosResasUser> List = new List<InfosResasUser>();
             InfosResasUser infos = new InfosResasUser();
@@ -58,12 +59,40 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         break;
                 }
 
-                // Vérifier si il faut afficher le partial view pour un des essais
-                if(openPartial == null && IdEssai == 0) // pas d'affichage nécessaire
+                // Vérifier si il faut afficher le partial view infos essai pour un des essais
+                if(IdEssai != 0) // signifie que une des vues infos essai ou infos réservation devra être affichée
+                {
+                    if(i.id == IdEssai && OpenPartialEssai!=null) // montrer la vue partielle de cet essai
+                    {
+                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai, OpenReservations = "none"};
+
+                    }else if (i.id == IdEssai && OpenReservations != null)
+                    {
+                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = OpenReservations};
+                    }
+                    else
+                    {
+                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
+                    }
+                }
+                else
                 {
                     infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = "none"};                 
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
+                }
+
+                /*if(OpenPartialEssai == null && IdEssai == 0) // pas d'affichage nécessaire
+                {
+                    infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                                        IdEssai = i.id, NumProjet = proj.num_projet,
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = "none"};                 
                 }
                 else 
                 { 
@@ -71,15 +100,15 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                     {
                         infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = openPartial};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai};
                     }
                     else // montrer uniquement la vue partielle de l'essai demandé 
                     {
                         infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartial = "none"};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none"};
                     }
-                }
+                }*/
                 List.Add(infos);
             }
             return List;
@@ -406,6 +435,26 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 return false;
             }
             return true;
+        }
+
+        public List<InfosResasEquipement> ResasEssai(int id)
+        {
+            List<InfosResasEquipement> list = new List<InfosResasEquipement>();
+
+            var resas = resaDB.reservation_projet.Where(r => r.essaiID == id).Distinct().ToList();
+            foreach (var r in resas)
+            {
+                InfosResasEquipement infoRes = new InfosResasEquipement() { DateDebut = r.date_debut, DateFin = r.date_debut,
+                    NomEquipement = resaDB.equipement.First(e => e.id == r.equipementID).nom, 
+                    ZoneEquipement = (from zon in resaDB.zone
+                                      from equi in resaDB.equipement
+                                      where zon.id == equi.zoneID && equi.id == r.equipementID
+                                      select zon.nom_zone).First()
+                };
+                list.Add(infoRes);
+            }
+
+            return list;
         }
     }
 }
