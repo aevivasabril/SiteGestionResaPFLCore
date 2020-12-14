@@ -1,0 +1,46 @@
+﻿@model IEnumerable<SiteGestionResaCore.Models.EquipementsReserves.InfosResasEquipement>
+
+@{
+    ViewData["Title"] = "ModifierEquipResa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<h1>Supprimer ou rajouter des équipements sur mon essai</h1>
+<p class="text-center">Vous pouvez supprimer et rajouter si nécessaire des équipements à votre essai</p>
+
+<div class="row">
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col">Zone</th>
+                <th scope="col">Nom Equipement</th>
+                <th scope="col">Date Début</th>
+                <th scope="col">Date Fin</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.ZoneEquipement</td>
+                    <td>@r.NomEquipement</td>
+                    <td>@r.DateDebut</td>
+                    <td>@r.DateFin</td>
+                    <td>
+                        <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerResa" asp-area="User" asp-controller="ResasUser" asp-route-id="@r.IdResa">
+                            <span class="fas fa-trash"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <!-- TODO: Rediriger vers le controleur "Reservation" envoyer quelconque id essai-->
+        <a class="btn navbar-inra" asp-action="AjouterEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ToList()[1].IdEssai">Ajouter un(s) équipement(s) à ma réservation</a>
+    </div>
+</div>
+

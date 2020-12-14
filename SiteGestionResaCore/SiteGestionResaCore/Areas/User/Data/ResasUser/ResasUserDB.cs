@@ -444,12 +444,14 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             var resas = resaDB.reservation_projet.Where(r => r.essaiID == id).Distinct().ToList();
             foreach (var r in resas)
             {
-                InfosResasEquipement infoRes = new InfosResasEquipement() { DateDebut = r.date_debut, DateFin = r.date_debut,
+                InfosResasEquipement infoRes = new InfosResasEquipement() {
+                    IdResa = r.id, DateDebut = r.date_debut, DateFin = r.date_debut,
                     NomEquipement = resaDB.equipement.First(e => e.id == r.equipementID).nom, 
                     ZoneEquipement = (from zon in resaDB.zone
                                       from equi in resaDB.equipement
                                       where zon.id == equi.zoneID && equi.id == r.equipementID
-                                      select zon.nom_zone).First()
+                                      select zon.nom_zone).First(),
+                    IdEssai = id
                 };
                 list.Add(infoRes);
             }

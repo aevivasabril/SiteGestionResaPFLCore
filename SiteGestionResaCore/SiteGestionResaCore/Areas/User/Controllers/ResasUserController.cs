@@ -320,5 +320,14 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             };
             return View("MesReservations", vm);
         }
+
+        public async Task<IActionResult> ModifierEquipResaAsync(int id)
+        {
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+            List<InfosResasEquipement> list = resasUserDB.ResasEssai(id);
+
+            return View(list);
+        }
     }
 }
