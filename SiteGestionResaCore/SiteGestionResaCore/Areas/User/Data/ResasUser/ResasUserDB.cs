@@ -450,13 +450,33 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                     ZoneEquipement = (from zon in resaDB.zone
                                       from equi in resaDB.equipement
                                       where zon.id == equi.zoneID && equi.id == r.equipementID
-                                      select zon.nom_zone).First(),
-                    IdEssai = id
+                                      select zon.nom_zone).First()
                 };
                 list.Add(infoRes);
             }
 
             return list;
+        }
+
+        public reservation_projet ObtenirResa(int IdReservation)
+        {
+            return resaDB.reservation_projet.First(r => r.id == IdReservation);
+        }
+
+        public bool SupprimerResa(int idResa)
+        {
+            try
+            {
+                reservation_projet resa = resaDB.reservation_projet.First(r => r.id == idResa);
+                resaDB.reservation_projet.Remove(resa);
+                resaDB.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la suppression réservation");
+                return false;
+            }
+            return true;
         }
     }
 }

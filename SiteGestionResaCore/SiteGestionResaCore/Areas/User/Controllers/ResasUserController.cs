@@ -321,13 +321,53 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             return View("MesReservations", vm);
         }
 
-        public async Task<IActionResult> ModifierEquipResaAsync(int id)
+        public IActionResult ModifierEquipResa(int id)
         {
-            // Obtenir les infos de l'utilisateur authentifié
-            var user = await userManager.FindByIdAsync(User.GetUserId());
-            List<InfosResasEquipement> list = resasUserDB.ResasEssai(id);
+            ModifierEquipVM vm = new ModifierEquipVM()
+            {
+                ListResas = resasUserDB.ResasEssai(id)
+            };
 
-            return View(list);
+            return View(vm);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id réservation</param>
+        /// <returns></returns>
+        public IActionResult PreSupprimerResaAsync(int id)
+        {
+            // obtenir certaines informations sur la réservations 
+            reservation_projet resa = resasUserDB.ObtenirResa(id);
+            //Affichage des réservations 
+            ModifierEquipVM vm = new ModifierEquipVM()
+            {
+                ListResas = resasUserDB.ResasEssai(resa.essaiID),
+                IdEssai = resa.essaiID,
+                IdResa = id
+            };
+            ViewBag.modalConfirm = "show";
+            return View("ModifierEquipResa", vm);
+        }
+
+        [HttpPost]
+        public IActionResult SupprimerResa(ModifierEquipVM vm, int id)
+        {
+            bool isChangeOk = false;
+            isChangeOk = resasUserDB.SupprimerResa(id);
+            if (!isChangeOk)
+            {
+                ModelState.AddModelError("", "Sorry! Problème lors de la suppression réservation. Essayez ulterieurement");
+                goto ENDT;
+            }
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Réservation supprimée! ";
+
+        ENDT:
+            vm.ListResas = resasUserDB.ResasEssai(vm.IdEssai);
+
+            return View("ModifierEquipResa", vm);
         }
     }
 }

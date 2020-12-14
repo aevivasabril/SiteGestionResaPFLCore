@@ -54,5 +54,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         bool UpdateComment(essai essa, string commentEssai);
 
         List<InfosResasEquipement> ResasEssai(int id);
+
+        reservation_projet ObtenirResa(int IdReservation);
+
+        bool SupprimerResa(int idResa);
     }
 }

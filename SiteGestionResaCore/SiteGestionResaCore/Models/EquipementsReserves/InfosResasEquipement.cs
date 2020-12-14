@@ -12,6 +12,5 @@ namespace SiteGestionResaCore.Models.EquipementsReserves
         public string ZoneEquipement { get; set; }
         public DateTime DateDebut { get; set; }
         public DateTime DateFin { get; set; }
-        public int IdEssai { get; set; }
     }
 }
