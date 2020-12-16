@@ -5,10 +5,24 @@
 }
 
 <br />
-<div>
-    <h2>Merci! Votre demande de réservation est bien prise en compte</h2>
-    <h6> Vous récevrez une confirmation de validation ou refus par mail</h6>
-    <br />
-    <a class="btn-link" href="~/Home/Index"> Cliquez sur ce lien pour revenir à l'accueil</a>
-</div>
+@if (ViewBag.IsConfirOutside == true) // aller vers area User
+{
+    <div>
+        <h2>Merci! Votre demande de mise à jour réservation est bien prise en compte</h2>
+        <h6> Vous récevrez une confirmation de validation ou refus par mail</h6>
+        <br />
+        <a class="btn-link" asp-area="User" asp-action="MesReservations" asp-controller="ResasUser"> Cliquez sur ce lien pour revenir à la page mes réservations</a>
+    </div>
+}
+else // aller vers l'index
+{
+    <div>
+        <h2>Merci! Votre demande de réservation est bien prise en compte</h2>
+        <h6> Vous récevrez une confirmation de validation ou refus par mail</h6>
+        <br />
+        <a class="btn-link" href="~/Home/Index"> Cliquez sur ce lien pour revenir à l'accueil</a>
+    </div>
+}
+
+
 

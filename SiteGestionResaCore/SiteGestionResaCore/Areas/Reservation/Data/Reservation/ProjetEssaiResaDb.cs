@@ -412,6 +412,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             context.SaveChanges();
         }
 
-               
+        public projet ObtenirProjXEssai(int projetID)
+        {
+            return context.projet.First(p => p.id == projetID);
+        }
+
+        public void UpdateStatusEssai(essai essai)
+        {
+            essai.status_essai = EnumStatusEssai.WaitingValidation.ToString();
+            context.SaveChanges();
+        }
     }
 }

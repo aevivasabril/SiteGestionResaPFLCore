@@ -41,5 +41,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         void UpdateEssai(essai Essai, DateTime dateInf, DateTime dateSup);
 
+        projet ObtenirProjXEssai(int projetID);
+
+        void UpdateStatusEssai(essai essai);
     }
 }

@@ -36,6 +36,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             }
             set { _equipementsParZone = value; }
         }
+
+        public int IdEssaiXAjoutEquip { get; set; }
     }
     #endregion
 

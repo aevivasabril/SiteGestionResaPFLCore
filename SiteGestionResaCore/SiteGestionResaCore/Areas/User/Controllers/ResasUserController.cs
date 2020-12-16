@@ -325,7 +325,8 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         {
             ModifierEquipVM vm = new ModifierEquipVM()
             {
-                ListResas = resasUserDB.ResasEssai(id)
+                ListResas = resasUserDB.ResasEssai(id),
+                IdEssai = id
             };
 
             return View(vm);
