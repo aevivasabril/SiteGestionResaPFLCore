@@ -9,8 +9,7 @@
             <!--Date picker -->
             <div class="form-group">
                 @Html.Label("Du : ")
-                <input class="form-control" name="DatePickerDu" asp-for="@Model.DatePickerDu" type="date"/>
-                @*@Html.EditorFor(m => m.DatePickerDu, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "datPickDu_" + Model.idEquipement.ToString(), @placeholder = "MM/DD/YYYY" } })*@     
+                <input class="form-control" name="DatePickerDu" asp-for="@Model.DatePickerDu" type="date"/>  
                 @Html.ValidationMessageFor(m => m.DatePickerDu, "", new { @class = "text-danger" })
                 <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
             </div>
@@ -22,11 +21,9 @@
                 <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
                 <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
                 <input class="form-control" name="DatePickerAu" asp-for="@Model.DatePickerAu" type="date" />
-                @*@Html.EditorFor(m => m.DatePickerAu, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "datPickAu_" + Model.idEquipement.ToString(), @placeholder = "MM/DD/YYYY" } })*@
                 @Html.ValidationMessageFor(m => m.DatePickerAu, "", new { @class = "text-danger" })
                 <!-- pour passer l'id zone de cette vue au controleur Reservation methode GetPlanning() -->
                 @Html.HiddenFor(model => model.zoneIDEquipement)
-                <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
             </div>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4">

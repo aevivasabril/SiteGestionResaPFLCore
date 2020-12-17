@@ -87,28 +87,6 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                                         IdEssai = i.id, NumProjet = proj.num_projet,
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
                 }
-
-                /*if(OpenPartialEssai == null && IdEssai == 0) // pas d'affichage nécessaire
-                {
-                    infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
-                                        IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = "none"};                 
-                }
-                else 
-                { 
-                    if(i.id == IdEssai) // montrer la vue partielle de cet essai
-                    {
-                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
-                                        IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai};
-                    }
-                    else // montrer uniquement la vue partielle de l'essai demandé 
-                    {
-                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
-                                        IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none"};
-                    }
-                }*/
                 List.Add(infos);
             }
             return List;

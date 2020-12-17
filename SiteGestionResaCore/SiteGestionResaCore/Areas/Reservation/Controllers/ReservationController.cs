@@ -94,7 +94,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         public async Task<ActionResult> SoumettreFormulaireAsync(FormulaireProjetViewModel model)
         {
             // NOTE: Dans le cas où on crée un nouveau projet et un nouveau essai
-            // TODO: traiter le cas où on copie les données essai et projet (pas de creation de projet! mais création d'essai) voir comment vérifier cela? 
             var user = await userManager.FindByIdAsync(User.GetUserId());
            
             // Je laisse cette ligne car elle permette de vérifier quel champ du formulaire me génère une erreur
@@ -116,7 +115,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     else
                     {
-                        //ViewBag.Message = "Ce projet existe mais vous n'avez pas le droit de rajouter des essais";
                         ModelState.AddModelError("", "Ce projet existe mais vous n'avez pas le droit de rajouter des essais");
                         return View("FormulaireProjet", model);
                     }
@@ -343,7 +341,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ModelState.Remove("DatePickerDebut_Matin");
             ModelState.Remove("DatePickerFin_Matin");
 
-            // TODO: vérifier que cela fonctionne!
             if (ModelState.IsValid) // Vérification uniquement des datePicker pour l'affichage du calendrier
             {
                 if (model.DatePickerDu.Value <= model.DatePickerAu.Value)
@@ -435,7 +432,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Etablir l'heure de début et de fin selon les créneaux choisis (Matin ou après-midi)
                     #region Définition des dates réservation avec l'heure selon le créneau choisi
                     // Definition date debut
-                    // TODO: Vérifier que la comparaison marche!
+
                     if (Convert.ToBoolean(model.DatePickerDebut_Matin) == true) // definir l'heure de début à 7h
                     {
                         debutToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Year,
@@ -524,7 +521,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         public ActionResult SupprimerCreneauResa(int ?i, int ?j)
         {
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
-            // TODO: Vérifier que je récupère bien tout le model complet!! 
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
             // Sauvegarde des indices qui seront utilisés dans la action POST pour répérer le créneau à supprimer 
             equipementZone.IndiceChildModel = i.Value;
@@ -648,7 +644,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        // TODO: A complèter!!! méthode final pour générer une réservation (vérifier que la personne à réservée au moins un équipement)
         /// <summary>
         /// Action POST qui traite un cas de réservation normal et un cas d'ajout des équipements sur un essai existant
         /// 2 cas différentes à traiter et a differencier grâce à la variable IdEssaiXAjoutEquip dans le view model ZonesReservationViewModel
@@ -901,11 +896,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
 
                     // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
-                    Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId, formulaire.PrecisionProduitIn, formulaire.QuantiteProduit,
-                                formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO, formulaire.CommentaireEssai); // TODO: pas oublier de rajouter le status  (enum dans view model)     
+                    Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId,
+                        formulaire.PrecisionProduitIn, formulaire.QuantiteProduit, formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO,
+                        formulaire.CommentaireEssai); 
 
                     // Remplir le message à envoyer aux admins pour notifier la réservation
-
                     mssLogis = @"<html>
                             <body> 
                             <p> Bonjour, <br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
@@ -1158,7 +1153,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     if (dow == DayOfWeek.Sunday) TodayDate = TodayDate.AddDays(-6);
 
                     NbJours = 7;
-                    //DateRecup = TodayDate;
                     // Ajouter l'heure (à 7h00) car sinon on va avoir un problème pour faire la comparaison lors de la récupération des "essai"
                     DateRecup = new DateTime(TodayDate.Year, TodayDate.Month, TodayDate.Day, 7, 0, 0, DateTimeKind.Local);
                     break;
@@ -1171,7 +1165,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     else
                     {
-                        NbJours = (DateAu.Value - DateDu.Value).Days;    // TODO: Vérifier que le nombre des jours est correct
+                        NbJours = (DateAu.Value - DateDu.Value).Days;    
                         NbJours = NbJours + 1;  // Car il compte pas la bonne quantité 
                         if (NbJours < 7) // Afficher au moins une semaine 
                             NbJours = 7;
@@ -1179,7 +1173,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     // Ajouter l'heure (à 7h00) car sinon on va avoir un problème pour faire la comparaison lors de la récupération des "essai"
                     DateRecup = new DateTime(DateDu.Value.Year, DateDu.Value.Month, DateDu.Value.Day, 7, 0, 0, DateTimeKind.Local);
-                    //DateRecup = DateDu.Value; 
                     break;
             }
 

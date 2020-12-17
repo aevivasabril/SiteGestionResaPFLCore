@@ -29,7 +29,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             //this.logger = logger;
         }
 
-        // TODO: à vérifier
         public reservation_projet CreationReservation(int EquipId, essai Essai, DateTime dateDebut, DateTime dateFin)
         {
             // Rajouter uniquement les ID's vers les autres tables (clé étrangere)
@@ -333,8 +332,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             bool estRestreintDispo          = false;
             bool estConfidentielDispo       = false;
 
-            // TODO: Vérifier cette requete
-
             // requete complète pour trouver les réservations où leur essai est "ouvert", l'id equipement est égal a idEquipement et la date souhaitée pour réservation est déjà prise
             var resasOuv = (from essai in context.essai
                          from resa in context.reservation_projet
@@ -364,7 +361,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                          && ( dateDebut <= resa.date_fin || dateFin <= resa.date_fin ))
                          select resa).Distinct().ToList();
 
-            // TODO: lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
+            // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
             // sont differents mais dans la même zone (réservations validées ou à valider)
             // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
             if (resasRest.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
@@ -373,8 +370,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             #endregion
 
             #region Vérification sur les réservations "Confidentiel"
-
-            // TODO: pas de blocage pour les zones HaloirAp7, SalleAp5, SalleAp6, SalleAp8, SalleAp9
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);

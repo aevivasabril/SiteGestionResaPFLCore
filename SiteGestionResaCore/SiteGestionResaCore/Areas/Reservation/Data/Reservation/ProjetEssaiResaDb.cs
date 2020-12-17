@@ -57,7 +57,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             IList<string> allUserRoles = await userManager.GetRolesAsync(usr);
             bool propProjOk = false;
             bool adminSiteOk = false;
-            // TODO: Vérifier!!!!
             // Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
             //propProjOk = context.projet.Where(p => p.num_projet == numProjet).Where(p => p.compte_userID == usr.Id).Any(); // PAS BON car j'ai besoin de comparer l'id user au parametre compte_userID (string)
             propProjOk = (from p in context.projet
@@ -400,9 +399,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return Essai;
         }
 
-
-
-        //TODO: Vérifier que je change uniquement l'essai existant
         public void UpdateEssai(essai Essai, DateTime dateInf, DateTime dateSup)
         {
             // Mettre à jour l'essai pour rajouter ces dates

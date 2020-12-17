@@ -45,7 +45,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             foreach (var user in users)
             {
-                //usr = context.utilisateur.First(r => r.Email == y.Email);
                 if (user.EmailConfirmed == true)
                     tempUsers.Add(user);
                 else
@@ -61,14 +60,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>lis des utilisateurs Admin</returns>
         public List<utilisateur> ObtenirListAdmins()
         {
-            //// TODO: vérifier
-            //var roles = context.Roles.Where(r => r.Name == "Admin" || r.Name == "MainAdmin");
-            //return context.Users
-            //    .Where(u => 
-            //        context.UserRoles
-            //            .Where(ur => roles.Any(r => r.Id == ur.RoleId))
-            //            .Any(ur => ur.UserId == u.Id))
-            //    .ToList()
             return (from role in context.Roles
                     from roleusr in context.Users
                     from usrrol in context.UserRoles
@@ -85,8 +76,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return await userManager.GetUsersInRoleAsync("Logistic");
 
         }
-
-       
+        
         /// <summary>
         /// obtenir un utilisateur à partir de son ID
         /// </summary>
@@ -133,28 +123,21 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             }
         }
 
-        //TODO: Tester cette méthode
         /// <summary>
         /// Méthode permettant de changer des droits "Utilisateur" à "Admin"
         /// </summary>
         public async Task ChangeAccesToAdminAsync(int id)
         {
             var user = await context.Users.FindAsync(id);
-
-            /*var query = (from roleUsr in context.Users
-                         from usrnet in context.Roles
-                         where email == roleUsr.Email && roleUsr.Id == usrnet.Id
-                         select usrnet).First();*/
-
             // Submit the changes to the database.
             try
             {
-                // Obtenir les rôles dont l'utilisateur
+                // Obtenir les rôles utilisateur
                 var allUserRoles = await userManager.GetRolesAsync(user);
                 // Vérifier qu'il ne s'agit pas d'un "MainAdmin"
                 if (allUserRoles.Contains("MainAdmin"))
                 {
-                    Console.WriteLine("Impossible de changer le rôle d'un utilisateur 'MainAdmin' ");
+                    logger.LogWarning(" Impossible de changer le rôle d'un utilisateur 'MainAdmin' ");
                 }
                 else
                 {
@@ -165,8 +148,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             catch (Exception e)
             {
                 logger.LogError(e, "Problème requete pour ajouter l'utilisateur dans le groupe Admin");
-                
-                // Provide for exceptions.
             }
             
         }
@@ -210,8 +191,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             catch (Exception e)
             {
                 logger.LogError(e, "Problème requete pour retirer les droits logistic");
-                
-                // Provide for exceptions.
             }
         }
 

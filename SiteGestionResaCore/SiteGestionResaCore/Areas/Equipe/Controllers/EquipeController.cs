@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
     // Ce controleur est destiné à la gestion des utilisateurs (pour les autres options créer un autre controleur dans l'area Equipe)
-    //TODO: donner l'accès uniquement aux administrateurs [Authorize (Roles ="Admin")]
+    // Pas nécessaire d'ajouter l'autorisation car le attribut est déjà ajouté dans le Home controller [Authorize (Roles ="Admin")]
     [Area("Equipe")]
     public class EquipeController : Controller
     {
@@ -253,13 +253,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
-        // TODO: tester les exceptions!! 
         [HttpPost]
         public async Task<ActionResult> Valider(int id)
         {
-            //string aspNetID;
-            //IdentityUser user;
-
             try
             {
                 //EquipeResaDb.ValidateAccount(id);

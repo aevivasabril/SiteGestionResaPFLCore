@@ -122,31 +122,19 @@ namespace SiteGestionResaCore.Controllers
                 
                 if (result.Succeeded)
                 {
-                    // Cette ligne on peut la supprimer pour eviter que l'utilisateur soit connecté tout de suite(Voir s'il peut s'authentifier tout de suite après et empecher cela!)
-                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    //string code = await userManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // Vérifier le format du mail
-                    //await userManager.SendEmailAsync(user.Id, "Confirmez votre compte mail", "Votre compte est validé! \n Pour confirmer votre adresse mail veuillez cliquer sur le lien suivant: \"" + callbackUrl + "\"");
-                    //TODO: Changer le contenu du mail!!!!!!!!!!!!!!!!
-                    //await userManager.SendEmailAsync(user.Id, "Test", "Votre compte est en attente de validation!!!!!!!!!!!");
-
                     // tout nouveau enregistré est utilisateur par défaut jusqu'à ce que un admin l'ajoute dans le groupe admin
-                    result = await userManager.AddToRoleAsync(user, "Utilisateur");
-
-                    if(result.Succeeded)
+                    try
                     {
-                        //créer l'utilisateur hors les infos de gestion de compte individuelle
-
-                        //accountResaDB.CreerUtilisateur(model.Nom, model.Prenom, model.SelectedOrganId, model.Email);
-
+                        result = await userManager.AddToRoleAsync(user, "Utilisateur");
+                        // viewbag pour activer le popup d'info
+                        ViewBag.ModalState = "show";
                     }
-                    // viewbag pour activer le popup d'info
-                    ViewBag.ModalState = "show";
-                    //return RedirectToAction("Index", "Home");
+                    catch(Exception e)
+                    {
+                        ViewBag.Message = e.ToString() + ". Problème pour ajouter ce nouveau utilisateur dans le rôle 'utilisateur' ";
+                        return View("Error");
+                    }
+
                 }
                 AddErrors(result);
             }

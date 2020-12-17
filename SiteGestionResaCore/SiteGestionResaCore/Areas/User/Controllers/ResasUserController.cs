@@ -119,7 +119,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     isChangeOk = resasUserDB.UpdateManipID(essa, reVM.SelecManipulateurID);
                     if (!isChangeOk)
                     {
-                        // TODO: tester!
                         ModelState.AddModelError("", "Problème lors de la maj 'manipulateur ID', reesayez ultérieurement.");
                         goto ENDT;
                     }
@@ -127,7 +126,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             }
             else
             {
-                // TODO: tester!
                 ModelState.AddModelError("", "Vous devez avoir un manipulateur essai, Modifications essai N° " + id +  " non pris en compte. Repetez l'opération.");
                 goto ENDT;
             }
@@ -142,7 +140,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
                     if (!isChangeOk)
                     {
-                        // TODO: tester!
                         ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
                         goto ENDT;
                     }
@@ -156,7 +153,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                         isChangeOk = resasUserDB.UpdateProdEntree(essa, reVM.SelectProductId);
                         if (!isChangeOk)
                         {
-                            // TODO: tester!
                             ModelState.AddModelError("", "Problème lors de la maj 'type produit entrant', reesayez ultérieurement.");
                             goto ENDT;
                         }
@@ -174,7 +170,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 isChangeOk = resasUserDB.UpdatePrecisionProd(essa, reVM.PrecisionProdIn);
                 if (!isChangeOk)
                 {
-                    // TODO: tester!
                     ModelState.AddModelError("", "Problème lors de la maj 'precision produit', reesayez ultérieurement.");
                     goto ENDT;
                 }
@@ -190,7 +185,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 isChangeOk = resasUserDB.UpdateQuantiteProd(essa, reVM.QuantProduit);
                 if (!isChangeOk)
                 {
-                    // TODO: tester!
                     ModelState.AddModelError("", "Problème lors de la maj 'quantité produit', reesayez ultérieurement.");
                     goto ENDT;
                 }
@@ -207,7 +201,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
                     if (!isChangeOk)
                     {
-                        // TODO: tester!
                         ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
                         goto ENDT;
                     }
@@ -219,7 +212,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                         isChangeOk = resasUserDB.UpdateProvProd(essa, reVM.SelectProvProduitId);
                         if (!isChangeOk)
                         {
-                            // TODO: tester!
                             ModelState.AddModelError("", "Problème lors de la maj 'provenance produit', reesayez ultérieurement.");
                             goto ENDT;
                         }
@@ -238,7 +230,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
                     if (!isChangeOk)
                     {
-                        // TODO: tester!
                         ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
                         goto ENDT;
                     }
@@ -251,7 +242,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                         isChangeOk = resasUserDB.UpdateDestProd(essa, reVM.SelectDestProduit);
                         if (!isChangeOk)
                         {
-                            // TODO: tester!
                             ModelState.AddModelError("", "Problème lors de la maj 'destination produit', reesayez ultérieurement.");
                             goto ENDT;
                         }
@@ -268,7 +258,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 isChangeOk = resasUserDB.UpdateTransport(essa, reVM.TranspSTLO);
                 if (!isChangeOk)
                 {
-                    // TODO: tester!
                     ModelState.AddModelError("", "Problème lors de la maj 'transport', reesayez ultérieurement.");
                     goto ENDT;
                 }
@@ -283,7 +272,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 isChangeOk = resasUserDB.UpdateComment(essa, reVM.CommentEssai);
                 if (!isChangeOk)
                 {
-                    // TODO: tester!
                     ModelState.AddModelError("", "Problème lors de la maj 'Commentaire essai', reesayez ultérieurement.");
                     goto ENDT;
                 }
