@@ -99,8 +99,50 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> AdminToUserAccesAsync(int id)
         {
-            await EquipeResaDb.ChangeAccesToUserAsync(id);
-            return RedirectToAction("GestionUtilisateurs"); //Cette redirection rentre dans le GET et reconstruit le model :)
+            try
+            {
+                await EquipeResaDb.ChangeAccesToUserAsync(id);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de changement de rôle \"Admin\" vers \"Utilisateur\"";
+                return View("Error");
+            }
+
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Changement de rôle \"Admin\" vers \"Utilisateur\" réussi! ";
+
+            return View("GestionUtilisateurs", vm); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
         public async Task<ActionResult> AddingAdminAsync()
@@ -136,8 +178,49 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> AddingAdminAsync(GestionUsersViewModel model)
         {
-            await EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
-            return RedirectToAction("GestionUtilisateurs");
+            try
+            {
+                await EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Admin\"";
+                return View("Error");
+            }
+
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"Admin\" réussi! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "MainAdmin")]
@@ -176,8 +259,49 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> AddingLogisticAsync(GestionUsersViewModel model)
         {
-            await EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
-            return RedirectToAction("GestionUtilisateurs");
+            try
+            {
+                await EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Logistic\"";
+                return View("Error");
+            }
+
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"Logistic\" réussi! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "MainAdmin")]
@@ -217,8 +341,50 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> RemoveLogisticUserAsync(int id)
         {
-            await EquipeResaDb.RemoveLogisticRoleAsync(id);
-            return RedirectToAction("GestionUtilisateurs");
+            try
+            {
+                await EquipeResaDb.RemoveLogisticRoleAsync(id);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"Logistic\"";
+                return View("Error");
+            }
+
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Extraction de l'utilisateur du rôle \"Logistic\" réussi! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         public async Task<ActionResult> Valider(int? id)
@@ -258,8 +424,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         {
             try
             {
-                //EquipeResaDb.ValidateAccount(id);
-                //aspNetID = resaDb.IdAspNetUser(id);
                 var user = await userManager.FindByIdAsync(id.ToString());
 
                 // envoyer le mail à l'utilisateur concerné
@@ -285,8 +449,41 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'écriture dans la BDD ou l'envoi de mail.";
                 return View("Error");
             }
-           
-            return RedirectToAction("GestionUtilisateurs");
+
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Compte validé! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         public async Task<ActionResult> Refuser(int? id)
@@ -334,7 +531,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 // Effacer de la BDD AspNet
                 await emailSender.SendEmailAsync(user.Email, "Votre compte PFL", "Bonjour,\n\nVotre demande d'ouverture de compte est refusée, nous vous prions de nous excuser pour la gêne occasionée.\nVenez nous voir ou contactez-nous si vous avez des questions.\n\n L'équipe PFL,");
                 await userManager.DeleteAsync(user);
-
             }
             catch (Exception e)
             {
@@ -342,7 +538,40 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            return RedirectToAction("GestionUtilisateurs");
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Compte refusé! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         public async Task<ActionResult> DeleteUser(int? id)
@@ -390,11 +619,43 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.Message = e.ToString() + ". Problème survenue lors de la suppression de la demande";
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de la suppression de l'ouverture de compte";
                 return View("Error");
             }
 
-            return RedirectToAction("GestionUtilisateurs");
+            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
+
+            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
+            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
+
+            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var AdminItem = ListAdmin.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            GestionUsersViewModel vm = new GestionUsersViewModel()
+            {
+                UsersAdmin = ListAdmin,
+                ListUsers = ListUsr.Users,
+                ListUsersWaiting = ListUsr.UsersWaitingValid,
+                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
+                UserItem = UsersItem,
+                AdminItem = AdminItem
+            };
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "Utilisateur supprimé! ";
+
+            return View("GestionUtilisateurs", vm);
         }
 
         private void AddErrors(IdentityResult result)

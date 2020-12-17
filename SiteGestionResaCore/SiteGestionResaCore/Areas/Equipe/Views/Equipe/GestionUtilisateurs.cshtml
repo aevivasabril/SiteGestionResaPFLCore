@@ -8,6 +8,12 @@
 <br />
 <h2 class="text-center">Gestion Utilisateurs</h2>
 <br />
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+}
+
 <!-- #region table administrateurs de site + utilisateurs avec compte validée -->
 <div class="row">
     <div class="col-sm-5 col-md-5">
@@ -30,9 +36,6 @@
                             <td>@x.prenom</td>
                             <td>@x.Email</td>
                             <td>@Html.ActionLink("Modifier", "AdminToUserAcces", new { id = x.Id })</td><!--Voir comme faire ce link-->
-                            @*<td>
-                                <button type="button" class="btn btn-link" data-toggle="modal" data-target="#AddAdminModal">Modifier</button>
-                            </td>*@
                         </tr>
                     }
                 </tbody>
@@ -64,12 +67,12 @@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
                         <!--<input type="hidden" value="@Model.UserToChange.Id"  />-->
-                        
+
                     </div>
                 </div>
             </div>
         </form>
-              
+
         <div class="row justify-content-center">
             <!--Rajouter le script pour ouvrir la fênetre modal-->
             @Html.ActionLink("Ajouter un nouvel administrateur", "AddingAdmin", null, new { @class = "btn btn-default navbar-inra" })
@@ -87,7 +90,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body" id="modalcontent">                           
+                        <div class="modal-body" id="modalcontent">
                             <select asp-for="UserToUpdateId" asp-items="@Model.UserItem" class="form-control">
                                 <option value="-1">- Selectionner un utilisateur -</option>
                             </select>
@@ -156,7 +159,7 @@
                 </div>
             </div>
         </form>
-            
+
     </div>
 </div>
 <!-- #endregion -->
@@ -222,7 +225,7 @@
             </div>
         </div>
     </form>
-        
+
 </div>
 <!-- #endregion -->
 
@@ -283,8 +286,8 @@
                 </div>
             </div>
         </form>
-            
-        
+
+
         <div class="row">
             <div class="offset-sm-3 col-md-6 text-center">
                 <!--Rajouter le script pour ouvrir la fênetre modal-->
@@ -319,7 +322,7 @@
                 </div>
             </div>
         </form>
-               
+
     </div>
 </div>
 <!-- #endregion -->

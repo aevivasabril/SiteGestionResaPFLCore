@@ -74,7 +74,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
         public IEnumerable<SelectListItem> AdminItem { get; set; }
 
-
         /// <summary>
         /// Nom de l'ActionResult à utiliser sur un utilisateur (refuser ou valider)
         /// </summary>
