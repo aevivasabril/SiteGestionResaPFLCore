@@ -295,16 +295,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 // initialiser pour chaque équipement 
                 calenChild = new CalendrierEquipChildViewModel();
                 // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                //reservationsSemEquipement = DonneesCalendrier(equipements[i].Id);
                 reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null);
                 calenChild.ListResas = reservationsSemEquipement;
                 calenChild.idEquipement = equipements[i].id;
                 calenChild.nomEquipement = equipements[i].nom;
                 calenChild.numGmaoEquipement = equipements[i].numGmao;
                 calenChild.zoneIDEquipement = equipements[i].zoneID.Value;
-                //calenChild.EquipementCalendrier = zoneEquipDb.GetEquipement(equipements[i].id);
-                //calenChild.zoneID = id.Value;
-                //calenChild.NomEquip = equipements[i].nom;
                 // 3. Rajouter cela dans une liste contenant les données des équipements
                 PlanningEquipements.Add(calenChild);
                 // mettre à zéro les variables
@@ -388,7 +384,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             DateTime finToSave = new DateTime();
             // Récupérer la session "EquipementZone" https://stackoverflow.com/questions/27517912/persisting-information-between-two-view-requests-in-mvc (VOIR CE LIEN)
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
-            //EquipementsParZoneViewModel equipementZone = (EquipementsParZoneViewModel)this.HttpContext.Session["EquipementZone"];
+
+            ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
             int indiceChild = 0; // Sauvegarder l'indice où se trouve le CalendrierEquipChildModel correspondant à l'id           
 
@@ -403,9 +400,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     model.nomEquipement = equipementZone.CalendrierChildVM[i].nomEquipement;
                     model.numGmaoEquipement = equipementZone.CalendrierChildVM[i].numGmaoEquipement;
                     model.zoneIDEquipement = equipementZone.CalendrierChildVM[i].zoneIDEquipement;
-                    //model.EquipementCalendrier = equipementZone.CalendrierChildVM[i].EquipementCalendrier;
-                    //model.equiID = idEquip;
-                    //model.NomEquip = resaBdd.GetNomEquipement(idEquip);
+
                     model.ListResas = equipementZone.CalendrierChildVM[i].ListResas;
                     model.ResaEquipement = equipementZone.CalendrierChildVM[i].ResaEquipement;                    
                     equipementZone.CalendrierChildVM[i] = model;
@@ -464,6 +459,27 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     #endregion
 
+                    #region Vérifier que la date début du créneaux à rajouter est inférieur ou égal à une semaine avant la réservation
+
+                    TimeSpan diff = debutToSave - DateTime.Now;
+                    if (zonesReservation.IdEssaiXAjoutEquip == 0) // Dans le cas de réservation standard vérifier le seuil de 7 jours avant 
+                    {
+                        if (diff.Days < 6)
+                        {
+                            ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins d'une semaine avant l'essai");
+                            goto ENDT;
+                        }
+                    }
+                    else
+                    {
+                        if (diff.Hours < 21) // pour permettre à une personne d'ajouter un équipement avant 10h du matin la veille de la manip
+                        {
+                            ModelState.AddModelError("", "Vous ne pouvez pas ajouter un équipement à votre réservation à moins d'un jour du début de votre essai!");
+                            goto ENDT;
+                        }
+                    }
+                    #endregion
+
                     #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
 
                     #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
@@ -488,10 +504,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Voir ce qu'il se passe ici!! 
                     this.HttpContext.AddToSession("EquipementZone", equipementZone);
 
-                    //EquipementsParZoneViewModel equip = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
                     #endregion
-                }
-                
+                }                
                 else
                 {
                     ModelState.AddModelError("", "La date fin de réservation ne peut pas être inférieure à la date début");
@@ -607,10 +621,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Sauvegarder la mise à jour de la session
             this.HttpContext.AddToSession("ZoneReservation", zonesReservation);
 
-            // Récupérer la session "FormulaireProjet" pour revenir au formulaire
-            FormulaireProjetViewModel formulaire = HttpContext.GetFromSession< FormulaireProjetViewModel>("FormulaireResa");
-
-            return View("FormulaireProjet", formulaire);
+            if(zonesReservation.IdEssaiXAjoutEquip == 0) // si il s'agit d'une réservation standard
+            {
+                // Récupérer la session "FormulaireProjet" pour revenir au formulaire
+                FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
+                return View("FormulaireProjet", formulaire);
+            }
+            else
+            {
+                return RedirectToAction("ModifierEquipResa", "ResasUser", new { area = "User", id= zonesReservation.IdEssaiXAjoutEquip });
+            }          
 
         }
 

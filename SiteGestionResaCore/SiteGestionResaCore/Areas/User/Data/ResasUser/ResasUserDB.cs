@@ -155,9 +155,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         }
                     }
                 }
-                TimeSpan diff = dateBegin - DateTime.Now.Date;
+                TimeSpan diff = dateBegin - DateTime.Now;
                 // vérifier si la date la plus récente a lieu plus tard une semaine avant
-                if (diff.TotalDays >= 7) // pour comparer uniquement la date dd/mm/yy
+                if (diff.Hours >= 21) // pour comparer uniquement la date dd/mm/aaaa
                     return true;
                 else
                     return false;
