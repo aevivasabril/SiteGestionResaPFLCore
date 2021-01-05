@@ -18,6 +18,8 @@ using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Areas.Reservation.Data.Consultation;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Areas.Equipe.Data;
+using SiteGestionResaCore.Areas.Calendrier.Data;
 
 namespace SiteGestionResaCore
 {
@@ -46,6 +48,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IResaAValiderDb, ResaAValiderDb>();
             services.AddScoped<IConsultResasDB, ConsultResasDB>();
             services.AddScoped<IResasUserDB, ResasUserDB>();
+            services.AddScoped<ICalendResaDb, CalendResaDb>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
 

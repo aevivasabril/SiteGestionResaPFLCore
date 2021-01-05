@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Calendrier\Models\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
