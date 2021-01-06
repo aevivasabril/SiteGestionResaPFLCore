@@ -22,7 +22,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         {
             CalenViewModel vm = new CalenViewModel()
             {
-                ZonesName = CalendResaDb.GetAllZones()
+                InfosZoneCalendrier = CalendResaDb.ObtenirZonesVsEquipements()
             };
             return View(vm);
         }

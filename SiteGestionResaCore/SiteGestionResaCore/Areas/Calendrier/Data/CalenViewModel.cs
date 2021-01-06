@@ -8,6 +8,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 {
     public class CalenViewModel
     {
-        public IList<zone> ZonesName { get; set; }
+        public IList<InfosCalenZone> InfosZoneCalendrier { get; set; }
     }
 }
