@@ -47,7 +47,7 @@
         </tr>
         @for (int y = 0; y < Model.InfosZoneCalendrier[j].ListEquipements.Count(); y++)
         {
-            <tr class="hide" style="display:none" id="@Model.InfosZoneCalendrier[j].IdZone.ToString()">
+            <tr class="hide" style="display:none" name ="@Model.InfosZoneCalendrier[j].IdZone.ToString()" id="@y">
                 <th style="color:gray">@Model.InfosZoneCalendrier[j].ListEquipements[y]</th>
                 <td> dispo</td>
                 <td>occupé</td>
@@ -91,20 +91,21 @@
 {
     <!-- JS includes -->
     <script type="text/javascript">
-        /*function showEquipements(parameter) {
+        function showEquipements(parameter) {
             var divName = document.getElementsByName(parameter);
             var i;
             //alert("Total Equipements:" + divName.length);  
             for (i = 0; i < divName.length; i++) {
-                if (divid[i].style.display == "") {
-                    divid[i].style.display = "none";
+                var ele = divName[i];
+                if (ele.style.display == "") {
+                    ele.style.display = "none";
                 } else {
-                    divid[i].style.display = "";
+                    ele.style.display = "";
                 }
             }         
-        }*/
+        }
 
-        function showEquipements(parameter) {
+        /*function showEquipements(parameter) {
             var divid = document.getElementById(parameter);  
             if (divid.style.display == "") {
                 divid.style.display = "none";
@@ -113,6 +114,6 @@
                 divid.style.display = "";
                 //alert(" "); 
             }
-        }
+        }*/
     </script>
 }
