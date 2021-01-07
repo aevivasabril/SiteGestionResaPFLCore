@@ -1,16 +1,18 @@
-﻿@model CalenViewModel
+﻿<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+@model CalenViewModel
 
 @{
     ViewData["Title"] = "CalendrierPFL";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <br />
-<h1>Calendrier PFL</h1>
+<h1 class="text-center">Calendrier PFL</h1>
 <br />
 
 <!--https://www.w3.org/WAI/tutorials/tables/irregular/ Pour faire une table avec ce format-->
 <table class="table table-bordered">
-    <col>
     <colgroup span="2"></colgroup>
     <colgroup span="2"></colgroup>
     <tr class="text-center">
@@ -33,15 +35,25 @@
     @for (int j = 0; j < Model.InfosZoneCalendrier.Count(); j++)
     {
         <tr>
-            <th scope="row">@Model.InfosZoneCalendrier[j].NomZone</th>
-            @for (int y = 0; y < Model.InfosZoneCalendrier[j].ListEquipements.Count(); y++)
-            {
-                <tr class="hide" style="display:none" id="@Model.InfosZoneCalendrier[j].IdZone">
-                    <th style="color:gray">@Model.InfosZoneCalendrier[j].ListEquipements[y]</th>
-                </tr>
-            }
+            <th scope="row">
+                @Model.InfosZoneCalendrier[j].NomZone
+                <span class="fas fa-caret-down" onclick="showEquipements(@Model.InfosZoneCalendrier[j].IdZone.ToString())"></span>
+            </th>
+            <td> emplacement pour matin</td>
+            <td> emplacement aprèm</td>
+            @*<div class="hide" style="display:none" id="@Model.InfosZoneCalendrier[j].IdZone.ToString()">
+
+            </div>*@
         </tr>
-        }
+        @for (int y = 0; y < Model.InfosZoneCalendrier[j].ListEquipements.Count(); y++)
+        {
+            <tr class="hide" style="display:none" id="@Model.InfosZoneCalendrier[j].IdZone.ToString()">
+                <th style="color:gray">@Model.InfosZoneCalendrier[j].ListEquipements[y]</th>
+                <td> dispo</td>
+                <td>occupé</td>
+            </tr>
+        }        
+    }
 </table>
 
 <!--CODE SNIPPET:
@@ -75,3 +87,32 @@
         <td>9,000</td>
     </tr>
 </table>-->
+@section Scripts
+{
+    <!-- JS includes -->
+    <script type="text/javascript">
+        /*function showEquipements(parameter) {
+            var divName = document.getElementsByName(parameter);
+            var i;
+            //alert("Total Equipements:" + divName.length);  
+            for (i = 0; i < divName.length; i++) {
+                if (divid[i].style.display == "") {
+                    divid[i].style.display = "none";
+                } else {
+                    divid[i].style.display = "";
+                }
+            }         
+        }*/
+
+        function showEquipements(parameter) {
+            var divid = document.getElementById(parameter);  
+            if (divid.style.display == "") {
+                divid.style.display = "none";
+                //alert("none"); 
+            } else {
+                divid.style.display = "";
+                //alert(" "); 
+            }
+        }
+    </script>
+}
