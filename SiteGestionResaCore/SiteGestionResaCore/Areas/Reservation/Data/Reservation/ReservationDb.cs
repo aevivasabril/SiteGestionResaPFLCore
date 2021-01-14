@@ -78,7 +78,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                              essa.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                              select essa).Distinct().ToArray();
 
-            // Résupérer les essais où la date enquêté est bien dans la plage de déroulement
+            // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
             foreach (var es in SubInfosEssai)
             {
                 var res = context.reservation_projet.Where(r => r.essaiID == es.id).ToList();

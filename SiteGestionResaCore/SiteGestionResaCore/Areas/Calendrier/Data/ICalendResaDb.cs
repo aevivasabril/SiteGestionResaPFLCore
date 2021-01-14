@@ -8,6 +8,14 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 {
     public interface ICalendResaDb
     {
-        List<InfosCalenZone> ObtenirZonesVsEquipements();
+        //List<InfosCalenZone> ObtenirZonesVsEquipements();
+
+        List<zone> ListeZones();
+
+        List<equipement> ListeEquipements(int ZoneID);
+
+        //InfosCalenZone ResasEquipementsParZone(DateTime DateRecup, int NbJours, int ZoneId);
+
+        ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup);
     }
 }

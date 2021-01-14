@@ -12,49 +12,120 @@
 <br />
 
 <!--https://www.w3.org/WAI/tutorials/tables/irregular/ Pour faire une table avec ce format-->
-<table class="table table-bordered">
-    <colgroup span="2"></colgroup>
-    <colgroup span="2"></colgroup>
-    <tr class="text-center">
-        <td rowspan="2">Zones</td>
-        <th colspan="2" scope="colgroup">Lundi</th>
-        <th colspan="2" scope="colgroup">Mardi</th>
-        <th colspan="2" scope="colgroup">Mercredi</th>
-        <th colspan="2" scope="colgroup">Jeudi</th>
-        <th colspan="2" scope="colgroup">Vendredi</th>
-        <th colspan="2" scope="colgroup">Samedi</th>
-        <th colspan="2" scope="colgroup">Dimanche</th>
-    </tr>
-    <tr>
-        @for (int i = 0; i < 7; i++)
-        {
-            <th scope="col">Matin</th>
-            <th scope="col">Aprèm</th>
-        }
-    </tr>
-    @for (int j = 0; j < Model.InfosZoneCalendrier.Count(); j++)
-    {
-        <tr>
-            <th scope="row">
-                @Model.InfosZoneCalendrier[j].NomZone
-                <span class="fas fa-caret-down" onclick="showEquipements(@Model.InfosZoneCalendrier[j].IdZone.ToString())"></span>
-            </th>
-            <td> emplacement pour matin</td>
-            <td> emplacement aprèm</td>
-            @*<div class="hide" style="display:none" id="@Model.InfosZoneCalendrier[j].IdZone.ToString()">
+<div class="row">
+    <h5 class="text-center">Selectionnez une date de debut et de fin pour affichage du calendrier </h5>
+    <div class="container">
+        <div class="form-group row justify-content-center">
+            <br />
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <!--Date picker -->
+                <div class="form-group">
+                    @Html.Label("Du : ")
+                    <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
+                    @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
+                    <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <!--Date picker -->
+                <div class="form-group">
+                    @Html.Label("Au : ")
+                    <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
+                    @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
 
-            </div>*@
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<br />
+<div class="row">
+    <table class="table table-bordered table-responsive">
+        <colgroup span="2"></colgroup>
+        <colgroup span="2"></colgroup>
+        <tr class="text-center">
+            <td rowspan="2">Zones</td>
+            @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
+            {
+                <th colspan="2" scope="colgroup">@Model.JoursCalendrier[z].NomJour - @Model.JoursCalendrier[z].JourPourAffichage.ToShortDateString()</th>
+            }
         </tr>
-        @for (int y = 0; y < Model.InfosZoneCalendrier[j].ListEquipements.Count(); y++)
+        <tr>
+            @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
+            {
+                <th scope="col">Matin</th>
+                <th scope="col">Aprèm</th>
+            }
+        </tr>
+        <!-- Normalement 17 zones -->
+        @for (int j = 0; j < Model.ListResasZone.Count(); j++)
         {
-            <tr class="hide" style="display:none" name ="@Model.InfosZoneCalendrier[j].IdZone.ToString()" id="@y">
-                <th style="color:gray">@Model.InfosZoneCalendrier[j].ListEquipements[y]</th>
-                <td> dispo</td>
-                <td>occupé</td>
+            <tr>
+                <th scope="row">
+                    @Model.ListResasZone[j].NomZone
+                    <span class="fas fa-caret-down" onclick="showEquipements(@Model.ListResasZone[j].IdZone.ToString())"></span>
+                </th>
+                @for(int i = 0; i < Model.ListResasZone[j].ListeDispoZonesDuAu.Count(); i++)
+                {
+                    @if(Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeMatin == true)
+                    {
+                        <td style="color:darkviolet">                         
+                            <strong>Occupée</strong>
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color:green">                         
+                            <strong>Disponible</strong>
+                        </td>
+                    }
+                    @if(Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeAprem == true)
+                    {
+                        <td style="color:darkviolet">                         
+                            <strong>Occupée</strong>
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="color:green">                         
+                            <strong>Disponible</strong>
+                        </td>
+                    }
+                }
             </tr>
-        }        
-    }
-</table>
+            @for (int y = 0; y < Model.ListResasZone[j].ListEquipementVsResa.Count(); y++)
+            {
+                <tr class="hide" style="display:none" name="@Model.ListResasZone[j].IdZone.ToString()" id="@y">
+                    <th style="color:gray">@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement</th>
+                    @for(int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
+                    {
+                        <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
+                            @for(int z=0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
+                            {
+                                <a><strong>[Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai</strong>]- 
+                                    (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite)</strong></a>                
+                            }
+                            liste resas matin (@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement)
+                        </td>
+
+                        <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
+                            @for(int z=0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); z++)
+                            {
+                                <a><strong>[Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].IdEssai</strong>]- 
+                                    (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].Confidentialite)</strong></a>                
+                            }
+                            Liste resas aprem (@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement)
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </table>
+</div>
 
 <!--CODE SNIPPET:
 <table>
@@ -94,7 +165,6 @@
         function showEquipements(parameter) {
             var divName = document.getElementsByName(parameter);
             var i;
-            //alert("Total Equipements:" + divName.length);  
             for (i = 0; i < divName.length; i++) {
                 var ele = divName[i];
                 if (ele.style.display == "") {
@@ -104,16 +174,5 @@
                 }
             }         
         }
-
-        /*function showEquipements(parameter) {
-            var divid = document.getElementById(parameter);  
-            if (divid.style.display == "") {
-                divid.style.display = "none";
-                //alert("none"); 
-            } else {
-                divid.style.display = "";
-                //alert(" "); 
-            }
-        }*/
     </script>
 }
