@@ -77,8 +77,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 
             DateTime TodayDate = new DateTime(); // Datetime pour obtenir la date actuelle
             DateTime DateRecup = new DateTime();
-            DateTime SaveRecupDay = new DateTime();
-            DateTime saveForZoneDisp = new DateTime();
+            DateTime SaveRecupDate = new DateTime();
+
             int NbJours = 0;
 
             //Afficher toujours à partir du lundi de la semaine en cours 
@@ -122,8 +122,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     break;
             }
 
-            SaveRecupDay = DateRecup;
-            saveForZoneDisp = DateRecup;
+            SaveRecupDate = DateRecup;
+            //saveForZoneDisp = DateRecup;
             #endregion
 
             #region Recueil des réservations par jour et par équipement par zone
@@ -150,7 +150,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     equipementVsResa.NomEquipement = equip.nom;
 
                     #endregion
-                    DateRecup = SaveRecupDay;
+                    // Remettre la date à sa valeur d'origine
+                    DateRecup = SaveRecupDate;
                     // For pour recupérer les réservations des N jours à partir du lundi
                     for (int i = 0; i < NbJours; i++)
                     {
@@ -170,6 +171,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                 // Supprimer les anciens valeurs sauvegardés
                 ListeDispoZonesDuAu = new List<OccupationZonesParJour>();
                 // Vérifier si la zone est libre ou occupé pour chaque jour
+                // Remettre la date à sa valeur d'origine sinon on a des dates faussées
+                DateRecup = SaveRecupDate;
                 for (int d = 0; d < NbJours; d++)
                 {
                     occupation = new OccupationZonesParJour();
@@ -177,7 +180,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     bool ZonOccupeAprem = false;
                     foreach (var equip in equipements)
                     {
-                        ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, saveForZoneDisp);
+                        ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
                         // Vérifier la disponibilité de la zone (juste pour affichage) 
                         if (EquipResaJour.ListResasMatin.Count() > 0) // vérifier uniquement                 
                             ZonOccupeMatin = true;
@@ -192,7 +195,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                         occupation.IsZoneOccupeAprem = true;
 
                     ListeDispoZonesDuAu.Add(occupation); // occupation de la zone par jour
-                    saveForZoneDisp = saveForZoneDisp.AddDays(1);
+                    DateRecup = DateRecup.AddDays(1);
                 }
 
                 resasZone = new ResasZone
@@ -212,12 +215,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             #endregion
 
             #region Initialisation des jours pour affichage(uniquement les jours pour les header table)
-
+            DateRecup = SaveRecupDate;
             for (int i = 0; i < NbJours; i++)
             {
-                JourCalendrier Jc = new JourCalendrier { JourPourAffichage = SaveRecupDay, NomJour = SaveRecupDay.ToString("dddd", dateTimeFormats) };
+                JourCalendrier Jc = new JourCalendrier { JourPourAffichage = DateRecup, NomJour = DateRecup.ToString("dddd", dateTimeFormats) };
                 ListCalendrierParZone.Add(Jc);
-                SaveRecupDay = SaveRecupDay.AddDays(1);
+                DateRecup = DateRecup.AddDays(1);
             }
 
             #endregion
