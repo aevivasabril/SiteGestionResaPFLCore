@@ -15,30 +15,31 @@
 <div class="row">
     <h5 class="text-center">Selectionnez une date de debut et de fin pour affichage du calendrier </h5>
     <div class="container">
-        <div class="form-group row justify-content-center">
-            <br />
-            <div class="col-sm-4 col-md-4 col-lg-4">
-                <!--Date picker -->
-                <div class="form-group">
-                    @Html.Label("Du : ")
-                    <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
-                    @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
-                    <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+        <form asp-action="AfficherPlanningDuAu" asp-controller="Calendrier" asp-area="Calendrier" method="post">
+            <div class="form-group row justify-content-center">
+                <br />
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <!--Date picker -->
+                    <div class="form-group">
+                        @Html.Label("Du : ")
+                        <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
+                        @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
+                        <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <!--Date picker -->
+                    <div class="form-group">
+                        @Html.Label("Au : ")
+                        <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
+                        @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
                 </div>
             </div>
-            <div class="col-sm-4 col-md-4 col-lg-4">
-                <!--Date picker -->
-                <div class="form-group">
-                    @Html.Label("Au : ")
-                    <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
-                    @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
-
-                </div>
-            </div>
-            <div class="col-sm-4 col-md-4 col-lg-4">
-                <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
-            </div>
-        </div>
+        </form>       
     </div>
 </div>
 <hr />
@@ -104,21 +105,52 @@
                     @for(int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
                     {
                         <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
-                            @for(int z=0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
+                            @if(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() == 0)
                             {
-                                <a><strong>[Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai</strong>]- 
-                                    (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite)</strong></a>                
+                                <a><strong>Libre Matin</strong></a>
                             }
-                            liste resas matin (@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement)
+                            else
+                            {
+                                @for(int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
+                                {
+                                    if(Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite == "Confidentiel")
+                                    {
+                                        <strong>Confidentiel</strong>
+                                    }
+                                    else
+                                    {
+                                        <a><strong>[Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai</strong>]- 
+                                        (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite)</strong></a>
+                                    }                                                    
+                                }
+                            }
                         </td>
 
                         <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
-                            @for(int z=0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); z++)
+                            @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() == 0)
                             {
-                                <a><strong>[Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].IdEssai</strong>]- 
-                                    (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].Confidentialite)</strong></a>                
+                                <a><strong>Libre Aprem</strong></a>
                             }
-                            Liste resas aprem (@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement)
+                            else
+                            {
+                                @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); z++)
+                                {
+                                    if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].Confidentialite == "Confidentiel")
+                                    {
+                                        <strong>Confidentiel</strong>
+                                    }
+                                    else
+                                    {
+                                        <a>
+                                            <strong>
+                                                [Reservé] <strong>@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].IdEssai</strong>]-
+                                                (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[z].Confidentialite)
+                                            </strong>
+                                        </a>
+                                    }
+                                    
+                                }
+                            }
                         </td>
                     }
                 </tr>

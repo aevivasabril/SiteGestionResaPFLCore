@@ -40,13 +40,27 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             return View(vm);
         }
 
+        [HttpPost]
+        public IActionResult AfficherPlanningDuAu(CalenViewModel vm)
+        {
+            var x = DonneesCalendrierPFL(false, vm.DateDu, vm.DateAu);
+
+            vm.JoursCalendrier = x.Item1;
+            vm.ListResasZone = x.Item2;
+
+            return View("CalendrierPFL", vm);
+        }
+
+        
+        #region Méthodes supplementaires
+
         /// <summary>
         /// Méthode inspiré de la méthode "DonneesCalendrierEquipement" du contrôlleur RESERVATION
         /// </summary>
         /// <param name="IsForOneWeek"></param>
         /// <param name="DateDu"></param>
         /// <param name="DateAu"></param>
-        /// <returns></returns>
+        /// <returns>List<JourCalendrier>, List<ResasZone></returns>
         public (List<JourCalendrier>, List<ResasZone>) DonneesCalendrierPFL(bool IsForOneWeek, DateTime? DateDu, DateTime? DateAu)
         {
             List<JourCalendrier> ListCalendrierParZone = new List<JourCalendrier>();
@@ -122,7 +136,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             {
                 ListEquiVsResa = new List<EquipementVsResa>(); // initialiser à zéro!
                 // Obtenir la liste des équipements pour la zone Z
-                List<equipement> equipements = CalendResaDb.ListeEquipements(z.id);  
+                List<equipement> equipements = CalendResaDb.ListeEquipements(z.id);
 
                 foreach (var equip in equipements)
                 {
@@ -136,7 +150,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     equipementVsResa.NomEquipement = equip.nom;
 
                     #endregion
-
+                    DateRecup = SaveRecupDay;
                     // For pour recupérer les réservations des N jours à partir du lundi
                     for (int i = 0; i < NbJours; i++)
                     {
@@ -145,7 +159,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                         ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
                         // Ajouter les données calendrier pour l'équipement dans la liste
                         ListResEquipParjour.Add(EquipResaJour);
-                        // Incrementer le nombre des jours à partir du lundi
+                        
                         DateRecup = DateRecup.AddDays(1);
                     }
                     equipementVsResa.ListResasDuAu = ListResEquipParjour;
@@ -181,10 +195,13 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     saveForZoneDisp = saveForZoneDisp.AddDays(1);
                 }
 
-                resasZone = new ResasZone 
-                { 
-                    IdZone = z.id, ListeDispoZonesDuAu = ListeDispoZonesDuAu, ListEquipementVsResa = ListEquiVsResa, NomZone = z.nom_zone 
-                };                
+                resasZone = new ResasZone
+                {
+                    IdZone = z.id,
+                    ListeDispoZonesDuAu = ListeDispoZonesDuAu,
+                    ListEquipementVsResa = ListEquiVsResa,
+                    NomZone = z.nom_zone
+                };
 
                 // Completer les infos sur chaque zone en ajoutant les réservations par équipement
                 //ZoneEquipVsReservations = new ZoneParJour { IdZone = z.id, NomZone = z.nom_zone, ListEquipements = ListEquipements };
@@ -198,14 +215,16 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 
             for (int i = 0; i < NbJours; i++)
             {
-                JourCalendrier Jc = new JourCalendrier { JourPourAffichage = SaveRecupDay , NomJour = SaveRecupDay.ToString("dddd", dateTimeFormats) };
+                JourCalendrier Jc = new JourCalendrier { JourPourAffichage = SaveRecupDay, NomJour = SaveRecupDay.ToString("dddd", dateTimeFormats) };
                 ListCalendrierParZone.Add(Jc);
                 SaveRecupDay = SaveRecupDay.AddDays(1);
             }
-            
+
             #endregion
 
             return (ListCalendrierParZone, ListResasZone);
         }
+
+        #endregion
     }
 }

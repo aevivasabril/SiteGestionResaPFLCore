@@ -36,7 +36,5 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         /// </summary>
         public DateTime? DateAu { get; set; }
 
-
-
     }
 }
