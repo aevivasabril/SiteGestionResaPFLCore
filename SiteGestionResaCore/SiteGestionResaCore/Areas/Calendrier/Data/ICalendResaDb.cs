@@ -17,5 +17,11 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         //InfosCalenZone ResasEquipementsParZone(DateTime DateRecup, int NbJours, int ZoneId);
 
         ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup);
+
+        InfosEquipementReserve ObtenirInfosResa(int IdEssai);
+
+        essai ObtenirEssai(int IdEssai);
+
+        projet ObtenirProjetEssai(essai Essai);
     }
 }

@@ -36,5 +36,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         /// </summary>
         public DateTime? DateAu { get; set; }
 
+        public InfosEquipementReserve InfosPopUpEquipement { get; set; }
+
+        public int IdEssaiToShow { get; set; }
+
     }
 }

@@ -407,5 +407,36 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             }
             return EquipVsResa;
         }
+
+        public InfosEquipementReserve ObtenirInfosResa(int IdEssai)
+        {
+            InfosEquipementReserve Infos = new InfosEquipementReserve();
+            essai essai = ObtenirEssai(IdEssai);
+
+            projet pr = ObtenirProjetEssai(essai);
+            // si essai confidentiel copier uniquement le mail du responsable projet
+            if(essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+            {
+                Infos = new InfosEquipementReserve { MailResponsablePj = pr.mailRespProjet, MailAuteurResa = resaDB.Users.Find(Convert.ToInt32(essai.compte_userID)).Email, 
+                    Confidentialite = essai.confidentialite, IdEssai = essai.id };
+            }
+            else
+            {
+                Infos = new InfosEquipementReserve { IdEssai = essai.id, MailAuteurResa = resaDB.Users.Find(Convert.ToInt32(essai.compte_userID)).Email, 
+                    MailResponsablePj = pr.mailRespProjet, NumeroProjet = pr.num_projet, TitreProjet = pr.titre_projet, Confidentialite = essai.confidentialite };
+            }
+
+            return Infos;
+        }
+
+        public essai ObtenirEssai(int IdEssai)
+        {
+            return resaDB.essai.First(e => e.id == IdEssai);
+        }
+
+        public projet ObtenirProjetEssai(essai essai)
+        {
+            return resaDB.projet.First(p => p.id == essai.projetID);
+        }
     }
 }

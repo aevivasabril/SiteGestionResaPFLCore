@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Calendrier.Data;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Extensions;
 
 namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 {
@@ -24,18 +25,22 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         /// Action pour obtenir les infos de réservation pour une semaine
         /// </summary>
         /// <returns></returns>
-        public IActionResult CalendrierPFL()
+        public IActionResult CalendrierPFL(CalenViewModel vm)
         {
-            //List<InfosCalenZone> ListZonesVsEquipEtResas = new List<InfosCalenZone>();
+            //Liberer la session si la personne reclique sur le ménu calendrier?
 
             var x = DonneesCalendrierPFL(true, null, null);
 
             // Premier affichage du calendrier à complèter pour une semaine
-            CalenViewModel vm = new CalenViewModel()
+            vm = new CalenViewModel()
             {
                 ListResasZone = x.Item2, 
-                JoursCalendrier = x.Item1
+                JoursCalendrier = x.Item1,
+                InfosPopUpEquipement = new InfosEquipementReserve()
             };
+
+            // Créer une session pour éviter de reappliquer les opérations de lecture vers la BDD dans le cas où on clique pour avoir des infos 
+            this.HttpContext.AddToSession("CalenViewModel", vm);
 
             return View(vm);
         }
@@ -47,11 +52,30 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 
             vm.JoursCalendrier = x.Item1;
             vm.ListResasZone = x.Item2;
+            vm.InfosPopUpEquipement = new InfosEquipementReserve();
+
+            // Mettre à jour la session pour les dates souhaitées
+            this.HttpContext.AddToSession("CalenViewModel", vm);
 
             return View("CalendrierPFL", vm);
         }
 
-        
+        public IActionResult VoirInfosEssai(int id)
+        {
+            // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
+            CalenViewModel CalendVM = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
+
+            // Obtenir les infos à afficher pour l'essai demandé
+            InfosEquipementReserve InfosResa = CalendResaDb.ObtenirInfosResa(id);
+
+            ViewBag.InfosResa = "show";
+
+            CalendVM.InfosPopUpEquipement = InfosResa;
+
+            return View ("CalendrierPFL", CalendVM);
+        }
+
+
         #region Méthodes supplementaires
 
         /// <summary>
