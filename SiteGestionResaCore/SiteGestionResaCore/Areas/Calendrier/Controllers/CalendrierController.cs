@@ -46,18 +46,37 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         }
 
         [HttpPost]
-        public IActionResult AfficherPlanningDuAu(CalenViewModel vm)
+        public IActionResult AfficherPlanningDuAu(CalenViewModel model)
         {
-            var x = DonneesCalendrierPFL(false, vm.DateDu, vm.DateAu);
+            if (model.DateAu != null && model.DateDu != null) // Vérification uniquement des datePicker pour l'affichage du calendrier
+            {
+                if (model.DateDu.Value <= model.DateAu.Value)
+                {
+                    var x = DonneesCalendrierPFL(false, model.DateDu, model.DateAu);
 
-            vm.JoursCalendrier = x.Item1;
-            vm.ListResasZone = x.Item2;
-            vm.InfosPopUpEquipement = new InfosEquipementReserve();
+                    model.JoursCalendrier = x.Item1;
+                    model.ListResasZone = x.Item2;
+                    model.InfosPopUpEquipement = new InfosEquipementReserve();
 
-            // Mettre à jour la session pour les dates souhaitées
-            this.HttpContext.AddToSession("CalenViewModel", vm);
+                    // Mettre à jour la session pour les dates souhaitées
+                    this.HttpContext.AddToSession("CalenViewModel", model);
+                }
+                else
+                {
+                    // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
+                    model = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
+                    ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
+                }
+            }
+            else
+            {
+                // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
+                model = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
+                ModelState.AddModelError("", "Oups! Vous avez oublié de saisir les dates! ");
+            }
 
-            return View("CalendrierPFL", vm);
+
+            return View("CalendrierPFL", model);
         }
 
         public IActionResult VoirInfosEssai(int id)

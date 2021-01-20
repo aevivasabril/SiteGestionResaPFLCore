@@ -1,0 +1,65 @@
+﻿@model InfosEquipementReserve
+<!-- Modal pour affichage des infos "Reservation"-->
+<div class="modal fade" id="InfoResaJour" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Infos Réservation "@Model.Confidentialite" </strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        @if (Model.Confidentialite != "Confidentiel")
+                        {
+                            <tr>
+                                <th scope="row">Titre projet </th>
+                                <td>@Model.TitreProjet</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Numéro projet</th>
+                                <td>@Model.NumeroProjet</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Id Essai</th>
+                                <td>@Model.IdEssai</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mail Auteur réservation</th>
+                                <td>@Model.MailAuteurResa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mail Responsable projet</th>
+                                <td>@Model.MailResponsablePj</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <th scope="row">Id Essai</th>
+                                <td>@Model.IdEssai</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mail Auteur réservation</th>
+                                <td>@Model.MailAuteurResa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Mail Responsable projet</th>
+                                <td>@Model.MailResponsablePj</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

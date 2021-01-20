@@ -1,5 +1,5 @@
 ﻿<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
 
 @model CalenViewModel
 
@@ -11,7 +11,46 @@
 <h1 class="text-center">Calendrier PFL</h1>
 <br />
 
+<div class="offset-1 col-md-8">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center">Code couleur calendrier PFL</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#ffd191" disabled="True">Orange</button>
+                    <label>Conflit entre 2 essais "Restreint"</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#fdc0be" disabled="True">Rouge</button>
+                    <label>Réservation essai validée</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#fbeed9" disabled="True">Beige</button>
+                    <label>Essai en attente de validation</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#c2e6e2" disabled="True">Vert</button>
+                    <label>Equipement Disponible</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#ffffff" disabled="True">Blanc</button>
+                    <label>Zone Disponible</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#d8b1d4" disabled="True">Violet</button>
+                    <label>Zone "occupée"</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
 <!--https://www.w3.org/WAI/tutorials/tables/irregular/ Pour faire une table avec ce format-->
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <div class="row">
     <h5 class="text-center">Selectionnez une date de debut et de fin pour affichage du calendrier </h5>
     <div class="container">
@@ -45,23 +84,26 @@
 <hr />
 <br />
 <div class="row">
-    <table class="table table-bordered table-responsive">
-        <colgroup span="2"></colgroup>
-        <colgroup span="2"></colgroup>
-        <tr class="text-center">
-            <td rowspan="2">Zones</td>
-            @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
-            {
-                <th colspan="2" scope="colgroup">@Model.JoursCalendrier[z].NomJour - @Model.JoursCalendrier[z].JourPourAffichage.ToShortDateString()</th>
-            }
-        </tr>
-        <tr>
-            @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
-            {
-                <th scope="col">Matin</th>
-                <th scope="col">Aprèm</th>
-            }
-        </tr>
+    <table class="table table-bordered table-responsive table-sm">
+        <thead>
+            <colgroup span="2"></colgroup>
+            <colgroup span="2"></colgroup>
+            <tr class="text-center">
+                <td rowspan="2">Zones</td>
+                @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
+                {
+                    <th colspan="2" scope="colgroup">@Model.JoursCalendrier[z].NomJour - @Model.JoursCalendrier[z].JourPourAffichage.ToShortDateString()</th>
+                }
+            </tr>
+            <tr>
+                @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
+                {
+                    <th scope="col">Matin</th>
+                    <th scope="col">Aprèm</th>
+                }
+            </tr>
+        </thead>
+
         <!-- Normalement 17 zones -->
         @for (int j = 0; j < Model.ListResasZone.Count(); j++)
         {
@@ -74,25 +116,25 @@
                 {
                     @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeMatin == true)
                     {
-                        <td style="color:darkviolet">
+                        <td style="background-color:#d8b1d4">
                             <strong>Occupée</strong>
                         </td>
                     }
                     else
                     {
-                        <td style="color:green">
+                        <td>
                             <strong>Disponible</strong>
                         </td>
                     }
                     @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeAprem == true)
                     {
-                        <td style="color:darkviolet">
+                        <td style="background-color:#d8b1d4">
                             <strong>Occupée</strong>
                         </td>
                     }
                     else
                     {
-                        <td style="color:green">
+                        <td>
                             <strong>Disponible</strong>
                         </td>
                     }
@@ -141,7 +183,7 @@
                                 @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
                                 {
                                     if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].Confidentialite == "Confidentiel")
-                                    {                               
+                                    {
                                         <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
                                            asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
                                             <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
@@ -196,71 +238,75 @@
         <td>9,000</td>
     </tr>
 </table>-->
-
 <!-- Modal pour affichage des infos "Reservation"-->
-<div class="modal fade" id="InfoResaJour" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl navbar-inra">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Infos Réservation "@Model.InfosPopUpEquipement.Confidentialite" </strong></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalcontent">
-                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
-                <table class="table table-sm table-borderless">
-                    <thead>
-                    </thead>
-                    <tbody>
-                        @if (Model.InfosPopUpEquipement.Confidentialite != "Confidentiel")
-                        {
-                            <tr>
-                                <th scope="row">Titre projet </th>
-                                <td>@Model.InfosPopUpEquipement.TitreProjet</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Numéro projet</th>
-                                <td>@Model.InfosPopUpEquipement.NumeroProjet</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Id Essai</th>
-                                <td>@Model.InfosPopUpEquipement.IdEssai</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mail Auteur réservation</th>
-                                <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mail Responsable projet</th>
-                                <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <th scope="row">Id Essai</th>
-                                <td>@Model.InfosPopUpEquipement.IdEssai</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mail Auteur réservation</th>
-                                <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mail Responsable projet</th>
-                                <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+@*<div class="modal fade" id="InfoResaJour" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog modal-xl navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Infos Réservation "@Model.InfosPopUpEquipement.Confidentialite" </strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
+                    <table class="table table-sm table-borderless">
+                        <thead>
+                        </thead>
+                        <tbody>
+                            @if (Model.InfosPopUpEquipement.Confidentialite != "Confidentiel")
+                            {
+                                <tr>
+                                    <th scope="row">Titre projet </th>
+                                    <td>@Model.InfosPopUpEquipement.TitreProjet</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Numéro projet</th>
+                                    <td>@Model.InfosPopUpEquipement.NumeroProjet</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Id Essai</th>
+                                    <td>@Model.InfosPopUpEquipement.IdEssai</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Mail Auteur réservation</th>
+                                    <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Mail Responsable projet</th>
+                                    <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <th scope="row">Id Essai</th>
+                                    <td>@Model.InfosPopUpEquipement.IdEssai</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Mail Auteur réservation</th>
+                                    <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Mail Responsable projet</th>
+                                    <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </div> *@
+
+<partial name="~/Areas/Calendrier/Views/Calendrier/_InfosResaCalendrier.cshtml" for="@Model.InfosPopUpEquipement"></partial>
+
+
+
 
 
 @section Scripts
@@ -286,5 +332,8 @@
             }
         }
         $('#InfoResaJour').modal('@ViewBag.InfosResa');
+
+        // Lien pour l'ajax et recharge d'une vue partielle (j'ai pas su l'implémenter)
+        // https://stackoverflow.com/questions/51114427/cant-update-partial-view-with-ajax-asp-net-core-mvc
     </script>
 }

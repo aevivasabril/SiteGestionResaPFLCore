@@ -345,9 +345,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                     // CODE COULEUR DISPO SUR: https://encycolorpedia.fr/
                     // Definir les couleurs de fond pour indiquer si le créneau est occupé ou pas
                     if (resasEquip.ListResasMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
-                        resasEquip.CouleurMatin = "#6cc3bb"; // matin dispo (Vert)
+                        resasEquip.CouleurMatin = "#c2e6e2"; // matin dispo (Vert)
                     if (resasEquip.ListResasAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
-                        resasEquip.CouleurAprem = "#6cc3bb"; // Aprèm libre (Vert)
+                        resasEquip.CouleurAprem = "#c2e6e2"; // Aprèm libre (Vert)
                 }
                 else // si jour samedi ou dimanche alors mettre en fond gris
                 {
