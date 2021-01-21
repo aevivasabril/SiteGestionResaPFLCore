@@ -70,8 +70,6 @@ namespace SiteGestionResaCore.Data.Data
             {
                 entity.Property(e => e.commentaire).IsUnicode(false);
 
-                entity.Property(e => e.compte_userID).IsUnicode(false);
-
                 entity.Property(e => e.confidentialite)
                     .IsRequired()
                     .HasMaxLength(50)

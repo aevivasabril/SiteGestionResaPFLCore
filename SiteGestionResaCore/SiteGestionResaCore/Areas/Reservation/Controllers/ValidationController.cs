@@ -192,7 +192,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 {
                     try
                     {
-                        await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID).Result.Email, "Notification de validation essai", message);
+                        await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID.ToString()).Result.Email, "Notification de validation essai", message);
                         success = true;
                     }
                     catch (Exception e)
@@ -283,7 +283,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     {
                         try
                         {
-                            await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID).Result.Email, "Notification de refus essai", message);
+                            await emailSender.SendEmailAsync(userManager.FindByIdAsync(essai.compte_userID.ToString()).Result.Email, "Notification de refus essai", message);
                             success = true;
                         }
                         catch (Exception e)

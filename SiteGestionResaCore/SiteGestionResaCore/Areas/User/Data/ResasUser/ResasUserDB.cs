@@ -35,7 +35,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             InfosResasUser infos = new InfosResasUser();
             string StatusEssai = "";
 
-            var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr.ToString()).ToList();
+            var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
 
             foreach(var i in essaiUsr)
             {
@@ -255,7 +255,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 DateCreation = essai.date_creation,
                 DestProd = essai.destination_produit,
                 MailManipulateur = resaDB.Users.First(u => u.Id == essai.manipulateurID).Email,
-                MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email,
+                MailUser = resaDB.Users.First(u => u.Id == essai.compte_userID).Email,
                 PrecisionProd = essai.precision_produit,
                 ProveProd = essai.provenance_produit,
                 QuantiteProd = essai.quantite_produit,

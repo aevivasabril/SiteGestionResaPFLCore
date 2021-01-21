@@ -417,12 +417,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             // si essai confidentiel copier uniquement le mail du responsable projet
             if(essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
             {
-                Infos = new InfosEquipementReserve { MailResponsablePj = pr.mailRespProjet, MailAuteurResa = resaDB.Users.Find(Convert.ToInt32(essai.compte_userID)).Email, 
+                Infos = new InfosEquipementReserve { MailResponsablePj = pr.mailRespProjet, MailAuteurResa = resaDB.Users.Find(essai.compte_userID).Email, 
                     Confidentialite = essai.confidentialite, IdEssai = essai.id };
             }
             else
             {
-                Infos = new InfosEquipementReserve { IdEssai = essai.id, MailAuteurResa = resaDB.Users.Find(Convert.ToInt32(essai.compte_userID)).Email, 
+                Infos = new InfosEquipementReserve { IdEssai = essai.id, MailAuteurResa = resaDB.Users.Find(essai.compte_userID).Email, 
                     MailResponsablePj = pr.mailRespProjet, NumeroProjet = pr.num_projet, TitreProjet = pr.titre_projet, Confidentialite = essai.confidentialite };
             }
 

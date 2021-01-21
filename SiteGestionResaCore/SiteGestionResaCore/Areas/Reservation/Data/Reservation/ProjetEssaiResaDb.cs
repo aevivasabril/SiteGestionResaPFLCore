@@ -375,7 +375,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Créer l'essai avec les infos provenant du model (rajouter les ID des clès étrangeres)
             essai Essai = new essai()
             {
-                compte_userID = Usr.Id.ToString(),
+                compte_userID = Usr.Id,
                 date_creation = myDateTime,
                 type_produit_entrant = TypeProduit,
                 precision_produit = precisionProd,

@@ -13,7 +13,7 @@ namespace SiteGestionResaCore.Data
 
         public int id { get; set; }
         public int projetID { get; set; }
-        public string compte_userID { get; set; }
+        public int compte_userID { get; set; }
         public DateTime date_creation { get; set; }
         public int manipulateurID { get; set; }
         public string type_produit_entrant { get; set; }

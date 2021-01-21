@@ -88,7 +88,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                 }
 
                 InfosAffichage infosEss = new InfosAffichage() { idEssai = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire,                   
-                                                        MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email, 
+                                                        MailUser = resaDB.Users.First(u => u.Id == essai.compte_userID).Email, 
                                                         NomProjet = resaDB.projet.First(p => p.id == essai.projetID).titre_projet, 
                                                         NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet, ConflitExist = conflitExiste,
                                                         idProj = essai.projetID};
@@ -115,7 +115,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                 DateCreation = essai.date_creation,
                 DestProd = essai.destination_produit,
                 MailManipulateur = resaDB.Users.First(u => u.Id == essai.manipulateurID).Email,
-                MailUser = resaDB.Users.First(u => u.Id == Convert.ToInt32(essai.compte_userID)).Email,
+                MailUser = resaDB.Users.First(u => u.Id == essai.compte_userID).Email,
                 PrecisionProd = essai.precision_produit,
                 ProveProd = essai.provenance_produit,
                 QuantiteProd = essai.quantite_produit,
