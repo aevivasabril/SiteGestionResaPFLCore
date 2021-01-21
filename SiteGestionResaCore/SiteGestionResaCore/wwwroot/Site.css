@@ -138,14 +138,14 @@ textarea {
 
 .fixed_head {
     overflow-y: auto;
-    height: 250px;
+    height: 700px;
     overflow-x: auto;
     width: 800px;
 }
     .fixed_head thead th {
         position: sticky;
         top: 0;
-        background: gray;
+        background: white;
         z-index:2;
     }
     .second_header {
@@ -155,5 +155,5 @@ textarea {
     .first_col {
         position:sticky;
         left:0;
-        background:gray;
+        background:white;
     }

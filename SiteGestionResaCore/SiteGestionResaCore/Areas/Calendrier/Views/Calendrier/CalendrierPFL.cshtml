@@ -83,7 +83,7 @@
 </div>
 <hr />
 <br />
-<div class="row">
+<div class="row justify-content-center">
     <div class="fixed_head">
         <table class="table table-bordered table-sm">
             <thead>
@@ -159,7 +159,7 @@
                                         if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite == "Confidentiel")
                                         {
                                             <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai)">
-                                                <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
+                                                <strong>Confidentiel </strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
                                             </a>
                                             @*<a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
                                                asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
@@ -168,10 +168,9 @@
                                         }
                                         else
                                         {
-                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
-                                                Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
-                                            </a>
+                                            <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai)">
+                                                <strong>Reservé</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
+                                            </a>              
                                         }
                                     }
                                 }
@@ -188,16 +187,14 @@
                                     {
                                         if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].Confidentialite == "Confidentiel")
                                         {
-                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
+                                            <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai)">
                                                 <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
                                             </a>
                                         }
                                         else
                                         {
-                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
-                                                Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
+                                            <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai)">
+                                                <strong>Reservé </strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
                                             </a>
                                         }
 
@@ -243,76 +240,8 @@
         <td>9,000</td>
     </tr>
 </table>-->
-<!-- Modal pour affichage des infos "Reservation"-->
-@*<div class="modal fade" id="InfoResaJour" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-        <div class="modal-dialog modal-xl navbar-inra">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Infos Réservation "@Model.InfosPopUpEquipement.Confidentialite" </strong></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modalcontent">
-                    <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
-                    <table class="table table-sm table-borderless">
-                        <thead>
-                        </thead>
-                        <tbody>
-                            @if (Model.InfosPopUpEquipement.Confidentialite != "Confidentiel")
-                            {
-                                <tr>
-                                    <th scope="row">Titre projet </th>
-                                    <td>@Model.InfosPopUpEquipement.TitreProjet</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Numéro projet</th>
-                                    <td>@Model.InfosPopUpEquipement.NumeroProjet</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Id Essai</th>
-                                    <td>@Model.InfosPopUpEquipement.IdEssai</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mail Auteur réservation</th>
-                                    <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mail Responsable projet</th>
-                                    <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <tr>
-                                    <th scope="row">Id Essai</th>
-                                    <td>@Model.InfosPopUpEquipement.IdEssai</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mail Auteur réservation</th>
-                                    <td>@Model.InfosPopUpEquipement.MailAuteurResa</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Mail Responsable projet</th>
-                                    <td>@Model.InfosPopUpEquipement.MailResponsablePj</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-                </div>
-            </div>
-        </div>
-    </div> *@
-
-@*<partial name="~/Areas/Calendrier/Views/Calendrier/_InfosResaCalendrier.cshtml" for="@Model.InfosPopUpEquipement"></partial>*@
 
 <div id="modal_data"></div>
-
-
 
 @section Scripts
 {
@@ -334,12 +263,12 @@
         //$('#InfoResaJour').modal('@ViewBag.InfosResa');
 
         function DisplayModalInfo(id) {
-            if (id)
+            if (id) //Vérifier que l'id contient une valeur
             {
                 $.ajax({
                     url: "@Url.Action("VoirInfosEssai", "Calendrier", new { Area = "Calendrier" })?id=" + id,
                     type: 'POST',
-                    success: function (html) {
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
                         $("#modal_data").html(html);
                         $("#InfoResaJour").modal('show');
                     }
