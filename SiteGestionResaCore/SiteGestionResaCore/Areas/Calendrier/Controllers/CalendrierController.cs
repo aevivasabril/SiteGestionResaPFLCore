@@ -82,16 +82,16 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         public IActionResult VoirInfosEssai(int id)
         {
             // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
-            CalenViewModel CalendVM = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
+            //CalenViewModel CalendVM = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
 
             // Obtenir les infos à afficher pour l'essai demandé
             InfosEquipementReserve InfosResa = CalendResaDb.ObtenirInfosResa(id);
 
-            ViewBag.InfosResa = "show";
+            //ViewBag.InfosResa = "show";
 
-            CalendVM.InfosPopUpEquipement = InfosResa;
+            //CalendVM.InfosPopUpEquipement = InfosResa;
 
-            return View ("CalendrierPFL", CalendVM);
+            return PartialView ("_InfosResaCalendrier", InfosResa);
         }
 
 

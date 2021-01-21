@@ -51,7 +51,7 @@
 <hr />
 <!--https://www.w3.org/WAI/tutorials/tables/irregular/ Pour faire une table avec ce format-->
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-<div class="row">
+<div class="row justify-content-center">
     <h5 class="text-center">Selectionnez une date de debut et de fin pour affichage du calendrier </h5>
     <div class="container">
         <form asp-action="AfficherPlanningDuAu" asp-controller="Calendrier" asp-area="Calendrier" method="post">
@@ -84,127 +84,132 @@
 <hr />
 <br />
 <div class="row">
-    <table class="table table-bordered table-responsive table-sm">
-        <thead>
-            <colgroup span="2"></colgroup>
-            <colgroup span="2"></colgroup>
-            <tr class="text-center">
-                <td rowspan="2">Zones</td>
-                @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
-                {
-                    <th colspan="2" scope="colgroup">@Model.JoursCalendrier[z].NomJour - @Model.JoursCalendrier[z].JourPourAffichage.ToShortDateString()</th>
-                }
-            </tr>
-            <tr>
-                @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
-                {
-                    <th scope="col">Matin</th>
-                    <th scope="col">Aprèm</th>
-                }
-            </tr>
-        </thead>
-
-        <!-- Normalement 17 zones -->
-        @for (int j = 0; j < Model.ListResasZone.Count(); j++)
-        {
-            <tr>
-                <th scope="row">
-                    @Model.ListResasZone[j].NomZone
-                    <span class="fas fa-caret-down" onclick="showEquipements(@Model.ListResasZone[j].IdZone.ToString())"></span>
-                </th>
-                @for (int i = 0; i < Model.ListResasZone[j].ListeDispoZonesDuAu.Count(); i++)
-                {
-                    @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeMatin == true)
+    <div class="fixed_head">
+        <table class="table table-bordered table-sm">
+            <thead>
+                @*<colgroup span="2"></colgroup>*@
+                @*<colgroup span="2"></colgroup>*@
+                <tr class="text-center">
+                    <th rowspan="2">Zones</th>
+                    @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
                     {
-                        <td style="background-color:#d8b1d4">
-                            <strong>Occupée</strong>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <strong>Disponible</strong>
-                        </td>
-                    }
-                    @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeAprem == true)
-                    {
-                        <td style="background-color:#d8b1d4">
-                            <strong>Occupée</strong>
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <strong>Disponible</strong>
-                        </td>
-                    }
-                }
-            </tr>
-            @for (int y = 0; y < Model.ListResasZone[j].ListEquipementVsResa.Count(); y++)
-            {
-                <tr class="hide" style="display:none" name="@Model.ListResasZone[j].IdZone.ToString()" id="@y">
-                    <th style="color:gray">@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement</th>
-                    @for (int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
-                    {
-                        <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
-                            @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() == 0)
-                            {
-                                <a><strong>Libre Matin</strong></a>
-                            }
-                            else
-                            {
-                                @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
-                                {
-                                    if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite == "Confidentiel")
-                                    {
-                                        <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                           asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
-                                            <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                           asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
-                                            Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
-                                        </a>
-                                    }
-                                }
-                            }
-                        </td>
-
-                        <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
-                            @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() == 0)
-                            {
-                                <a><strong>Libre Aprem</strong></a>
-                            }
-                            else
-                            {
-                                @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
-                                {
-                                    if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].Confidentialite == "Confidentiel")
-                                    {
-                                        <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                           asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
-                                            <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
-                                           asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
-                                            Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
-                                        </a>
-                                    }
-
-                                }
-                            }
-                        </td>
+                        <th colspan="2" scope="colgroup">@Model.JoursCalendrier[z].NomJour - @Model.JoursCalendrier[z].JourPourAffichage.ToShortDateString()</th>
                     }
                 </tr>
+                <tr>
+                    @for (int z = 0; z < Model.JoursCalendrier.Count(); z++)
+                    {
+                        <th scope="col" class="second_header">Matin</th>
+                        <th scope="col" class="second_header">Aprèm</th>
+                    }
+                </tr>
+            </thead>
+
+            <!-- Normalement 17 zones -->
+            @for (int j = 0; j < Model.ListResasZone.Count(); j++)
+            {
+                <tr>
+                    <td scope="row" class="first_col">
+                        @Model.ListResasZone[j].NomZone
+                        <span class="fas fa-caret-down" onclick="showEquipements(@Model.ListResasZone[j].IdZone.ToString())"></span>
+                    </td>
+                    @for (int i = 0; i < Model.ListResasZone[j].ListeDispoZonesDuAu.Count(); i++)
+                    {
+                        @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeMatin == true)
+                        {
+                            <td style="background-color:#d8b1d4">
+                                <strong>Occupée</strong>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <strong>Disponible</strong>
+                            </td>
+                        }
+                        @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeAprem == true)
+                        {
+                            <td style="background-color:#d8b1d4">
+                                <strong>Occupée</strong>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <strong>Disponible</strong>
+                            </td>
+                        }
+                    }
+                </tr>
+                @for (int y = 0; y < Model.ListResasZone[j].ListEquipementVsResa.Count(); y++)
+                {
+                    <tr class="hide" style="display:none" name="@Model.ListResasZone[j].IdZone.ToString()" id="@y">
+                        <th style="color:gray" class="first_col">@Model.ListResasZone[j].ListEquipementVsResa[y].NomEquipement</th>
+                        @for (int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
+                        {
+                            <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() == 0)
+                                {
+                                    <a><strong>Libre Matin</strong></a>
+                                }
+                                else
+                                {
+                                    @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
+                                    {
+                                        if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].Confidentialite == "Confidentiel")
+                                        {
+                                            <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai)">
+                                                <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
+                                            </a>
+                                            @*<a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
+                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
+                                                <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
+                                            </a>*@
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
+                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai">
+                                                Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai
+                                            </a>
+                                        }
+                                    }
+                                }
+                            </td>
+
+                            <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() == 0)
+                                {
+                                    <a><strong>Libre Aprem</strong></a>
+                                }
+                                else
+                                {
+                                    @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
+                                    {
+                                        if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].Confidentialite == "Confidentiel")
+                                        {
+                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
+                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
+                                                <strong>Confidentiel</strong> @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="VoirInfosEssai" asp-controller="Calendrier" asp-area="Calendrier"
+                                               asp-route-id="@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai">
+                                                Reservé @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai
+                                            </a>
+                                        }
+
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
             }
-        }
-    </table>
+        </table>
+    </div>
 </div>
 
 <!--CODE SNIPPET:
@@ -303,9 +308,9 @@
         </div>
     </div> *@
 
-<partial name="~/Areas/Calendrier/Views/Calendrier/_InfosResaCalendrier.cshtml" for="@Model.InfosPopUpEquipement"></partial>
+@*<partial name="~/Areas/Calendrier/Views/Calendrier/_InfosResaCalendrier.cshtml" for="@Model.InfosPopUpEquipement"></partial>*@
 
-
+<div id="modal_data"></div>
 
 
 
@@ -325,13 +330,22 @@
                 }
             }
         }
-        @{
-            if (ViewBag.InfosResa == null)
+
+        //$('#InfoResaJour').modal('@ViewBag.InfosResa');
+
+        function DisplayModalInfo(id) {
+            if (id)
             {
-                ViewBag.InfosResa = "hide";
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Calendrier", new { Area = "Calendrier" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#modal_data").html(html);
+                        $("#InfoResaJour").modal('show');
+                    }
+                });
             }
         }
-        $('#InfoResaJour').modal('@ViewBag.InfosResa');
 
         // Lien pour l'ajax et recharge d'une vue partielle (j'ai pas su l'implémenter)
         // https://stackoverflow.com/questions/51114427/cant-update-partial-view-with-ajax-asp-net-core-mvc

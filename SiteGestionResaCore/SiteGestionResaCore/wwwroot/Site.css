@@ -135,3 +135,25 @@ textarea {
         background-color: #000000;
     }
 }
+
+.fixed_head {
+    overflow-y: auto;
+    height: 250px;
+    overflow-x: auto;
+    width: 800px;
+}
+    .fixed_head thead th {
+        position: sticky;
+        top: 0;
+        background: gray;
+        z-index:2;
+    }
+    .second_header {
+        top: 58px !important;
+    }
+
+    .first_col {
+        position:sticky;
+        left:0;
+        background:gray;
+    }
