@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Calendrier.Data;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Data.PcVue;
 using SiteGestionResaCore.Extensions;
 
 namespace SiteGestionResaCore.Areas.Calendrier.Controllers
@@ -14,11 +15,14 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
     public class CalendrierController : Controller
     {
         private readonly ICalendResaDb CalendResaDb;
+        private readonly PcVueContext pcVueDb;
 
         public CalendrierController(
-           ICalendResaDb CalendResaDb)
+           ICalendResaDb CalendResaDb,
+           PcVueContext PcVueDb)
         {
             this.CalendResaDb = CalendResaDb;
+            pcVueDb = PcVueDb;
         }
 
         /// <summary>
@@ -90,6 +94,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             //ViewBag.InfosResa = "show";
 
             //CalendVM.InfosPopUpEquipement = InfosResa;
+            var valo = pcVueDb.tab_UA_VALO.First();
 
             return PartialView ("_InfosResaCalendrier", InfosResa);
         }

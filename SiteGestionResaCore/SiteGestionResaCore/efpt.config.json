@@ -1,5 +1,5 @@
 ﻿{
-   "ContextClassName": "GestionResaContext",
+   "ContextClassName": "PcVueContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -7,62 +7,82 @@
    "ModelNamespace": null,
    "OutputContextPath": "Data",
    "OutputPath": null,
-   "ProjectRootNamespace": "SiteGestionResaCore.Data",
+   "ProjectRootNamespace": "SiteGestionResaCore.Data.PcVue",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[equipement]"
+         "Name": "[dbo].[AICommonParameters]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[essai]"
+         "Name": "[dbo].[tab_LOG_TRACA]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_destination]"
+         "Name": "[dbo].[tab_UA_ACT]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_financement]"
+         "Name": "[dbo].[tab_UA_CUV]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_produit_in]"
+         "Name": "[dbo].[tab_UA_ECR]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_provenance]"
+         "Name": "[dbo].[tab_UA_ENG]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_provenance_produit]"
+         "Name": "[dbo].[tab_UA_EVAA]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[ld_type_projet]"
+         "Name": "[dbo].[tab_UA_EVAB]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[organisme]"
+         "Name": "[dbo].[tab_UA_GP7]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[projet]"
+         "Name": "[dbo].[tab_UA_MAT]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[reservation_projet]"
+         "Name": "[dbo].[tab_UA_MFMG]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[utilisateur]"
+         "Name": "[dbo].[tab_UA_MTH]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[zone]"
+         "Name": "[dbo].[tab_UA_NEP]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[tab_UA_OPTIMAL]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[tab_UA_SAL]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[tab_UA_SEC]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[tab_UA_SPI]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[tab_UA_VALO]"
       }
    ],
    "UseDatabaseNames": true,
