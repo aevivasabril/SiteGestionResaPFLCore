@@ -13,9 +13,7 @@ using SiteGestionResaCore.Services;
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
     [Area("Reservation")]
-    [Authorize(Roles = "Admin")]
-    [Authorize(Roles = "Logistic")]
-    [Authorize(Roles = "MainAdmin")]
+    [Authorize(Roles = "Admin, Logistic, MainAdmin")] // Il faut être ou Admin ou Logistic ou MainAdmin si on met authorize pour chaque rôle il faut être parti des 3 rôles pour accèder
     public class ValidationController : Controller
     {
         private readonly UserManager<utilisateur> userManager;

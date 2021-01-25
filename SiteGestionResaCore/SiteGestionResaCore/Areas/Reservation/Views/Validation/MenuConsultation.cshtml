@@ -13,7 +13,7 @@
             <div class="card-body">
                 <h5 class="card-title">Réservations à valider</h5>
                 <p class="card-text">Liste des réservations en attente de validation ou refus</p>
-                <a href="/Reservation/Validation/ReservationsAValider" class="btn navbar-inra">Accèder à la liste</a>
+                <a asp-action="ReservationsAValider" asp-controller="Validation" asp-area="Reservation" class="btn navbar-inra">Accèder à la liste</a>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <div class="card-body">
                 <h5 class="card-title text-center">Réservations validées</h5>
                 <p class="card-text">Liste des réservations validées</p>
-                <a href="/Reservation/Consultation/ResasValidees" class="btn navbar-inra">Consulter</a>
+                <a asp-action="ResasValidees" asp-controller="Consultation" asp-area="Reservation" class="btn navbar-inra">Consulter</a>
             </div>
         </div>
     </div>
