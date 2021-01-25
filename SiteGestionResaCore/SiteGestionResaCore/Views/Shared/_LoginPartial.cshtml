@@ -22,7 +22,7 @@ else
         <li class="list-inline-item">@Html.ActionLink("Se connecter", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn btn-dark" })</li>
     </ul>*@
 <form class="nav navbar-nav ml-auto justify-content-center">
-    <a href="/Account/Login" class="btn btn-dark" role="button">
+    <a asp-action="Login" asp-controller="Account" asp-area="" class="btn btn-dark" role="button">
         Se connecter
         <span class="fas fa-user"></span>
     </a>
