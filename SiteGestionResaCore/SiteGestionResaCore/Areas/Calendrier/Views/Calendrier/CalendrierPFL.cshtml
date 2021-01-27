@@ -11,7 +11,7 @@
 <h1 class="text-center">Calendrier PFL</h1>
 <br />
 
-<div class="offset-1 col-md-8">
+<div class="offset-2 col-md-8">
     <div class="card">
         <div class="card-body">
             <h5 class="card-title text-center">Code couleur calendrier PFL</h5>
@@ -74,7 +74,10 @@
                     </div>
                 </div>
                 <div class="col-sm-4 col-md-4 col-lg-4">
-                    <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+                    <div class="form-group">
+                        <br />
+                        <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+                    </div>
                 </div>
             </div>
         </form>
@@ -109,34 +112,26 @@
             {
                 <tr>
                     <td scope="row" class="first_col">
-                        @Model.ListResasZone[j].NomZone
+                        <strong>@Model.ListResasZone[j].NomZone</strong>
                         <span class="fas fa-caret-down" onclick="showEquipements(@Model.ListResasZone[j].IdZone.ToString())"></span>
                     </td>
                     @for (int i = 0; i < Model.ListResasZone[j].ListeDispoZonesDuAu.Count(); i++)
                     {
                         @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeMatin == true)
                         {
-                            <td style="background-color:#d8b1d4">
-                                <!--<strong>Occupée</strong>-->
-                            </td>
+                            <td style="background-color:#d8b1d4"></td>
                         }
                         else
                         {
-                            <td>
-                                <!--<strong>Disponible</strong>-->
-                            </td>
+                            <td></td>
                         }
                         @if (Model.ListResasZone[j].ListeDispoZonesDuAu[i].IsZoneOccupeAprem == true)
                         {
-                            <td style="background-color:#d8b1d4">
-                                <!--<strong>Occupée</strong>-->
-                            </td>
+                            <td style="background-color:#d8b1d4"></td>
                         }
                         else
                         {
-                            <td>
-                                <!--<strong>Disponible</strong>-->
-                            </td>
+                            <td></td>
                         }
                     }
                 </tr>
@@ -147,11 +142,7 @@
                         @for (int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
                         {
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
-                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() == 0)
-                                {
-                                    <a><strong></strong></a>
-                                }
-                                else
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() != 0)
                                 {
                                     @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
                                     {
@@ -172,24 +163,20 @@
                             </td>
 
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
-                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() == 0)
-                                {
-                                    <a><strong></strong></a>
-                                }
-                                else
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() != 0)
                                 {
                                     @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
                                     {
                                         if (Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].Confidentialite == "Confidentiel")
                                         {
                                             <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai)">
-                                                <strong>Confidentiel</strong> 
+                                                <strong>Confidentiel</strong>
                                             </a>
                                         }
                                         else
                                         {
                                             <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai)">
-                                                <strong>Reservé </strong> 
+                                                <strong>Reservé </strong>
                                             </a>
                                         }
 
