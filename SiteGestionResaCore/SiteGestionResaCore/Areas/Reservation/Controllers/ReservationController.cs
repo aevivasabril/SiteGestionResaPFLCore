@@ -325,9 +325,70 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View(vm);
         }
 
+        public IActionResult CalendrierEquipXId(int id)
+        {
+            // Récupérer la session "EquipementZone"
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+            CalendrierEquipChildViewModel ChildModelEquip = equipementZone.CalendrierChildVM.Where(c => c.idEquipement == id).First();
 
-        [HttpPost]
-        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
+            return PartialView("_CalendrierEquipement", ChildModelEquip);
+        }
+
+        public IActionResult CreneauEquipXId(int id)
+        {
+            // Récupérer la session "EquipementZone"
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+            CalendrierEquipChildViewModel ChildModelEquip = equipementZone.CalendrierChildVM.Where(c => c.idEquipement == id).First();
+
+            return PartialView("_Creneau", ChildModelEquip);
+        }
+
+        public IActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
+        {
+            // Initialisation des variables
+            //List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
+            List<ReservationsJour> reservationsEquipement = new List<ReservationsJour>();
+
+            // Récupérer la session "EquipementZone"
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+
+            // Il faut supprimer de la liste d'erreur puisque ils sont pas utilisés sur cette partie
+            ModelState.Remove("DateDebut");
+            ModelState.Remove("DateFin");
+            ModelState.Remove("DatePickerDebut_Matin");
+            ModelState.Remove("DatePickerFin_Matin");
+
+            if (ModelState.IsValid) // Vérification uniquement des datePicker pour l'affichage du calendrier
+            {
+                if (model.DatePickerDu.Value <= model.DatePickerAu.Value)
+                {
+                    // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
+                    for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
+                    {
+                        if (equipementZone.CalendrierChildVM[i].idEquipement == id)
+                        {
+                            // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
+                            reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu.Value, model.DatePickerAu.Value);
+                            equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
+                            model = equipementZone.CalendrierChildVM[i];
+
+                            // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
+                            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
+                }
+            }
+            return PartialView("_CalendrierEquipement", model);
+        }
+
+
+        /*public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
         {
             // Initialisation des variables
             List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
@@ -368,7 +429,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 }              
             }
             return View("EquipementVsZone", equipementZone);
-        }
+        }*/
+
 
         /// <summary>
         /// méthode permettant d'ajouter un créneau de réservation et de revenir sur la même vue en mettant la liste à jour

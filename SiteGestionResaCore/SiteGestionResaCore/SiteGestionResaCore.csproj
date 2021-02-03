@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Calendrier\Models\" />
+    <Folder Include="Areas\Reservation\Views\Shared\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 

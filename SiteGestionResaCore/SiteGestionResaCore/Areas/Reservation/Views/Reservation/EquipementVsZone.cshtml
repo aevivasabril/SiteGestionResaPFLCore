@@ -66,8 +66,11 @@
                         <hr />
                         <div class="row">
                             <div class="col-sm-10 col-md-10">
-                                <form asp-action="AfficherPlanning" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
-                                    <partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                                <form id="@("formEquip_"+ Model.CalendrierChildVM[i].idEquipement.ToString())" asp-action="AfficherPlanning" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
+                                    <div id="@("calEquip_"+ Model.CalendrierChildVM[i].idEquipement.ToString())">
+                                        <partial name="~/Areas/Reservation/Views/Reservation/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                                    </div>
+                                    @*<partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>*@
                                     @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
                                 </form>
                             </div>
@@ -76,7 +79,10 @@
                     <hr />
                     <div id="cren-content">
                         <form asp-action="AjouterResa" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
-                            <partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                            <div id="@("creneauResa_"+ Model.CalendrierChildVM[i].idEquipement.ToString())">
+                                <partial name="~/Areas/Reservation/Views/Reservation/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
+                            </div>
+                            @*<partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>*@
                             @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
                         </form>
                     </div>
@@ -169,16 +175,72 @@
     <!-- JS includes -->
     <script type="text/javascript">
 
-
-
         function showCalendar(parameter) {
+            if (parameter) //Vérifier que l'id contient une valeur
+            {
+                var debCal = "#calEquip_";
+                var CalName = debCal.concat(parameter);
+
+                var debCre = "#creneauResa_";
+                var CreName = debCre.concat(parameter);
+
+                //$.ajax({
+                //    url: "@Url.Action("CalendrierEquipXId", "Reservation", new { Area = "Reservation" })?id=" + parameter,
+                //    type: 'POST',
+                //    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                //        $(CalName).html(html);
+                //    }
+                //}).done(
+                //    $.ajax({
+                //    url: "@Url.Action("CreneauEquipXId", "Reservation", new { Area = "Reservation" })?id=" + parameter,
+                //    type: 'POST',
+                //    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                //        $(CreName).html(html);
+                //    }
+                //}));
+
+                var divid = document.getElementById(parameter);
+                if (divid.style.display == "") {
+                    divid.style.display = "none";
+                } else {
+                    divid.style.display = "";
+                }
+            }
+        }
+
+        $('input[name = "btnAffich"]').click(function (e) {
+
+            var debCal = "#formEquip_";
+            var formName = debCal.concat((this).id);
+
+            var divCal = "#calEquip_";
+            var divName = divCal.concat((this).id);
+            alert(divName + "" + formName);
+            e.preventDefault(); //preventing the default action
+            var $form = $(formName);
+
+            $.ajax({
+                url: $form.prop('action'),
+                //url: "@Url.Action("AfficherPlanning", "Reservation", new { Area = "Reservation" })",
+                data: $form.serializeArray(),
+                type: 'POST',
+                success: function (data) {
+                    $(divName).html(data);
+                }
+            });
+            // or just
+            //return false;
+        });
+
+
+        /*function showCalendar(parameter) {
             var divid = document.getElementById(parameter);
             if (divid.style.display == "") {
                 divid.style.display = "none";
             } else {
                 divid.style.display = "";
             }
-        }
+        }*/
         @{
             if (ViewBag.modalSupp == null)
             {

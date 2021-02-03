@@ -265,11 +265,13 @@
         function DisplayModalInfo(id) {
             if (id) //Vérifier que l'id contient une valeur
             {
+                var modal = "#modal";
+                var modalnam = modal.concat("_data");
                 $.ajax({
                     url: "@Url.Action("VoirInfosEssai", "Calendrier", new { Area = "Calendrier" })?id=" + id,
                     type: 'POST',
                     success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
-                        $("#modal_data").html(html);
+                        $(modalnam).html(html);
                         $("#InfoResaJour").modal('show');
                     }
                 });
