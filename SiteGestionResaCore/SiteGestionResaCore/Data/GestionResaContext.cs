@@ -51,6 +51,8 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<equipement>(entity =>
             {
+                entity.Property(e => e.nomTabPcVue).IsUnicode(false);
+
                 entity.Property(e => e.nom)
                     .IsRequired()
                     .IsUnicode(false);
