@@ -30,5 +30,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         public string ProveProd { get; set; }
 
         public string DestProd { get; set; }
+
+        public string ActionName { get; set; }
     }
 }

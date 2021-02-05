@@ -76,6 +76,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             else
             {                
                 infos = resasUserDB.ObtenirInfosEssai(id);
+                infos.ActionName = "MesReservations";
             }
             
             MyReservationsViewModel vm = new MyReservationsViewModel()
