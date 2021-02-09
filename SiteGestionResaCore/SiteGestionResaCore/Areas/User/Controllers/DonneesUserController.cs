@@ -34,7 +34,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             ListResasDonneesVM vm = new ListResasDonneesVM()
             {
                 ResasUser = donneesUsrDB.ObtenirResasUser(user.Id),
-                EquipementsReserves = new List<InfosResasEquipement>(),
+                EquipVsDonnees = new EquipVsDonneesVM(),
                 ConsultInfosEssai = new ConsultInfosEssaiChilVM()
             };
             return View(vm);
@@ -45,6 +45,17 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             ConsultInfosEssaiChilVM vm = donneesUsrDB.ObtenirInfosEssai(id);
             vm.ActionName = "ListEssaisDonnees";
             return PartialView("_DisplayInfosEssai", vm);
+        }
+        
+
+        public IActionResult ListEquipVsDonnees(int id) 
+        {
+            // id essai
+            EquipVsDonneesVM vm = new EquipVsDonneesVM();
+            List<InfosResasEquipement> ListResa = donneesUsrDB.ListEquipVsDonnees(id);
+            vm.EquipementsReserves = ListResa;
+            vm.IdEssai = id;
+            return PartialView("_EquipVsDonnees", vm);
         }
     }
 }

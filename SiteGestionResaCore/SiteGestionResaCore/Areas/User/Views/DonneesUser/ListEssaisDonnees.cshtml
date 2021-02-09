@@ -25,10 +25,10 @@
                     {
                         <tr>
                             <td>@x.NomProjet (N°: @x.NumProjet)</td>
-                            <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">Infos essai</a></td>
+                            <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">Infos essai N° @x.IdEssai</a></td>
                             @if (x.EquipementSousPcVue == true)
                             {
-                                <td><a href="#"> Oui! clique ici </a></td>
+                                <td><a href="#" onclick="EquipVsData(@x.IdEssai)"> Oui! clique ici </a></td>
                             }
                             else
                             {
@@ -44,14 +44,10 @@
 </div>
 <hr />
 <br />
-<div class="hide" style="display:none" id="InfosResas">
-    <div class="form-group row">
-        <div class="offset-5 col-md-2">
-            @Html.ActionLink("Fermer", "MesReservations", null, new { @class = "btn btn-primary" })
-        </div>
-    </div>
-    <hr />
-</div>
+
+<div class="hide" style="display:none" id="InfosResas"></div>
+
+<div class="hide" style="display:none" id="EquipVsDonnees"></div>
 
 @section Scripts
 {
@@ -66,10 +62,30 @@
                     type: 'POST',
                     success: function (html) {
                         $("#InfosResas").show();
+                        $("#EquipVsDonnees").hide();
                         $("#InfosResas").html(html);
                     }
                 });
             }
+        }
+
+        function EquipVsData(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("ListEquipVsDonnees", "DonneesUser", new { Area = "User" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#EquipVsDonnees").show();
+                        $("#InfosResas").hide();
+                        $("#EquipVsDonnees").html(html);
+                    }
+                });
+            }
+        }
+
+        function DisplayEssaiInfoClose() {                       
+            $("#InfosResas").hide();
         }
 
     </script>

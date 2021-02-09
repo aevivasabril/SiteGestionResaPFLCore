@@ -1,5 +1,4 @@
 ﻿using SiteGestionResaCore.Areas.User.Data.ResasUser;
-using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +22,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         #endregion
 
-        private List<InfosResasEquipement> _equipementsReserves = new List<InfosResasEquipement>();
-
-        public List<InfosResasEquipement> EquipementsReserves
-        {
-            get { return _equipementsReserves; }
-            set { _equipementsReserves = value; }
-        }
-
-
+        // View model pour la vue partielle 
+        public EquipVsDonneesVM EquipVsDonnees { get; set; }
     }
 }

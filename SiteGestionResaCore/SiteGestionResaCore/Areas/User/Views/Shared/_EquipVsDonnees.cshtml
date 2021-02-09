@@ -1,0 +1,50 @@
+﻿@model SiteGestionResaCore.Areas.User.Data.DonneesUser.EquipVsDonneesVM
+
+<h5 class="text-center">Le téléchargement de données pour l'essai N° @Model.IdEssai se fera dès le début de l'essai jusqu'au aujourd'hui si l'essai n'est pas fini</h5>
+<br />
+<div class="row">
+    <div class="offset-2 col-sm-8 col-md-8 text-center">
+        <div class="row justify-content-center">
+            <table class="table table-striped justify-content-center table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom Equipement</th>
+                        <th scope="col">Zone Equipement</th>
+                        <th scope="col">Date debut utilisation</th>
+                        <th scope="col">Date fin utilisation</th>
+                        <th scope="col">Données disponibles?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.EquipementsReserves)
+                    {
+                        <tr>
+                            <td>@x.NomEquipement</td>
+                            <td>@x.ZoneEquipement</td>
+                            <td>@x.DateDebut</td>
+                            <td>@x.DateFin</td>
+                            @if(x.IsEquipUnderPcVue == true)
+                            {
+                                if (x.IsDataReady == true)
+                                {
+                                    <td><a href="#"></a>Téléchargement</td>
+                                }
+                                else 
+                                {
+                                    <td>Données indisponibles</td>
+                                }
+
+                            }
+                            else
+                            {
+                                <td>Equipement non supervisé</td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
