@@ -94,7 +94,16 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             DateTime dateFin;
             DateTime DateToday = DateTime.Now;
             string tableName;
-            
+
+            /* Test pour déterminer que la deduction des dates est OK, juste une heure de décalage en moins sur la table pcVue donc 
+             * soustraire une HEURE aux datetime pour obtenir la vrai valeur de chrono sur la table pcvue
+             * Copie de db_archive faite à 19h56 le 08/02/2021
+             * DateTime debutToSave = new DateTime(2021-1600, 02 , 08, 18, 55, 00, DateTimeKind.Local);
+            //debutToSave.AddYears(-1600);
+
+            var queryy =  (from donnees in pcVueDb.tab_UA_MAT
+                            where donnees.Chrono >= debutToSave.Ticks
+                            select donnees).ToList();*/
 
             // Récupérer toutes les réservations pour cet essai
             var lisEquip = resaDB.reservation_projet.Where(r => r.essaiID == IdEssai).ToList();
@@ -110,12 +119,12 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     // 2. Vérifier s'il y a des données à récupérer entre les dates de réservation de l'équipement
                     // http://kosted.free.fr/pdf/rapport.pdf: Chrono qui représente un temps (Mois-Jour-AnnéeMinutes-Secondes) bien précis. La norme utilisée pour enregistrer ces informations est celle du
                     // FILE TIME. Le FILE TIME est le temps écoulé en nanosecondes écoulés depuis le 1er Janvier 1601.
-                    dateDebut = ResaEquip.date_debut;
+                    dateDebut = ResaEquip.date_debut.AddHours(-1);
                     dateDebut = dateDebut.AddYears(-1600);
                     //dateDebut = dateDebut.AddHours(-2);
                     // convertir à ticks pour obtenir un format bigint? dateDebut.Ticks;
 
-                    dateFin = ResaEquip.date_fin;
+                    dateFin = ResaEquip.date_fin.AddHours(-1);
                     dateFin = dateFin.AddYears(-1600);
                     // convertir au format la date de consultation
                     DateToday = DateToday.AddYears(-1600);
