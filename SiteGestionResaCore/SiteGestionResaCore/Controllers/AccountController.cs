@@ -156,9 +156,11 @@ namespace SiteGestionResaCore.Controllers
             var user = await  userManager.FindByIdAsync(userId);
             if (userId == null || code == null)
             {
+                ViewBag.Message = "Un problème est survenu lors du clic sur le lien de confirmation. UserId = " + userId +". code = " + code + ".";
                 return View("Error");
             }
             var result = await userManager.ConfirmEmailAsync(user, code);
+            ViewBag.Message = "Un problème est survenu lors du clic sur le lien de confirmation. Il faut une connexion vers le réseau stlo!";
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
