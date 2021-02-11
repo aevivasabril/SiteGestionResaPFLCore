@@ -138,6 +138,12 @@ namespace SiteGestionResaCore.Controllers
                 }
                 AddErrors(result);
             }
+            var allOrgs = formulaireResaDb.ObtenirListOrg().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_organisme
+            });
+            model.OrganItem = allOrgs;
             // If we got this far, something failed, redisplay form
             return View(model);
         }
