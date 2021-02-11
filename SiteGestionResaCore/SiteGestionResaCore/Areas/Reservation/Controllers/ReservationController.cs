@@ -312,8 +312,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //Equipements = equipements,
                 NomZone = zoneEquipDb.GetNomZone(id.Value),
                 IdZone = id.Value,
-                CalendrierChildVM = PlanningEquipements
-
+                CalendrierChildVM = PlanningEquipements, 
+                CalendVM = new CalendrierEquipChildViewModel(),
+                OpenCalendEtCreneau = "none"
             };
 
             // Etablir une session avec les données à mettre à jour pour la vue EquipementsVsZones
@@ -325,6 +326,31 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View(vm);
         }
 
+        public IActionResult VoirPlanningSemaine(int id)
+        {
+            // Récupérer la session "EquipementZone"
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+            CalendrierEquipChildViewModel vm = equipementZone.CalendrierChildVM.Where(l => l.idEquipement == id).First();
+            equipementZone.CalendVM = vm;
+            equipementZone.OpenCalendEtCreneau = null;
+
+            // Etablir une session avec les données à mettre à jour pour la vue EquipementsVsZones
+            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
+            return View("EquipementVsZone", equipementZone);
+        }
+
+        public IActionResult FermerCalend()
+        {
+            // Récupérer la session "EquipementZone"
+            EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
+            equipementZone.OpenCalendEtCreneau = "none";
+
+            // Etablir une session avec les données à mettre à jour pour la vue EquipementsVsZones
+            this.HttpContext.AddToSession("EquipementZone", equipementZone);
+
+            return View("EquipementVsZone", equipementZone);
+        }
 
         [HttpPost]
         public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
@@ -353,11 +379,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         {
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
                             reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu.Value, model.DatePickerAu.Value);
-                            equipementZone.CalendrierChildVM[i].ListResas = reservationsEquipement;
+                            equipementZone.CalendVM.ListResas = reservationsEquipement;
+                            equipementZone.OpenCalendEtCreneau = null;
 
                             // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
                             this.HttpContext.AddToSession("EquipementZone", equipementZone);
-
                             break;
                         }
                     }
@@ -394,14 +420,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 {
                     #region Compléter le model "CalendrierEquipChildViewModel" avec le model "EquipementsParZoneViewModel"
 
-                    model.idEquipement = equipementZone.CalendrierChildVM[i].idEquipement;
+                    /*model.idEquipement = equipementZone.CalendrierChildVM[i].idEquipement;
                     model.nomEquipement = equipementZone.CalendrierChildVM[i].nomEquipement;
                     model.numGmaoEquipement = equipementZone.CalendrierChildVM[i].numGmaoEquipement;
                     model.zoneIDEquipement = equipementZone.CalendrierChildVM[i].zoneIDEquipement;
 
                     model.ListResas = equipementZone.CalendrierChildVM[i].ListResas;
                     model.ResaEquipement = equipementZone.CalendrierChildVM[i].ResaEquipement;                    
-                    equipementZone.CalendrierChildVM[i] = model;
+                    equipementZone.CalendrierChildVM[i] = model;*/
                     indiceChild = i;
                     break;
 
@@ -414,7 +440,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             if (ModelState.IsValid) // Ajouter le créneau de réservation dans la liste
             {
-                if (equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value == equipementZone.CalendrierChildVM[indiceChild].DateFin.Value)
+                if (model.DateDebut.Value == model.DateFin.Value)
                 {
                     if ((Convert.ToBoolean(model.DatePickerDebut_Matin) == false) && (Convert.ToBoolean(model.DatePickerFin_Matin) == true))
                     {
@@ -428,7 +454,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 }
 
                 ADD:
-                if (equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value <= equipementZone.CalendrierChildVM[indiceChild].DateFin.Value) // si la date debut est inférieure à la date fin alors OK
+                if (model.DateDebut.Value <= model.DateFin.Value) // si la date debut est inférieure à la date fin alors OK
                 {
                     // Etablir l'heure de début et de fin selon les créneaux choisis (Matin ou après-midi)
                     #region Définition des dates réservation avec l'heure selon le créneau choisi
@@ -436,24 +462,24 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     if (Convert.ToBoolean(model.DatePickerDebut_Matin) == true) // definir l'heure de début à 7h
                     {
-                        debutToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Year,
-                            equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Day, 7, 0, 0, DateTimeKind.Local);
+                        debutToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 7, 0, 0, DateTimeKind.Local);
                     }
                     else // Début de manip l'après-midi à 13h
                     {
-                        debutToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Year,
-                                                equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateDebut.Value.Day, 13, 0, 0, DateTimeKind.Local);
+                        debutToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 13, 0, 0, DateTimeKind.Local);
                     }
                     // Definition date fin
                     if (Convert.ToBoolean(model.DatePickerFin_Matin) == true)
                     {
-                        finToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Year,
-                            equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Day, 12, 0, 0, DateTimeKind.Local);
+                        finToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 12, 0, 0, DateTimeKind.Local);
                     }
-                    else // Début de manip l'après-midi à 13h
+                    else // Fin de la manip 18h
                     {
-                        finToSave = new DateTime(equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Year,
-                            equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Month, equipementZone.CalendrierChildVM[indiceChild].DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
+                        finToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 18, 0, 0, DateTimeKind.Local);
                     }
                     #endregion
 
@@ -498,6 +524,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         date_debut = debutToSave,
                         date_fin = finToSave
                     });
+
+                    equipementZone.OpenCalendEtCreneau = "none";
 
                     // Voir ce qu'il se passe ici!! 
                     this.HttpContext.AddToSession("EquipementZone", equipementZone);

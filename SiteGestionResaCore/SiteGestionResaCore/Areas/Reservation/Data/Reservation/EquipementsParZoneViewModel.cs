@@ -32,6 +32,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         public int IndiceResaEquipXChild { get; set; }
 
+        public string OpenCalendEtCreneau { get; set; }
+
+        public CalendrierEquipChildViewModel CalendVM { get; set; }
+
     }
     #endregion
 
