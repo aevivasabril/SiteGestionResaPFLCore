@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SiteGestionResaCore.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
     {
         public IList<InfosAffichage> resasAValider { get; set; }
 
-        public InfosEssai InfosEssai { get; set; }
+        public ConsultInfosEssaiChildVM InfosEssai { get; set; }
 
         public InfosProjet InfosProj { get; set; }
 

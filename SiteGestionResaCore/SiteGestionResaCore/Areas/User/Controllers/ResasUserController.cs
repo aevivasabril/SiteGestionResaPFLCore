@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Reservation.Data;
-using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Areas.User.Data;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 
 namespace SiteGestionResaCore.Areas.User.Controllers
@@ -46,7 +46,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         public async Task<IActionResult> OuvrirEssaiXModifAsync(int id)
         {
             essai ess = new essai(); // Variable pour récupération d'essai
-            ConsultInfosEssaiChilVM infos;
+            ConsultInfosEssaiChildVM infos;
             //ResEssaiChildViewModel childVM;
 
             // Obtenir les infos de l'utilisateur authentifié
@@ -71,11 +71,12 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             var isModif = resasUserDB.IsEssaiModifiable(id);
             if (isModif)
             {
-                infos = new ConsultInfosEssaiChilVM();
+                infos = new ConsultInfosEssaiChildVM();
             }
             else
             {                
                 infos = resasUserDB.ObtenirInfosEssai(id);
+                ViewBag.modalState = "show";
             }
             
             MyReservationsViewModel vm = new MyReservationsViewModel()
@@ -303,7 +304,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             {
                 ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, "", id),
                 EquipementsReserves = resasUserDB.ResasEssai(id),
-                ConsultInfosEssai = new ConsultInfosEssaiChilVM(), 
+                ConsultInfosEssai = new ConsultInfosEssaiChildVM(), 
                 IsEssaiModifiable = isModif
             };
             return View("MesReservations", vm);

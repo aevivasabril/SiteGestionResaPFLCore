@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Reservation.Data.Consultation;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
@@ -37,7 +38,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
                 InfosProjet = new InfosProjet(), 
-                InfosEssai = new InfosEssai(),
+                InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = new List<InfosReservation>()
             };
             return View(model);
@@ -54,7 +55,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
                 InfosProjet = resaAValider.ObtenirInfosProjet(id),
-                InfosEssai = new InfosEssai(),
+                InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = new List<InfosReservation>()
             };
             ViewBag.modalProj = "show";
@@ -68,15 +69,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public IActionResult VoirInfosEssai(int id)
         {
-            ConsultationViewModel model = new ConsultationViewModel()
-            {
-                ResasValid = consultDB.ObtInfEssaiValidees(),
-                InfosProjet = new InfosProjet(), 
-                InfosEssai = resaAValider.ObtenirInfosEssai(id),
-                Reservations = new List<InfosReservation>()
-            };
-            ViewBag.modalEssai = "show";
-            return View("ResasValidees", model);
+            ConsultInfosEssaiChildVM model = resaAValider.ObtenirInfosEssai(id);
+            return PartialView ("~/Views/Shared/_DisplayInfosEssai.cshtml", model);
         }
 
         /// <summary>
@@ -90,7 +84,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
                 InfosProjet = new InfosProjet(),
-                InfosEssai = new InfosEssai(),
+                InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = resaAValider.InfosReservations(id)
             };
             ViewBag.modalResas = "show";

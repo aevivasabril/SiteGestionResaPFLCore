@@ -33,7 +33,7 @@
                     {
                         <tr>
                             <td>@x.idEssai</td>
-                            <td><a asp-action="VoirInfosEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Infos essai</a></td>
+                            <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">Infos Essai</a></td>
                             <td><a asp-action="VoirInfosProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NumProjet</a></td>
                             <td><a asp-action="ConsulterResasProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
                             <td>
@@ -57,85 +57,7 @@
     </div>
 </div>
 <!-- Modal pour affichage des infos "essai"-->
-<div class="modal fade" id="EssaiModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg navbar-inra">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Informations essai N° @Model.InfosEssai.id</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalcontent">
-                <table class="table table-sm table-borderless">
-                    <thead>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">N° Essai</th>
-                            <td>@Model.InfosEssai.id</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Date Création</th>
-                            <td>@Model.InfosEssai.DateCreation</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Email manipulateur essai</th>
-                            <td>@Model.InfosEssai.MailManipulateur</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Type de produit entrant</th>
-                            <td>@Model.InfosEssai.TypeProduitEntrant</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Demande saisie par</th>
-                            <td>@Model.InfosEssai.MailUser</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Descriptif essai</th>
-                            <td>@Model.InfosEssai.Commentaire</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Confidentialité essai</th>
-                            <td>@Model.InfosEssai.Confidentialite</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Transport assuré par</th>
-                            @if (Model.InfosEssai.TransportStlo == true)
-                            {
-                                <td>STLO</td>
-                            }
-                            else
-                            {
-                                <td>Autre</td>
-                            }
-                        </tr>
-                        <tr>
-                            <th scope="row">Précision produit</th>
-                            <td>@Model.InfosEssai.PrecisionProd</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Quantité produit</th>
-                            <td>@Model.InfosEssai.QuantiteProd</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Provenance produit</th>
-                            <td>@Model.InfosEssai.ProveProd</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Destination produit</th>
-                            <td>@Model.InfosEssai.PrecisionProd</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="InfosEssai"></div>
 
 <!-- Modal pour affichage des infos "projet"-->
 <div class="modal fade" id="ProjModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -357,12 +279,8 @@
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-    <script>
+<script>
         @{
-            if (ViewBag.modalEssai == null)
-            {
-                ViewBag.modalEssai = "hide";
-            }
             if (ViewBag.modalProj == null)
             {
                 ViewBag.modalProj = "hide";
@@ -384,11 +302,26 @@
                 ViewBag.modalRefus = "hide";
             }
         }
-        $('#EssaiModal').modal('@ViewBag.modalEssai');
+        //$('#EssaiModal').modal('@ViewBag.modalEssai');
         $('#ProjModal').modal('@ViewBag.modalProj');
         $('#ResaModal').modal('@ViewBag.modalResas');
         $('#ConflitModal').modal('@ViewBag.modalConflit');
         $('#ValidEssa').modal('@ViewBag.modalValid');
         $('#RefusEssa').modal('@ViewBag.modalRefus');
-    </script>
+
+        function ModalInfosEssai(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Validation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+</script>
 }

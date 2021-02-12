@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,9 @@ namespace SiteGestionResaCore.Areas.User.Data
 
         #region Infos "Essai" uniquement lecture
 
-        private ConsultInfosEssaiChilVM _consultInfosEssai = new ConsultInfosEssaiChilVM(); // Vue partielle _DisplayInfosEssai
+        private ConsultInfosEssaiChildVM _consultInfosEssai = new ConsultInfosEssaiChildVM(); // Vue partielle _DisplayInfosEssai
 
-        public ConsultInfosEssaiChilVM ConsultInfosEssai
+        public ConsultInfosEssaiChildVM ConsultInfosEssai
         {
             get { return _consultInfosEssai; }
             set { _consultInfosEssai = value; }

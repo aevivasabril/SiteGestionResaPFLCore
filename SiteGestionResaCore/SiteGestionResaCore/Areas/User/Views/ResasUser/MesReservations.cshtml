@@ -9,7 +9,7 @@
 
 @if (ViewBag.AfficherMessage == true)
 {
-    <p class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </p>
+<p class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </p>
 }
 
 <div class="row">
@@ -31,15 +31,15 @@
                 <tbody>
                     @foreach (var x in Model.ResasUser)
                     {
-                        <tr>
-                            <td>@x.IdEssai</td>
-                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
-                            <td>@x.TitreProj</td>
-                            <td>@x.NumProjet</td>
-                            <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
-                            <td>@x.DateCreation</td>
-                            <td>@x.StatusEssai</td>
-                        </tr>
+                    <tr>
+                        <td>@x.IdEssai</td>
+                        <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
+                        <td>@x.TitreProj</td>
+                        <td>@x.NumProjet</td>
+                        <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
+                        <td>@x.DateCreation</td>
+                        <td>@x.StatusEssai</td>
+                    </tr>
                     }
                 </tbody>
             </table>
@@ -54,111 +54,111 @@
     <div class="col-md-12">
         @for (int x = 0; x < Model.ResasUser.Count(); x++)
         {
-            <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartialEssai">
-                <hr />
-                @if (Model.IsEssaiModifiable == true)
+        <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenPartialEssai">
+            <hr />
+            @if (Model.IsEssaiModifiable == true)
                 {
-                    <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
-                        @*<partial name="~/Areas/User/Views/Shared/_ModifEssai.cshtml" for="@Model.ChildVmModifEssai"></partial>*@
-                        <h6>INFORMATIONS ESSAI</h6>
-                        <h6 style="color:red" class="text-center">Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements. Attention: une fois cliqué le bouton, les changements seront pris en compte!</h6>
-                        <hr />
-                        <div class="form-row">
-                            @Html.LabelFor(m => m.ConfidentialiteEss, new { @class = "col-md-4 control-label" })
-                            @Html.ValidationMessageFor(m => m.ConfidentialiteEss, "", new { @class = "text-danger" })
-                            <div class="form-row">
-                                <div class="col-4">
-                                    <label class="col-md-3 radio-inline">@Model.ConfidentialiteEss</label>
-                                </div>
-                            </div>
+            <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
+                @*<partial name="~/Areas/User/Views/Shared/_ModifEssai.cshtml" for="@Model.ChildVmModifEssai"></partial>*@
+                <h6>INFORMATIONS ESSAI</h6>
+                <h6 style="color:red" class="text-center">Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements. Attention: une fois cliqué le bouton, les changements seront pris en compte!</h6>
+                <hr />
+                <div class="form-row">
+                    @Html.LabelFor(m => m.ConfidentialiteEss, new { @class = "col-md-4 control-label" })
+                    @Html.ValidationMessageFor(m => m.ConfidentialiteEss, "", new { @class = "text-danger" })
+                    <div class="form-row">
+                        <div class="col-4">
+                            <label class="col-md-3 radio-inline">@Model.ConfidentialiteEss</label>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-4">
-                                @Html.LabelFor(m => m.SelecManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
-                                <select asp-for="SelecManipulateurID" asp-items="@Model.ManiProjItem" class="form-control">
-                                    <option value="-1">- Manipulateur essai -</option>
-                                </select>
-                                @Html.ValidationMessageFor(m => m.SelecManipulateurID, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(m => m.SelecManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
+                        <select asp-for="SelecManipulateurID" asp-items="@Model.ManiProjItem" class="form-control">
+                            <option value="-1">- Manipulateur essai -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.SelecManipulateurID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                @Html.LabelFor(m => m.SelectProductId, new { @class = "col-md-7 control-label" })
-                                <select asp-for="SelectProductId" asp-items="@Model.ProdItem" class="form-control">
-                                    <option value="-1">- Produit d'entrée -</option>
-                                </select>
-                                @Html.ValidationMessageFor(m => m.SelectProductId, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group col-md-7">
-                                @Html.LabelFor(m => m.PrecisionProdIn, new { @class = "col-md-4 control-label" })
-                                <input name="PrecisionProdIn" asp-for="@Model.PrecisionProdIn" type="text" />
-                                @Html.ValidationMessageFor(m => m.PrecisionProdIn, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                @Html.LabelFor(m => m.QuantProduit, new { @class = "col-md-6 control-label" })
-                                <input name="QuantProduit" asp-for="@Model.QuantProduit" type="text" />
-                                @Html.ValidationMessageFor(m => m.QuantProduit, "", new { @class = "text-danger" })
-                            </div>
-                            <div class="form-group col-md-7">
-                                @Html.LabelFor(m => m.SelectProvProduitId, new { @class = "col-md-4 col-lg-7 control-label" })
-                                <select asp-for="SelectProvProduitId" asp-items="@Model.ProvProduitItem" class="form-control">
-                                    <option value="-1">- Provenance produit entrée -</option>
-                                </select>
-                                @Html.ValidationMessageFor(m => m.SelectProvProduitId, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-5">
-                                @Html.LabelFor(m => m.SelectDestProduit, new { @class = "col-md-4 col-lg-7 control-label" })
-                                <select asp-for="SelectDestProduit" asp-items="@Model.DestProdItem" class="form-control">
-                                    <option value="-1">- Destinaison produit sortie -</option>
-                                </select>
-                                @Html.ValidationMessageFor(m => m.SelectDestProduit, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.CommentEssai, new { @class = "col-md-6 control-label" })
-                            <input name="CommentEssai" asp-for="@Model.CommentEssai" type="text" class="col-md-10" />
-                            @Html.ValidationMessageFor(m => m.CommentEssai, "", new { @class = "text-danger" })
-                        </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        @Html.LabelFor(m => m.SelectProductId, new { @class = "col-md-7 control-label" })
+                        <select asp-for="SelectProductId" asp-items="@Model.ProdItem" class="form-control">
+                            <option value="-1">- Produit d'entrée -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.SelectProductId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-7">
+                        @Html.LabelFor(m => m.PrecisionProdIn, new { @class = "col-md-4 control-label" })
+                        <input name="PrecisionProdIn" asp-for="@Model.PrecisionProdIn" type="text" />
+                        @Html.ValidationMessageFor(m => m.PrecisionProdIn, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        @Html.LabelFor(m => m.QuantProduit, new { @class = "col-md-6 control-label" })
+                        <input name="QuantProduit" asp-for="@Model.QuantProduit" type="text" />
+                        @Html.ValidationMessageFor(m => m.QuantProduit, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-7">
+                        @Html.LabelFor(m => m.SelectProvProduitId, new { @class = "col-md-4 col-lg-7 control-label" })
+                        <select asp-for="SelectProvProduitId" asp-items="@Model.ProvProduitItem" class="form-control">
+                            <option value="-1">- Provenance produit entrée -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.SelectProvProduitId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        @Html.LabelFor(m => m.SelectDestProduit, new { @class = "col-md-4 col-lg-7 control-label" })
+                        <select asp-for="SelectDestProduit" asp-items="@Model.DestProdItem" class="form-control">
+                            <option value="-1">- Destinaison produit sortie -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.SelectDestProduit, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CommentEssai, new { @class = "col-md-6 control-label" })
+                    <input name="CommentEssai" asp-for="@Model.CommentEssai" type="text" class="col-md-10" />
+                    @Html.ValidationMessageFor(m => m.CommentEssai, "", new { @class = "text-danger" })
+                </div>
 
-                        <div class="form-row">
-                            @Html.LabelFor(m => m.TranspSTLO, new { @class = "col-md-6 control-label" })
-                            @Html.ValidationMessageFor(m => m.TranspSTLO, "", new { @class = "text-danger" })
-                            <div class="form-row">
-                                <div class="col-8">
-                                    <label asp-for="@Model.TranspSTLO" class="col-md-8 radio-inline">
-                                        <input asp-for="@Model.TranspSTLO" name="TranspSTLO" value="true" type="radio">STLO (800L max)
-                                    </label>
-                                </div>
-                                <div class="col-4">
-                                    <label asp-for="@Model.TranspSTLO" class="col-md-6 radio-inline">
-                                        <input asp-for="@Model.TranspSTLO" name="TranspSTLO" value="false" type="radio">Autre
-                                    </label>
-                                </div>
-                            </div>
+                <div class="form-row">
+                    @Html.LabelFor(m => m.TranspSTLO, new { @class = "col-md-6 control-label" })
+                    @Html.ValidationMessageFor(m => m.TranspSTLO, "", new { @class = "text-danger" })
+                    <div class="form-row">
+                        <div class="col-8">
+                            <label asp-for="@Model.TranspSTLO" class="col-md-8 radio-inline">
+                                <input asp-for="@Model.TranspSTLO" name="TranspSTLO" value="true" type="radio">STLO (800L max)
+                            </label>
                         </div>
+                        <div class="col-4">
+                            <label asp-for="@Model.TranspSTLO" class="col-md-6 radio-inline">
+                                <input asp-for="@Model.TranspSTLO" name="TranspSTLO" value="false" type="radio">Autre
+                            </label>
+                        </div>
+                    </div>
+                </div>
 
-                        <div class="form-group row">
-                            <div class="col-md-2">
-                                @Html.ActionLink("Abandoner", "MesReservations", null, new { @class = "btn btn-primary" })
-                            </div>
-                            <div class="offset-9 col-md-1">
-                                <input type="submit" value="Enregistrer" class="btn btn-default navbar-inra" />
-                            </div>
-                        </div>
-                    </form>
-                    <hr />
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        @Html.ActionLink("Abandoner", "MesReservations", null, new { @class = "btn btn-primary" })
+                    </div>
+                    <div class="offset-9 col-md-1">
+                        <input type="submit" value="Enregistrer" class="btn btn-default navbar-inra" />
+                    </div>
+                </div>
+            </form>
+            <hr />
                 }
                 else
                 {
-                    <partial name="~/Areas/User/Views/Shared/_DisplayInfosEssai.cshtml" for="@Model.ConsultInfosEssai"></partial>
+                    <partial name="~/Views/Shared/_DisplayInfosEssai.cshtml" for="@Model.ConsultInfosEssai"></partial>
                     <hr />
                 }
-            </div>
+        </div>
         }
     </div>
 </div>
@@ -166,28 +166,41 @@
     <div class="col-md-12">
         @for (int x = 0; x < Model.ResasUser.Count(); x++)
         {
-            <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenReservations">
-                <form asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
-                    <br />
-                    <h5 class="text-center">Equipements réservés pour l'essai N° @Model.ResasUser[x].IdEssai </h5>
-                    <br />
-                    <partial name="_InfoEquipemReserves" for="@Model.EquipementsReserves"></partial>
-                    <br />
-                    @if (Model.IsEssaiModifiable == true)
+        <div id="@Model.ResasUser[x].IdEssai.ToString()" class="hide" style="display:@Model.ResasUser[x].OpenReservations">
+            <form asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
+                <br />
+                <h5 class="text-center">Equipements réservés pour l'essai N° @Model.ResasUser[x].IdEssai </h5>
+                <br />
+                <partial name="_InfoEquipemReserves" for="@Model.EquipementsReserves"></partial>
+                <br />
+                @if (Model.IsEssaiModifiable == true)
                     {
-                        <div class="col-sm-3 col-md-3 col-lg-3 offset-4">
-                            <input type="submit" class="btn btn-outline-success" value="Modifier equipements réservés" />
-                        </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 offset-4">
+                    <input type="submit" class="btn btn-outline-success" value="Modifier equipements réservés" />
+                </div>
                     }
                     else
                     {
-                        <p class="text-center" style="color:orange"><strong>Oups! trop tard! <span class="fas fa-sad-tear"></span> la modification des réservations équipements doit être fait minimum une journée avant...</strong></p>
+                <p class="text-center" style="color:orange"><strong>Oups! trop tard! <span class="fas fa-sad-tear"></span> la modification des réservations équipements doit être fait minimum une journée avant...</strong></p>
                     }
-                    <hr />
-                </form>
-            </div>
+                <hr />
+            </form>
+        </div>
         }
     </div>
 </div>
 
 @*<h6 class="text-right"><strong>Note:</strong> vous ne pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>*@
+
+section Scripts {
+@*script pour afficher le popoup de confirmation de demande *@
+<script>
+        @{
+            if (ViewBag.ModalState == null)
+            {
+                ViewBag.ModalState = "hide";
+            }           
+        }
+        $('#EssaiModal').modal('@ViewBag.ModalState');
+</script>
+}

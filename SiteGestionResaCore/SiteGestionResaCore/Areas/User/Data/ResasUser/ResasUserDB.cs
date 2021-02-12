@@ -2,6 +2,7 @@
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -243,11 +244,11 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// </summary>
         /// <param name="idEssai"></param>
         /// <returns></returns>
-        public ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai)
+        public ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai)
         {
             var essai = resaDB.essai.First(e => e.id == idEssai);
 
-            ConsultInfosEssaiChilVM Infos = new ConsultInfosEssaiChilVM
+            ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
                 Commentaire = essai.commentaire,

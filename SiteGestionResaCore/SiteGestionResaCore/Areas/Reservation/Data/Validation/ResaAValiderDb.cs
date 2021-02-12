@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 {
@@ -103,11 +104,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         /// </summary>
         /// <param name="idEssai"></param>
         /// <returns></returns>
-        public InfosEssai ObtenirInfosEssai(int idEssai)
+        public ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai)
         {            
             var essai = resaDB.essai.First(e=>e.id == idEssai);
 
-            InfosEssai Infos = new InfosEssai
+            ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
                 Commentaire = essai.commentaire,
