@@ -37,8 +37,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ConsultationViewModel model = new ConsultationViewModel()
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
-                InfosProjet = new InfosProjet(), 
-                InfosEssai = new ConsultInfosEssaiChildVM(),
+                //InfosProjet = new InfosProjet(), 
+                //InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = new List<InfosReservation>()
             };
             return View(model);
@@ -51,15 +51,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public IActionResult VoirInfosProj(int id)
         {
-            ConsultationViewModel model = new ConsultationViewModel()
+            /*ConsultationViewModel model = new ConsultationViewModel()
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
                 InfosProjet = resaAValider.ObtenirInfosProjet(id),
                 InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = new List<InfosReservation>()
             };
-            ViewBag.modalProj = "show";
-            return View("ResasValidees", model);
+            ViewBag.modalProj = "show";*/
+            InfosProjet vm = resaAValider.ObtenirInfosProjet(id);
+            return PartialView("~/Views/Shared/_DisplayInfosProjet.cshtml", vm);
         }
 
         /// <summary>
@@ -83,8 +84,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ConsultationViewModel model = new ConsultationViewModel()
             {
                 ResasValid = consultDB.ObtInfEssaiValidees(),
-                InfosProjet = new InfosProjet(),
-                InfosEssai = new ConsultInfosEssaiChildVM(),
+                //InfosProjet = new InfosProjet(),
+                //InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = resaAValider.InfosReservations(id)
             };
             ViewBag.modalResas = "show";

@@ -27,7 +27,8 @@
                     @foreach (var x in Model.ResasValid)
                     {
                         <tr>
-                            <td><a asp-action="VoirInfosProj" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NomProjet</a></td>
+                            @*<td><a asp-action="VoirInfosProj" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NomProjet</a></td>*@
+                            <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NomProjet</a></td>
                             <td>@x.NumProjet</td>
                             <td>@x.MailRespProj</td>
                             <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">Infos Essai</a></td>
@@ -49,66 +50,7 @@
 </div>
 
 <!-- Modal pour affichage des infos "projet"-->
-<div class="modal fade" id="ProjModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-    <div class="modal-dialog modal-lg navbar-inra">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Informations projet <strong>@Model.InfosProjet.TitreProjet</strong></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalcontent">
-                <table class="table table-sm table-borderless">
-                    <thead>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">Numéro projet </th>
-                            <td>@Model.InfosProjet.NumProjet</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Type projet</th>
-                            <td>@Model.InfosProjet.TypeProjet</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Financement projet</th>
-                            <td>@Model.InfosProjet.Financement</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Organisme</th>
-                            <td>@Model.InfosProjet.Organisme</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Email responsable projet</th>
-                            <td>@Model.InfosProjet.MailRespProj</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Provenance projet</th>
-                            <td>@Model.InfosProjet.Provenance</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Description projet</th>
-                            <td>@Model.InfosProjet.Description</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Date création projet</th>
-                            <td>@Model.InfosProjet.DateCreation</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Projet créé par </th>
-                            <td>@Model.InfosProjet.MailUsrSaisie</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
+<div id="InfosProjet"></div>
 
 <!-- Modal pour affichage des infos "essai"-->
 <div id="InfosEssai"></div>
@@ -158,10 +100,6 @@
     @*script pour afficher le popoup de confirmation de demande *@
 <script>
         @{
-            if (ViewBag.modalProj == null)
-            {
-                ViewBag.modalProj = "hide";
-            }
             /*if (ViewBag.modalEssai == null)
             {
                 ViewBag.modalEssai = "hide";
@@ -171,8 +109,6 @@
                 ViewBag.modalResas = "hide";
             }
         }
-        $('#ProjModal').modal('@ViewBag.modalProj');
-        //$('#EssaiModal').modal('@ViewBag.modalEssai');
         $('#ResaModal').modal('@ViewBag.modalResas');
 
         function ModalInfosEssai(id) {
@@ -184,6 +120,20 @@
                     success: function (html) {
                         $("#InfosEssai").html(html);
                         $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalInfosProjet(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosProj", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosProjet").html(html);
+                        $("#ProjModal").modal('show');
                     }
                 });
             }

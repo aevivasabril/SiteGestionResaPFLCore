@@ -11,9 +11,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
     {
         public IList<InfosResasValid> ResasValid { get; set; }
 
-        public InfosProjet InfosProjet { get; set; }
+        //public InfosProjet InfosProjet { get; set; }
 
-        public ConsultInfosEssaiChildVM InfosEssai { get; set; }
+        //public ConsultInfosEssaiChildVM InfosEssai { get; set; }
 
         public List<InfosReservation> Reservations { get; set; }
     }

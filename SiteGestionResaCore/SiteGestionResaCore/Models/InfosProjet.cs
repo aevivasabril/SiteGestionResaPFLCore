@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
+namespace SiteGestionResaCore.Models
 {
     public class InfosProjet
     {
