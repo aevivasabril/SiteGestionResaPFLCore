@@ -85,7 +85,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Id d'un item selectionné pour le organisme
         /// </summary>
-        [Display(Name = "Nom de l'entreprise si privé")]
+        [Required]
+        [Display(Name = "Nom de l'entreprise*")]
+        [Range(1, 100, ErrorMessage = "Selectionnez un organisme")]
         public int SelectedOrganId { get; set; }
 
         public IEnumerable<SelectListItem> OrganItem { get; set;}
