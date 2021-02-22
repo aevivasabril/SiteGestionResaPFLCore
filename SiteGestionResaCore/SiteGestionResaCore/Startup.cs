@@ -70,8 +70,14 @@ namespace SiteGestionResaCore
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Views/Shared/Error");
             }
+
+            //app.UseStatusCodePages();
+            // Rediger les personnes non autorisés vers la page d'accueil
+            app.UseStatusCodePagesWithRedirects("~/Home/Index");
+            //app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();
