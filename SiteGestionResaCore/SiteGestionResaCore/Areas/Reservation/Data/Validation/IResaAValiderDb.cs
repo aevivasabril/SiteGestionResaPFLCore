@@ -1,4 +1,5 @@
 ﻿using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
 {
     public interface IResaAValiderDb
     {
-        InfosEssai ObtenirInfosEssai(int idEssai);
+        ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai);
         Task<IList<InfosAffichage>> ObtenirInfosAffichageAsync();
         InfosProjet ObtenirInfosProjet(int idProj);
         List<InfosReservation> InfosReservations(int idEssai);

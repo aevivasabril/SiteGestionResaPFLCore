@@ -49,8 +49,7 @@
             <img class="card-img-top" src="~/Content/Images/EquipeViewImages/utilisateur.jpg" />
             <div class="card-body">
                 <h5 class="card-title">
-                    <a class="btn-link" href="/Equipe/Equipe/GestionUtilisateurs">Gestion des utilisateurs</a>
-                    @*@Html.ActionLink("Gestion des utilisateurs", "GestionUtilisateurs", "Equipe", new { area = "Equipe" }, new { @class= "btn-link"})*@
+                    <a class="btn-link" asp-action="GestionUtilisateurs" asp-controller="Equipe" asp-area="Equipe">Gestion des utilisateurs</a>
                 </h5>
                 <p class="card-text">Supprimer des anciens utilisateurs, modifier les droits de compte, valider les demandes d'ouverture... </p>
             </div>
@@ -61,7 +60,7 @@
             <img class="card-img-top h-auto m-auto" src="~/Content/Images/EquipeViewImages/planning.png" />
             <div class="card-body">
                 <h5 class="card-title">
-                    <a class="btn-link" href="/Reservation/Validation/MenuConsultation">Réservations</a>
+                    <a class="btn-link" asp-action="MenuConsultation" asp-controller="Validation" asp-area="Reservation">Réservations</a>
                 </h5>
                 <p class="card-text">Valider ou refuser des réservations, consulter les réservations validés ou supprimées </p>
             </div>

@@ -1,0 +1,66 @@
+﻿@model SiteGestionResaCore.Models.InfosProjet
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<!-- Modal pour affichage des infos "projet"-->
+<div class="modal fade" id="ProjModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Informations projet <strong>@Model.TitreProjet</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Numéro projet </th>
+                            <td>@Model.NumProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type projet</th>
+                            <td>@Model.TypeProjet</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Financement projet</th>
+                            <td>@Model.Financement</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Organisme</th>
+                            <td>@Model.Organisme</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email responsable projet</th>
+                            <td>@Model.MailRespProj</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Provenance projet</th>
+                            <td>@Model.Provenance</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description projet</th>
+                            <td>@Model.Description</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Date création projet</th>
+                            <td>@Model.DateCreation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Projet créé par </th>
+                            <td>@Model.MailUsrSaisie</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

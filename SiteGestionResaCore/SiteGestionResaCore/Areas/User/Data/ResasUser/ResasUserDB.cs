@@ -2,6 +2,7 @@
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -125,6 +126,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         if (IsFirstSearch == true)
                         {
                             dateBegin = x.date_debut;
+                            IsFirstSearch = false;
                         }
                         else
                         {
@@ -134,8 +136,8 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                     }
                 }
                 TimeSpan diff = dateBegin - DateTime.Now;
-                // vérifier si la date la plus récente a lieu plus tard une semaine avant
-                if (diff.Hours >= 21) // pour comparer uniquement la date dd/mm/aaaa
+                // vérifier si la date la plus récente a lieu plus tard 21h avant
+                if ( (diff.Days >= 1) || (diff.Days == 0 && diff.Hours >= 21) ) // si la difference des jours est superieur à un ou à 21h alors c'est un essai modifiable
                     return true;
                 else
                     return false;
@@ -243,11 +245,11 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// </summary>
         /// <param name="idEssai"></param>
         /// <returns></returns>
-        public ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai)
+        public ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai)
         {
             var essai = resaDB.essai.First(e => e.id == idEssai);
 
-            ConsultInfosEssaiChilVM Infos = new ConsultInfosEssaiChilVM
+            ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
                 Commentaire = essai.commentaire,

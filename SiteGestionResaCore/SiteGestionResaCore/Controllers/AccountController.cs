@@ -138,6 +138,12 @@ namespace SiteGestionResaCore.Controllers
                 }
                 AddErrors(result);
             }
+            var allOrgs = formulaireResaDb.ObtenirListOrg().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_organisme
+            });
+            model.OrganItem = allOrgs;
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -150,9 +156,11 @@ namespace SiteGestionResaCore.Controllers
             var user = await  userManager.FindByIdAsync(userId);
             if (userId == null || code == null)
             {
+                ViewBag.Message = "Un problème est survenu lors du clic sur le lien de confirmation. UserId = " + userId +". code = " + code + ".";
                 return View("Error");
             }
             var result = await userManager.ConfirmEmailAsync(user, code);
+            ViewBag.Message = "Un problème est survenu lors du clic sur le lien de confirmation. Il faut une connexion vers le réseau stlo!";
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 

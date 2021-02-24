@@ -1,4 +1,5 @@
 ﻿using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         int IdProduitInToCopie(int IdEssai);
 
-        ConsultInfosEssaiChilVM ObtenirInfosEssai(int idEssai);
+        ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai);
 
         bool UpdateConfidentialiteEss(essai ess, string confidentialite);
 
