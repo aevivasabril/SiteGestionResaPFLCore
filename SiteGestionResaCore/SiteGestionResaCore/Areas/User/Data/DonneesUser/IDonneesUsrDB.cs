@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Areas.User.Data.ResasUser;
+﻿using SiteGestionResaCore.Areas.User.Data.DataPcVue;
+using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
         ConsultInfosEssaiChilVM ObtenirInfosEssai(int IdEssai);
 
         List<InfosResasEquipement> ListEquipVsDonnees(int IdEssai);
+
+        AllDataPcVue ObtenirDonneesPcVue(int idResa);
     }
 }

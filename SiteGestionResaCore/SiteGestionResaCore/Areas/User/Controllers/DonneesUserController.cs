@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Data;
@@ -56,6 +57,16 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             vm.EquipementsReserves = ListResa;
             vm.IdEssai = id;
             return PartialView("_EquipVsDonnees", vm);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id réservation</param>
+        /// <returns></returns>
+        public IActionResult ObtenirDonnees(int id)
+        {
+            AllDataPcVue Donnees = donneesUsrDB.ObtenirDonneesPcVue(id);
+            return View();
         }
     }
 }

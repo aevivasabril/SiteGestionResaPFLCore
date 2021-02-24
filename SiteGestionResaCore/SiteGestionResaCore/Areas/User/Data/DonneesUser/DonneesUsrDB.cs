@@ -10,6 +10,7 @@ using SiteGestionResaCore.Data.PcVue;
 using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 
 namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 {
@@ -92,7 +93,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             bool IsDataReady = false;
             DateTime dateDebut;
             DateTime dateFin;
-            DateTime DateToday = DateTime.Now;
+            //DateTime DateToday = DateTime.Now;
             string tableName;
 
             /* Test pour déterminer que la deduction des dates est OK, juste une heure de décalage en moins sur la table pcVue donc 
@@ -127,7 +128,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     dateFin = ResaEquip.date_fin.AddHours(-1);
                     dateFin = dateFin.AddYears(-1600);
                     // convertir au format la date de consultation
-                    DateToday = DateToday.AddYears(-1600);
+                    //DateToday = DateToday.AddYears(-1600);
                     //dateFin = dateFin.AddHours(-2);
 
                     //TypeConverter typeConverter = TypeDescriptor.GetConverter(pcVueDb.tab_UA_ACT);
@@ -271,39 +272,164 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             return List;
         }
 
-        /*public DbSet<SiteGestionResaCore.Data.PcVue> PcVueTable(string tableName)
+        public AllDataPcVue ObtenirDonneesPcVue(int idResa)
         {
-            switch (tableName)
+            AllDataPcVue DataPcVue = new AllDataPcVue();
+            List<DataPcVueEquip> OnlyData = new List<DataPcVueEquip>();
+            DateTime dateDebutPcVue = new DateTime();
+            DateTime dateFinPcVue = new DateTime();
+            DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
+            bool CreneauFinMatin = false;
+            //bool CreneauFinAprem = false;
+
+            var resa = resaDB.reservation_projet.First(r => r.id == idResa);
+            // Vérifier le nom de la table pour l'équipement
+            string NamePcVueTable = resaDB.equipement.First(e => e.id == resa.equipementID).nomTabPcVue;
+
+            if(resa.date_debut <= DateToday && resa.date_fin <= DateToday) // Manip finie! 
+            {
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = resa.date_debut.AddHours(-1);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                // Vérifier le créneau pour ajouter ou enlever des heures
+                if (resa.date_fin.Hour == 12) // Finie la matinée vers midi alors rajouter une heure
+                {
+                    dateFinPcVue = resa.date_fin; // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
+                    dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                    CreneauFinMatin = true;
+                }
+                else // heure fin 18h, rajouter 6 h c'est à dire 5h à cause de la conversion (-1h)
+                {
+                    dateFinPcVue = resa.date_fin.AddHours(5);
+                    dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                    CreneauFinMatin = false;
+                }
+            }
+            else if(resa.date_debut <= DateToday && resa.date_fin >= DateToday) // Manip encore en cours!
+            { // si la date est supérieur ou égal à la date d'aujourd'hui
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = resa.date_debut.AddHours(-1);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                dateFinPcVue = DateToday.AddHours(-1);
+                dateFinPcVue = dateFinPcVue.AddYears(-1600);
+            }
+
+            //Application de la requete pour obtenir les infos selon la table PcVue
+            // selon le nom de la table alors obtenir les données et les convertir au format globale
+
+            switch (NamePcVueTable)
             {
                 case "tab_UA_ACT":
-                    return pcVueDb.Set<tab_UA_ACT>();
+                    var queryAct = (from donnees in pcVueDb.tab_UA_ACT
+                                  where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                  select donnees).ToList();
+                    foreach (var donne in queryAct)
+                    {
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans et une heure 
+                        DataPcVueEquip data = new DataPcVueEquip { Chrono =new DateTime(donne.Chrono).AddYears(1600).AddHours(1), NomCapteur = donne.Name, Value = donne.Value};
+                    }
+                    break;
                 case "tab_UA_CUV":
-                    return pcVueDb.Set<tab_UA_CUV>();
-                case "tab_UA_EVAA":
-                    return pcVueDb.Set<tab_UA_EVAA>();
-                case "tab_UA_EVAB":
-                    return pcVueDb.Set<tab_UA_EVAB>();
+                    var queryyCuv = (from donnees in pcVueDb.tab_UA_CUV
+                                  where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                  select donnees).ToList();
+                    break;
                 case "tab_UA_GP7":
-                    return pcVueDb.Set<tab_UA_GP7>();
+                    var queryyGp = (from donnees in pcVueDb.tab_UA_GP7
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).ToList();
+                    break;
                 case "tab_UA_MAT":
-                    return pcVueDb.Set<tab_UA_MAT>();
+                    var queryyMat = (from donnees in pcVueDb.tab_UA_MAT
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    break;
                 case "tab_UA_MFMG":
-                    return pcVueDb.Set<tab_UA_MFMG>();
+                    var queryyMFMG = (from donnees in pcVueDb.tab_UA_GP7
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    break;
                 case "tab_UA_MTH":
-                    return pcVueDb.Set<tab_UA_MTH>();
+                    var queryyMth = (from donnees in pcVueDb.tab_UA_MTH
+                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                      select donnees).ToList();
+                    break;
                 case "tab_UA_NEP":
-                    return pcVueDb.Set<tab_UA_NEP>();
+                    var queryyNep = (from donnees in pcVueDb.tab_UA_NEP
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).ToList();
+                    break;
                 case "tab_UA_OPTIMAL":
-                    return pcVueDb.Set<tab_UA_OPTIMAL>();
+                    var queryyOptimal = (from donnees in pcVueDb.tab_UA_OPTIMAL
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).ToList();
+                    break;
                 case "tab_UA_SEC":
-                    return pcVueDb.Set<tab_UA_SEC>();
+                    var queryySec = (from donnees in pcVueDb.tab_UA_SEC
+                                         where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                         select donnees).ToList();
+                    foreach (var donne in queryySec)
+                    {
+                        DataPcVueEquip DataPcV;
+                        if (CreneauFinMatin)
+                        {
+                            // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                            DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        }
+                        else
+                        {
+                            DateTime datet = new DateTime(donne.Chrono);
+                            // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans et 5 heures 
+                            DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        }
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
                 case "tab_UA_SPI":
-                    return pcVueDb.Set<tab_UA_SPI>();
+                    var queryySpi = (from donnees in pcVueDb.tab_UA_SPI
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).ToList();
+                    break;
                 case "tab_UA_VALO":
-                    return pcVueDb.Set<tab_UA_VALO>();
-                default:
+                    var queryyValo = (from donnees in pcVueDb.tab_UA_VALO
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).ToList();
+                    break;
+                default: // vérifier le cas des 2 tables pour l'évaporateur
+                    //string pattern = @"[\w]+";
+                    //Regex rg = new Regex(pattern);
+                    var list = NamePcVueTable.Split(",");
+                    //MatchCollection collect = rg.Matches(NamePcVueTable);
 
-            } 
-        }*/
+                    for (int i = 0; i < list.Length; i++)
+                    {
+                        //string table = list[i];
+                        // pour le cas de l'évapo A et B j'imagine ils sont synchros en terme des données (TODO: A verifier)
+                        if (list[i] == "tab_UA_EVAA")
+                        {
+                            var queryA = (from donnees in pcVueDb.tab_UA_EVAA
+                                            where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                            select donnees).Any();
+                            //if (query)
+                                break;
+                        }
+                        else
+                        {
+                            var queryB = (from donnees in pcVueDb.tab_UA_EVAB
+                                        where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                        select donnees).Any();
+                            //if (query)
+                                break;
+                        }
+                    }
+
+                    break;
+            }
+            DataPcVue = new AllDataPcVue { DataEquipement = OnlyData, NomEquipement = resaDB.equipement.First(e => e.id == resa.equipementID).nom };
+            return DataPcVue;
+        }
+
     }
 }

@@ -27,7 +27,7 @@
                             {
                                 if (x.IsDataReady == true)
                                 {
-                                    <td><a href="#"></a>Téléchargement</td>
+                                    <td><a asp-action="ObtenirDonnees" asp-area="User" asp-controller="DonneesUser" asp-route-id="@x.IdResa">Téléchargement</a></td>
                                 }
                                 else 
                                 {
