@@ -279,7 +279,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             DateTime dateDebutPcVue = new DateTime();
             DateTime dateFinPcVue = new DateTime();
             DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
-            bool CreneauFinMatin = false;
             //bool CreneauFinAprem = false;
 
             var resa = resaDB.reservation_projet.First(r => r.id == idResa);
@@ -297,13 +296,13 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                 {
                     dateFinPcVue = resa.date_fin; // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
-                    CreneauFinMatin = true;
+                    //CreneauFinMatin = true;
                 }
                 else // heure fin 18h, rajouter 6 h c'est à dire 5h à cause de la conversion (-1h)
                 {
                     dateFinPcVue = resa.date_fin.AddHours(5);
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
-                    CreneauFinMatin = false;
+                    //CreneauFinMatin = false;
                 }
             }
             else if(resa.date_debut <= DateToday && resa.date_fin >= DateToday) // Manip encore en cours!
@@ -327,44 +326,103 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                   select donnees).ToList();
                     foreach (var donne in queryAct)
                     {
-                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans et une heure 
-                        DataPcVueEquip data = new DataPcVueEquip { Chrono =new DateTime(donne.Chrono).AddYears(1600).AddHours(1), NomCapteur = donne.Name, Value = donne.Value};
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
                     }
                     break;
                 case "tab_UA_CUV":
                     var queryyCuv = (from donnees in pcVueDb.tab_UA_CUV
                                   where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                   select donnees).ToList();
+                    foreach (var donne in queryyCuv)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_GP7":
                     var queryyGp = (from donnees in pcVueDb.tab_UA_GP7
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
+                    foreach (var donne in queryyGp)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_MAT":
                     var queryyMat = (from donnees in pcVueDb.tab_UA_MAT
                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                     select donnees).ToList();
+                    foreach (var donne in queryyMat)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_MFMG":
                     var queryyMFMG = (from donnees in pcVueDb.tab_UA_GP7
                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                     select donnees).ToList();
+                    foreach (var donne in queryyMFMG)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_MTH":
                     var queryyMth = (from donnees in pcVueDb.tab_UA_MTH
                                       where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                       select donnees).ToList();
+                    foreach (var donne in queryyMth)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_NEP":
                     var queryyNep = (from donnees in pcVueDb.tab_UA_NEP
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
+                    foreach (var donne in queryyNep)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_OPTIMAL":
                     var queryyOptimal = (from donnees in pcVueDb.tab_UA_OPTIMAL
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
+                    foreach (var donne in queryyOptimal)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_SEC":
                     var queryySec = (from donnees in pcVueDb.tab_UA_SEC
@@ -373,17 +431,9 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     foreach (var donne in queryySec)
                     {
                         DataPcVueEquip DataPcV;
-                        if (CreneauFinMatin)
-                        {
-                            // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                            DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
-                        }
-                        else
-                        {
-                            DateTime datet = new DateTime(donne.Chrono);
-                            // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans et 5 heures 
-                            DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
-                        }
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
                     break;
@@ -391,11 +441,27 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     var queryySpi = (from donnees in pcVueDb.tab_UA_SPI
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
+                    foreach (var donne in queryySpi)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 case "tab_UA_VALO":
                     var queryyValo = (from donnees in pcVueDb.tab_UA_VALO
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
+                    foreach (var donne in queryyValo)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
                     break;
                 default: // vérifier le cas des 2 tables pour l'évaporateur
                     //string pattern = @"[\w]+";
@@ -409,19 +475,35 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                         // pour le cas de l'évapo A et B j'imagine ils sont synchros en terme des données (TODO: A verifier)
                         if (list[i] == "tab_UA_EVAA")
                         {
-                            var queryA = (from donnees in pcVueDb.tab_UA_EVAA
+                            var queryA  = (from donnees in pcVueDb.tab_UA_EVAA
                                             where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
-                                            select donnees).Any();
+                                            select donnees).ToList();
+                            foreach (var donne in queryA)
+                            {
+                                DataPcVueEquip DataPcV;
+                                // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                                //Rajouter dans la liste des données PcVue
+                                OnlyData.Add(DataPcV);
+                            }
                             //if (query)
-                                break;
+                            break;
                         }
                         else
                         {
                             var queryB = (from donnees in pcVueDb.tab_UA_EVAB
-                                        where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
-                                        select donnees).Any();
+                                          where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                          select donnees).ToList();
+                            foreach (var donne in queryB)
+                            {
+                                DataPcVueEquip DataPcV;
+                                // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                                //Rajouter dans la liste des données PcVue
+                                OnlyData.Add(DataPcV);
+                            }
                             //if (query)
-                                break;
+                            break;
                         }
                     }
 

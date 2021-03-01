@@ -66,6 +66,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         public IActionResult ObtenirDonnees(int id)
         {
             AllDataPcVue Donnees = donneesUsrDB.ObtenirDonneesPcVue(id);
+
             return View();
         }
     }
