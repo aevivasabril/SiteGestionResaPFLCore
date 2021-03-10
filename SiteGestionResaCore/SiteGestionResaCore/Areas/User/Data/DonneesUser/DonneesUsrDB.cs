@@ -58,8 +58,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     IdEssai = i.id,
                     EquipementSousPcVue = IsEquipUnderPcVue
 
-                };
-                //IsEquipUnderPcVue = false;   
+                };  
                 List.Add(infos);
             }
             return List;
@@ -93,7 +92,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             bool IsDataReady = false;
             DateTime dateDebut;
             DateTime dateFin;
-            //DateTime DateToday = DateTime.Now;
             string tableName;
 
             /* Test pour déterminer que la deduction des dates est OK, juste une heure de décalage en moins sur la table pcVue donc 
@@ -127,12 +125,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
                     dateFin = ResaEquip.date_fin.AddHours(-1);
                     dateFin = dateFin.AddYears(-1600);
-                    // convertir au format la date de consultation
-                    //DateToday = DateToday.AddYears(-1600);
-                    //dateFin = dateFin.AddHours(-2);
-
-                    //TypeConverter typeConverter = TypeDescriptor.GetConverter(pcVueDb.tab_UA_ACT);
-                    //object propValue = typeConverter.ConvertFromString(tableName);
 
                     // Méthode qui permet de définir la table sur laquelle on execute la requete
                     bool query = false;
@@ -148,16 +140,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                          where donnees.Chrono >= dateDebut.Ticks
                                          select donnees).Any();
                             break;
-                        /*case "tab_UA_EVAA":
-                            query = (from donnees in pcVueDb.tab_UA_EVAA
-                                     where donnees.Chrono >= dateDebut.Ticks
-                                     select donnees).Any();
-                            break;
-                        case "tab_UA_EVAB":
-                            query = (from donnees in pcVueDb.tab_UA_EVAB
-                                     where donnees.Chrono >= dateDebut.Ticks
-                                     select donnees).Any();
-                            break;*/
                         case "tab_UA_GP7":
                             query = (from donnees in pcVueDb.tab_UA_GP7
                                      where donnees.Chrono >= dateDebut.Ticks
@@ -279,7 +261,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             DateTime dateDebutPcVue = new DateTime();
             DateTime dateFinPcVue = new DateTime();
             DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
-            //bool CreneauFinAprem = false;
 
             var resa = resaDB.reservation_projet.First(r => r.id == idResa);
             // Vérifier le nom de la table pour l'équipement
@@ -296,13 +277,11 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                 {
                     dateFinPcVue = resa.date_fin; // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
-                    //CreneauFinMatin = true;
                 }
                 else // heure fin 18h, rajouter 6 h c'est à dire 5h à cause de la conversion (-1h)
                 {
                     dateFinPcVue = resa.date_fin.AddHours(5);
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
-                    //CreneauFinMatin = false;
                 }
             }
             else if(resa.date_debut <= DateToday && resa.date_fin >= DateToday) // Manip encore en cours!
@@ -466,7 +445,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                 default: // vérifier le cas des 2 tables pour l'évaporateur
                     //string pattern = @"[\w]+";
                     //Regex rg = new Regex(pattern);
-                    var list = NamePcVueTable.Split(",");
+                    var list = NamePcVueTable.Split(", ");
                     //MatchCollection collect = rg.Matches(NamePcVueTable);
 
                     for (int i = 0; i < list.Length; i++)
@@ -487,7 +466,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                 OnlyData.Add(DataPcV);
                             }
                             //if (query)
-                            break;
+                            //break;
                         }
                         else
                         {
@@ -503,7 +482,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                 OnlyData.Add(DataPcV);
                             }
                             //if (query)
-                            break;
+                            //break;
                         }
                     }
 
