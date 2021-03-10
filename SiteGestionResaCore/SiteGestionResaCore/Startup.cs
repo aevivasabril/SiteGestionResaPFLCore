@@ -20,6 +20,8 @@ using SiteGestionResaCore.Areas.Reservation.Data.Consultation;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Areas.Equipe.Data;
 using SiteGestionResaCore.Areas.Calendrier.Data;
+using SiteGestionResaCore.Data.PcVue;
+using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 
 namespace SiteGestionResaCore
 {
@@ -37,7 +39,8 @@ namespace SiteGestionResaCore
         {
             services.AddIdentity<utilisateur,IdentityRole<int>>().AddEntityFrameworkStores<GestionResaContext>().AddUserManager<UserManager<utilisateur>>().AddRoleManager<RoleManager<IdentityRole<int>>>().AddDefaultTokenProviders();
             services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("SqlServer")));
-            
+            services.AddDbContext<PcVueContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PcVue")));
+
             //services.AddScoped<IResaDB, ResaDB>();
             services.AddScoped<IAccountResaDB, AccountResaDB>();
             services.AddScoped<IEquipeResaDb, EquipeResaDb>();
@@ -49,6 +52,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IConsultResasDB, ConsultResasDB>();
             services.AddScoped<IResasUserDB, ResasUserDB>();
             services.AddScoped<ICalendResaDb, CalendResaDb>();
+            services.AddScoped<IDonneesUsrDB, DonneesUsrDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
 

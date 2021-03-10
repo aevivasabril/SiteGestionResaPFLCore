@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20210204110604_AjoutNomTablePcVue_Equipement")]
+    partial class AjoutNomTablePcVue_Equipement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,28 +53,28 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "1beca1ef-7fe7-46cd-b68f-b8fce8364fa6",
+                            ConcurrencyStamp = "c6da6c5a-1399-427c-93f7-ce68967c48ce",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a97d4458-3e0d-4f26-9f56-7f918f73016b",
+                            ConcurrencyStamp = "e2467fa6-4c3e-4cb4-ae45-2cf161638300",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "f952f25a-8044-43f5-8da1-6bd69f6e313b",
+                            ConcurrencyStamp = "751cd1fe-1a39-46cd-986f-143145f2792c",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "6699a482-e596-476b-881b-6d1d6e6f5865",
+                            ConcurrencyStamp = "7d2abe5c-a99f-4b15-8d09-5055e1a4b4e3",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         });
@@ -409,7 +411,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 182,
                             mobile = false,
                             nom = "Ecrémeuse Westfalia EASYCREAM",
-                            nomTabPcVue = "tab_UA_ECR",
                             numGmao = "ECREM0002",
                             zoneID = 3
                         },
@@ -458,7 +459,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 188,
                             mobile = false,
                             nom = "2 cuves maturation 500L",
-                            nomTabPcVue = "tab_UA_MAT",
                             numGmao = "ECUV0010",
                             zoneID = 3
                         },
@@ -555,7 +555,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 200,
                             mobile = false,
                             nom = "Cuve 2000L avec agitateur",
-                            nomTabPcVue = "tab_UA_CUV",
                             numGmao = "ECUV0026",
                             zoneID = 2
                         },
@@ -644,7 +643,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 211,
                             mobile = false,
                             nom = "Ensemble NEP",
-                            nomTabPcVue = "tab_UA_NEP",
                             numGmao = "MLAV0016",
                             zoneID = 2
                         },
@@ -661,7 +659,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 213,
                             mobile = false,
                             nom = "Pilote ultrafiltration TIA spirale",
-                            nomTabPcVue = "tab_UA_SPI",
                             numGmao = "PILOT0001",
                             zoneID = 8
                         },
@@ -702,7 +699,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 218,
                             mobile = false,
                             nom = "Pilote de microfiltration MFMG",
-                            nomTabPcVue = "tab_UA_MFMG",
                             numGmao = "PILOT0006",
                             zoneID = 3
                         },
@@ -719,7 +715,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 220,
                             mobile = false,
                             nom = "Pilote de microfiltration GP7",
-                            nomTabPcVue = "tab_UA_GP7",
                             numGmao = "PILOT0008",
                             zoneID = 4
                         },
@@ -736,7 +731,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 222,
                             mobile = false,
                             nom = "Stérilisateur pilote tubulaire électrique ACTINI",
-                            nomTabPcVue = "tab_UA_ACT",
                             numGmao = "PILOT0010",
                             zoneID = 3
                         },
@@ -745,7 +739,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 223,
                             mobile = false,
                             nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH",
-                            nomTabPcVue = "tab_UA_MTH",
                             numGmao = "PILOT0011",
                             zoneID = 8
                         },
@@ -762,7 +755,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 225,
                             mobile = false,
                             nom = "Pilote évaporateur à flot tombant FF-1",
-                            nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB",
                             numGmao = "PILOT0014",
                             zoneID = 1
                         },
@@ -787,7 +779,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 228,
                             mobile = false,
                             nom = "Pilote tour de sèchage MINOR",
-                            nomTabPcVue = "tab_UA_SEC",
                             numGmao = "PILOT0017",
                             zoneID = 1
                         },
@@ -796,7 +787,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 229,
                             mobile = false,
                             nom = "Pilote VALOBAB (MF et UF) SKID 12EO46",
-                            nomTabPcVue = "tab_UA_VALO",
                             numGmao = "PILOT0018",
                             zoneID = 3
                         },
@@ -805,7 +795,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 230,
                             mobile = false,
                             nom = "Pilote UF (optimal)",
-                            nomTabPcVue = "tab_UA_OPTIMAL",
                             numGmao = "PILOT0019",
                             zoneID = 4
                         },
