@@ -44,7 +44,7 @@
 </div>
 <hr />
 
-<div class="hide" style="display:none" id="InfosResas"></div>
+<div id="InfosEssai"></div>
 
 <div class="hide" style="display:none" id="EquipVsDonnees"></div>
 
@@ -60,9 +60,9 @@
                     url: "@Url.Action("VoirInfosEssai", "DonneesUser", new { Area = "User" })?id=" + id,
                     type: 'POST',
                     success: function (html) {
-                        $("#InfosResas").show();
                         $("#EquipVsDonnees").hide();
-                        $("#InfosResas").html(html);
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
                     }
                 });
             }
@@ -76,15 +76,10 @@
                     type: 'POST',
                     success: function (html) {
                         $("#EquipVsDonnees").show();
-                        $("#InfosResas").hide();
                         $("#EquipVsDonnees").html(html);
                     }
                 });
             }
-        }
-
-        function DisplayEssaiInfoClose() {                       
-            $("#InfosResas").hide();
         }
 
     </script>

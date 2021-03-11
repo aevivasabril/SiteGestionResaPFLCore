@@ -1,5 +1,6 @@
 ﻿using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
     {
         List<InfosResa> ObtenirResasUser(int IdUsr);
 
-        ConsultInfosEssaiChilVM ObtenirInfosEssai(int IdEssai);
+        ConsultInfosEssaiChildVM ObtenirInfosEssai(int IdEssai);
 
         List<InfosResasEquipement> ListEquipVsDonnees(int IdEssai);
 

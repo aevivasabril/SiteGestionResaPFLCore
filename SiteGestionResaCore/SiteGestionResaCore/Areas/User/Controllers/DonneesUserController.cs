@@ -5,6 +5,7 @@ using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
 using System.Collections.Generic;
@@ -37,16 +38,16 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             {
                 ResasUser = donneesUsrDB.ObtenirResasUser(user.Id),
                 EquipVsDonnees = new EquipVsDonneesVM(),
-                ConsultInfosEssai = new ConsultInfosEssaiChilVM()
+                ConsultInfosEssai = new ConsultInfosEssaiChildVM()
             };
             return View(vm);
         }
 
         public IActionResult VoirInfosEssai(int id)
         {
-            ConsultInfosEssaiChilVM vm = donneesUsrDB.ObtenirInfosEssai(id);
-            vm.ActionName = "ListEssaisDonnees";
-            return PartialView("_DisplayInfosEssai", vm);
+            ConsultInfosEssaiChildVM vm = donneesUsrDB.ObtenirInfosEssai(id);
+            //vm.ActionName = "ListEssaisDonnees";
+            return PartialView("~/Views/Shared/_DisplayInfosEssai.cshtml", vm);
         }
         
 

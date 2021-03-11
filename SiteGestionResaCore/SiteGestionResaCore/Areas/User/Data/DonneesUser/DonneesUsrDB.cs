@@ -11,6 +11,7 @@ using System.ComponentModel;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using SiteGestionResaCore.Areas.User.Data.DataPcVue;
+using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 {
@@ -64,10 +65,10 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             return List;
         }
 
-        public ConsultInfosEssaiChilVM ObtenirInfosEssai(int IdEssai)
+        public ConsultInfosEssaiChildVM ObtenirInfosEssai(int IdEssai)
         {
             var essai = resaDB.essai.First(e => e.id == IdEssai);
-            ConsultInfosEssaiChilVM vm = new ConsultInfosEssaiChilVM
+            ConsultInfosEssaiChildVM vm = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
                 Commentaire = essai.commentaire,

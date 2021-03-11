@@ -1,4 +1,5 @@
 ﻿using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         #region Infos "Essai" pour affichage
 
-        private ConsultInfosEssaiChilVM _consultInfosEssai = new ConsultInfosEssaiChilVM(); // Vue partielle _DisplayInfosEssai
+        private ConsultInfosEssaiChildVM _consultInfosEssai = new ConsultInfosEssaiChildVM(); // Vue partielle _DisplayInfosEssai
 
-        public ConsultInfosEssaiChilVM ConsultInfosEssai
+        public ConsultInfosEssaiChildVM ConsultInfosEssai
         {
             get { return _consultInfosEssai; }
             set { _consultInfosEssai = value; }
