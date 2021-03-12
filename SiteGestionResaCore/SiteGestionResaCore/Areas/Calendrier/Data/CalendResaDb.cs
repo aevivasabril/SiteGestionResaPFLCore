@@ -27,27 +27,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             this.logger = logger;
         }
 
-        /*public List<InfosCalenZone> ObtenirZonesVsEquipements()
-        {
-            List<InfosCalenZone> listInfos = new List<InfosCalenZone>();
-            InfosCalenZone infosTemp = new InfosCalenZone();
-            List<string> NomsEquip = new List<string>();
-
-            var zones = resaDB.zone.ToList();
-
-            foreach(var zo in zones)
-            {
-                infosTemp = new InfosCalenZone()
-                {
-                    IdZone = zo.id,
-                    NomZone = zo.nom_zone,
-                    ListEquipements = resaDB.equipement.Where(e => e.zoneID == zo.id).Select(e => e.nom).ToList()
-                };
-                listInfos.Add(infosTemp);
-            }   
-            return listInfos;
-        }*/
-
         public List<zone> ListeZones()
         {
             return resaDB.zone.ToList();

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
+namespace SiteGestionResaCore.Models
 {
     public class EquipVsDonneesVM
     {

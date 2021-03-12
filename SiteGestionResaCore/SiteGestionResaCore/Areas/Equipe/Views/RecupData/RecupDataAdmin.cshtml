@@ -1,12 +1,12 @@
-﻿@model SiteGestionResaCore.Areas.User.Data.DonneesUser.ListResasDonneesVM
+﻿@model SiteGestionResaCore.Areas.Equipe.Data.RecupData.ListAllResasVsDonneesVM
 @{
-    ViewData["Title"] = "Récuperation des données";
+    ViewData["Title"] = "Récuperation données Admin";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <br />
-<h1 class="text-center">Récuperation des données PcVue</h1>
-<br />
-<h6 class="text-center"> Liste de tous vos essais pour récupération des données </h6>
+<h1 class="text-center">Récuperation des données PcVue (Administrateurs)</h1>
+<h6 class="text-center">La liste est affichée pour les essais crées il y a moins d'un an</h6>
 <br />
 
 <div class="row">
@@ -16,15 +16,17 @@
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Projet (N° et Titre)</th>
+                        <th scope="col">Mail propiètaire essai</th>
                         <th scope="col">Informations essai</th>
                         <th scope="col">Equipements supervisés?</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Model.ResasUser)
+                    @foreach (var x in Model.AllResas)
                     {
                         <tr>
                             <td>@x.NomProjet (N°: @x.NumProjet)</td>
+                            <td>@x.MailPropietaireEssai</td>
                             <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">Infos essai N° @x.IdEssai</a></td>
                             @if (x.EquipementSousPcVue == true)
                             {
@@ -39,7 +41,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 <hr />
@@ -57,7 +58,7 @@
             if (id)
             {
                 $.ajax({
-                    url: "@Url.Action("VoirInfosEssai", "DonneesUser", new { Area = "User" })?id=" + id,
+                    url: "@Url.Action("VoirInfosEssai", "RecupData", new { Area = "Equipe" })?id=" + id,
                     type: 'POST',
                     success: function (html) {
                         $("#EquipVsDonnees").hide();
@@ -72,7 +73,7 @@
             if (id)
             {
                 $.ajax({
-                    url: "@Url.Action("ListEquipVsDonnees", "DonneesUser", new { Area = "User" })?id=" + id,
+                    url: "@Url.Action("ListEquipVsDonnees", "RecupData", new { Area = "Equipe" })?id=" + id,
                     type: 'POST',
                     success: function (html) {
                         $("#EquipVsDonnees").show();

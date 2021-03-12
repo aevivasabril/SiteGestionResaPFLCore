@@ -22,6 +22,7 @@ using SiteGestionResaCore.Areas.Equipe.Data;
 using SiteGestionResaCore.Areas.Calendrier.Data;
 using SiteGestionResaCore.Data.PcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
+using SiteGestionResaCore.Areas.Equipe.Data.RecupData;
 
 namespace SiteGestionResaCore
 {
@@ -53,6 +54,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IResasUserDB, ResasUserDB>();
             services.AddScoped<ICalendResaDb, CalendResaDb>();
             services.AddScoped<IDonneesUsrDB, DonneesUsrDB>();
+            services.AddScoped<IDataAdminDB, DataAdminDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
 

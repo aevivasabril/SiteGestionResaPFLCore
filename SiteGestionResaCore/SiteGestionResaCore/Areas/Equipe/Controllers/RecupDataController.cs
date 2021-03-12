@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SiteGestionResaCore.Areas.Equipe.Data.RecupData;
 using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
-using SiteGestionResaCore.Areas.User.Data.ResasUser;
 using SiteGestionResaCore.Data;
-using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
@@ -13,30 +12,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SiteGestionResaCore.Areas.User.Controllers
+namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
-    [Area("User")]
-    public class DonneesUserController : Controller
+    [Area("Equipe")]
+    public class RecupDataController : Controller
     {
         private readonly UserManager<utilisateur> userManager;
         private readonly IDonneesUsrDB donneesUsrDB;
+        private readonly IDataAdminDB dataAdminDB;
 
-        public DonneesUserController(
+        public RecupDataController(
             UserManager<utilisateur> userManager,
-            IDonneesUsrDB donneesUsrDB)
+            IDonneesUsrDB donneesUsrDB,
+            IDataAdminDB dataAdminDB)
         {
             this.userManager = userManager;
             this.donneesUsrDB = donneesUsrDB;
+            this.dataAdminDB = dataAdminDB;
         }
 
-        public async Task<IActionResult> ListEssaisDonneesAsync()
+        public IActionResult RecupDataAdmin()
         {
-            // Obtenir les infos de l'utilisateur authentifié
-            var user = await userManager.FindByIdAsync(User.GetUserId());
-
-            ListResasDonneesVM vm = new ListResasDonneesVM()
+            ListAllResasVsDonneesVM vm = new ListAllResasVsDonneesVM()
             {
-                ResasUser = donneesUsrDB.ObtenirResasUser(user.Id),
+                AllResas = dataAdminDB.ObtInfosResasAdms(),
                 EquipVsDonnees = new EquipVsDonneesVM(),
                 ConsultInfosEssai = new ConsultInfosEssaiChildVM()
             };
@@ -49,9 +48,9 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             //vm.ActionName = "ListEssaisDonnees";
             return PartialView("~/Views/Shared/_DisplayInfosEssai.cshtml", vm);
         }
-        
 
-        public IActionResult ListEquipVsDonnees(int id) 
+
+        public IActionResult ListEquipVsDonnees(int id)
         {
             // id essai
             EquipVsDonneesVM vm = new EquipVsDonneesVM();
@@ -77,7 +76,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             var headers = Donnees.DataEquipement.Select(d => d.NomCapteur).Distinct().ToList();
             // Ajouter la colonne de date 
             csv.Append("Date et heure");
-            
+
             foreach (var dc in headers)
             {
                 csv.Append(";");
@@ -96,7 +95,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 foreach (var r in group)
                 {
                     csv.Append(";");
-                    csv.Append(r.Value);     
+                    csv.Append(r.Value);
                 }
                 csv.AppendLine();
             }
