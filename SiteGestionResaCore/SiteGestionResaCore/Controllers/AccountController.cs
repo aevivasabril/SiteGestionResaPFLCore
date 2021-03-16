@@ -61,26 +61,34 @@ namespace SiteGestionResaCore.Controllers
 
             var user = await userManager.FindByEmailAsync(model.Email);
 
-            if (user.EmailConfirmed)
+            if (user.EmailConfirmed) 
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, change to shouldLockout: true
-                // PasswordSignInAsync authentifie l'utilisateur 
-                var result = await userManager.CheckPasswordAsync(user, model.Password);
-                if(result)
+                if(user.compteInactif != true) // Vérifier que le compte n'est pas archivé
                 {
-                    await signInManager.SignInAsync(user, new AuthenticationProperties
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, change to shouldLockout: true
+                    // PasswordSignInAsync authentifie l'utilisateur 
+                    var result = await userManager.CheckPasswordAsync(user, model.Password);
+                    if (result)
                     {
-                        IsPersistent = true,
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddMonths(1)
-                    });
-                    return RedirectToLocal(returnUrl);
+                        await signInManager.SignInAsync(user, new AuthenticationProperties
+                        {
+                            IsPersistent = true,
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddMonths(1)
+                        });
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Tentative de connexion non valide. Compte mail non enregistré");
+                        return View(model);
+                    }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Tentative de connexion non valide. Compte mail non enregistré");
+                    ModelState.AddModelError("", "Votre compte est inactif! Contactez l'administration PFL");
                     return View(model);
-                }
+                }                
             }
             else
             {
@@ -182,9 +190,9 @@ namespace SiteGestionResaCore.Controllers
             if (ModelState.IsValid)
             {
                 var user = await userManager.FindByNameAsync(model.Email);
-                if (user == null || !(await userManager.IsEmailConfirmedAsync(user)))
+                if (user == null || !(await userManager.IsEmailConfirmedAsync(user)) || user.compteInactif == true)
                 {
-                    // Don't reveal that the user does not exist or is not confirmed
+                    // Don't reveal that the user does not exist, is not confirmed or inactive account 
                     return View("ForgotPasswordConfirmation");
                 }
 

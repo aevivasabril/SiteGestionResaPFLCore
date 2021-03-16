@@ -62,7 +62,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns> liste des utilisateurs</returns>
         public List<utilisateur> ObtenirList_UtilisateurValide()
         {
-            return context.Users.Where(e => e.EmailConfirmed == true).ToList();
+            return context.Users.Where(e => e.EmailConfirmed == true && e.compteInactif != true).ToList(); 
             /*List<utilisateur> userWithAccess = new List<utilisateur>();
             utilisateur usr;
 

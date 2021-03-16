@@ -28,5 +28,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
         void ValidateAccount(int id);
 
+        int NbEssaiXUser(utilisateur user);
+
     }
 }

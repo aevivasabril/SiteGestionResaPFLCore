@@ -42,8 +42,8 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
             List<utilisateur> usrWaiting = new List<utilisateur>();
 
             var users = await userManager.GetUsersInRoleAsync("Utilisateur");
-
-            foreach (var user in users)
+            var usrs = users.Where(u => u.compteInactif != true); // TODO: Vérifier!!!
+            foreach (var user in usrs)
             {
                 if (user.EmailConfirmed == true)
                     tempUsers.Add(user);
@@ -212,5 +212,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
             }
         }
 
+        public int NbEssaiXUser(utilisateur user)
+        {
+            return context.essai.Where(e=> e.compte_userID == user.Id).Count();
+        }
     }
 }

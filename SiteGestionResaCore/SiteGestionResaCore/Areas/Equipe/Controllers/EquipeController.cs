@@ -610,16 +610,28 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         {
             try
             {
-                //Effacer de la BDD pfl
                 var user = await userManager.FindByIdAsync(id.ToString());
-                //Effacer de tous les roles AspNet
-                await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
-                // Effacer de la BDD AspNet
-                await userManager.DeleteAsync(user);
+                //int x = EquipeResaDb.NbEssaiXUser(user);
+                if (EquipeResaDb.NbEssaiXUser(user) != 0) // alors mettre le compte à inactif pour garder l'historique!
+                {
+                    //Effacer de tous les roles AspNet
+                    //await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
+                    // mettre le compte utilisateur à inactif pour ignorer sa connexion
+                    user.compteInactif = true;
+                    await userManager.UpdateAsync(user);
+                }
+                else // alors on peut supprimer l'utilisateur définitivement
+                {
+                    //Effacer de tous les roles AspNet
+                    await userManager.RemoveFromRolesAsync(user, await userManager.GetRolesAsync(user));
+                    // Effacer de la BDD AspNet
+                    await userManager.DeleteAsync(user);
+                }
+                
             }
             catch (Exception e)
             {
-                ViewBag.Message = e.ToString() + ". Problème survenue lors de la suppression de l'ouverture de compte";
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de la suppression compte";
                 return View("Error");
             }
 
