@@ -20,13 +20,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         //private readonly ILogger<FormulaireResaDb> logger;
 
         public FormulaireResaDb(
-            GestionResaContext resaDB/*,
-            UserManager<utilisateur> userManager,
-            ILogger<FormulaireResaDb> logger*/)
+            GestionResaContext resaDB)
         {
             this.context = resaDB;
-            //this.userManager = userManager;
-            //this.logger = logger;
+
         }
 
         /// <summary>
@@ -63,22 +60,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public List<utilisateur> ObtenirList_UtilisateurValide()
         {
             return context.Users.Where(e => e.EmailConfirmed == true && e.compteInactif != true).ToList(); 
-            /*List<utilisateur> userWithAccess = new List<utilisateur>();
-            utilisateur usr;
-
-            var query = (from roleUsr in context.Users
-                         where (roleUsr.EmailConfirmed == true)
-                         select roleUsr).ToArray();
-
-            foreach (var y in query)
-            {
-                usr = context.utilisateur.First(r => r.Email == y.Email);
-                if (usr.compte_valide == true)
-                {
-                    userWithAccess.Add(usr);
-                }
-            }
-            return userWithAccess;*/
         }
 
         /// <summary>
