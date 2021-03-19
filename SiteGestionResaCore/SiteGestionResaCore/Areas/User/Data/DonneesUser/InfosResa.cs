@@ -13,6 +13,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         public int IdEssai { get; set; }
 
+        public string TitreEssai { get; set; }
+
         public bool EquipementSousPcVue { get; set; } // déterminer s'on affiche ou pas le lien pour accèder aux équipements sous supervision
 
     }

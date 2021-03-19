@@ -11,7 +11,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.RecupData
 
         public string NumProjet { get; set; }
 
-        public int IdEssai { get; set; } // TODO: Le mettre à string une fois la mise à jour sur la BDD changer de descriptif_essai à titre_essai
+        public int IdEssai { get; set; } 
+
+        public string TitreEssai { get; set; }
 
         public string MailPropietaireEssai { get; set; }
 

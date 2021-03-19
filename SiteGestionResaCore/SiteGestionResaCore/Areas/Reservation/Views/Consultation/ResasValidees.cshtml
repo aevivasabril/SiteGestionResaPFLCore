@@ -31,7 +31,7 @@
                             <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NomProjet</a></td>
                             <td>@x.NumProjet</td>
                             <td>@x.MailRespProj</td>
-                            <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">Infos Essai</a></td>
+                            <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
                             <td><a asp-action="VoirReservations" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
                             <td>@x.DateSaisieEssai</td>
                             <td>@x.DateValidation</td>

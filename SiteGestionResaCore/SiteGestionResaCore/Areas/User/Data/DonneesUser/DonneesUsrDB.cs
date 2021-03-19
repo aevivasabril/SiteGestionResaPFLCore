@@ -57,6 +57,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     NomProjet = resaDB.projet.First(p => p.id == i.projetID).titre_projet,
                     NumProjet = resaDB.projet.First(p => p.id == i.projetID).num_projet,
                     IdEssai = i.id,
+                    TitreEssai = i.titreEssai,
                     EquipementSousPcVue = IsEquipUnderPcVue
 
                 };  
@@ -71,7 +72,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             ConsultInfosEssaiChildVM vm = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
-                Commentaire = essai.commentaire,
+                TitreEssai = essai.titreEssai,
                 Confidentialite = essai.confidentialite,
                 DateCreation = essai.date_creation,
                 DestProd = essai.destination_produit,

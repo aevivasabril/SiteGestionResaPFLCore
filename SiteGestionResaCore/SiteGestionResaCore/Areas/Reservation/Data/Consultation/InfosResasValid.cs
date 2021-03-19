@@ -14,8 +14,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         public DateTime DateValidation { get; set; }
         public string MailRespProj { get; set; }
         public DateTime DateSaisieEssai { get; set; }
-        public string CommentaireEssai { get; set; }
         public string Confidentialit { get; set; }
+        public string TitreEssai { get; set; }
 
         public string NomProjet { get; set; }
         public string NumProjet { get; set; }

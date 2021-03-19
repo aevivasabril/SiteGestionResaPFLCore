@@ -16,7 +16,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         public int idEssai { get; set; }
         public DateTime DateCreation { get; set; }
         public string MailUser { get; set; }
-        public string Commentaire { get; set; }
+        public string TitreEssai { get; set; }
 
         public bool ConflitExist { get; set; }
 

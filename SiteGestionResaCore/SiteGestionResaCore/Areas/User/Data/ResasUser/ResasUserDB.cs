@@ -65,26 +65,26 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 {
                     if(i.id == IdEssai && OpenPartialEssai!=null) // montrer la vue partielle de cet essai
                     {
-                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                        infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai, OpenReservations = "none"};
 
                     }else if (i.id == IdEssai && OpenReservations != null)
                     {
-                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                        infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = OpenReservations};
                     }
                     else
                     {
-                        infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                        infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
                     }
                 }
                 else
                 {
-                    infos = new InfosResasUser { CommentEssai = i.commentaire, DateCreation = i.date_creation,
+                    infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
                 }
@@ -252,7 +252,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
-                Commentaire = essai.commentaire,
+                TitreEssai = essai.titreEssai,
                 Confidentialite = essai.confidentialite,
                 DateCreation = essai.date_creation,
                 DestProd = essai.destination_produit,
@@ -402,11 +402,11 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return true;
         }
 
-        public bool UpdateComment(essai essa, string commentEssai)
+        public bool UpdateTitre(essai essa, string commentEssai)
         {
             try
             {
-                essa.commentaire = commentEssai;
+                essa.titreEssai = commentEssai;
                 resaDB.SaveChanges();
             }
             catch (Exception e)

@@ -40,20 +40,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
                             idEssai = m.id,
                             DateValidation = m.date_validation.Value,
                             MailRespProj = proj.mailRespProjet,
-                            CommentEssai = m.commentaire,
+                            titreEssai = m.titreEssai,
                             NomProjet = proj.titre_projet,
                             NumProjet = proj.num_projet,
                             DateSaisie = m.date_creation,
                             IdProj = proj.id,
-                            Confi = m.confidentialite
+                            Confi = m.confidentialite,
                         }).Distinct();
 
             foreach (var x in Reg)
             {
                 InfosResasValid infos = new InfosResasValid {
-                    CommentaireEssai = x.CommentEssai, DateSaisieEssai = x.DateSaisie, 
+                    TitreEssai = x.titreEssai, DateSaisieEssai = x.DateSaisie, 
                     DateValidation = x.DateValidation, idEssai = x.idEssai, MailRespProj = x.MailRespProj,
-                    NomProjet = x.NomProjet, NumProjet = x.NumProjet, idProj = x.IdProj, Confidentialit = x.Confi };
+                    NomProjet = x.NomProjet, NumProjet = x.NumProjet, idProj = x.IdProj, Confidentialit = x.Confi};
 
                 list.Add(infos);
             }

@@ -121,6 +121,12 @@
                 </div>
             </div>
         </div>
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(m => m.TitreEssai, new { @class = "col-md-6 control-label" })
+            @Html.TextBoxFor(m => m.TitreEssai, new { @class = "col-md-12 form-control" })
+            @Html.ValidationMessageFor(m => m.TitreEssai, "", new { @class = "text-danger" })
+        </div>
         <div class="form-row">
             <div class="form-group col-md-4">
                 @Html.LabelFor(m => m.SelectedManipulateurID, new { @class = "col-md-12 col-lg-9 control-label" })
@@ -175,11 +181,6 @@
                 </p>
             </div>
         </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.CommentaireEssai, new { @class = "col-md-6 control-label" })
-            @Html.TextBoxFor(m => m.CommentaireEssai, new { @class = "col-md-12 form-control" })
-            @Html.ValidationMessageFor(m => m.CommentaireEssai, "", new { @class = "text-danger" })
-        </div>
 
         <div class="form-row">
             @Html.LabelFor(m => m.TransportSTLO, new { @class = "col-md-6 control-label" })
@@ -196,10 +197,10 @@
                 </div>
             </div>
         </div>
-
+        <br />
         <div class="form-group row">
             <div class="col-md-2">
-                @Html.ActionLink("Annuler", "AnnulerDemande", null, new { @class = "btn btn-primary" })
+                <a class="btn btn-primary" asp-action="AnnulerDemande" asp-controller="Reservation" asp-area="Reservation">Annuler</a>
             </div>
             <div class="offset-9 col-md-1">
                 <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />

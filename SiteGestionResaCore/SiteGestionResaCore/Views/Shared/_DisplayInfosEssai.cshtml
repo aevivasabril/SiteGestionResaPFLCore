@@ -19,6 +19,10 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <th scope="row">Titre essai</th>
+                            <td>@Model.TitreEssai</td>
+                        </tr>
+                        <tr>
                             <th scope="row">N° Essai</th>
                             <td>@Model.id</td>
                         </tr>
@@ -39,22 +43,14 @@
                             <td>@Model.MailUser</td>
                         </tr>
                         <tr>
-                            <th scope="row">Descriptif essai</th>
-                            <td>@Model.Commentaire</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Confidentialité essai</th>
-                            <td>@Model.Confidentialite</td>
-                        </tr>
-                        <tr>
                             <th scope="row">Transport assuré par</th>
                             @if (Model.TransportStlo == true)
                             {
-                                <td>STLO</td>
+                            <td>STLO</td>
                             }
                             else
                             {
-                                <td>Autre</td>
+                            <td>Autre</td>
                             }
                         </tr>
                         <tr>

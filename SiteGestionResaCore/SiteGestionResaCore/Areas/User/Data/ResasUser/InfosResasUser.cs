@@ -8,7 +8,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
     public class InfosResasUser
     {
         public int IdEssai { get; set; }
-        public string CommentEssai { get; set; }
+        public string TitreEssai { get; set; }
         public DateTime DateCreation { get; set; }
         public string StatusEssai { get; set; }
         public string OpenPartialEssai { get; set; }

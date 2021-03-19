@@ -384,7 +384,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 destination_produit = DestProd,
                 transport_stlo = Convert.ToBoolean(TransStlo),
                 status_essai = EnumStatusEssai.WaitingValidation.ToString(),
-                commentaire = commentaire,
+                titreEssai = commentaire,
                 confidentialite = confident,
                 manipulateurID = usrManip.Id,
                 projetID = pr.id

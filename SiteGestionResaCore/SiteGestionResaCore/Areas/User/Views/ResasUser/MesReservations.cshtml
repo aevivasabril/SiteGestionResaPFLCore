@@ -19,7 +19,6 @@
                 <h5 class="text-center">Pour modifier cliquez sur le lien</h5>
                 <thead class="thead-light">
                     <tr>
-                        <th scope="col">N° Essai</th>
                         <th scope="col">Informations essai</th>
                         <th scope="col">Titre projet</th>
                         <th scope="col">N° projet</th>
@@ -32,8 +31,7 @@
                     @foreach (var x in Model.ResasUser)
                     {
                         <tr>
-                            <td>@x.IdEssai</td>
-                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Infos essai</a></td>
+                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
                             <td>@x.TitreProj</td>
                             <td>@x.NumProjet</td>
                             <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
@@ -59,10 +57,14 @@
                 @if (Model.IsEssaiModifiable == true)
                 {
                     <form asp-action="EnregistrerInfosEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.ResasUser[x].IdEssai" method="post">
-                        @*<partial name="~/Areas/User/Views/Shared/_ModifEssai.cshtml" for="@Model.ChildVmModifEssai"></partial>*@
                         <h6>INFORMATIONS ESSAI</h6>
                         <h6 style="color:red" class="text-center">Vouz pouvez modifier des infos sur cet essai, cliquez sur sauvegarder pour enregistrer les changements. Attention: une fois cliqué le bouton, les changements seront pris en compte!</h6>
                         <hr />
+                        <div class="form-group">
+                            @Html.LabelFor(m => m.TitreEssai, new { @class = "col-md-6 control-label" })
+                            <input name="TitreEssai" asp-for="@Model.TitreEssai" type="text" class="col-md-10" />
+                            @Html.ValidationMessageFor(m => m.TitreEssai, "", new { @class = "text-danger" })
+                        </div>
                         <div class="form-row">
                             @Html.LabelFor(m => m.ConfidentialiteEss, new { @class = "col-md-4 control-label" })
                             @Html.ValidationMessageFor(m => m.ConfidentialiteEss, "", new { @class = "text-danger" })
@@ -119,11 +121,6 @@
                                 @Html.ValidationMessageFor(m => m.SelectDestProduit, "", new { @class = "text-danger" })
                             </div>
                         </div>
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.CommentEssai, new { @class = "col-md-6 control-label" })
-                            <input name="CommentEssai" asp-for="@Model.CommentEssai" type="text" class="col-md-10" />
-                            @Html.ValidationMessageFor(m => m.CommentEssai, "", new { @class = "text-danger" })
-                        </div>
 
                         <div class="form-row">
                             @Html.LabelFor(m => m.TranspSTLO, new { @class = "col-md-6 control-label" })
@@ -178,7 +175,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">N° Essai</th>
+                            <th scope="row">Titre essai</th>
+                            <td>@Model.ConsultInfosEssai.TitreEssai</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">ID Essai</th>
                             <td>@Model.ConsultInfosEssai.id</td>
                         </tr>
                         <tr>
@@ -196,10 +197,6 @@
                         <tr>
                             <th scope="row">Demande saisie par</th>
                             <td>@Model.ConsultInfosEssai.MailUser</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Descriptif essai</th>
-                            <td>@Model.ConsultInfosEssai.Commentaire</td>
                         </tr>
                         <tr>
                             <th scope="row">Confidentialité essai</th>

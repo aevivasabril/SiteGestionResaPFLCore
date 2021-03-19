@@ -19,7 +19,7 @@ namespace SiteGestionResaCore.Models
         [DisplayName("Demande saisie par")]
         public string MailUser { get; set; }
         [DisplayName("Descriptif essai")]
-        public string Commentaire { get; set; }
+        public string TitreEssai { get; set; }
         [DisplayName("Confidentialité essai")]
         public string Confidentialite { get; set; }
         [DisplayName("Transport assuré par")]

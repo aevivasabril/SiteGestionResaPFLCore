@@ -111,8 +111,9 @@ namespace SiteGestionResaCore.Areas.User.Data
         /// <summary>
         /// String pour rajouter un commentaire dans le formulaire
         /// </summary>
-        [Display(Name = "Commentaire Essai")]
-        public string CommentEssai { get; set; }
+        [Required(ErrorMessage = "Titre essai requis")]
+        [Display(Name = "Titre ESSAI (Précisez des éléments de l'essai qui vous permettront de le retrouver plus facilement par la suite)")]
+        public string TitreEssai { get; set; }
 
         #endregion
 

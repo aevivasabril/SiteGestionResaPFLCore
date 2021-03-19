@@ -23,7 +23,7 @@ namespace SiteGestionResaCore.Data
         public string destination_produit { get; set; }
         public bool transport_stlo { get; set; }
         public string status_essai { get; set; }
-        public string commentaire { get; set; }
+        public string titreEssai { get; set; }
         public bool? repondu_enquete { get; set; }
         public DateTime? date_validation { get; set; }
         public bool? resa_supprime { get; set; }

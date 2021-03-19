@@ -21,5 +21,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         public int IdResa { get; set; }
 
         public int IdEss { get; set; }
+        
+        public string TitreEss { get; set; }
     }
 }

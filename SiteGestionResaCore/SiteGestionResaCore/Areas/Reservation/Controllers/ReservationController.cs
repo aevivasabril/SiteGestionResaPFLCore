@@ -161,7 +161,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     {
                         Value = f.CopieEssai.id.ToString(),
                         Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom +
-                        ", " + f.user.prenom + " - Commentaire essai: " + f.CopieEssai.commentaire +
+                        ", " + f.user.prenom + " - Titre essai: " + f.CopieEssai.titreEssai +
                         " - Type produit entrant: " + f.CopieEssai.type_produit_entrant + " -" + f.CopieEssai.quantite_produit
                     });
 
@@ -248,7 +248,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             vm.ConfidentialiteEssai = ess.confidentialite;
             vm.PrecisionProduitIn = ess.precision_produit;
             vm.QuantiteProduit = ess.quantite_produit;
-            vm.CommentaireEssai = ess.commentaire;
+            vm.TitreEssai = ess.titreEssai;
             vm.TransportSTLO = ess.transport_stlo.ToString();
             vm.SelectedManipulateurID = ess.manipulateurID;
 
@@ -899,7 +899,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
                     Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId,
                         formulaire.PrecisionProduitIn, formulaire.QuantiteProduit, formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO,
-                        formulaire.CommentaireEssai); 
+                        formulaire.TitreEssai); 
 
                     // Remplir le message à envoyer aux admins pour notifier la réservation
                     mssLogis = @"<html>

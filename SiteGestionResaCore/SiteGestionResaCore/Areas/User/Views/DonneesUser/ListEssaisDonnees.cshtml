@@ -25,7 +25,7 @@
                     {
                         <tr>
                             <td>@x.NomProjet (N°: @x.NumProjet)</td>
-                            <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">Infos essai N° @x.IdEssai</a></td>
+                            <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">@x.TitreEssai</a></td>
                             @if (x.EquipementSousPcVue == true)
                             {
                                 <td><a href="#" onclick="EquipVsData(@x.IdEssai)"> Oui! clique ici </a></td>

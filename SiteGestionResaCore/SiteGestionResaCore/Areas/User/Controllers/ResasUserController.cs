@@ -91,7 +91,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 ConfidentialiteEss = ess.confidentialite,
                 PrecisionProdIn = ess.precision_produit,
                 QuantProduit = ess.quantite_produit,
-                CommentEssai = ess.commentaire,
+                TitreEssai = ess.titreEssai,
                 TranspSTLO = ess.transport_stlo.ToString(),
                 SelecManipulateurID = ess.manipulateurID,
                 SelectProvProduitId = resasUserDB.IdProvProduitToCopie(ess.id),
@@ -267,10 +267,10 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             #region Vérifier le commentaire essai
             // Vérifier si le Commentaire essai a changé
-            if ((essa.commentaire == null && reVM.CommentEssai != null) || (essa.commentaire != null && reVM.CommentEssai == null) ||
-                (essa.commentaire != reVM.CommentEssai))
+            if ((essa.titreEssai == null && reVM.TitreEssai != null) || (essa.titreEssai != null && reVM.TitreEssai == null) ||
+                (essa.titreEssai != reVM.TitreEssai))
             {
-                isChangeOk = resasUserDB.UpdateComment(essa, reVM.CommentEssai);
+                isChangeOk = resasUserDB.UpdateTitre(essa, reVM.TitreEssai);
                 if (!isChangeOk)
                 {
                     ModelState.AddModelError("", "Problème lors de la maj 'Commentaire essai', reesayez ultérieurement.");

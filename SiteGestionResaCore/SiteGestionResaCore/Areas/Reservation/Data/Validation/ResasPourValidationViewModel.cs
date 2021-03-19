@@ -25,6 +25,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             get { return _idEss; }
             set { _idEss = value; }
         }
+        public string TitreEssaiPrincipal { get; set; }
 
         private string _raisonRefus;
         [Required(ErrorMessage = "Champ 'Raison refus' requis")]

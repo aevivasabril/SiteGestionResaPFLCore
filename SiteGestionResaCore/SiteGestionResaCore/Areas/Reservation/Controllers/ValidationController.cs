@@ -121,7 +121,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 InfosProj = new InfosProjet(),
                 Reservations = new List<InfosReservation>(),
                 InfosConflits = resaAValiderDb.InfosConflits(id),
-                IdEss = id
+                IdEss = id,
+                TitreEssaiPrincipal = resaAValiderDb.ObtenirEssai(id).titreEssai
             };
             ViewBag.modalConflit = "show";
             return View("ReservationsAValider", vm);

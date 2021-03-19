@@ -70,7 +70,7 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<essai>(entity =>
             {
-                entity.Property(e => e.commentaire).IsUnicode(false);
+                entity.Property(e => e.titreEssai).IsUnicode(false);
 
                 entity.Property(e => e.confidentialite)
                     .IsRequired()

@@ -88,7 +88,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                     }
                 }
 
-                InfosAffichage infosEss = new InfosAffichage() { idEssai = essai.id , DateCreation = essai.date_creation , Commentaire = essai.commentaire,                   
+                InfosAffichage infosEss = new InfosAffichage() { idEssai = essai.id , DateCreation = essai.date_creation , TitreEssai = essai.titreEssai,                   
                                                         MailUser = resaDB.Users.First(u => u.Id == essai.compte_userID).Email, 
                                                         NomProjet = resaDB.projet.First(p => p.id == essai.projetID).titre_projet, 
                                                         NumProjet = resaDB.projet.First(p => p.id == essai.projetID).num_projet, ConflitExist = conflitExiste,
@@ -111,7 +111,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
             ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
             {
                 id = essai.id,
-                Commentaire = essai.commentaire,
+                TitreEssai = essai.titreEssai,
                 Confidentialite = essai.confidentialite,
                 DateCreation = essai.date_creation,
                 DestProd = essai.destination_produit,
@@ -215,7 +215,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                NomEquipement = e.nom,
                                ZoneEquipement = z.nom_zone,
                                idResa = n.id, 
-                               idEss = m.id
+                               idEss = m.id,
+                               TitreEss = m.titreEssai
                            });
 
                 foreach (var x in Reg)
@@ -231,7 +232,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                             NomEquipement = x.NomEquipement,
                             NumProjet = x.NumProjet,
                             ZoneEquipement = x.ZoneEquipement, 
-                            IdEss = x.idEss
+                            IdEss = x.idEss,
+                            TitreEss = x.TitreEss
                         };
                         ListConflit.Add(infosConfInterne);
                     }// sinon on rajoute rien à la liste                                                                        

@@ -52,7 +52,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         bool UpdateTransport(essai essa, string TranspSTLO);
 
-        bool UpdateComment(essai essa, string commentEssai);
+        bool UpdateTitre(essai essa, string commentEssai);
 
         List<InfosResasEquipement> ResasEssai(int id);
 

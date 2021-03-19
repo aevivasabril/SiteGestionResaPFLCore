@@ -94,7 +94,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// String pour rajouter un commentaire dans le formulaire
         /// </summary>
         [Display(Name = "Commentaire Essai")]
-        public string CommentEssai { get; set; }
+        public string TitreEssai { get; set; }
 
         #endregion
 

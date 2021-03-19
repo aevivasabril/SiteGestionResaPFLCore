@@ -55,6 +55,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.RecupData
                         NomProjet = resaDB.projet.First(p => p.id == ess.projetID).titre_projet,
                         NumProjet = resaDB.projet.First(p => p.id == ess.projetID).num_projet,
                         IdEssai = ess.id,
+                        TitreEssai = ess.titreEssai,
                         EquipementSousPcVue = IsEquipUnderPcVue,
                         DateCreationEssai = ess.date_creation.ToString(),
                         MailPropietaireEssai = resaDB.Users.Find(ess.compte_userID).Email
