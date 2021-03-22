@@ -159,3 +159,16 @@ textarea {
         /*border-bottom: 1px solid black;
         border-right: 1px solid black;*/
     }
+
+.fixed_head_resas {
+    overflow-y: auto;
+    height: 400px;
+    overflow-x: auto;
+    width: auto;
+}
+    .fixed_head_resas thead th {
+        position: sticky;
+        top: 0;
+        background: whitesmoke;
+        z-index: 2;
+    }

@@ -13,45 +13,46 @@
  }
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <div class="row justify-content-center">
-            <table class="table table-striped justify-content-center">
-                <h5 class="text-center">Liste des essais en attente de validation</h5>
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Informations essai</th>
-                        <th scope="col">N° projet</th>
-                        <th scope="col">Equipements réservés</th>
-                        <th scope="col">Conflit</th>
-                        <th scope="col">Date création</th>
-                        <th scope="col">Saisie par</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var x in Model.resasAValider)
-                    {
+        <h5 class="text-center">Liste des essais en attente de validation</h5>
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
                         <tr>
-                        <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
-                        <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NumProjet</a></td>
-                        <td><a asp-action="ConsulterResasProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
-                        <td>
-                            @if (x.ConflitExist == true)
-                            {
-                            <a asp-action="VoirConflitEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Voir conflit</a>
-                            }
-                        </td>
-                        <td>@x.DateCreation</td>
-                        <td>@x.MailUser</td>
-                        <td>
-                            <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Valider</a>
-                            <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Refuser</a>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+                            <th scope="col">Informations essai</th>
+                            <th scope="col">N° projet</th>
+                            <th scope="col">Equipements réservés</th>
+                            <th scope="col">Conflit</th>
+                            <th scope="col">Date création</th>
+                            <th scope="col">Saisie par</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.resasAValider)
+                        {
+                            <tr>
+                                <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
+                                <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NumProjet</a></td>
+                                <td><a asp-action="ConsulterResasProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
+                                <td>
+                                    @if (x.ConflitExist == true)
+                                    {
+                                        <a asp-action="VoirConflitEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Voir conflit</a>
+                                    }
+                                </td>
+                                <td>@x.DateCreation</td>
+                                <td>@x.MailUser</td>
+                                <td>
+                                    <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Valider</a>
+                                    <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Refuser</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-
     </div>
 </div>
 <!-- Modal pour affichage des infos "essai"-->
