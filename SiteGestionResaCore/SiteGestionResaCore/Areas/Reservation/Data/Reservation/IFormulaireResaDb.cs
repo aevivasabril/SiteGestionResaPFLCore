@@ -24,6 +24,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         List<ld_produit_in> ObtenirList_TypeProduitEntree();
 
         List<ld_destination> ObtenirList_DestinationPro();
-        
+
+        Task<IList<utilisateur>> ObtenirLogisticUsersAsync();
+
+        Task<IList<utilisateur>> ObtenirMainAdmUsersAsync();
+
     }
 }

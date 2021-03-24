@@ -16,14 +16,17 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// accès à la base de données PflStloResaTest
         /// </summary>
         private GestionResaContext context;
+        private readonly UserManager<utilisateur> userManager;
+
         //private readonly UserManager<utilisateur> userManager;
         //private readonly ILogger<FormulaireResaDb> logger;
 
         public FormulaireResaDb(
-            GestionResaContext resaDB)
+            GestionResaContext resaDB,
+            UserManager<utilisateur> userManager)
         {
             this.context = resaDB;
-
+            this.userManager = userManager;
         }
 
         /// <summary>
@@ -97,6 +100,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             return context.ld_destination.ToList();
         }
-        
+
+        public async Task<IList<utilisateur>> ObtenirLogisticUsersAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("Logistic");
+        }
+
+        public async Task<IList<utilisateur>> ObtenirMainAdmUsersAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("MainAdmin");
+        }
     }
 }
