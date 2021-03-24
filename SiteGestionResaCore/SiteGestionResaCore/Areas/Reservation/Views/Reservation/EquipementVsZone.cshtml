@@ -6,9 +6,9 @@
 }
 
 <br />
-<h4>Liste des équipements pour la zone @Model.NomZone </h4>
+<h3 class="text-center">Liste des équipements pour la zone <strong>@Model.NomZone</strong> </h3>
 <br />
-<div class="offset-1 col-md-8">
+<div class="offset-2 col-md-8">
     <div class="card">
         <div class="card-body">
             <h5 class="card-title text-center">Code couleur calendrier</h5>
@@ -56,44 +56,231 @@
         </div>
         <br />
         <div class="col-sm-4 col-md-4">
-            <a class="btn-link" href="#" onclick="showCalendar(@Model.CalendrierChildVM[i].idEquipement.ToString())">Voir disponibilité</a>
+            <a class="btn-link" asp-action="VoirPlanningSemaine" asp-controller="Reservation" asp-area="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement">Voir disponibilité</a>
         </div>
         <br />
         <div class="row">
             <div class="col-sm-12 col-md-12">
-                <div id="@Model.CalendrierChildVM[i].idEquipement.ToString()" class="hide" style="display:none">
-                    <div class="form-group row">
-                        <hr />
-                        <div class="row">
-                            <div class="col-sm-10 col-md-10">
-                                <form asp-action="AfficherPlanning" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
-                                    <partial name="~/Areas/Reservation/Views/Shared/_CalendrierEquipement.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                                    @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <hr />
-                    <div id="cren-content">
-                        <form asp-action="AjouterResa" asp-controller="Reservation" asp-route-id="@Model.CalendrierChildVM[i].idEquipement" asp-area="Reservation" method="post">
-                            <partial name="~/Areas/Reservation/Views/Shared/_Creneau.cshtml" for="@Model.CalendrierChildVM[i]"></partial>
-                            @*@Html.HiddenFor(m => m.CalendrierChildVM[i].idEquipement, new { equipementId = Model.CalendrierChildVM[i].idEquipement })*@
-                        </form>
-                    </div>
-                </div>
+
                 <hr />
             </div>
         </div>
     </div>
 }
+
+
+<!--using (Html.BeginForm("SupprimerCreneauResa", "Reservation", new { i = Model.IndiceChildModel, j = Model.IndiceResaEquipXChild }, FormMethod.Post, new { role = "" }))-->
+<form asp-action="SupprimerCreneauResa" asp-controller="Reservation" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau réservation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau réservation?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @Html.HiddenFor(m => m.IndiceChildModel)
+                @Html.HiddenFor(m => m.IndiceResaEquipXChild)
+            </div>
+        </div>
+    </div>
+</form>
+
+<hr />
+<div class="hide" style="display:@Model.OpenCalendEtCreneau" id="Calend">
+    <div class="container">
+        <br />
+        <form asp-action="AfficherPlanning" asp-controller="Reservation" asp-route-id="@Model.CalendVM.idEquipement" asp-area="Reservation" method="post">
+            <h4 class="text-center"> Sélectionnez les dates pour voir les créneaux disponibles pour l'équipement <strong>"@Model.CalendVM.nomEquipement"</strong></h4>
+            <div class="form-group row justify-content-center">
+                <br />
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <!--Date picker -->
+                    <div class="form-group">
+                        @Html.Label("Du : ")
+                        <input class="form-control" name="DatePickerDu" asp-for="@Model.CalendVM.DatePickerDu" type="date" />
+                        @Html.ValidationMessageFor(m => m.CalendVM.DatePickerDu, "", new { @class = "text-danger" })
+                        <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <!--Date picker -->
+                    <div class="form-group">
+                        @Html.Label("Au : ")
+                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                        <input class="form-control" name="DatePickerAu" asp-for="@Model.CalendVM.DatePickerAu" type="date" />
+                        @Html.ValidationMessageFor(m => m.CalendVM.DatePickerAu, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-4">
+                    <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+                </div>
+            </div>
+            <div class="row">
+                <div id="scroller" class="col-sm-12 col-md-12 col-lg-12">
+                    <!--https://www.w3schools.com/bootstrap4/bootstrap_tables.asp-->
+                    <table class="table table-bordered table-responsive table-sm">
+                        <h5 class="text-center">Calendrier</h5>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Créneaux</th> <!--Colonne pour ajouter les créneau matin et aprèm, pas besoin de head-->
+                                @foreach (var x in Model.CalendVM.ListResas)
+                                {
+                                    <th scope="col">@x.NomJour @x.JourResa.ToShortDateString()</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row" class="first_col">
+                                    <dl class="dl-horizontal text-center">
+                                        <br />
+                                        <dd>M</dd>
+                                        <dd>A</dd>
+                                        <dd>T</dd>
+                                        <dd>I</dd>
+                                        <dd>N</dd>
+                                    </dl>
+                                </td>
+                                @foreach (var y in Model.CalendVM.ListResas)
+                                {
+                                    <td style="background-color:@y.CouleurFondMatin.ToString()">
+                                        @foreach (var i in y.InfosResaMatin)
+                                        {
+                                            if (i.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                            {
+                                                <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
+                                            }
+                                            else
+                                            {
+                                                <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                            <tr>
+                                <td scope="row" class="first_col">
+                                    <dl class="dl-horizontal text-center">
+                                        <br />
+                                        <dd>A</dd>
+                                        <dd>P</dd>
+                                        <dd>R</dd>
+                                        <dd>E</dd>
+                                        <dd>M</dd>
+                                    </dl>
+                                </td>
+                                @foreach (var y in Model.CalendVM.ListResas)
+                                {
+                                    <td style="background-color:@y.CouleurFondAprem.ToString()">
+                                        @foreach (var i in y.InfosResaAprem)
+                                        {
+                                            if (i.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                            {
+                                                <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
+                                            }
+                                            else
+                                            {
+                                                <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                            }
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr />
+    <div class="container">
+        <form asp-action="AjouterResa" asp-controller="Reservation" asp-route-id="@Model.CalendVM.idEquipement" asp-area="Reservation" method="post">
+            <div class="form-group row">
+                <div class="col-sm-8 col-md-8">
+                    <div class="form-row">
+                        <div class="form-group col-sm-4 col-md-4">
+                            <!--Date picker -->
+                            @Html.Label("Date Début:  ")
+                            <input class="form-control" name="DateDebut" asp-for="@Model.CalendVM.DateDebut" type="date" />
+                            @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
+                            @Html.ValidationMessageFor(m => m.CalendVM.DateDebut, "", new { @class = "text-danger" })
+                            <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.CalendVM.DatePickerDebut_Matin" value="true" />
+                            @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")*@
+                            <label class="col-md-2 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.CalendVM.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.CalendVM.DatePickerDebut_Matin" value="false" />
+                            @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")*@
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.CalendVM.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-sm-4 col-md-4">
+                            @Html.Label("Date Fin:  ")
+                            <input class="form-control" name="DateFin" asp-for="@Model.CalendVM.DateFin" type="date" />
+                            @*@Html.EditorFor(m => m.DateFin, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaFinDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
+                            @Html.ValidationMessageFor(m => m.CalendVM.DateFin, "", new { @class = "text-danger" })
+                            <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.CalendVM.DatePickerFin_Matin" value="true" />
+                            @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "true")*@
+                            <label class="col-md-2 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.CalendVM.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.CalendVM.DatePickerFin_Matin" value="false" />
+                            @*@Html.RadioButtonFor(m => m.DatePickerFin_Matin, "false")*@
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.CalendVM.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <!-- pour passer l'id equipement et l'id zone à la méthode AddReservation() -->
+                @*@Html.HiddenFor(model => model.equiID)*@
+                <div class="col-sm-4 col-md-4">
+                    <input type="submit" class="btn btn-outline-success" value="Ajouter Réservation" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="offset-5 col-md-2">
+        <a class="btn btn-primary" asp-action="FermerCalend" asp-controller="Reservation" asp-area="Reservation">Fermer</a>
+    </div>
+</div>
+
+
 <hr />
 <br />
 <div class="form-group row">
     <div class="col-sm-12 col-md-12">
-        <h4 class="text-center"><strong>Récapitulatif de Réservation Zone @Model.NomZone</strong></h4>
-        <h6>Vérifiez les créneaux réservations ajoutés, si vous souhaitez modifier un créneau, supprimez-les et rajoutez si besoin</h6>
+        <h3 class="text-center"><strong>Récapitulatif des Réservations Zone @Model.NomZone</strong></h3>
+        <h6 class="text-center">Vérifiez les créneaux réservations ajoutés, si vous souhaitez modifier un créneau, supprimez-les et rajoutez si besoin</h6>
         <table class="table table-hover">
-            <thead>
+            <thead class="navbar-inra">
                 <tr>
                     <th scope="col">Equipement</th>
                     <th scope="col">Date Début</th>
@@ -136,49 +323,23 @@
     </div>
 </form>
 
-
-<!--using (Html.BeginForm("SupprimerCreneauResa", "Reservation", new { i = Model.IndiceChildModel, j = Model.IndiceResaEquipXChild }, FormMethod.Post, new { role = "" }))-->
-<form asp-action="SupprimerCreneauResa" asp-controller="Reservation" method="post">
-    <!-- Modal pop-up d'info-->
-    <div class="modal fade" id="suppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-        <div class="modal-dialog navbar-inra" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau réservation</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modalcontent">
-                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau réservation?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
-                    <input type="submit" class="btn btn-primary" value="Valider" />
-                </div>
-                @Html.HiddenFor(m => m.IndiceChildModel)
-                @Html.HiddenFor(m => m.IndiceResaEquipXChild)
-            </div>
-        </div>
-    </div>
-</form>
- 
-
 @section Scripts
 {
     <!-- JS includes -->
     <script type="text/javascript">
 
+        function Close() {
+            $('#calend').hide();
+        }
 
-
-        function showCalendar(parameter) {
+        /*function showCalendar(parameter) {
             var divid = document.getElementById(parameter);
             if (divid.style.display == "") {
                 divid.style.display = "none";
             } else {
                 divid.style.display = "";
             }
-        }
+        }*/
         @{
             if (ViewBag.modalSupp == null)
             {
@@ -186,33 +347,6 @@
             }
         }
         $('#suppModal').modal('@ViewBag.modalSupp');
-
-        /*https://stackoverflow.com/questions/11346112/can-i-lock-the-first-column-in-a-twitter-bootstrap-table
-         * $('#scroller table').each(function(){
-            var table = $(this),
-                fixedCol = table.clone(true),
-                fixedWidth = table.find('th').eq(0).width(),
-                tablePos = table.position();
-
-            // Remove all but the first column from the cloned table
-            fixedCol.find('th').not(':eq(0)').remove();
-            fixedCol.find('tbody tr').each(function(){
-                $(this).find('td').not(':eq(0)').remove();
-            });
-
-            // Set positioning so that cloned table overlays
-            // first column of original table
-            fixedCol.addClass('fixedCol');
-            fixedCol.css({
-                left: tablePos.left,
-                top: tablePos.top
-            });
-
-            // Match column width with that of original table
-            fixedCol.find('th,td').css('width',fixedWidth+'px');
-
-            $('#scroller').append(fixedCol);
-        });*/
     </script>
 }
 
