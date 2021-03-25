@@ -7,10 +7,10 @@
 <br />
 <h1>Reservations à valider</h1>
 <br />
-@if(ViewBag.SuccessMessage == "Ok")
- {
-<p class="text-center" style="color:green"><strong> @ViewBag.Action essai pris(e) en compte!</strong> </p>
- }
+@if (ViewBag.SuccessMessage == "Ok")
+{
+    <p class="text-center" style="color:green"><strong> @ViewBag.Action essai pris(e) en compte!</strong> </p>
+}
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
         <h5 class="text-center">Liste des essais en attente de validation</h5>
@@ -34,11 +34,13 @@
                             <tr>
                                 <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
                                 <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NumProjet</a></td>
-                                <td><a asp-action="ConsulterResasProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>
+                                @*<td><a asp-action="ConsulterResasProjet" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>*@
+                                <td><a href="#" onclick="ModalEquipReserv(@x.idEssai)">Equipements réservés</a></td>
                                 <td>
                                     @if (x.ConflitExist == true)
                                     {
-                                        <a asp-action="VoirConflitEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Voir conflit</a>
+                                        @*<a asp-action="VoirConflitEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@x.idEssai">Voir conflit</a>*@
+                                        <a href="#" onclick="ModalConflit(@x.idEssai)">Voir conflit</a>
                                     }
                                 </td>
                                 <td>@x.DateCreation</td>
@@ -61,97 +63,15 @@
 <!-- Modal pour affichage des infos "projet"-->
 <div id="InfosProjet"></div>
 
-<!-- Modal pour affichage des infos "Reservations"-->
-<div class="modal fade" id="ResaModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl navbar-inra">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Equipements réservés</strong></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalcontent">
-                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
-                <table class="table table-sm table-borderless">
-                    <thead>
-                        <tr>
-                            <th scope="col">Zone</th>
-                            <th scope="col">Nom Equipement</th>
-                            <th scope="col">Date Début</th>
-                            <th scope="col">Date Fin</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var r in Model.Reservations)
-                        {
-                        <tr>
-                            <td>@r.ZoneEquipement</td>
-                            <td>@r.NomEquipement</td>
-                            <td>@r.DateDebut</td>
-                            <td>@r.DateFin</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Modal pour affichage des infos "equipements réservés"-->
+<div id="EquipReserves"></div>
 
 <!-- Modal pour affichage des infos "Conflits"-->
-<div class="modal fade" id="ConflitModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl navbar-inra">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Equipements de l'essai " @Model.TitreEssaiPrincipal " en conflit avec autre(s) essai(s)</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modalcontent">
-                <table class="table table-sm table-borderless">
-                    <thead>
-                        <tr>
-                            <th scope="col">N° Projet</th>
-                            <th scope="col">Titre Essai</th>
-                            <th scope="col">Nom Equipement</th>
-                            <th scope="col">Zone</th>
-                            <th scope="col">Date Début</th>
-                            <th scope="col">Date Fin</th>
-                            <th scope="col">Responsable projet</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var y in Model.InfosConflits)
-                        {
-                        <tr>
-                            <td>@y.NumProjet</td>
-                            <td>@y.TitreEss</td>
-                            <td>@y.NomEquipement</td>
-                            <td>@y.ZoneEquipement</td>
-                            <td>@y.DateDeb</td>
-                            <td>@y.DateFin</td>
-                            <td>@y.MailResponsablePrj</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+<div id="ConflitResa"></div>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal pour affichage de la confirmation "Validation"-->
-<form asp-action="ValiderEssai" asp-controller="Validation" asp-area="Reservation" method="post">
+<form asp-action="ValiderEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ValidEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog modal-sm navbar-inra">
@@ -165,8 +85,7 @@
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold">
                         Etês-vous sûr de vouloir valider la réservation pour l'essai
-                        N° @Model.IdEss (projet N° @Model.InfosProj.NumProjet)?
-                        @Html.HiddenFor(m => m.IdEss)
+                        N° @Model.TitreEssai (projet N° @Model.NumProjet)?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -179,7 +98,7 @@
 </form>
 
 <!-- Modal pour affichage de la confirmation "Refuser"-->
-<form asp-action="RefuserEssai" asp-controller="Validation" asp-area="Reservation" method="post">
+<form asp-action="RefuserEssai" asp-controller="Validation" asp-area="Reservation" asp-route-id="@Model.IdEss" method="post">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="RefusEssa" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -195,13 +114,12 @@
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold text-center">
                         Etês-vous sûr de refuser la réservation pour l'essai
-                        N° @Model.IdEss (projet N° @Model.InfosProj.NumProjet)?
+                        N° @Model.TitreEssai (projet N° @Model.NumProjet)?
                     </p>
                     <p>Indiquez le(s) raison(s) du refus: </p>
                     <div class="form-group">
                         @Html.TextAreaFor(m => m.RaisonRefus, new { @class = "col-md-12 form-control" })
                         @Html.ValidationMessageFor(m => m.RaisonRefus, "", new { @class = "text-danger" })
-                        @Html.HiddenFor(m => m.IdEss)
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -266,6 +184,34 @@
                     success: function (html) {
                         $("#InfosProjet").html(html);
                         $("#ProjModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalEquipReserv(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirEquipReserves", "Validation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#EquipReserves").html(html);
+                        $("#ResaModal").modal('show');
+                    }
+                });
+            }
+    }
+
+        function ModalConflit(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirConflitEssai", "Validation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#ConflitResa").html(html);
+                        $("#ConflitModal").modal('show');
                     }
                 });
             }

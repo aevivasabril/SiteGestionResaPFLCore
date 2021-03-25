@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
+namespace SiteGestionResaCore.Models
 {
     public class InfosReservation
     {

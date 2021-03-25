@@ -1,0 +1,43 @@
+﻿@model SiteGestionResaCore.Models.EquipementsReservesVM
+
+<!-- Modal pour affichage des infos "Reservations"-->
+<div class="modal fade" id="ResaModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel"><strong>Equipements réservés</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
+                <table class="table table-sm table-borderless">
+                    <thead>
+                        <tr>
+                            <th scope="col">Zone</th>
+                            <th scope="col">Nom Equipement</th>
+                            <th scope="col">Date Début</th>
+                            <th scope="col">Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model.Reservations)
+                        {
+                            <tr>
+                                <td>@r.ZoneEquipement</td>
+                                <td>@r.NomEquipement</td>
+                                <td>@r.DateDebut</td>
+                                <td>@r.DateFin</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

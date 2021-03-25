@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
+namespace SiteGestionResaCore.Models
 {
     // class contenant les infos sur une autre réservation generant un conflit ( pour les projet RESTREINT)
     public class InfosConflit

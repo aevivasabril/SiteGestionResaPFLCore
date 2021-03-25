@@ -47,11 +47,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             ResaVm = new ResasPourValidationViewModel()
             {
-                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = new InfosProjet(),
-                Reservations = new List<InfosReservation>(),
-                InfosConflits = new List<InfosConflit>()                               
+                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),                           
             };
             
             return View(ResaVm);
@@ -75,15 +71,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public IActionResult VoirInfosProjet(int id)
         {
-            /*ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
-            {
-                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = resaAValiderDb.ObtenirInfosProjet(id),
-                Reservations = new List<InfosReservation>(),
-                InfosConflits = new List<InfosConflit>()
-            };
-            ViewBag.modalProj = "show";*/
             InfosProjet vm = resaAValiderDb.ObtenirInfosProjet(id);
             return PartialView("~/Views/Shared/_DisplayInfosProjet.cshtml", vm);
         }
@@ -93,18 +80,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> ConsulterResasProjetAsync(int id)
+        public IActionResult VoirEquipReserves(int id)
         {
-            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            EquipementsReservesVM equipementsReservesVM = new EquipementsReservesVM
             {
-                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = new InfosProjet(),
-                Reservations = resaAValiderDb.InfosReservations(id),
-                InfosConflits = new List<InfosConflit>()
+                Reservations = resaAValiderDb.InfosReservations(id)
             };
-            ViewBag.modalResas = "show";
-            return View("ReservationsAValider", vm);
+            return PartialView("~/Views/Shared/_DisplayEquipsReserves.cshtml", equipementsReservesVM);
         }
 
         /// <summary>
@@ -112,20 +94,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// </summary>
         /// <param name="id">id essai</param>
         /// <returns></returns>
-        public async Task<IActionResult> VoirConflitEssaiAsync(int id)
+        public IActionResult VoirConflitEssai(int id)
         {
-            ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
+            ConsultConflitEssaiVM conflitEssaiVM = new ConsultConflitEssaiVM()
             {
-                resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = new InfosProjet(),
-                Reservations = new List<InfosReservation>(),
                 InfosConflits = resaAValiderDb.InfosConflits(id),
-                IdEss = id,
                 TitreEssaiPrincipal = resaAValiderDb.ObtenirEssai(id).titreEssai
             };
-            ViewBag.modalConflit = "show";
-            return View("ReservationsAValider", vm);
+            return PartialView("~/Views/Shared/_DisplayConflitEssai.cshtml", conflitEssaiVM);
         }
 
         /// <summary>
@@ -138,10 +114,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                //InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai je l'utilise pour l'affichage!
-                Reservations = new List<InfosReservation>(),
-                InfosConflits = new List<InfosConflit>(),
                 IdEss = id
             };
             ViewBag.modalValid = "show";
@@ -154,7 +126,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="vm"> view model vue</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> ValiderEssaiAsync(ResasPourValidationViewModel vm)
+        public async Task<IActionResult> ValiderEssaiAsync(ResasPourValidationViewModel vm, int id)
         {
             // Retry pour envoi mail
             string message;
@@ -208,10 +180,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
         ENDT:
             vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
-            vm.InfosEssai = new ConsultInfosEssaiChildVM();
-            vm.InfosProj = new InfosProjet();
-            vm.Reservations = new List<InfosReservation>();
-            vm.InfosConflits = new List<InfosConflit>();
             vm.IdEss = vm.IdEss;
 
             return View("ReservationsAValider", vm);
@@ -227,10 +195,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                //InfosEssai = new ConsultInfosEssaiChildVM(),
-                InfosProj = resaAValiderDb.ObtenirInfosProjetFromEssai(id), //obtenir les infos projet à partir de l'id essai
-                Reservations = new List<InfosReservation>(),
-                InfosConflits = new List<InfosConflit>(),
                 IdEss = id
             };
             ViewBag.modalRefus = "show";
@@ -243,7 +207,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="vm"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm)
+        public async Task<IActionResult> RefuserEssaiAsync(ResasPourValidationViewModel vm, int id)
         {
             // Retry pour envoi mail
             string message;
@@ -304,10 +268,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
         ENDT:
             vm.resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync();
-            vm.InfosEssai = new ConsultInfosEssaiChildVM();
-            vm.InfosProj = new InfosProjet();
-            vm.Reservations = new List<InfosReservation>();
-            vm.InfosConflits = new List<InfosConflit>();
             vm.IdEss = vm.IdEss;
 
             return View("ReservationsAValider", vm);
