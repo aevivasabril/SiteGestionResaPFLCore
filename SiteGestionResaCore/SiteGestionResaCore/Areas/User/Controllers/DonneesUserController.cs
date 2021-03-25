@@ -46,7 +46,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         public IActionResult VoirInfosEssai(int id)
         {
             ConsultInfosEssaiChildVM vm = donneesUsrDB.ObtenirInfosEssai(id);
-            //vm.ActionName = "ListEssaisDonnees";
             return PartialView("~/Views/Shared/_DisplayInfosEssai.cshtml", vm);
         }
         
@@ -107,8 +106,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
 
             #endregion
-
-            //return View();
         }
     }
 }

@@ -86,14 +86,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         public IActionResult VoirInfosEssai(int id)
         {
             // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
-            //CalenViewModel CalendVM = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
 
             // Obtenir les infos à afficher pour l'essai demandé
             InfosEquipementReserve InfosResa = CalendResaDb.ObtenirInfosResa(id);
-
-            //ViewBag.InfosResa = "show";
-
-            //CalendVM.InfosPopUpEquipement = InfosResa;
             var valo = pcVueDb.tab_UA_VALO.First();
 
             return PartialView ("_InfosResaCalendrier", InfosResa);
@@ -203,7 +198,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     // For pour recupérer les réservations des N jours à partir du lundi
                     for (int i = 0; i < NbJours; i++)
                     {
-                        //occupation = new OccupationZonesParJour();
                         // Obtenir l'emploi du temps du jour de la semaine i pour un équipement
                         ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
                         // Ajouter les données calendrier pour l'équipement dans la liste
@@ -255,8 +249,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                 };
 
                 // Completer les infos sur chaque zone en ajoutant les réservations par équipement
-                //ZoneEquipVsReservations = new ZoneParJour { IdZone = z.id, NomZone = z.nom_zone, ListEquipements = ListEquipements };
-                //ListCalendrierParZone.Add(ZoneEquipVsReservations);
                 ListResasZone.Add(resasZone);
             }
 
