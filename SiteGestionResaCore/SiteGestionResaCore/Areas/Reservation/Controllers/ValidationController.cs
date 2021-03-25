@@ -111,10 +111,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public async Task<IActionResult> ValiderEssaiAsync(int id)
         {
+            essai ess = resaAValiderDb.ObtenirEssai(id);
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                IdEss = id
+                IdEss = id,
+                NumProjet = resaAValiderDb.ObtenirInfosProjet(ess.projetID).NumProjet,
+                TitreEssai = ess.titreEssai
             };
             ViewBag.modalValid = "show";
             return View("ReservationsAValider", vm);
@@ -134,14 +137,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             var retryCount = NumberOfRetries;
             var success = false;
 
-            bool isValidOk = resaAValiderDb.ValiderEssai(vm.IdEss);
+            bool isValidOk = resaAValiderDb.ValiderEssai(id);
             if(isValidOk)
             {
                 ViewBag.SuccessMessage = "Ok";
                 ViewBag.Action = "Validation";
 
                 #region envoi de mail validation
-                var essai = resaAValiderDb.ObtenirEssai(vm.IdEss);
+                var essai = resaAValiderDb.ObtenirEssai(id);
                 var proj = resaAValiderDb.ObtenirInfosProjet(essai.projetID);
                 message = @"<html>
                             <body> 
@@ -192,10 +195,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public async Task<IActionResult> RefuserEssaiAsync(int id)
         {
+            essai ess = resaAValiderDb.ObtenirEssai(id);
             ResasPourValidationViewModel vm = new ResasPourValidationViewModel()
             {
                 resasAValider = await resaAValiderDb.ObtenirInfosAffichageAsync(),
-                IdEss = id
+                IdEss = id,
+                NumProjet = resaAValiderDb.ObtenirInfosProjet(ess.projetID).NumProjet,
+                TitreEssai = ess.titreEssai
             };
             ViewBag.modalRefus = "show";
             return View("ReservationsAValider", vm);
@@ -217,14 +223,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             if (ModelState.IsValid)
             {
-                bool isRefusOk = resaAValiderDb.RefuserEssai(vm.IdEss, vm.RaisonRefus);
+                bool isRefusOk = resaAValiderDb.RefuserEssai(id, vm.RaisonRefus);
                 if (isRefusOk)
                 {
                     ViewBag.SuccessMessage = "Ok";
                     ViewBag.Action = "Refus";
 
                     #region envoi de mail validation
-                    var essai = resaAValiderDb.ObtenirEssai(vm.IdEss);
+                    var essai = resaAValiderDb.ObtenirEssai(id);
                     var proj = resaAValiderDb.ObtenirInfosProjet(essai.projetID);
                     message = @"<html>
                             <body> 
