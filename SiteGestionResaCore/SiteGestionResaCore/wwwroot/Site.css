@@ -164,7 +164,7 @@ textarea {
     overflow-y: auto;
     height: 400px;
     overflow-x: auto;
-    width: auto;
+    width: 1200px;
 }
     .fixed_head_resas thead th {
         position: sticky;

@@ -81,15 +81,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <returns></returns>
         public IActionResult VoirReservations(int id)
         {
-            ConsultationViewModel model = new ConsultationViewModel()
+            EquipementsReservesVM vm = new EquipementsReservesVM()
             {
-                ResasValid = consultDB.ObtInfEssaiValidees(),
-                //InfosProjet = new InfosProjet(),
-                //InfosEssai = new ConsultInfosEssaiChildVM(),
                 Reservations = resaAValider.InfosReservations(id)
             };
-            ViewBag.modalResas = "show";
-            return View("ResasValidees", model);
+            return PartialView("~/Views/Shared/_DisplayEquipsReserves.cshtml", vm);
         }
     }
 }
