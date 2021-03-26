@@ -10,36 +10,38 @@
 <br />
 
 <div class="row">
-    <div class="offset-2 col-sm-8 col-md-8 text-center">
-        <div class="row justify-content-center">
-            <table class="table table-striped justify-content-center table-sm">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Projet (N° et Titre)</th>
-                        <th scope="col">Mail propiètaire essai</th>
-                        <th scope="col">Informations essai</th>
-                        <th scope="col">Equipements supervisés?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var x in Model.AllResas)
-                    {
+    <div class="col-sm-8 col-md-8 text-center">
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
                         <tr>
-                            <td>@x.NomProjet (N°: @x.NumProjet)</td>
-                            <td>@x.MailPropietaireEssai</td>
-                            <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">@x.TitreEssai</a></td>
-                            @if (x.EquipementSousPcVue == true)
-                            {
-                                <td><a href="#" onclick="EquipVsData(@x.IdEssai)"> Oui! clique ici </a></td>
-                            }
-                            else
-                            {
-                                <td>Non</td>
-                            }
+                            <th scope="col">Projet (N° et Titre)</th>
+                            <th scope="col">Mail propiètaire essai</th>
+                            <th scope="col">Informations essai</th>
+                            <th scope="col">Equipements supervisés?</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.AllResas)
+                        {
+                            <tr>
+                                <td>@x.NomProjet (N°: @x.NumProjet)</td>
+                                <td>@x.MailPropietaireEssai</td>
+                                <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">@x.TitreEssai</a></td>
+                                @if (x.EquipementSousPcVue == true)
+                                {
+                                    <td><a href="#" onclick="EquipVsData(@x.IdEssai)"> Oui! clique ici </a></td>
+                                }
+                                else
+                                {
+                                    <td>Non</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

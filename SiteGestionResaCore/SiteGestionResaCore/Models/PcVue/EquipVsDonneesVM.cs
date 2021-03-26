@@ -17,6 +17,6 @@ namespace SiteGestionResaCore.Models
             set { _equipementsReserves = value; }
         }
 
-        public int IdEssai { get; set; }
+        public string TitreEssai { get; set; }
     }
 }

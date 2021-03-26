@@ -14,21 +14,22 @@
 
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <div class="row justify-content-center">
-            <table class="table table-striped justify-content-center">
-                <h5 class="text-center">Pour modifier cliquez sur le lien</h5>
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Informations essai</th>
-                        <th scope="col">Titre projet</th>
-                        <th scope="col">N° projet</th>
-                        <th scope="col">Equipements réservés</th>
-                        <th scope="col">Date création</th>
-                        <th scope="col">Status essai</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var x in Model.ResasUser)
+        <h5 class="text-center">Pour modifier cliquez sur le lien</h5>
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Informations essai</th>
+                            <th scope="col">Titre projet</th>
+                            <th scope="col">N° projet</th>
+                            <th scope="col">Equipements réservés</th>
+                            <th scope="col">Date création</th>
+                            <th scope="col">Status essai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ResasUser)
                     {
                         <tr>
                             <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
@@ -39,10 +40,10 @@
                             <td>@x.StatusEssai</td>
                         </tr>
                     }
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
     </div>
 </div>
 <!--Ouvrir la fênetre pour affichage et modification des infos "essai"-->
@@ -239,7 +240,6 @@
         </div>
     </div>
 </div>
-<hr />
 
 <div class="form-group row">
     <div class="col-md-12">
