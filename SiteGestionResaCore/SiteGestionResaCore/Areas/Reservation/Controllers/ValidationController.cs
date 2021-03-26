@@ -220,6 +220,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             int NumberOfRetries = 5;
             var retryCount = NumberOfRetries;
             var success = false;
+            var essai = resaAValiderDb.ObtenirEssai(id);
 
             if (ModelState.IsValid)
             {
@@ -230,7 +231,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     ViewBag.Action = "Refus";
 
                     #region envoi de mail validation
-                    var essai = resaAValiderDb.ObtenirEssai(id);
+                    
                     var proj = resaAValiderDb.ObtenirInfosProjet(essai.projetID);
                     message = @"<html>
                             <body> 
@@ -270,6 +271,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             else
             {
                 ViewBag.modalRefus = "show";
+                vm.TitreEssai = essai.titreEssai;
+                vm.NumProjet = resaAValiderDb.ObtenirInfosProjet(essai.projetID).NumProjet;
+                vm.IdEss = id;
             }
 
         ENDT:
