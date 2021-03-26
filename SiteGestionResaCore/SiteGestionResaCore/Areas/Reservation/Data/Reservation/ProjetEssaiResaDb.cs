@@ -60,7 +60,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             // Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
             //propProjOk = context.projet.Where(p => p.num_projet == numProjet).Where(p => p.compte_userID == usr.Id).Any(); // PAS BON car j'ai besoin de comparer l'id user au parametre compte_userID (string)
             propProjOk = (from p in context.projet
-                    where p.num_projet == numProjet && p.compte_userID == usr.Id.ToString()
+                    where p.num_projet == numProjet && p.compte_userID == usr.Id
                     select p).Any();
             // Si la personne n'est pas propiètaire du projet mais qu'elle est "Admin" ou "MainAdmin"
             foreach (string roles in allUserRoles)
@@ -327,7 +327,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 provenance = ProvenanProj,
                 description_projet = description,
                 date_creation = dateCreation,
-                compte_userID = Usr.Id.ToString(),
+                compte_userID = Usr.Id,
                 organismeID = org.id
             };
 

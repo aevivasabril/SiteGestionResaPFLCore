@@ -21,7 +21,7 @@ namespace SiteGestionResaCore.Data
         public string provenance { get; set; }
         public string description_projet { get; set; }
         public DateTime date_creation { get; set; }
-        public string compte_userID { get; set; }
+        public int compte_userID { get; set; }
 
         public virtual organisme organisme { get; set; }
         public virtual ICollection<essai> essai { get; set; }

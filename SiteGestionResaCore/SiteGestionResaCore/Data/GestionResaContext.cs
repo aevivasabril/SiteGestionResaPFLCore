@@ -176,8 +176,6 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<projet>(entity =>
             {
-                entity.Property(e => e.compte_userID).IsUnicode(false);
-
                 entity.Property(e => e.date_creation).HasColumnType("datetime");
 
                 entity.Property(e => e.description_projet).IsUnicode(false);
