@@ -17,7 +17,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.RecupData
 
         public string MailPropietaireEssai { get; set; }
 
-        public string DateCreationEssai { get; set; }
+        public DateTime DateCreationEssai { get; set; }
 
         public bool EquipementSousPcVue { get; set; } // déterminer si on affiche ou pas le lien pour accèder aux équipements sous supervision
     }

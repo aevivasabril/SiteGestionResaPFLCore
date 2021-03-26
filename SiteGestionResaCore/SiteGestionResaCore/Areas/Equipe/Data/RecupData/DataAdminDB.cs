@@ -57,12 +57,12 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.RecupData
                         IdEssai = ess.id,
                         TitreEssai = ess.titreEssai,
                         EquipementSousPcVue = IsEquipUnderPcVue,
-                        DateCreationEssai = ess.date_creation.ToString(),
+                        DateCreationEssai = ess.date_creation,
                         MailPropietaireEssai = resaDB.Users.Find(ess.compte_userID).Email
                     };
                     List.Add(infos);
                 }
-                return List;
+                return List.OrderByDescending(x=>x.DateCreationEssai).ToList();
             }
             catch (Exception e)
             {

@@ -57,7 +57,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
 
                 list.Add(infos);
             }
-            return list;
+            return list.OrderByDescending(x=>x.DateValidation).ToList(); // Ordonner la liste par ordre chronologique descendant
         }
     }
 }

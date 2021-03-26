@@ -18,6 +18,7 @@
                         <tr>
                             <th scope="col">Projet (N° et Titre)</th>
                             <th scope="col">Informations essai</th>
+                            <th scope="col">Date création essai</th>
                             <th scope="col">Equipements supervisés?</th>
                         </tr>
                     </thead>
@@ -27,6 +28,7 @@
                             <tr>
                                 <td>@x.NomProjet (N°: @x.NumProjet)</td>
                                 <td><a href="#" onclick="DisplayEssaiInfo(@x.IdEssai)">@x.TitreEssai</a></td>
+                                <td>@x.DateCreationEssai</td>
                                 @if (x.EquipementSousPcVue == true)
                                 {
                                     <td><a href="#" onclick="EquipVsData(@x.IdEssai)"> Oui! clique ici </a></td>
@@ -34,7 +36,7 @@
                                 else
                                 {
                                     <td>Non</td>
-                                }
+                                }                              
                             </tr>
                         }
                     </tbody>

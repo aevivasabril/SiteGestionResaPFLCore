@@ -58,12 +58,13 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     NumProjet = resaDB.projet.First(p => p.id == i.projetID).num_projet,
                     IdEssai = i.id,
                     TitreEssai = i.titreEssai,
-                    EquipementSousPcVue = IsEquipUnderPcVue
+                    EquipementSousPcVue = IsEquipUnderPcVue,
+                    DateCreationEssai = i.date_creation
 
                 };  
                 List.Add(infos);
             }
-            return List;
+            return List.OrderByDescending(x=>x.DateCreationEssai).ToList();
         }
 
         public ConsultInfosEssaiChildVM ObtenirInfosEssai(int IdEssai)

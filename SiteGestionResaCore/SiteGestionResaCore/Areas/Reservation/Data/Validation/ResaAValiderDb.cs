@@ -96,7 +96,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                 list.Add(infosEss);
             }
 
-            return list;
+            return list.OrderByDescending(x=>x.DateCreation).ToList();
         }
 
         /// <summary>

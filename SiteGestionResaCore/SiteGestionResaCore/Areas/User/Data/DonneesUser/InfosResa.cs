@@ -17,5 +17,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         public bool EquipementSousPcVue { get; set; } // déterminer s'on affiche ou pas le lien pour accèder aux équipements sous supervision
 
+        public DateTime DateCreationEssai { get; set; }
+
     }
 }

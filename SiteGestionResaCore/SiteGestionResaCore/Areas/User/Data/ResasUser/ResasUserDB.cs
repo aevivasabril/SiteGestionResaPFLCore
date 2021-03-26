@@ -89,8 +89,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                                         TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
                 }
                 List.Add(infos);
+                //List = List.OrderByDescending(x => x.DateCreation).ToList();
             }
-            return List;
+            return List.OrderByDescending(x => x.DateCreation).ToList();
         }
 
         public essai ObtenirEssaiPourModif(int IdEssai)
