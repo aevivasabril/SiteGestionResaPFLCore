@@ -473,13 +473,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Definition date fin
                     if (Convert.ToBoolean(model.DatePickerFin_Matin) == true)
                     {
-                        finToSave = new DateTime(model.DateDebut.Value.Year,
-                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 12, 0, 0, DateTimeKind.Local);
+                        finToSave = new DateTime(model.DateFin.Value.Year,
+                            model.DateFin.Value.Month, model.DateFin.Value.Day, 12, 0, 0, DateTimeKind.Local);
                     }
                     else // Fin de la manip 18h
                     {
-                        finToSave = new DateTime(model.DateDebut.Value.Year,
-                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 18, 0, 0, DateTimeKind.Local);
+                        finToSave = new DateTime(model.DateFin.Value.Year,
+                            model.DateFin.Value.Month, model.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                     }
                     #endregion
 
