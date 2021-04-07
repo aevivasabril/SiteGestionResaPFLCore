@@ -51,29 +51,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
 
             var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet});
-
             var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement});
-
             // Création d'une liste Dropdownlist contenant les types d'organismes
             var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme});
-
             var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"});
-
             // Création d'une liste de provenance projet (dropdownlist)
             var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance});
-
             // Création d'une liste utilisateurs "manipulateur" de l'essai
             var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )"});
-
             // Création d'une liste dropdownlist pour le type produit entrée
             var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in});
-
             // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
             var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit});
-
             // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
             var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
-
             FormulaireProjetViewModel vm = new FormulaireProjetViewModel()
             {
                 TypeProjetItem = typeProj,
@@ -101,7 +92,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             var errors = ModelState.Values.SelectMany(v => v.Errors);
 
             ModelState.Remove("SelectedEssaiId"); // J'extrait le model error généré par SelectedEssaiId car il est pas pris en compte dans la copie projet, voir commme l'ignorer plus proprement
-
+            //ModelState.Remove("NumProjetXCopie");
             if (ModelState.IsValid)
             {
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
@@ -116,8 +107,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError("", "Ce projet existe mais vous n'avez pas le droit de rajouter des essais");
-                        return View("FormulaireProjet", model);
+                        // cas où le projet existe mais l'utilisateur n'a pas les droits
+                        goto ERR;
                     }
                 }
                 else // si le projet n'existe pas alors l'ajouter dans la session
@@ -130,8 +121,40 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             }
             else
             {
-                return View("FormulaireProjet", model); // Si error alors on recharge la page pour montrer les messages
+                goto ERR;
             }
+            ERR:
+                #region Recharge des listes déroulantes
+
+                List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+                var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet });
+                var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement });
+                // Création d'une liste Dropdownlist contenant les types d'organismes
+                var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme });
+                var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+                // Création d'une liste de provenance projet (dropdownlist)
+                var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance });
+                // Création d'une liste utilisateurs "manipulateur" de l'essai
+                var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+                // Création d'une liste dropdownlist pour le type produit entrée
+                var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
+                // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+                var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
+                // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+                var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
+                model.TypeProjetItem = typeProj;
+                model.TypefinancementItem = finanItem;
+                model.OrganItem = allOrgs;
+                model.RespProjItem = usersList;
+                model.ProvenanceItem = provProj;
+                model.ManipProjItem = usersManip;
+                model.ProductItem = prodEntree;
+                model.ProvenanceProduitItem = provProd;
+                model.DestProduitItem = destProd;
+
+                #endregion
+
+            return View("FormulaireProjet", model); // Si error alors on recharge la page pour montrer les messages
         }
 
         [HttpPost]
@@ -144,20 +167,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             bool projetValideOk = false;
             // récupérer les projets pour le numéro saisie
 
-            projetValideOk = projetEssaiDb.ProjetExists(model.NumProjet);
+            projetValideOk = projetEssaiDb.ProjetExists(model.NumProjetXCopie);
             
             if (!projetValideOk)
             {
-                ViewBag.Message = " Ce numéro de projet n'existe pas";
+                ViewBag.Message = "Ce numéro de projet n'existe pas ou n'a pas été saisie. 'Ignorer' cette fênetre et essayez avec un numéro valide";
             }
             else
             {
-                propProjetOk = await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user);
+                propProjetOk = await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjetXCopie, user);
                 if (propProjetOk)
                 {
                     ViewBag.Message = "";
                     // Création d'une liste des item avec des détails d'un essai
-                    model.EssaiItem = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjet).Select(f => new SelectListItem
+                    model.EssaiItem = projetEssaiDb.ObtenirList_EssaisUser(model.NumProjetXCopie).Select(f => new SelectListItem
                     {
                         Value = f.CopieEssai.id.ToString(),
                         Text = "Essai crée le " + f.CopieEssai.date_creation.ToString() + " - Manipulateur Essai: " + f.user.nom +
@@ -228,7 +251,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             // Récupérer à partir de la BDD les infos sur le projet et l'essai
             // Vérifier cette ligne suite à migration ASP NET CORE
-            pr = projetEssaiDb.ObtenirProjet_pourCopie(model.NumProjet); // Provenant du HiddenFor ligne 207
+            pr = projetEssaiDb.ObtenirProjet_pourCopie(model.NumProjetXCopie); // Provenant du HiddenFor ligne 207
             ess = projetEssaiDb.ObtenirEssai_pourCopie(model.SelectedEssaiId);
             vm.SelectTypeProjetId = projetEssaiDb.IdTypeProjetPourCopie(pr.id);
             vm.SelectFinancementId = projetEssaiDb.IdFinancementPourCopie(pr.id);

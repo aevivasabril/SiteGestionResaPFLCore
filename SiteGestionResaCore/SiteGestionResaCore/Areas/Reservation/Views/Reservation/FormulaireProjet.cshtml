@@ -23,8 +23,8 @@
                 <div class="form-row">
                     <label class="col-md-12 control-label">Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345): </label>
                     <div class="col-sm-10">
-                        @Html.TextBoxFor(m => m.NumProjet, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.NumProjet, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.NumProjetXCopie, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.NumProjetXCopie, "", new { @class = "text-danger" })
                     </div>
                 </div>
                 <hr />
@@ -215,7 +215,7 @@
         <div class="modal-dialog navbar-inra" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-center" id="staticBackdropLabel">Liste des essais pour le projet N° @Model.NumProjet: </h5>
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Liste des essais pour le projet N° @Model.NumProjetXCopie: </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -225,7 +225,7 @@
                         <option value="-1">- Sélectionnez un essai -</option>
                     </select>
                     @Html.ValidationMessageFor(m => m.SelectedEssaiId, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.NumProjet)
+                    @Html.HiddenFor(model => model.NumProjetXCopie)
                     <hr />
                     <strong class="text-center">@ViewBag.Message</strong>
                     <!-- On met le HiddenFor pour envoyer le num_projet vers la méthode POST "CopierProjetEssai"-->

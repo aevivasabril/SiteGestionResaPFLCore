@@ -15,6 +15,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #region Liste des essais correspondant au numéro projet
 
+        // Numero du projet au format (12-345)
+        [Display(Name = "Numéro de projet (*) (Ex format: 12-345)")] // il faut respecter le numéro 
+        [RegularExpression(@"^[0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
+        public string NumProjetXCopie { get; set; }
+
         /// <summary>
         /// boolean indiquant si un numéro de projet existe
         /// </summary>
@@ -40,13 +45,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Titre du projet
         /// </summary>
         [Required(ErrorMessage = "Champ 'Titre projet' requis")]
-        [Display(Name = "Titre Projet*")]
+        [Display(Name = "Titre Projet (*)")]
         [RegularExpression(@"^[\w][^\/;\\.!:*?,]*$", ErrorMessage = "Le format est incorrect, evitez les caractères suivants:  /;\\.!:*?,")]
         public string TitreProjet { get; set; }
 
         // Numero du projet au format (12-345)
         [Required(ErrorMessage = "Champ 'Numéro de projet' requis")]
-        [Display(Name = "Numéro de projet* (Ex format: 12-345)")] // il faut respecter le numéro 
+        [Display(Name = "Numéro de projet (*) (Ex format: 12-345)")] // il faut respecter le numéro 
         [RegularExpression(@"^[0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
         public string NumProjet { get; set; }
 
@@ -86,7 +91,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Id d'un item selectionné pour le organisme
         /// </summary>
         [Required]
-        [Display(Name = "Nom de l'entreprise*")]
+        [Display(Name = "Nom de l'entreprise (*)")]
         [Range(1, 100, ErrorMessage = "Selectionnez un organisme")]
         public int SelectedOrganId { get; set; }
 
@@ -100,7 +105,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Id d'un item de la liste des responsables projet
         /// </summary>
         [Required]
-        [Display(Name = "Mail responsable projet*")]
+        [Display(Name = "Mail responsable projet (*)")]
         [Range(1, 100, ErrorMessage = "Selectionnez un responsable projet")]
         public int SelectedRespProjId { get; set; }
 
@@ -130,14 +135,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Confidentialité du projet (restreint, ouvert ou confidentiel)
         /// </summary>
         [Required(ErrorMessage = "Champ 'Confidentialité' requis")]
-        [Display(Name = "Confidentialité: *")]
+        [Display(Name = "Confidentialité (*)")]
         public string ConfidentialiteEssai { get; set; }
 
         /// <summary>
         /// Id d'un item de la liste provenance manipulateur essai
         /// </summary>
         [Required]
-        [Display(Name = "Personne en charge des manips*")]
+        [Display(Name = "Personne en charge des manips (*)")]
         [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
         public int SelectedManipulateurID { get; set; }
 
@@ -197,14 +202,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// string à true ou false pour indiquer si le transport depend du STLO ou Autre
         /// </summary>
         [Required(ErrorMessage = "Champ 'Transport' requis")]
-        [Display(Name = "Transport assuré par*: ")]
+        [Display(Name = "Transport assuré par (*): ")]
         public string TransportSTLO { get; set; }
 
         /// <summary>
         /// String pour rajouter un commentaire dans le formulaire
         /// </summary>
         [Required(ErrorMessage = "Titre essai requis")]
-        [Display(Name = "Titre ESSAI (Précisez des éléments de l'essai qui vous permettront de le retrouver plus facilement par la suite)")]
+        [Display(Name = "Titre ESSAI (Précisez des éléments de l'essai qui vous permettront de le retrouver plus facilement par la suite) (*)")]
         public string TitreEssai { get; set; }
 
         #endregion
