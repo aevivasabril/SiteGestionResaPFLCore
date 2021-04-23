@@ -94,7 +94,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             bool IsEquipPcVue = false;
             bool IsDataReady = false;
             DateTime dateDebut;
-            DateTime dateFin;
+            //DateTime dateFin;
             string tableName;
 
             /* Test pour déterminer que la deduction des dates est OK, juste une heure de décalage en moins sur la table pcVue donc 
@@ -121,13 +121,13 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     // 2. Vérifier s'il y a des données à récupérer entre les dates de réservation de l'équipement
                     // http://kosted.free.fr/pdf/rapport.pdf: Chrono qui représente un temps (Mois-Jour-AnnéeMinutes-Secondes) bien précis. La norme utilisée pour enregistrer ces informations est celle du
                     // FILE TIME. Le FILE TIME est le temps écoulé en nanosecondes écoulés depuis le 1er Janvier 1601.
-                    dateDebut = ResaEquip.date_debut.AddHours(-1);
+                    dateDebut = ResaEquip.date_debut.AddHours(-3);
                     dateDebut = dateDebut.AddYears(-1600);
                     //dateDebut = dateDebut.AddHours(-2);
                     // convertir à ticks pour obtenir un format bigint? dateDebut.Ticks;
 
-                    dateFin = ResaEquip.date_fin.AddHours(-1);
-                    dateFin = dateFin.AddYears(-1600);
+                    /*dateFin = ResaEquip.date_fin.AddHours(-1);
+                    dateFin = dateFin.AddYears(-1600);*/
 
                     // Méthode qui permet de définir la table sur laquelle on execute la requete
                     bool query = false;
@@ -272,28 +272,28 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             if(resa.date_debut <= DateToday && resa.date_fin <= DateToday) // Manip finie! 
             {
                 // convertir les dates fin et date debut réservation 
-                dateDebutPcVue = resa.date_debut.AddHours(-1);
+                dateDebutPcVue = resa.date_debut.AddHours(-3);
                 dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
 
                 // Vérifier le créneau pour ajouter ou enlever des heures
                 if (resa.date_fin.Hour == 12) // Finie la matinée vers midi alors rajouter une heure
                 {
-                    dateFinPcVue = resa.date_fin; // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
+                    dateFinPcVue = resa.date_fin.AddHours(-1); // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
                 }
-                else // heure fin 18h, rajouter 6 h c'est à dire 5h à cause de la conversion (-1h)
+                else // heure fin 18h, rajouter 6h c'est à dire 5h à cause de la conversion (-1h)
                 {
-                    dateFinPcVue = resa.date_fin.AddHours(5);
+                    dateFinPcVue = resa.date_fin.AddHours(3);
                     dateFinPcVue = dateFinPcVue.AddYears(-1600);
                 }
             }
             else if(resa.date_debut <= DateToday && resa.date_fin >= DateToday) // Manip encore en cours!
             { // si la date est supérieur ou égal à la date d'aujourd'hui
                 // convertir les dates fin et date debut réservation 
-                dateDebutPcVue = resa.date_debut.AddHours(-1);
+                dateDebutPcVue = resa.date_debut.AddHours(-3);
                 dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
 
-                dateFinPcVue = DateToday.AddHours(-1);
+                dateFinPcVue = DateToday;
                 dateFinPcVue = dateFinPcVue.AddYears(-1600);
             }
 
@@ -310,7 +310,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -323,7 +323,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -336,7 +336,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -349,7 +349,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -362,7 +362,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -375,7 +375,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -387,8 +387,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     foreach (var donne in queryyNep)
                     {
                         DataPcVueEquip DataPcV;
-                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans)
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -401,7 +401,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -414,7 +414,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -427,7 +427,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -440,7 +440,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                         //Rajouter dans la liste des données PcVue
                         OnlyData.Add(DataPcV);
                     }
@@ -464,7 +464,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                             {
                                 DataPcVueEquip DataPcV;
                                 // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                                 //Rajouter dans la liste des données PcVue
                                 OnlyData.Add(DataPcV);
                             }
@@ -479,8 +479,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                             foreach (var donne in queryB)
                             {
                                 DataPcVueEquip DataPcV;
-                                // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
-                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600), NomCapteur = donne.Name, Value = donne.Value };
+                                // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans)
+                                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
                                 //Rajouter dans la liste des données PcVue
                                 OnlyData.Add(DataPcV);
                             }

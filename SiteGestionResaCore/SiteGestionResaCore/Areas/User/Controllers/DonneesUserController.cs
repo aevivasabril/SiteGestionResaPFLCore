@@ -104,7 +104,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             return File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
 
-
             #endregion
         }
     }
