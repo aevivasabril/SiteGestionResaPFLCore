@@ -180,7 +180,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             #region Vérifir la quantité de produit
             // vérifier si la quantité de produit a changée
-            if((essa.quantite_produit == null && reVM.QuantProduit != null) || (essa.quantite_produit != null && reVM.QuantProduit == null) ||
+            if((essa.quantite_produit == 0 && reVM.QuantProduit != 0) || (essa.quantite_produit != 0 && reVM.QuantProduit == 0) ||
                 (essa.quantite_produit != reVM.QuantProduit) )
             {
                 isChangeOk = resasUserDB.UpdateQuantiteProd(essa, reVM.QuantProduit);

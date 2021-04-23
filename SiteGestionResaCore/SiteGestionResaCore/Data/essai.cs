@@ -18,7 +18,7 @@ namespace SiteGestionResaCore.Data
         public int manipulateurID { get; set; }
         public string type_produit_entrant { get; set; }
         public string precision_produit { get; set; }
-        public string quantite_produit { get; set; }
+        public int? quantite_produit { get; set; }
         public string provenance_produit { get; set; }
         public string destination_produit { get; set; }
         public bool transport_stlo { get; set; }

@@ -333,7 +333,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return true;
         }
 
-        public bool UpdateQuantiteProd(essai essa, string quantite)
+        public bool UpdateQuantiteProd(essai essa, int? quantite)
         {
             try
             {

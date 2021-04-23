@@ -40,7 +40,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         bool UpdatePrecisionProd(essai essa, string precision);
 
-        bool UpdateQuantiteProd(essai essa, string quantite);
+        bool UpdateQuantiteProd(essai essa, int? quantite);
 
         bool compareProvProd(string provProduit, int SelProvId);
 

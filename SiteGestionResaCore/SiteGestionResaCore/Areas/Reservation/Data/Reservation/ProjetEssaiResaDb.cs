@@ -353,7 +353,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <param name="destProduit"></param>
         /// <param name="TransStlo"></param>
         /// <param name="commentaire"></param>
-        public essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confident, int manipId, int ProdId, string precisionProd, string QuantProd,
+        public essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confident, int manipId, int ProdId, string precisionProd, int? QuantProd,
             int ProvId, int destProduit, string TransStlo, string commentaire)
         {
             // Déclaration des variables

@@ -95,10 +95,6 @@ namespace SiteGestionResaCore.Data.Data
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.quantite_produit)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.raison_refus).IsUnicode(false);
 
                 entity.Property(e => e.raison_suppression).IsUnicode(false);

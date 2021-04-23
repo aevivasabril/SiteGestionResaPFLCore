@@ -36,7 +36,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         projet CreationProjet(string TitreProjet, int typeProjetId, int financId, int orgId,
           int respProjetId, string numProj, int provProj, string description, DateTime dateCreation, utilisateur User);
         
-        essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confidentialite, int manipId, int ProdId, string precisionProd, string QuantProd,
+        essai CreationEssai(projet pr, utilisateur Usr, DateTime myDateTime, string confidentialite, int manipId, int ProdId, string precisionProd, int? QuantProd,
                 int ProvId, int destProduit, string TransStlo, string commentaire);
 
         void UpdateEssai(essai Essai, DateTime dateInf, DateTime dateSup);

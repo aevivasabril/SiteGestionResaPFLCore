@@ -27,7 +27,7 @@ namespace SiteGestionResaCore.Models
         [DisplayName("Précision produit")]
         public string PrecisionProd { get; set; }
         [DisplayName("Quantité produit")]
-        public string QuantiteProd { get; set; }
+        public int? QuantiteProd { get; set; }
         [DisplayName("Provenance produit")]
         public string ProveProd { get; set; }
         [DisplayName("Destination produit")]

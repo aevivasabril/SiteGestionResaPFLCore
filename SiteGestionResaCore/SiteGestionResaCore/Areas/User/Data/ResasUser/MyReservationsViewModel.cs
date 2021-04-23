@@ -74,7 +74,7 @@ namespace SiteGestionResaCore.Areas.User.Data
         /// string Quantité de produit
         /// </summary>
         [Display(Name = "Quantité de produit (Kg, L):")]
-        public string QuantProduit { get; set; }
+        public int? QuantProduit { get; set; }
 
         #region Liste des provenances produits
 
