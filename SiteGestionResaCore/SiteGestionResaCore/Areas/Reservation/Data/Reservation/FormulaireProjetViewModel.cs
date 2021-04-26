@@ -170,7 +170,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// string Quantité de produit
         /// </summary>
-        [Display(Name = "Quantité de produit (Kg, L):")]
+        [Display(Name = "Quantité de produit (Kg):")]
         public int? QuantiteProduit { get; set; }
 
         #region Liste des provenances produits
