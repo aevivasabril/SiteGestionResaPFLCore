@@ -215,7 +215,6 @@
                             <input class="form-control" name="DateDebut" asp-for="@Model.CalendVM.DateDebut" type="date" />
                             @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
                             @Html.ValidationMessageFor(m => m.CalendVM.DateDebut, "", new { @class = "text-danger" })
-                            <!--<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
                         </div>
                         <div class="form-group col-sm-3 col-md-3">
                             <br />

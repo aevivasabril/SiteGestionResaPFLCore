@@ -36,6 +36,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         public CalendrierEquipChildViewModel CalendVM { get; set; }
 
+        /// <summary>
+        /// Mois à sauvegarder pour synchroniser tous les datepicker de la page
+        /// </summary>
+        public int MoisDatePick { get; set; }
+
+        /// <summary>
+        /// Année à sauvegarder pour synchroniser tous les datepicker de la page
+        /// </summary>
+        public int AnneeDatePick { get; set; }
     }
     #endregion
 

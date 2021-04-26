@@ -36,7 +36,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Date debut à afficher pour le planning équipement 
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Le champ 'Du' est requis")]
         [DataType(DataType.Date)]
         //[DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Display(Name = "Du : ")]
@@ -45,7 +45,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Date fin pour afficher le planning equipement 
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Le champ 'Au' est requis")]
         [DataType(DataType.Date)]
         //[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         [Display(Name = "Au : ")]
@@ -54,7 +54,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Date debut pour créneau réservation
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Le champ 'Date Debut' est requis")]
         [DataType(DataType.Date)]
         [Display(Name = "Date Debut : ")]
         public DateTime? DateDebut { get; set; }
@@ -62,7 +62,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Date fin pour créneau réservation
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Le champ 'Date Fin' est requis")]
         [DataType(DataType.Date)]
         [Display(Name = "Date Fin : ")]
         public DateTime? DateFin { get; set; }
@@ -70,11 +70,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Définition créneau pour chaque datepicker (réservation)
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "La selection 'Matin' ou 'après-midi' pour la date début est requis")]
         [Display(Name = "Créneau début")]
         public string DatePickerDebut_Matin { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "La selection 'Matin' ou 'après-midi' pour la date fin est requis")]
         [Display(Name = "Créneau fin")]
         public string DatePickerFin_Matin { get; set; }
 
