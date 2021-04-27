@@ -89,7 +89,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 
             // Obtenir les infos à afficher pour l'essai demandé
             InfosEquipementReserve InfosResa = CalendResaDb.ObtenirInfosResa(id);
-            var valo = pcVueDb.tab_UA_VALO.First();
 
             return PartialView ("_InfosResaCalendrier", InfosResa);
         }
