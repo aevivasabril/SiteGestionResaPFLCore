@@ -188,6 +188,11 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                      where donnees.Chrono >= dateDebut.Ticks
                                      select donnees).Any();
                             break;
+                        case "tab_UA_UFMF":
+                            query = (from donnees in pcVueDb.tab_UA_UFMF
+                                     where donnees.Chrono >= dateDebut.Ticks
+                                     select donnees).Any();
+                            break;
                         default: // vérifier le cas des 2 tables pour l'évaporateur
                             string pattern = @"[\w]+";
                             Regex rg = new Regex(pattern);
@@ -299,7 +304,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
             //Application de la requete pour obtenir les infos selon la table PcVue
             // selon le nom de la table alors obtenir les données et les convertir au format globale
-
+            dateDebutPcVue = new DateTime(2021, 04, 21, 7, 0, 0);
+            dateFinPcVue = new DateTime(2021, 04, 22, 7, 0, 0);
             switch (NamePcVueTable)
             {
                 case "tab_UA_ACT":
@@ -437,6 +443,19 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).ToList();
                     foreach (var donne in queryyValo)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+                case "tab_UA_UFMF":
+                    var queryyUfMf = (from donnees in pcVueDb.tab_UA_UFMF
+                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                      select donnees).ToList();
+                    foreach (var donne in queryyUfMf)
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans

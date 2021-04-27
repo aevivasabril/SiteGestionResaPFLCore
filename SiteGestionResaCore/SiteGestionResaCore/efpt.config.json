@@ -81,8 +81,12 @@
          "Name": "[dbo].[tab_UA_SPI]"
       },
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_VALO]"
+        "HasPrimaryKey": true,
+        "Name": "[dbo].[tab_UA_VALO]"
+      },
+      {
+        "HasPrimaryKey": true,
+        "Name": "[dbo].[tab_UA_UFMF]"
       }
    ],
    "UseDatabaseNames": true,

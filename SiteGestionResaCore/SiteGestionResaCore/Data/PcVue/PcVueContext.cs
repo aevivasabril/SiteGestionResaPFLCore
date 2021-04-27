@@ -34,6 +34,7 @@ namespace SiteGestionResaCore.Data.PcVue
         public virtual DbSet<tab_UA_SEC> tab_UA_SEC { get; set; }
         public virtual DbSet<tab_UA_SPI> tab_UA_SPI { get; set; }
         public virtual DbSet<tab_UA_VALO> tab_UA_VALO { get; set; }
+        public virtual DbSet<tab_UA_UFMF> tab_UA_UFMF { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -310,6 +311,21 @@ namespace SiteGestionResaCore.Data.PcVue
 
                 entity.HasIndex(e => e.Chrono)
                     .HasName("IX_TREND_tab_UA_VALO_CLUSTERED")
+                    .IsClustered();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<tab_UA_UFMF>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
+                    .HasName("IX_TREND_tab_UA_UFMF_PRIMARY")
+                    .IsClustered(false);
+
+                entity.HasIndex(e => e.Chrono)
+                    .HasName("IX_TREND_tab_UA_UFMF_CLUSTERED")
                     .IsClustered();
 
                 entity.Property(e => e.Name)
