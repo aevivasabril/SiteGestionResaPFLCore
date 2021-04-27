@@ -306,7 +306,8 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 238, nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h", zoneID = 3, numGmao = "ACTALIA", mobile = false }, new equipement { id = 239, nom = "Camion collecte", zoneID = 2, numGmao = "", mobile = true }, 
                 new equipement { id = 240, nom = "Bac de saumurage", zoneID = 10, numGmao = "ECUV0015", mobile = false }, new equipement { id = 241, nom = "3 cuves fromagerie 200 Litres", zoneID = 7, numGmao = "ACTALIA", mobile = false }, 
                 new equipement { id = 242, nom = "Hotte PSM", zoneID = 12, numGmao = "", mobile = false }, new equipement { id = 243, nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", zoneID = 8, numGmao = "PILOT0022", mobile = false }, 
-                new equipement { id = 244, nom = "Thermocook", zoneID = 12, numGmao = "", mobile = true } });
+                new equipement { id = 244, nom = "Thermocook", zoneID = 12, numGmao = "", mobile = true }, new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true },
+                new equipement { id = 246, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0074", mobile = true }, new equipement { id = 247, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true } });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
                 new ld_destination { id = 2, nom_destination = "Plan HACCP" },
