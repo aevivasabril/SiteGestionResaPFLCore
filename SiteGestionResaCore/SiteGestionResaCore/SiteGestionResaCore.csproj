@@ -20,11 +20,14 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.11" />
     <PackageReference Include="Mailkit" Version="2.10.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Calendrier\Models\" />
+    <Folder Include="Areas\Enquete\Controllers\" />
+    <Folder Include="Areas\Enquete\Data\" />
+    <Folder Include="Areas\Enquete\Models\" />
     <Folder Include="Areas\User\Views\Shared\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
