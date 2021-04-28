@@ -392,7 +392,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             //Ajouter dans la BDD "essai"  le nouveau essai
             context.essai.Add(Essai);
-
+            // Enregistrer les changements pour pouvoir accèder à l'id essai
+            context.SaveChanges();
+            // Dès que l'on crée un essai alors il faut créer l'enquete pour faciliter l'algorithme (Task pour l'envoie d'enquetes)
+            enquete enq = new enquete { essaiId = Essai.id };
+            context.enquete.Add(enq);
             // Enregistrer les changements
             context.SaveChanges();
 
