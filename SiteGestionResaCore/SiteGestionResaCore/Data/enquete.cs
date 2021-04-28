@@ -8,7 +8,7 @@ namespace SiteGestionResaCore.Data
     public class enquete
     {
         public int id { get; set; }
-        public DateTime date_envoi_enquete { get; set; }
+        public DateTime? date_envoi_enquete { get; set; }
         public int essaiId { get; set; }
         public bool? reponduEnquete { get; set; }
         public string fichierReponse { get; set; }

@@ -38,10 +38,12 @@ namespace SiteGestionResaCore.Data.Data
         {
             modelBuilder.Entity<enquete>(entity =>
             {
-                entity.Property(e => e.date_envoi_enquete)
-                    .IsRequired()
-                    .IsUnicode(false);
-                        
+                entity.Property(e => e.fichierReponse).IsUnicode(false);
+
+                entity.Property(e => e.date_envoi_enquete).HasColumnType("datetime");
+
+                entity.Property(e => e.date_reponse).HasColumnType("datetime");
+
                 entity.HasOne(d => d.essai)
                     .WithOne(p => p.enquete)
                     .HasForeignKey<enquete>(d => d.essaiId)
