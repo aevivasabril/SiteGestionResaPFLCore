@@ -24,6 +24,7 @@ using SiteGestionResaCore.Data.PcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Areas.Equipe.Data.RecupData;
 using SiteGestionResaCore.Areas.Enquete.Data;
+using SiteGestionResaCore.Services.ScheduleTask;
 
 namespace SiteGestionResaCore
 {
@@ -43,6 +44,7 @@ namespace SiteGestionResaCore
             services.AddDbContext<GestionResaContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("SqlServer")));
             services.AddDbContext<PcVueContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("PcVue")));
 
+
             //services.AddScoped<IResaDB, ResaDB>();
             services.AddScoped<IAccountResaDB, AccountResaDB>();
             services.AddScoped<IEquipeResaDb, EquipeResaDb>();
@@ -57,8 +59,12 @@ namespace SiteGestionResaCore
             services.AddScoped<IDonneesUsrDB, DonneesUsrDB>();
             services.AddScoped<IDataAdminDB, DataAdminDB>();
             services.AddScoped<IEnqueteDb, EnqueteDb>();
+            services.AddScoped<IEnqueteTaskDB, EnqueteTaskDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
+            //services.AddScoped<IReportGenerator, ReportGenerator>();
+            services.AddSingleton<IHostedService, EnqueteTask>();
+
 
             services.AddSession();
             services.AddOptions();
