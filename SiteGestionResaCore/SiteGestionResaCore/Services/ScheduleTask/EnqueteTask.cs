@@ -9,8 +9,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 {
     public class EnqueteTask : ScheduledProcessor
     {
-        /*private readonly IEnqueteTaskDB enqueteTaskDB;
-        private readonly IEmailSender emailSender;*/
+        private readonly IEnqueteTaskDB enqueteTaskDB;
+        private readonly IEmailSender emailSender;
 
         public EnqueteTask(IServiceScopeFactory serviceScopeFactory/*, 
             IEnqueteTaskDB enqueteTaskDB,
@@ -18,18 +18,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         {
             /*this.enqueteTaskDB = enqueteTaskDB;
             this.emailSender = emailSender;*/
+            // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
+            emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
+            enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
         }
         protected override string Schedule => "*/1 * * * *";
 
-        public override Task ProcessInScope(IServiceProvider scopeServiceProvider)
+        public override async Task<Task> ProcessInScope(IServiceProvider scopeServiceProvider)
         {
             //var Ok = SendingEmailAsync();
-            Console.WriteLine("ENQUETE 1 : " + DateTime.Now.ToString());
-            return Task.CompletedTask;
-        }
-
-        /*public async Task<bool> SendingEmailAsync()
-        {
             // Retry pour envoi mail
             string message;
 
@@ -49,7 +46,9 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 await emailSender.SendEmailAsync(UsersAdmin[i].Email, "Test task ENQUETE", message);
             }
 
-            return true;
-        }*/
+            Console.WriteLine("ENQUETE 1 : " + DateTime.Now.ToString()); // Fonctionne!
+            return Task.CompletedTask;
+        }
+      
     }
 }

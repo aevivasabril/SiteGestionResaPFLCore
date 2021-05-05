@@ -23,6 +23,6 @@ namespace SiteGestionResaCore.Services
             }
         }
 
-        public abstract Task ProcessInScope(IServiceProvider scopeServiceProvider);
+        public abstract Task<Task> ProcessInScope(IServiceProvider scopeServiceProvider);
     }
 }
