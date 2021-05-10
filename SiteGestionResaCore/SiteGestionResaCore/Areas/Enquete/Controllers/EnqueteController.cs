@@ -22,10 +22,10 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             this.EnqueteDb = EnqueteDb;
             this.emailSender = emailSender;
         }
-        public IActionResult EnqueteSatisfaction()
+        public IActionResult EnqueteSatisfaction(int id)
         {
             //TODO: effacer j'essai de forcer le titre essai pour éviter les erreurs
-            int id = 13;
+            //int idx = 13;
             essai ess = EnqueteDb.ObtenirEssai(id);
             projet pr = EnqueteDb.ObtenirProjet(ess);
 

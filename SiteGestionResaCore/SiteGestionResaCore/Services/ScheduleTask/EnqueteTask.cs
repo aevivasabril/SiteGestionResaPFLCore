@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
@@ -12,41 +14,93 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         private readonly IEnqueteTaskDB enqueteTaskDB;
         private readonly IEmailSender emailSender;
 
-        public EnqueteTask(IServiceScopeFactory serviceScopeFactory/*, 
-            IEnqueteTaskDB enqueteTaskDB,
-            IEmailSender emailSender*/): base(serviceScopeFactory)
+        public EnqueteTask(IServiceScopeFactory serviceScopeFactory): base(serviceScopeFactory)
         {
-            /*this.enqueteTaskDB = enqueteTaskDB;
-            this.emailSender = emailSender;*/
             // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
             emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
         }
         protected override string Schedule => "*/1 * * * *";
+        //protected override string Schedule => "0 23 * * *";
 
         public override async Task<Task> ProcessInScope(IServiceProvider scopeServiceProvider)
         {
-            //var Ok = SendingEmailAsync();
-            // Retry pour envoi mail
-            string message;
+            List<enquete> ListEnquetesFirstTime = new List<enquete>();
+            List<enquete> ListEnquetesXRelance = new List<enquete>();
 
+            string message;
             IList<utilisateur> UsersAdmin = new List<utilisateur>();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
 
-            message = @"<html>
-                            <body> 
-                            <p> Bonjour, <br><br> TEST pour vérifier l'envoi de mail par tâche planifié!! : <b> </b> (Essai N°: ) " +
-                             " c'est tout"
-                            + "</p><p>L'équipe PFL! </p> </body></html>";
+            #region Rajouter les enquetes pour les essais dont elle a pas été crée automatiquement (Environnement Prod) TODO: A effacer une fois la MAJ est faite en Prod
 
-            UsersAdmin = await enqueteTaskDB.GetUtilisateurSuperAdminAsync();
+            bool isOK = enqueteTaskDB.AreEnquetesCreated();
 
-            for (int i = 0; i < UsersAdmin.Count(); i++)
+            #endregion
+
+            #region Reperer les enquetes dont l'envoi se fait pour la première fois
+
+            ListEnquetesFirstTime = enqueteTaskDB.GetEnquetesXFirstTime();
+
+            #region Envoi mail pour remplissage enquete
+
+            foreach(var enque in ListEnquetesFirstTime)
             {
+                var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
+                var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
 
-                await emailSender.SendEmailAsync(UsersAdmin[i].Email, "Test task ENQUETE", message);
+                //string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+
+                string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+
+                message = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> Vous recevez cette enquête suite à votre essai : <b> </b>  N°" + essai.id + ": <strong>"+ essai.titreEssai + "</strong> (Projet " + proj.num_projet +
+                            ": "+ proj.titre_projet+ "). Pour répondre à cette enquete: "+ "<a href='[CALLBACK_URL]'>Veuillez cliquer ici</a>.<br/> " +
+                                "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
+                            + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
+                    
+                await emailSender.SendEmailAsync(proj.mailRespProjet, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+
+                // Mettre à jour la date-envoi_enquete
+                enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
             }
 
-            Console.WriteLine("ENQUETE 1 : " + DateTime.Now.ToString()); // Fonctionne!
+            #endregion
+
+            #endregion
+
+
+            #region Relancer l'enquête de satisfaction si non répondu après 7 jours 
+
+            ListEnquetesXRelance = enqueteTaskDB.GetEnquetesPourRelance();
+
+            #region Envoi mail pour remplissage enquete
+
+            foreach (var enque in ListEnquetesXRelance)
+            {
+                var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
+                var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
+
+                //string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+
+                string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+
+                message = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> Vous recevez cette enquête suite à votre essai : <b> </b>  N°" + essai.id + ": <strong>" + essai.titreEssai + "</strong> (Projet " + proj.num_projet +
+                            ": " + proj.titre_projet + "). Pour répondre à cette enquete: " + "<a href='[CALLBACK_URL]'>Veuillez cliquer ici</a>.<br/> " +
+                                "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
+                            + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
+
+                await emailSender.SendEmailAsync(proj.mailRespProjet, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                // Mettre à jour la date-envoi_enquete
+                enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
+            }
+
+            #endregion
+
+            #endregion
+
             return Task.CompletedTask;
         }
       
