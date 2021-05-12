@@ -8,8 +8,14 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 {
     public interface IEnqueteDb
     {
-        public essai ObtenirEssai(int essaiID);
+        essai ObtenirEssai(int essaiID);
 
-        public projet ObtenirProjet(essai ess);
+        projet ObtenirProjet(essai ess);
+
+        //essai ObtenirEssaiXEnquete(int IdEnquete);
+
+        void UpdateEnqueteWithResponse(string reponse, enquete enquete);
+
+        enquete ObtenirEnqueteFromEssai(int IdEssai);
     }
 }

@@ -17,11 +17,11 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region Méthodes
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Logiciel de réservation: ")]
         public int LogicielMeth { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Accesibilité/Clarté des procédures (équipements, nettoyage/désinfection, accès à la PFL,...: ")]
         public int AccessibiliteMeth { get; set; }
 
@@ -31,15 +31,15 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region Matériels (outils de travail)
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Disponibilité: ")]
         public int DisponibiliteMat { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Opérationnabilité: ")]
         public int OperationnabiliteMat { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Maintenance: ")]
         public int MaintenanceMat { get; set; }
 
@@ -49,23 +49,23 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region Main d'oeuvre
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Disponibilité: ")]
         public int DisponibiliteMain { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Compétence: ")]
         public int CompetenceMain { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Formation/Tutorat: ")]
         public int FormationMain { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        //[Required(ErrorMessage = "Champ requis")]
         [Display(Name = "Cochez cette case si vous n'êtes pas concerné par la Formation/Tutorat! ")]
-        public bool IsConcerneFormationMain { get; set; }
+        public bool IsNotConcerneFormationMain { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Reactivité: ")]
         public int ReactiviteMain { get; set; }
 
@@ -75,15 +75,15 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region Milieu
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Hygiène/Securité/Ergonomie/Réglementation: ")]
         public int HygieneMil { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Confidentialité: ")]
         public int ConfidentMil { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Espace de travail: ")]
         public int EspaceMil { get; set; }
 
@@ -93,15 +93,15 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region Matière
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Approvisionnement (lait produits laitières et produits de nettoyage): ")]
         public int ApprovisioMatiere { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Energie et fluides: ")]
         public int EnergieMatiere { get; set; }
 
-        [Required(ErrorMessage = "Champ requis")]
+        [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Petit matériel et consommable (essuis main, charlotte, surchaussures,...: ")]
         public int MaterielMatiere { get; set; }
 

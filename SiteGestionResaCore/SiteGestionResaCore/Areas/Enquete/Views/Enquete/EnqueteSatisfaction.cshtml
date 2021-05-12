@@ -6,7 +6,9 @@
 }
 
 <hr />
-<form asp-action="EnvoyerEnquete" asp-controller="Enquete" asp-route-id="@Model.IdEnquete" asp-area="Enquete" method="post">
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<form asp-action="EnvoyerEnquete" asp-controller="Enquete" asp-route-id="@Model.IdEssai" asp-area="Enquete" method="post">
+    @Html.AntiForgeryToken()
     <div class="form-group">
         <div class="row">
             <div class="col-md-1">
@@ -219,9 +221,11 @@
                 </div>
                 <div class="row">
                     @Html.LabelFor(m => m.FormationMain, new { @class = "col-md-2 control-label" })
-                    @Html.CheckBoxFor(m => m.IsConcerneFormationMain, new { @class = "col-md-1 control-label" })
-                    <strong style="color:red">@Html.LabelFor(m => m.IsConcerneFormationMain, new { @class = "col-md-12 control-label" })</strong>
                     @Html.ValidationMessageFor(m => m.FormationMain, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    @Html.CheckBoxFor(m => m.IsNotConcerneFormationMain, new { @class = "col-md-1 control-label" })
+                    <strong style="color:red">@Html.LabelFor(m => m.IsNotConcerneFormationMain, new { @class = "col-md-12 control-label" })</strong>
                 </div>
                 <div class="row">
                     <div class="col-3">
@@ -434,7 +438,7 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <input type="submit" class="btn btn-outline-success" value="ENVOYER" />    
+        <input type="submit" class="btn btn-outline-success" value="ENVOYER REPONSES ENQUETE" />
     </div>
 </form>
 

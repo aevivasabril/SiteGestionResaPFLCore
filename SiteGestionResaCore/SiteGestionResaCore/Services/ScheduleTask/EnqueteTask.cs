@@ -20,8 +20,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
         }
-        protected override string Schedule => "*/1 * * * *";
-        //protected override string Schedule => "0 23 * * *";
+        //protected override string Schedule => "*/4 * * * *";
+        protected override string Schedule => "0 23 * * *";
 
         public override async Task<Task> ProcessInScope(IServiceProvider scopeServiceProvider)
         {
@@ -29,7 +29,6 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             List<enquete> ListEnquetesXRelance = new List<enquete>();
 
             string message;
-            IList<utilisateur> UsersAdmin = new List<utilisateur>();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
 
             #region Rajouter les enquetes pour les essais dont elle a pas été crée automatiquement (Environnement Prod) TODO: A effacer une fois la MAJ est faite en Prod
 
@@ -48,9 +47,9 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
 
-                //string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
-                string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+                //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
                 message = @"<html>
                             <body> 
@@ -81,9 +80,9 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
 
-                //string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
-                string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+                //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
                 message = @"<html>
                             <body> 
