@@ -426,7 +426,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             foreach (var r in resas)
             {
                 InfosResasEquipement infoRes = new InfosResasEquipement() {
-                    IdResa = r.id, DateDebut = r.date_debut, DateFin = r.date_debut,
+                    IdResa = r.id, DateDebut = r.date_debut, DateFin = r.date_fin,
                     NomEquipement = resaDB.equipement.First(e => e.id == r.equipementID).nom, 
                     ZoneEquipement = (from zon in resaDB.zone
                                       from equi in resaDB.equipement

@@ -30,16 +30,16 @@
                     </thead>
                     <tbody>
                         @foreach (var x in Model.ResasUser)
-                    {
-                        <tr>
-                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
-                            <td>@x.TitreProj</td>
-                            <td>@x.NumProjet</td>
-                            <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
-                            <td>@x.DateCreation</td>
-                            <td>@x.StatusEssai</td>
-                        </tr>
-                    }
+                        {
+                            <tr>
+                                <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
+                                <td>@x.TitreProj</td>
+                                <td>@x.NumProjet</td>
+                                <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
+                                <td>@x.DateCreation</td>
+                                <td>@x.StatusEssai</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
