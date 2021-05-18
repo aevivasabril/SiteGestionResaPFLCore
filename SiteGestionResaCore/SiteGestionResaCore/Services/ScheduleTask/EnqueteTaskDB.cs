@@ -35,14 +35,17 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             foreach (var enq in enquetesNonEnvoyées)
             {
                 // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
-                var esssai = resaDb.essai.First(e => e.id == enq.essaiId);
-                // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
-                List<reservation_projet> reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
-                // recuperer la premiere date que est la plus récente par rapport à aujourd'hui
-                if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
+                var esssai = resaDb.essai.First(e => e.id == enq.essaiId );
+                if(esssai.resa_refuse != true && esssai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
                 {
-                    enquetesToReturn.Add(enq);
-                }
+                    // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
+                    List<reservation_projet> reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
+                    // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
+                    if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
+                    {
+                        enquetesToReturn.Add(enq);
+                    }
+                }                
             }
 
             return enquetesToReturn;
