@@ -26,6 +26,7 @@
                             <th scope="col">Equipements réservés</th>
                             <th scope="col">Date création</th>
                             <th scope="col">Status essai</th>
+                            <th scope="col">Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,14 @@
                                 <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
                                 <td>@x.DateCreation</td>
                                 <td>@x.StatusEssai</td>
+                                <td>
+                                    @if(@x.IsCanceledAutorised)
+                                    {
+                                        <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerResa" asp-area="User" asp-controller="ResasUser" asp-route-id="@x.IdEssai">
+                                            <span class="fas fa-trash"></span>
+                                        </a>
+                                    }                                    
+                                </td>
                             </tr>
                         }
                     </tbody>

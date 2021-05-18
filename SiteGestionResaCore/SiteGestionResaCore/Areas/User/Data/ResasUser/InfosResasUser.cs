@@ -16,6 +16,8 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         public string NumProjet { get; set; }
         public string TitreProj { get; set; }
+
+        public bool IsCanceledAutorised { get; set; }
         
     }
 }

@@ -60,6 +60,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         break;
                 }
 
+                // Vérifier si l'essai est supprimable
+                bool ReadyToSupp = IsEssaiReadyToSupp(i.id);
+
                 // Vérifier si il faut afficher le partial view infos essai pour un des essais
                 if(IdEssai != 0) // signifie que une des vues infos essai ou infos réservation devra être affichée
                 {
@@ -67,27 +70,28 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                     {
                         infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai, OpenReservations = "none"};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = OpenPartialEssai, OpenReservations = "none", IsCanceledAutorised = ReadyToSupp};
 
                     }else if (i.id == IdEssai && OpenReservations != null)
                     {
                         infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = OpenReservations};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations = OpenReservations, IsCanceledAutorised = ReadyToSupp};
                     }
                     else
                     {
                         infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none", IsCanceledAutorised = ReadyToSupp};
                     }
                 }
                 else
                 {
                     infos = new InfosResasUser { TitreEssai = i.titreEssai, DateCreation = i.date_creation,
                                         IdEssai = i.id, NumProjet = proj.num_projet,
-                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none"};
+                                        TitreProj = proj.titre_projet, StatusEssai = StatusEssai, OpenPartialEssai = "none", OpenReservations="none", IsCanceledAutorised = ReadyToSupp};
                 }
+
                 List.Add(infos);
                 //List = List.OrderByDescending(x => x.DateCreation).ToList();
             }
@@ -458,6 +462,52 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 return false;
             }
             return true;
+        }
+
+        private bool IsEssaiReadyToSupp(int IdEssai)
+        {
+            DateTime dateBegin = new DateTime();
+
+            var essai = resaDB.essai.First(e => e.id == IdEssai);
+            // si l'essai est refusé ou annulé alors essai non modifiable
+            if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
+                return false;
+            else // Essais modifiables mais uniquement si l'essai n'est pas passé
+            {
+                // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
+                var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
+
+                bool IsFirstSearch = true;
+                if (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                {
+                    // la date début de l'essai est déjà calculé
+                    dateBegin = essai.date_inf_confidentiel.Value;
+                }
+                else
+                {
+                    foreach (var x in resas)
+                    {
+
+                        // Pour tous les autres cas, retrouver la date à laquel commence l'essai (date la plus récente)
+                        if (IsFirstSearch == true)
+                        {
+                            dateBegin = x.date_debut;
+                            IsFirstSearch = false;
+                        }
+                        else
+                        {
+                            if (dateBegin > x.date_debut)
+                                dateBegin = x.date_debut;
+                        }
+                    }
+                }
+                TimeSpan diff = dateBegin - DateTime.Now;
+                 
+                if (diff.Days>=0) // Permettre de supprimer une réservation maximum le même jour du debut 
+                    return true;
+                else
+                    return false;
+            }
         }
     }
 }
