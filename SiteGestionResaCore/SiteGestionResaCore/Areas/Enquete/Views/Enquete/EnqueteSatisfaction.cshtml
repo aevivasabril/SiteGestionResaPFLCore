@@ -24,7 +24,7 @@
             <h4>Cette enquête s'inscrit dans la démarche de l'assurance qualité élaborée à partir de la méthode des 5M.</h4>
         </div>
         <div class="row justify-content-center">
-            <h5>Chacune des 5 parties doit être notée de 1 <h5 style="color:red"> (très insatisfait) </h5> <h5> à 4 </h5><h5 style="color:green"> (très satisfait)</h5></h5>
+            <h5>Chacune des 5 parties doit être notée de 1 <h5 style="color:red"> (pas satisfait) </h5> <h5> à 4 </h5><h5 style="color:green"> (très satisfait)</h5></h5>
         </div>
     </div>
     <hr />
@@ -35,7 +35,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    @Html.LabelFor(m => m.LogicielMeth, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.LogicielMeth, new { @class = "col-md-10 control-label" })
                     @Html.ValidationMessageFor(m => m.LogicielMeth, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.AccessibiliteMeth, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.AccessibiliteMeth, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.AccessibiliteMeth, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="row">
-                    @Html.LabelFor(m => m.CommentMéthodes, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.CommentMéthodes, new { @class = "col-md-10 control-label" })
                     @Html.TextBoxFor(m => m.CommentMéthodes, new { @class = "col-md-10 offset-1 form-control" })
                     @Html.ValidationMessageFor(m => m.CommentMéthodes, "", new { @class = "text-danger" })
                 </div>
@@ -95,7 +95,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    @Html.LabelFor(m => m.DisponibiliteMat, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.DisponibiliteMat, new { @class = "col-md-10 control-label" })
                     @Html.ValidationMessageFor(m => m.DisponibiliteMat, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -117,7 +117,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.OperationnabiliteMat, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.OperationnabiliteMat, new { @class = "col-md-10 control-label" })
                     @Html.ValidationMessageFor(m => m.OperationnabiliteMat, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -139,8 +139,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.MaintenanceMat, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.MaintenanceMat, new { @class = "col-md-10 control-label" })
                     @Html.ValidationMessageFor(m => m.MaintenanceMat, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    @Html.CheckBoxFor(m => m.IsNotConcerneMaintMat, new { @class = "col-md-1 control-label" })
+                    <strong style="color:red">@Html.LabelFor(m => m.IsNotConcerneMaintMat, new { @class = "col-md-12 control-label" })</strong>
                 </div>
                 <div class="row">
                     <div class="col-3">
@@ -169,14 +173,14 @@
         </div>
     </div>
 
-    <div class="form-group">
+    @*<div class="form-group">
         <div class="card">
             <div class="card-header navbar-inra">
                 <strong>3. Main d'oeuvre</strong>
             </div>
             <div class="card-body">
                 <div class="row">
-                    @Html.LabelFor(m => m.DisponibiliteMain, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.DisponibiliteMain, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.DisponibiliteMain, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -198,7 +202,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.CompetenceMain, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.CompetenceMain, new { @class = "col-md-10 control-label" })
                     @Html.ValidationMessageFor(m => m.CompetenceMain, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -220,7 +224,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.FormationMain, new { @class = "col-md-2 control-label" })
+                    @Html.LabelFor(m => m.FormationMain, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.FormationMain, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -246,7 +250,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.ReactiviteMain, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.ReactiviteMain, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.ReactiviteMain, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -268,22 +272,22 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.CommentaireMain, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.CommentaireMain, new { @class = "col-md-12 control-label" })
                     @Html.TextBoxFor(m => m.CommentaireMain, new { @class = "col-md-10 offset-1 form-control" })
                     @Html.ValidationMessageFor(m => m.CommentaireMain, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@
 
     <div class="form-group">
         <div class="card">
             <div class="card-header navbar-inra">
-                <strong>4. Milieu</strong>
+                <strong>3. Milieu</strong>
             </div>
             <div class="card-body">
                 <div class="row">
-                    @Html.LabelFor(m => m.HygieneMil, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.HygieneMil, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.HygieneMil, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -305,7 +309,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.ConfidentMil, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.ConfidentMil, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.ConfidentMil, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -327,29 +331,73 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.EspaceMil, new { @class = "col-md-2 control-label" })
-                    @Html.ValidationMessageFor(m => m.EspaceMil, "", new { @class = "text-danger" })
+                    @Html.LabelFor(m => m.SecureMil, new { @class = "col-md-12 control-label" })
+                    @Html.ValidationMessageFor(m => m.SecureMil, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EspaceMil, "1")
+                        @Html.RadioButtonFor(m => m.SecureMil, "1")
                         <label class="col-md-10 control-label">1</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EspaceMil, "2")
+                        @Html.RadioButtonFor(m => m.SecureMil, "2")
                         <label class="col-md-5 control-label">2</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EspaceMil, "3")
+                        @Html.RadioButtonFor(m => m.SecureMil, "3")
                         <label class="col-md-5 control-label">3</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EspaceMil, "4")
+                        @Html.RadioButtonFor(m => m.SecureMil, "4")
                         <label class="col-md-5 control-label">4</label>
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.CommentaireMil, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.MaterielMil, new { @class = "col-md-12 control-label" })
+                    @Html.ValidationMessageFor(m => m.MaterielMil, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.MaterielMil, "1")
+                        <label class="col-md-10 control-label">1</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.MaterielMil, "2")
+                        <label class="col-md-5 control-label">2</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.MaterielMil, "3")
+                        <label class="col-md-5 control-label">3</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.MaterielMil, "4")
+                        <label class="col-md-5 control-label">4</label>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.EnergieMil, new { @class = "col-md-12 control-label" })
+                    @Html.ValidationMessageFor(m => m.MaterielMil, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.EnergieMil, "1")
+                        <label class="col-md-10 control-label">1</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.EnergieMil, "2")
+                        <label class="col-md-5 control-label">2</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.EnergieMil, "3")
+                        <label class="col-md-5 control-label">3</label>
+                    </div>
+                    <div class="col-3">
+                        @Html.RadioButtonFor(m => m.EnergieMil, "4")
+                        <label class="col-md-5 control-label">4</label>
+                    </div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(m => m.CommentaireMil, new { @class = "col-md-12 control-label" })
                     @Html.TextBoxFor(m => m.CommentaireMil, new { @class = "col-md-10 offset-1 form-control" })
                     @Html.ValidationMessageFor(m => m.CommentaireMil, "", new { @class = "text-danger" })
                 </div>
@@ -360,12 +408,16 @@
     <div class="form-group">
         <div class="card">
             <div class="card-header navbar-inra">
-                <strong>5. Matière</strong>
+                <strong>4. Matière</strong>
             </div>
             <div class="card-body">
                 <div class="row">
-                    @Html.LabelFor(m => m.ApprovisioMatiere, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.ApprovisioMatiere, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.ApprovisioMatiere, "", new { @class = "text-danger" })
+                </div>
+                <div class="row">
+                    @Html.CheckBoxFor(m => m.IsNotConcerneApproviMat, new { @class = "col-md-1 control-label" })
+                    <strong style="color:red">@Html.LabelFor(m => m.IsNotConcerneApproviMat, new { @class = "col-md-12 control-label" })</strong>
                 </div>
                 <div class="row">
                     <div class="col-3">
@@ -386,29 +438,29 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.EnergieMatiere, new { @class = "col-md-8 control-label" })
-                    @Html.ValidationMessageFor(m => m.EnergieMatiere, "", new { @class = "text-danger" })
+                    @Html.LabelFor(m => m.NettoMatiere, new { @class = "col-md-12 control-label" })
+                    @Html.ValidationMessageFor(m => m.NettoMatiere, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EnergieMatiere, "1")
+                        @Html.RadioButtonFor(m => m.NettoMatiere, "1")
                         <label class="col-md-10 control-label">1</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EnergieMatiere, "2")
+                        @Html.RadioButtonFor(m => m.NettoMatiere, "2")
                         <label class="col-md-5 control-label">2</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EnergieMatiere, "3")
+                        @Html.RadioButtonFor(m => m.NettoMatiere, "3")
                         <label class="col-md-5 control-label">3</label>
                     </div>
                     <div class="col-3">
-                        @Html.RadioButtonFor(m => m.EnergieMatiere, "4")
+                        @Html.RadioButtonFor(m => m.NettoMatiere, "4")
                         <label class="col-md-5 control-label">4</label>
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.MaterielMatiere, new { @class = "col-md-8 control-label" })
+                    @Html.LabelFor(m => m.MaterielMatiere, new { @class = "col-md-12 control-label" })
                     @Html.ValidationMessageFor(m => m.MaterielMatiere, "", new { @class = "text-danger" })
                 </div>
                 <div class="row">
@@ -430,7 +482,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    @Html.LabelFor(m => m.CommentaireMatiere, new { @class = "col-md-6 control-label" })
+                    @Html.LabelFor(m => m.CommentaireMatiere, new { @class = "col-md-12 control-label" })
                     @Html.TextBoxFor(m => m.CommentaireMatiere, new { @class = "col-md-10 offset-1 form-control" })
                     @Html.ValidationMessageFor(m => m.CommentaireMatiere, "", new { @class = "text-danger" })
                 </div>
