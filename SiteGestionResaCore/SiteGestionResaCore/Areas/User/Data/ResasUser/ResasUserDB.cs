@@ -140,9 +140,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         }
                     }
                 }
-                TimeSpan diff = dateBegin - DateTime.Now;
-                // vérifier si la date la plus récente a lieu plus tard 21h avant
-                if ( (diff.Days >= 1) || (diff.Days == 0 && diff.Hours >= 21) ) // si la difference des jours est superieur à un ou à 21h alors c'est un essai modifiable
+                TimeSpan diff = DateTime.Today - dateBegin;
+                // Il faut que l'utilisateur puisse modifier la réservation 2 jours après début de l'essai s'il a un pb d'approvissionement
+                if (diff.Days <= 2)  // 
                     return true;
                 else
                     return false;
@@ -464,6 +464,34 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return true;
         }
 
+        public bool AnnulerEssai(int IdEssai, string RaisonAnnulation)
+        {
+            bool IsChangeOk = false;
+
+            int retry = 0;
+
+            var essai = resaDB.essai.First(e => e.id == IdEssai);
+            essai.status_essai = EnumStatusEssai.Canceled.ToString();
+            essai.date_validation = DateTime.Now;
+            essai.resa_supprime = true;
+            essai.raison_suppression = RaisonAnnulation;
+            while (retry < 3 && IsChangeOk != true)
+            {
+                try
+                {
+                    resaDB.SaveChanges();
+                    IsChangeOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Erreur lors de la validation de l'essai N° :" + IdEssai);
+                    retry++;
+                }
+            }
+
+            return IsChangeOk;
+        }
+
         private bool IsEssaiReadyToSupp(int IdEssai)
         {
             DateTime dateBegin = new DateTime();
@@ -501,9 +529,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         }
                     }
                 }
-                TimeSpan diff = dateBegin - DateTime.Now;
+                TimeSpan diff = DateTime.Today - dateBegin;
                  
-                if (diff.Days>=0) // Permettre de supprimer une réservation maximum le même jour du debut 
+                if (diff.Days<2) // Permettre de supprimer une réservation maximum 2 jours après le début de l'essai
                     return true;
                 else
                     return false;

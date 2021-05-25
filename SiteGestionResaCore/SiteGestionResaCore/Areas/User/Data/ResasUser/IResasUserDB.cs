@@ -59,5 +59,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         reservation_projet ObtenirResa(int IdReservation);
 
         bool SupprimerResa(int idResa);
+
+        bool AnnulerEssai(int IdEssai, string RaisonAnnulation);
     }
 }

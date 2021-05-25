@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="Areas\User\Models\**" />
+    <Compile Remove="Areas\User\Views\Shared\**" />
     <Content Remove="Areas\User\Models\**" />
+    <Content Remove="Areas\User\Views\Shared\**" />
     <EmbeddedResource Remove="Areas\User\Models\**" />
+    <EmbeddedResource Remove="Areas\User\Views\Shared\**" />
     <None Remove="Areas\User\Models\**" />
+    <None Remove="Areas\User\Views\Shared\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,7 +31,6 @@
   <ItemGroup>
     <Folder Include="Areas\Calendrier\Models\" />
     <Folder Include="Areas\Enquete\Models\" />
-    <Folder Include="Areas\User\Views\Shared\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 
