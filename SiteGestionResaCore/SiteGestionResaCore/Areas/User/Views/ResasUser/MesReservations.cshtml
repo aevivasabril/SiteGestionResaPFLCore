@@ -26,20 +26,29 @@
                             <th scope="col">Equipements réservés</th>
                             <th scope="col">Date création</th>
                             <th scope="col">Status essai</th>
+                            <th scope="col">Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var x in Model.ResasUser)
-                    {
-                        <tr>
-                            <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
-                            <td>@x.TitreProj</td>
-                            <td>@x.NumProjet</td>
-                            <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
-                            <td>@x.DateCreation</td>
-                            <td>@x.StatusEssai</td>
-                        </tr>
-                    }
+                        {
+                            <tr>
+                                <td><a asp-action="OuvrirEssaiXModif" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">@x.TitreEssai</a></td>
+                                <td>@x.TitreProj</td>
+                                <td>@x.NumProjet</td>
+                                <td><a asp-action="RecapEquipements" asp-controller="ResasUser" asp-area="User" asp-route-id="@x.IdEssai">Equipements réservés</a></td>
+                                <td>@x.DateCreation</td>
+                                <td>@x.StatusEssai</td>
+                                <td>
+                                    @if (@x.IsCanceledAutorised)
+                                    {
+                                        <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="AnnulerEssai" asp-area="User" asp-controller="ResasUser" asp-route-id="@x.IdEssai">
+                                            <span class="fas fa-trash"></span>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -260,7 +269,7 @@
                     }
                     else
                     {
-                        <p class="text-center" style="color:orange"><strong>Oups! trop tard! <span class="fas fa-sad-tear"></span> la modification des réservations équipements doit être fait minimum une journée avant...</strong></p>
+                        <p class="text-center" style="color:orange"><strong>Oups! Vous ne pouvez pas modifier cet essai car le delai de modification est dépassé ou car le status essai ne le permet pas</strong></p>
                     }
                     <hr />
                 </form>
@@ -269,17 +278,55 @@
     </div>
 </div>
 
-@*<h6 class="text-right"><strong>Note:</strong> vous ne pouvez pas modifier les essais déjà passés ou les essais commençant aujourd'hui</h6>*@
+<!-- Modal pour affichage de la confirmation "Refuser"-->
+<form asp-action="AnnulerEssai" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.IdEss" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="AnnulerEss" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Annulation Essai</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Etês-vous sûr de vouloir annuler votre essai N° @Model.IdEss
+                        "@Model.TitreEssai"?
+                    </p>
+                    <p>Indiquez le(s) raison(s) de l'annulation: </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.RaisonAnnulation, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.RaisonAnnulation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-    <script>
+<script>
         @{
             if (ViewBag.ModalState == null)
             {
                 ViewBag.ModalState = "hide";
             }
+            if (ViewBag.modalAnnul == null)
+            {
+                ViewBag.modalAnnul = "hide";
+            }
         }
         $('#EssaiModal').modal('@ViewBag.ModalState');
-    </script>
+        $('#AnnulerEss').modal('@ViewBag.modalAnnul');
+</script>
 }

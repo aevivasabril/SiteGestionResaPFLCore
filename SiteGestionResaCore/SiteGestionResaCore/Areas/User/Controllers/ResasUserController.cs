@@ -359,5 +359,59 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             return View("ModifierEquipResa", vm);
         }
+
+        public async Task<IActionResult> AnnulerEssaiAsync(int id) // id essai
+        {
+
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+
+            // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
+            MyReservationsViewModel vm = new MyReservationsViewModel()
+            {
+                ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0), 
+                IdEss = id,
+                TitreEssai = resasUserDB.ObtenirEssaiPourModif(id).titreEssai
+            };
+            ViewBag.modalAnnul = "show";
+            return View("MesReservations", vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AnnulerEssaiAsync(MyReservationsViewModel vm, int id) // id essai
+        {
+            // REMOVE les champs non concernés pour cette partie ModelState
+            ModelState.Remove("TitreEssai");
+            ModelState.Remove("TranspSTLO");
+            ModelState.Remove("SelecManipulateurID");
+
+            if (ModelState.IsValid)
+            {
+                bool IsAnnulationOk = resasUserDB.AnnulerEssai(id, vm.RaisonAnnulation);
+                if (IsAnnulationOk)
+                {
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Essai supprimé avec succès! ";
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Problème pour annuler la réservation. Veuillez essayer ultérieurement");
+                }
+            }
+            else
+            {              
+
+                ViewBag.modalAnnul = "show";
+            }
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+
+            // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
+            vm.ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0);
+            vm.IdEss = id;
+            vm.TitreEssai = resasUserDB.ObtenirEssaiPourModif(id).titreEssai;
+
+            return View("MesReservations", vm);
+        }
     }
 }

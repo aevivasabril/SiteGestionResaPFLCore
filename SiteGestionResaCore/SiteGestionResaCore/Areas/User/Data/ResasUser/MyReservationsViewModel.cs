@@ -126,5 +126,14 @@ namespace SiteGestionResaCore.Areas.User.Data
         }
 
         //public List<InfosResasEquipement> EquipementsReserves { get; set; }
+
+
+        private string _raisonAnnulation;
+        [Required(ErrorMessage = "Champ 'Raison d'annulation' requis")]
+        public string RaisonAnnulation
+        {
+            get { return _raisonAnnulation; }
+            set { _raisonAnnulation = value; }
+        }
     }
 }
