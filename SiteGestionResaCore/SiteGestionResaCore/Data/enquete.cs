@@ -13,6 +13,7 @@ namespace SiteGestionResaCore.Data
         public bool? reponduEnquete { get; set; }
         public string fichierReponse { get; set; }
         public DateTime? date_reponse { get; set; }
+        public DateTime? date_premier_envoi { get; set; }
 
         public virtual essai essai { get; set; }
 

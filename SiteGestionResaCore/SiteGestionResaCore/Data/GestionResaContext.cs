@@ -42,6 +42,8 @@ namespace SiteGestionResaCore.Data.Data
 
                 entity.Property(e => e.date_envoi_enquete).HasColumnType("datetime");
 
+                entity.Property(e => e.date_premier_envoi).HasColumnType("datetime");
+
                 entity.Property(e => e.date_reponse).HasColumnType("datetime");
 
                 entity.HasOne(d => d.essai)
