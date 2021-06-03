@@ -30,8 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Calendrier\Models\" />
-    <Folder Include="Areas\Enquete\Data\PostEnquete\" />
-    <Folder Include="Areas\Enquete\Views\PostEnquete\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
 

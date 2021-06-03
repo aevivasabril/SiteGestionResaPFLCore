@@ -91,18 +91,18 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             // Vérification Rubrique 2
             if ((vm.DisponibiliteMat < 3 || vm.OperationnabiliteMat < 3 || (vm.MaintenanceMat < 3 && vm.IsNotConcerneMaintMat == false)) && vm.CommentMateriels == null)
             {
-                ModelState.AddModelError("CommentMateriels", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfacente");
+                ModelState.AddModelError("CommentMateriels", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfaisant");
                 PointBas = true;
             }
             // Vérification Rubrique 3
             if ((vm.HygieneMil < 3 || vm.ConfidentMil < 3 || vm.SecureMil < 3 || vm.MaterielMil < 3 || vm.EnergieMil < 3) && vm.CommentaireMil == null)
             {
-                ModelState.AddModelError("CommentMateriels", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfacente");
+                ModelState.AddModelError("CommentMateriels", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfaisant");
                 PointBas = true;
             }
             if (( (vm.ApprovisioMatiere < 3 && vm.IsNotConcerneApproviMat == false) || vm.NettoMatiere < 3 || vm.MaterielMatiere < 3) && vm.CommentaireMatiere == null)
             {
-                ModelState.AddModelError("CommentaireMatiere", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfacente");
+                ModelState.AddModelError("CommentaireMatiere", "Merci d'ajouter un commentaire avec la cause suite à votre appreciation pas satisfaisant");
                 PointBas = true;
             }
 
@@ -117,8 +117,8 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             {
 
                 ReponseBalise = "<1M1>" + vm.LogicielMeth + "</1M1><1M2>" + vm.AccessibiliteMeth + "</1M2><1Mcomm>" + vm.CommentMéthodes +
-                "</1Mcomm><2M1>" + vm.DisponibiliteMat + "</2M1><2M2>" + vm.OperationnabiliteMat + "</2M2><2M3>" + vm.MaintenanceMat + "</2M3><2M3bit>" + vm.IsNotConcerneMaintMat + "</ 2M3bit ><2Mcomm>" + vm.CommentMateriels +
-                "</2Mcomm><3M1>" + vm.HygieneMil + "</3M1><3M2>" + vm.ConfidentMil + "</3M2 ><3M3>" + vm.SecureMil + "</3M3><3M4>" + vm.MaterielMil + "</3M4><3M5>" + vm.EnergieMil + "</3M5><3Mcomm>" + vm.CommentaireMil +
+                "</1Mcomm><2M1>" + vm.DisponibiliteMat + "</2M1><2M2>" + vm.OperationnabiliteMat + "</2M2><2M3>" + vm.MaintenanceMat + "</2M3><2M3bit>" + vm.IsNotConcerneMaintMat + "</2M3bit><2Mcomm>" + vm.CommentMateriels +
+                "</2Mcomm><3M1>" + vm.HygieneMil + "</3M1><3M2>" + vm.ConfidentMil + "</3M2><3M3>" + vm.SecureMil + "</3M3><3M4>" + vm.MaterielMil + "</3M4><3M5>" + vm.EnergieMil + "</3M5><3Mcomm>" + vm.CommentaireMil +
                 "</3Mcomm><4M1>" + vm.ApprovisioMatiere + "</4M1><4M1bit>"+ vm.IsNotConcerneApproviMat+"</4M1bit><4M2>" + vm.NettoMatiere + "</4M2><4M3>" + vm.MaterielMatiere + "</4M3><4Mcomm>" + vm.CommentaireMatiere + "</4Mcomm>";
 
                 enquete enquete = EnqueteDb.ObtenirEnqueteFromEssai(id);

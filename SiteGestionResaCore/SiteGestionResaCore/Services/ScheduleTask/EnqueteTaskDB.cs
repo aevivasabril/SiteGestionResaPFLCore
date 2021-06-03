@@ -43,6 +43,9 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                     // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
                     if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
                     {
+                        // TODO: tester!! Mettre à jour la date du premier envoi pour cet enquete = date fin de l'essai
+                        enq.date_premier_envoi = reservations[0].date_fin;
+                        resaDb.SaveChanges();
                         enquetesToReturn.Add(enq);
                     }
                 }                

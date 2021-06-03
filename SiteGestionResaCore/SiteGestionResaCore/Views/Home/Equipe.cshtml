@@ -35,7 +35,8 @@
             <img class="card-img-top" src="~/Content/Images/EquipeViewImages/enquetes.jpg" />
             <div class="card-body">
                 <h5 class="card-title">
-                    <a class="btn-link" href="#">Enquetes de satisfaction</a>
+                    @*<a class="btn-link" href="#">Enquetes de satisfaction</a>*@
+                    <a class="btn-link" asp-action="RecupNotesEnquete" asp-controller="PostEnquete" asp-area="Enquete">Enquetes de satisfaction</a>
                 </h5>
                 <p class="card-text">Obtenir les notes des enquêtes de satisfaction et accès aux statistiques obtenues des enquêtes repondues</p>
             </div>

@@ -50,6 +50,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
         //[Required(ErrorMessage = "Champ requis")]
         [Display(Name = "Cochez cette case si vous n'êtes pas concerné par la rubrique")]
         public bool IsNotConcerneMaintMat { get; set; }
+       
 
         [Display(Name = "Commentaire: ")]
         public string CommentMateriels { get; set; }
@@ -123,7 +124,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
         //[Required(ErrorMessage = "Champ requis")]
         [Display(Name = "Cochez cette case si vous n'êtes pas concerné par la rubrique")]
         public bool IsNotConcerneApproviMat { get; set; }
-
+        
         [Range(1, 4, ErrorMessage = "Note requise")]
         [Display(Name = "Disponibilité des produits de nettoyage?: ")]
         public int NettoMatiere { get; set; }
