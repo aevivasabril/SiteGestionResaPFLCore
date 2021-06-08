@@ -34,12 +34,6 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
             return context.projet.First(p => p.id == essai.projetID);
         }
 
-        /*public essai ObtenirEssaiXEnquete(int IdEnquete)
-        {
-            //int idEssaiEnq = context.enquete.First(e => e.id == IdEnquete).essaiId;
-            return context.essai.First(e => e.id == (context.enquete.First(e => e.id == IdEnquete).essaiId) );
-        }*/
-
         public void UpdateEnqueteWithResponse(string reponse, enquete enquete)
         {
             //var enquete = context.enquete.First(e => e.id == e);
