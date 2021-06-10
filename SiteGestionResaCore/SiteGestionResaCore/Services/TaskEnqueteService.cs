@@ -8,15 +8,10 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Services
 {
-    public abstract class TaskEnqueteService : IHostedService, IDisposable
+    public abstract class TaskEnqueteService : IHostedService
     {
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
