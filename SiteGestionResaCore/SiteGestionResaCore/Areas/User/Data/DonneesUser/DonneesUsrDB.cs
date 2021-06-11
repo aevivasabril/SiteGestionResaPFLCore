@@ -304,8 +304,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
             //Application de la requete pour obtenir les infos selon la table PcVue
             // selon le nom de la table alors obtenir les données et les convertir au format globale
-            dateDebutPcVue = new DateTime(2021, 04, 21, 7, 0, 0);
-            dateFinPcVue = new DateTime(2021, 04, 22, 7, 0, 0);
+            //dateDebutPcVue = new DateTime(2021, 04, 21, 7, 0, 0);
+            //dateFinPcVue = new DateTime(2021, 04, 22, 7, 0, 0);
             switch (NamePcVueTable)
             {
                 case "tab_UA_ACT":
