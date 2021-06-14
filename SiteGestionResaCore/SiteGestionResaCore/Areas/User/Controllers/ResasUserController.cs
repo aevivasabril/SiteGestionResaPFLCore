@@ -54,7 +54,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             #region Récupérer les infos projet pour affichage dans le formulaire de modif
 
-            List<utilisateur> listUsersAcces = userManager.Users.Where(e => e.EmailConfirmed == true).ToList();
+            List<utilisateur> listUsersAcces = userManager.Users.Where(e => e.EmailConfirmed == true).OrderBy(u=>u.nom).ToList();
             // Création d'une liste utilisateurs "manipulateur" de l'essai
             var usrsManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
             // Création d'une liste dropdownlist pour le type produit entrée

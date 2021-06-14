@@ -51,7 +51,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
                     usrWaiting.Add(user);
             }
 
-            return new listAutresUtilisateurs(tempUsers, usrWaiting);
+            return new listAutresUtilisateurs(tempUsers.OrderBy(u=>u.nom).ToList(), usrWaiting.OrderBy(u=>u.nom).ToList());
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
                     from roleusr in context.Users
                     from usrrol in context.UserRoles
                     where (role.Name == "Admin" || role.Name == "MainAdmin") && role.Id == usrrol.RoleId && roleusr.Id == usrrol.UserId
-                    select roleusr).Distinct().ToList();
+                    select roleusr).Distinct().OrderBy(u=>u.nom).ToList();
         }
 
         /// <summary>
