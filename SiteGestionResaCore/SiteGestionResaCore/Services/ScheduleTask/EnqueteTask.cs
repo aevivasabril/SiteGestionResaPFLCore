@@ -67,7 +67,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
             #endregion
             // TODO: effacer!! c'est juste pour tester l'envoi des mails tous les 2 minutes
-            //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
+            await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
 
             #endregion
 

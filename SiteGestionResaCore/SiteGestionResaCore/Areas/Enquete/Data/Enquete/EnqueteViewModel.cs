@@ -104,7 +104,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
         public int SecureMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "Le petit materiel de la zone de travail était-il disponible?: ")]
+        [Display(Name = "Le  materiel annexe aux appareils était-il disponible?: ")]
         public int MaterielMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
