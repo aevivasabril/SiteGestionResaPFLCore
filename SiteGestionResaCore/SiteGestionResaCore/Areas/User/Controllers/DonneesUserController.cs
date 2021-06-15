@@ -75,7 +75,9 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             // Déterminer les headers tableau
             var headers = Donnees.DataEquipement.Select(d => d.NomCapteur).Distinct().ToList();
             // Ajouter la colonne de date 
-            csv.Append("Date et heure");
+            csv.Append("Date");
+            csv.Append(";");
+            csv.Append("Heure");
             
             foreach (var dc in headers)
             {
@@ -88,10 +90,9 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             var reg = Donnees.DataEquipement.GroupBy(d => d.Chrono);
             foreach (var group in reg)
             {
-                var x = group.Key;
-                int u = group.Count();
-                csv.Append(group.Key.ToString());
-                //csv.Append(";");
+                csv.Append(group.Key.ToShortDateString());
+                csv.Append(";");
+                csv.Append(group.Key.ToShortTimeString());
                 foreach (var r in group)
                 {
                     csv.Append(";");
