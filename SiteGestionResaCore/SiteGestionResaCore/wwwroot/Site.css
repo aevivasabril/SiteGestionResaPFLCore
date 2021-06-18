@@ -172,3 +172,9 @@ textarea {
         background: whitesmoke;
         z-index: 2;
     }
+
+.imge {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
