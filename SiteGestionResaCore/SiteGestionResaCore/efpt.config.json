@@ -87,6 +87,10 @@
       {
         "HasPrimaryKey": true,
         "Name": "[dbo].[tab_UA_UFMF]"
+      },
+      {
+        "HasPrimaryKey": true,
+        "Name": "[dbo].[tab_UA_ECREM]"
       }
    ],
    "UseDatabaseNames": true,
