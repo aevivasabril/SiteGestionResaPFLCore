@@ -422,5 +422,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             essai.status_essai = EnumStatusEssai.WaitingValidation.ToString();
             context.SaveChanges();
         }
+
+        public List<reservation_projet> ObtenirResasEssai(int IdEssai)
+        {
+            return context.reservation_projet.Where(e => e.essaiID == IdEssai).ToList();
+        }
     }
 }

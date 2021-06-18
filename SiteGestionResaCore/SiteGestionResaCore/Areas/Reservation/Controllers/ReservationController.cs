@@ -981,6 +981,39 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     #endregion
 
+                    #region reverifier la date inférieure et supérieure si essai "confidentiel"
+
+                    if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                    {
+                        // obtenir toutes les réservations après modification
+                        resas = projetEssaiDb.ObtenirResasEssai(Essai.id);
+                        foreach (var reservation in resas)
+                        {
+                            if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
+                            {
+                                IsFirstResa = false;
+                                dateSeuilInf = reservation.date_debut;
+                                dateSeuilSup = reservation.date_fin;
+                            }
+                            else
+                            {
+                                // Recherche des dates superieur et inferieur sur toutes les réservations
+                                if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
+                                {
+                                    dateSeuilInf = reservation.date_debut;
+                                }
+                                if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
+                                {
+                                    dateSeuilSup = reservation.date_fin;
+                                }
+                            }
+                        }
+                        //Mettre à jour l'essai avec les dates seuil
+                        projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
+                    }
+
+                    #endregion
+
                     #endregion
 
                     // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
