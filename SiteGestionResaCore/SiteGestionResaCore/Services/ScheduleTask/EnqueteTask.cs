@@ -83,7 +83,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
 
-                string callbackUrl = "http://147.99.161.143/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
                 //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
