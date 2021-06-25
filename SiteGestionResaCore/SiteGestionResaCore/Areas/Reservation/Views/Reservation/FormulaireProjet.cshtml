@@ -38,7 +38,7 @@
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @using (Html.BeginForm("SoumettreFormulaire", "Reservation", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
-        <h6>INFORMATIONS PROJET</h6>
+        <h6><strong>INFORMATIONS PROJET</strong></h6>
         <hr />
         @Html.AntiForgeryToken()
         <div class="form-group">
@@ -100,7 +100,7 @@
         </div>
 
         <hr />
-        <h6>INFORMATIONS ESSAI</h6>
+        <h6><strong>INFORMATIONS ESSAI</strong></h6>
         <hr />
         <div class="form-row">
             @Html.LabelFor(m => m.ConfidentialiteEssai, new { @class = "col-md-6 control-label" })
