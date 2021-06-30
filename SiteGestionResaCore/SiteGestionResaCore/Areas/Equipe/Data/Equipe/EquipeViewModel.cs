@@ -60,7 +60,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         /// <summary>
         /// Id de l'utilisateur selectionné pour le changement "utilisateur" à "admin"
         /// </summary>
-        [Range(1, 100, ErrorMessage = "Selectionnez un utilisateur")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un utilisateur")]
         public int UserToUpdateId { get; set; }
 
         public IEnumerable<SelectListItem> UserItem { get; set; }
@@ -69,7 +69,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         /// <summary>
         /// Id de l'administrateur selectionné pour l'ajout dans le rôle "Logistic"
         /// </summary>
-        [Range(1, 100, ErrorMessage = "Selectionnez un administrateur")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un administrateur")]
         public int AdminToLogisticId { get; set; }
 
         public IEnumerable<SelectListItem> AdminItem { get; set; }

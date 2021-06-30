@@ -24,7 +24,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         [Range(1, 4, ErrorMessage = "Note requise")]
         //[Display(Name = "Accesibilité/Clarté des procédures (équipements, nettoyage/désinfection, accès à la PFL,...: ")]
-        [Display(Name = "Les procédures relatives aux modalités d'utilisation de la PFL, à l'utilisation des materiels, utilisation nettoyage étaient-elles claires?")]
+        [Display(Name = "Les procédures relatives aux modalités d'utilisation de la PFL, à l'utilisation des matériels, nettoyage étaient claires?")]
         public int AccessibiliteMeth { get; set; }
 
         [Display(Name = "Commentaire: ")]
@@ -56,55 +56,24 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
         public string CommentMateriels { get; set; }
         #endregion
 
-        #region 3 Main d'oeuvre
-
-        /*[Range(1, 4, ErrorMessage = "Note requise")]
-        //[Display(Name = "Disponibilité: ")]
-        [Display(Name = "Le personnel PFL a été disponible pour vous informer et vous aider à la préparation et réalisation des essais?: ")]
-        public int DisponibiliteMain { get; set; }
-
-        // TODO: A SUPPRIMER
-        [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = " SUPPRIMER Compétence: ")]
-        public int CompetenceMain { get; set; }
-
-        [Range(1, 4, ErrorMessage = "Note requise")]
-        //[Display(Name = "Formation/Tutorat: ")]
-        [Display(Name = "A SUPPRIMER Pour les nouveaux utilisateurs: Comment jugez vous la formation reçue?")]
-        public int FormationMain { get; set; }
-
-        //[Required(ErrorMessage = "Champ requis")]
-        [Display(Name = "Cochez cette case si vous n'êtes pas concerné par la rubrique")]
-        public bool IsNotConcerneFormationMain { get; set; }
-
-        // TODO: A SUPPRIMER
-        [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "SUPPRIMER Le personnel PFL était-il reactif à des problèmes que vous avez pu rencontrer (ex: panne d'un équipement)? ")]
-        public int ReactiviteMain { get; set; }
-
-        [Display(Name = "Commentaire: ")]
-        public string CommentaireMain { get; set; }*/
-
-        #endregion
-
         #region 3 Milieu
 
         [Range(1, 4, ErrorMessage = "Note requise")]
         //[Display(Name = "Hygiène/Securité/Ergonomie/Réglementation: ")]
-        [Display(Name = "L'état de proprète était-il satisfaisant?: ")]
+        [Display(Name = "L'état de propreté était satisfaisant?: ")]
         public int HygieneMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
         //[Display(Name = "Confidentialité: ")]
-        [Display(Name = "La confidentialité de vos essais était-elle assurée?: ")]
+        [Display(Name = "La confidentialité de vos essais était assurée?: ")]
         public int ConfidentMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "Est-ce que votre environnement de travail était-il secure?: ")]
+        [Display(Name = "Est-ce que votre environnement de travail était sécure?: ")]
         public int SecureMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "Le  materiel annexe aux appareils était-il disponible?: ")]
+        [Display(Name = "Le materiel annexe aux appareils était disponible?: ")]
         public int MaterielMil { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
@@ -118,7 +87,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
 
         #region 4 Matière
         [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "L'approvisionnement de matière première était-il satisfaisant?: ")]
+        [Display(Name = "L'approvisionnement de matière première était satisfaisant?: ")]
         public int ApprovisioMatiere { get; set; }
 
         //[Required(ErrorMessage = "Champ requis")]
@@ -130,7 +99,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data
         public int NettoMatiere { get; set; }
 
         [Range(1, 4, ErrorMessage = "Note requise")]
-        [Display(Name = "L'approvisionnement des consommables(essuis main, surchaussures,...) était-il satisfaisant?: ")]
+        [Display(Name = "L'approvisionnement des consommables (essuie-main, surchaussures,...) était satisfaisant?: ")]
         public int MaterielMatiere { get; set; }
 
         [Display(Name = "Commentaire: ")]

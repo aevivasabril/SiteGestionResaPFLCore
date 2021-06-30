@@ -29,7 +29,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Id de l'essai selectionné à partir du dropdownlist 
         /// </summary>
         [Display(Name = "Liste des Essais")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un Essai")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un Essai")]
         public int SelectedEssaiId { get; set; }
 
 
@@ -46,7 +46,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required(ErrorMessage = "Champ 'Titre projet' requis")]
         [Display(Name = "Titre Projet (*)")]
-        [RegularExpression(@"^[\w][^\/;\\.!:*?,]*$", ErrorMessage = "Le format est incorrect, evitez les caractères suivants:  /;\\.!:*?,")]
+        [RegularExpression(@"^[\w][^\/;\\.!:*?,]*$", ErrorMessage = "Le format est incorrect, évitez les caractères suivants:  /;\\.!:*?,")]
         public string TitreProjet { get; set; }
 
         // Numero du projet au format (12-345)
@@ -92,7 +92,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required]
         [Display(Name = "Nom de l'entreprise (*)")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un organisme")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un organisme")]
         public int SelectedOrganId { get; set; }
 
         public IEnumerable<SelectListItem> OrganItem { get; set;}
@@ -106,7 +106,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required]
         [Display(Name = "Mail responsable projet (*)")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un responsable projet")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un responsable projet")]
         public int SelectedRespProjId { get; set; }
 
         public IEnumerable<SelectListItem> RespProjItem { get; set; }
@@ -143,7 +143,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required]
         [Display(Name = "Personne en charge des manips (*)")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un manipulateur pour l'essai")]
         public int SelectedManipulateurID { get; set; }
 
         public IEnumerable<SelectListItem> ManipProjItem { get; set; }

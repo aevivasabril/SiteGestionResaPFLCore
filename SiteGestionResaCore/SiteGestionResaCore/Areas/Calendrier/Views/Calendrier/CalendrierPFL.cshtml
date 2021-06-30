@@ -51,7 +51,7 @@
 <!--https://www.w3.org/WAI/tutorials/tables/irregular/ Pour faire une table avec ce format-->
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <div class="row justify-content-center">
-    <h5 class="text-center">Selectionnez une date de debut et de fin pour affichage du calendrier </h5>
+    <h5 class="text-center">Sélectionnez une date de debut et de fin pour affichage du calendrier </h5>
     <div class="container">
         <form asp-action="AfficherPlanningDuAu" asp-controller="Calendrier" asp-area="Calendrier" method="post">
             <div class="form-group row justify-content-center">
@@ -155,7 +155,7 @@
                                         else
                                         {
                                             <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin[z].IdEssai)">
-                                                <strong>Reservé</strong>
+                                                <strong>Réservé</strong>
                                             </a>
                                         }
                                     }
@@ -176,7 +176,7 @@
                                         else
                                         {
                                             <a href="#" onclick="DisplayModalInfo(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem[u].IdEssai)">
-                                                <strong>Reservé </strong>
+                                                <strong>Réservé </strong>
                                             </a>
                                         }
 

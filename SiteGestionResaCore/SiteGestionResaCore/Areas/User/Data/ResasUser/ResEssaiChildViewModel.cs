@@ -28,7 +28,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// </summary>
         [Required]
         [Display(Name = "Personne en charge des manips*")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un manipulateur pour l'essai")]
         public int SelecManipulateurID { get; set; }
 
         public IEnumerable<SelectListItem> ManiProjItem { get; set; }

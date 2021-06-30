@@ -46,7 +46,7 @@ namespace SiteGestionResaCore.Areas.User.Data
         /// Id d'un item de la liste provenance manipulateur essai
         /// </summary>
         [Display(Name = "Personne en charge des manips*")]
-        [Range(1, 100, ErrorMessage = "Selectionnez un manipulateur pour l'essai")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un manipulateur pour l'essai")]
         public int SelecManipulateurID { get; set; }
 
         public IEnumerable<SelectListItem> ManiProjItem { get; set; }

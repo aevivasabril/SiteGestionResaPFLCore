@@ -70,11 +70,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Définition créneau pour chaque datepicker (réservation)
         /// </summary>
-        [Required(ErrorMessage = "La selection 'Matin' ou 'après-midi' pour la date début est requis")]
+        [Required(ErrorMessage = "La sélection 'Matin' ou 'après-midi' pour la date début est requis")]
         [Display(Name = "Créneau début")]
         public string DatePickerDebut_Matin { get; set; }
 
-        [Required(ErrorMessage = "La selection 'Matin' ou 'après-midi' pour la date fin est requis")]
+        [Required(ErrorMessage = "La sélection 'Matin' ou 'après-midi' pour la date fin est requis")]
         [Display(Name = "Créneau fin")]
         public string DatePickerFin_Matin { get; set; }
 
