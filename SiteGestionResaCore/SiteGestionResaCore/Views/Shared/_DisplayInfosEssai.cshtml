@@ -23,6 +23,10 @@
                             <td>@Model.TitreEssai</td>
                         </tr>
                         <tr>
+                            <th scope="row">Confidentialité</th>
+                            <td>@Model.Confidentialite</td>
+                        </tr>
+                        <tr>
                             <th scope="row">N° Essai</th>
                             <td>@Model.id</td>
                         </tr>
@@ -46,11 +50,11 @@
                             <th scope="row">Transport assuré par</th>
                             @if (Model.TransportStlo == true)
                             {
-                            <td>STLO</td>
+                                <td>STLO</td>
                             }
                             else
                             {
-                            <td>Autre</td>
+                                <td>Autre</td>
                             }
                         </tr>
                         <tr>
