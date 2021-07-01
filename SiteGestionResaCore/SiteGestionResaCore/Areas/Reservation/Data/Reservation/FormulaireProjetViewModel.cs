@@ -16,8 +16,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         #region Liste des essais correspondant au numéro projet
 
         // Numero du projet au format (12-345)
-        [Display(Name = "Numéro de projet (*) (Ex format: 12-345)")] // il faut respecter le numéro 
-        [RegularExpression(@"^[0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
+        [Display(Name = "Numéro de projet (*) (Ex format: 12-345 ou XX-123)")] // il faut respecter le numéro 
+        [RegularExpression(@"^[A-Za-z0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
         public string NumProjetXCopie { get; set; }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         // Numero du projet au format (12-345)
         [Required(ErrorMessage = "Champ 'Numéro de projet' requis")]
-        [Display(Name = "Numéro de projet (*) (Ex format: 12-345)")] // il faut respecter le numéro 
-        [RegularExpression(@"^[0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
+        [Display(Name = "Numéro de projet (*) (Ex format: 12-345 ou XX-123)")] // il faut respecter le numéro 
+        [RegularExpression(@"^[A-Za-z0-9]{2}[-][0-9]{3}$", ErrorMessage = "Le numéro de projet ne respecte pas le format de la base action")]
         public string NumProjet { get; set; }
 
         /// <summary>

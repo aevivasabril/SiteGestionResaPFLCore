@@ -21,7 +21,7 @@
             <div class="card-body">
                 <h5 class="card-title">Trouver un essai existant et copier les informations (projet + essai)</h5>
                 <div class="form-row">
-                    <label class="col-md-12 control-label">Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345): </label>
+                    <label class="col-md-12 control-label">Saissisez le numéro de projet qui vous a été attribué sur la base action (Ex format: 12-345 ou XX-123): </label>
                     <div class="col-sm-10">
                         @Html.TextBoxFor(m => m.NumProjetXCopie, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.NumProjetXCopie, "", new { @class = "text-danger" })
