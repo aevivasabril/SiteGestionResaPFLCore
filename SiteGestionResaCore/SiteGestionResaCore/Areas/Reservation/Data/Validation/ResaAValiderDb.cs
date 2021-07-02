@@ -36,6 +36,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
         {
             List<InfosAffichage> list = new List<InfosAffichage>();
             bool conflitExiste = false;
+            bool Reg = false;
             // Récuperer tous les "essai" en attente de validation
             var essais =  await resaDB.essai.Where(e => e.status_essai == EnumStatusEssai.WaitingValidation.ToString()).Distinct().ToListAsync();
 
@@ -52,30 +53,60 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                       where zon.id == equi.zoneID && equi.id == resa.equipementID
                                       select zon.id).First();
 
-                    // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) determiner s'il y a un conflit
-                    var Reg = await (from proj in resaDB.projet
-                               join ess in resaDB.essai on proj.id equals ess.projetID into t1
-                               from m in t1.DefaultIfEmpty()
-                               join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
-                               from n in t2.DefaultIfEmpty()
-                               join equi in resaDB.equipement on n.equipementID equals equi.id into t3
-                               from e in t3.DefaultIfEmpty()
-                               join zo in resaDB.zone on e.zoneID equals zo.id into t4
-                               from z in t4.DefaultIfEmpty()
-                               where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != essai.id &&
-                               (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
-                               && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
-                                   (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
-                               select new
-                               {
-                                   MailResponsablePrj = proj.mailRespProjet,
-                                   NumProjet = proj.num_projet,
-                                   DateDeb = n.date_debut,
-                                   DateFin = n.date_fin,
-                                   NomEquipement = e.nom,
-                                   ZoneEquipement = z.nom_zone,
-                                   idResa = n.id
-                               }).AnyAsync();
+                    if(essai.confidentialite == EnumConfidentialite.Ouvert.ToString())
+                    {
+                        Reg = await (from proj in resaDB.projet
+                                         join ess in resaDB.essai on proj.id equals ess.projetID into t1
+                                         from m in t1.DefaultIfEmpty()
+                                         join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
+                                         from n in t2.DefaultIfEmpty()
+                                         join equi in resaDB.equipement on n.equipementID equals equi.id into t3
+                                         from e in t3.DefaultIfEmpty()
+                                         join zo in resaDB.zone on e.zoneID equals zo.id into t4
+                                         from z in t4.DefaultIfEmpty()
+                                         where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != essai.id &&
+                                         (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
+                                         && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
+                                             (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
+                                         select new
+                                         {
+                                             MailResponsablePrj = proj.mailRespProjet,
+                                             NumProjet = proj.num_projet,
+                                             DateDeb = n.date_debut,
+                                             DateFin = n.date_fin,
+                                             NomEquipement = e.nom,
+                                             ZoneEquipement = z.nom_zone,
+                                             idResa = n.id
+                                         }).AnyAsync();
+                    }
+                    if(essai.confidentialite == EnumConfidentialite.Restreint.ToString())
+                    {
+     
+                        Reg = await (from proj in resaDB.projet
+                                     join ess in resaDB.essai on proj.id equals ess.projetID into t1
+                                     from m in t1.DefaultIfEmpty()
+                                     join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
+                                     from n in t2.DefaultIfEmpty()
+                                     join equi in resaDB.equipement on n.equipementID equals equi.id into t3
+                                     from e in t3.DefaultIfEmpty()
+                                     join zo in resaDB.zone on e.zoneID equals zo.id into t4
+                                     from z in t4.DefaultIfEmpty()
+                                     where (m.confidentialite == EnumConfidentialite.Restreint.ToString() || m.confidentialite == EnumConfidentialite.Ouvert.ToString()) && m.id != essai.id &&
+                                     (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
+                                     && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
+                                         (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
+                                     select new
+                                     {
+                                         MailResponsablePrj = proj.mailRespProjet,
+                                         NumProjet = proj.num_projet,
+                                         DateDeb = n.date_debut,
+                                         DateFin = n.date_fin,
+                                         NomEquipement = e.nom,
+                                         ZoneEquipement = z.nom_zone,
+                                         idResa = n.id
+                                     }).AnyAsync();
+                    }
+                    
 
                     if(Reg==true)
                     {
@@ -189,54 +220,106 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                   from equi in resaDB.equipement
                                   where zon.id == equi.zoneID && equi.id == resa.equipementID
                                   select zon.id).First();
+                var essai = resaDB.essai.First(e => e.id == idEssai);
 
-                // pour chaque essai "RESTREINT" (seule type où il y a la possibilité d'avoir un conflit) alors trouver les infos de chaque réservation ayant un conflit
-                // requete jointure ne fonctionne pas sur entity framework
-                // eviter de vérifier les conflits sur des autres essais refusés ou annulés
-                var Reg = (from proj in resaDB.projet
-                           join ess in resaDB.essai on proj.id equals ess.projetID into t1
-                           from m in t1.DefaultIfEmpty()
-                           join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
-                           from n in t2.DefaultIfEmpty()
-                           join equi in resaDB.equipement on n.equipementID equals equi.id into t3
-                           from e in t3.DefaultIfEmpty()
-                           join zo in resaDB.zone on e.zoneID equals zo.id into t4
-                           from z in t4.DefaultIfEmpty()
-                           where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != idEssai && 
-                           ( m.status_essai != EnumStatusEssai.Refuse.ToString() ) && ( m.status_essai != EnumStatusEssai.Canceled.ToString() )
-                           && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
-                               (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
-                           select new
-                           {
-                               MailResponsablePrj = proj.mailRespProjet,
-                               NumProjet = proj.num_projet,
-                               DateDeb = n.date_debut,
-                               DateFin = n.date_fin,
-                               NomEquipement = e.nom,
-                               ZoneEquipement = z.nom_zone,
-                               idResa = n.id, 
-                               idEss = m.id,
-                               TitreEss = m.titreEssai
-                           });
+                if (essai.confidentialite == EnumConfidentialite.Ouvert.ToString())
+                {                  
+                    // requete jointure ne fonctionne pas sur entity framework
+                    // eviter de vérifier les conflits sur des autres essais refusés ou annulés
+                    var Reg = (from proj in resaDB.projet
+                               join ess in resaDB.essai on proj.id equals ess.projetID into t1
+                               from m in t1.DefaultIfEmpty()
+                               join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
+                               from n in t2.DefaultIfEmpty()
+                               join equi in resaDB.equipement on n.equipementID equals equi.id into t3
+                               from e in t3.DefaultIfEmpty()
+                               join zo in resaDB.zone on e.zoneID equals zo.id into t4
+                               from z in t4.DefaultIfEmpty()
+                               where m.confidentialite == EnumConfidentialite.Restreint.ToString() && m.id != idEssai &&
+                               (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
+                               && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
+                                   (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
+                               select new
+                               {
+                                   MailResponsablePrj = proj.mailRespProjet,
+                                   NumProjet = proj.num_projet,
+                                   DateDeb = n.date_debut,
+                                   DateFin = n.date_fin,
+                                   NomEquipement = e.nom,
+                                   ZoneEquipement = z.nom_zone,
+                                   idResa = n.id,
+                                   idEss = m.id,
+                                   TitreEss = m.titreEssai
+                               });
 
-                foreach (var x in Reg)
+                                foreach (var x in Reg)
+                                {
+                                    if (!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
+                                    {
+                                        InfosConflit infosConfInterne = new InfosConflit()
+                                        {
+                                            IdResa = x.idResa,
+                                            DateDeb = x.DateDeb,
+                                            DateFin = x.DateFin,
+                                            MailResponsablePrj = x.MailResponsablePrj,
+                                            NomEquipement = x.NomEquipement,
+                                            NumProjet = x.NumProjet,
+                                            ZoneEquipement = x.ZoneEquipement,
+                                            IdEss = x.idEss,
+                                            TitreEss = x.TitreEss
+                                        };
+                                        ListConflit.Add(infosConfInterne);
+                                    }// sinon on rajoute rien à la liste                                                                        
+                                }
+                }
+                if (essai.confidentialite == EnumConfidentialite.Restreint.ToString())
                 {
-                    if (!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
+                    var Reg = (from proj in resaDB.projet
+                               join ess in resaDB.essai on proj.id equals ess.projetID into t1
+                               from m in t1.DefaultIfEmpty()
+                               join res in resaDB.reservation_projet on m.id equals res.essaiID into t2
+                               from n in t2.DefaultIfEmpty()
+                               join equi in resaDB.equipement on n.equipementID equals equi.id into t3
+                               from e in t3.DefaultIfEmpty()
+                               join zo in resaDB.zone on e.zoneID equals zo.id into t4
+                               from z in t4.DefaultIfEmpty()
+                               where (m.confidentialite == EnumConfidentialite.Restreint.ToString() || m.confidentialite == EnumConfidentialite.Ouvert.ToString()) && m.id != idEssai &&
+                               (m.status_essai != EnumStatusEssai.Refuse.ToString()) && (m.status_essai != EnumStatusEssai.Canceled.ToString())
+                               && ((resa.date_debut >= n.date_debut || resa.date_fin >= n.date_debut) &&
+                                   (resa.date_debut <= n.date_fin || resa.date_fin <= n.date_fin)) && (z.id == zoneIdresa)
+                               select new
+                               {
+                                   MailResponsablePrj = proj.mailRespProjet,
+                                   NumProjet = proj.num_projet,
+                                   DateDeb = n.date_debut,
+                                   DateFin = n.date_fin,
+                                   NomEquipement = e.nom,
+                                   ZoneEquipement = z.nom_zone,
+                                   idResa = n.id,
+                                   idEss = m.id,
+                                   TitreEss = m.titreEssai
+                               });
+
+                    foreach (var x in Reg)
                     {
-                        InfosConflit infosConfInterne = new InfosConflit()
+                        if (!ListConflit.Where(j => j.IdResa == x.idResa).Any()) // vérifier que la réservation n'est pas présente dans la liste
                         {
-                            IdResa = x.idResa,
-                            DateDeb = x.DateDeb,
-                            DateFin = x.DateFin,
-                            MailResponsablePrj = x.MailResponsablePrj,
-                            NomEquipement = x.NomEquipement,
-                            NumProjet = x.NumProjet,
-                            ZoneEquipement = x.ZoneEquipement, 
-                            IdEss = x.idEss,
-                            TitreEss = x.TitreEss
-                        };
-                        ListConflit.Add(infosConfInterne);
-                    }// sinon on rajoute rien à la liste                                                                        
+                            InfosConflit infosConfInterne = new InfosConflit()
+                            {
+                                IdResa = x.idResa,
+                                DateDeb = x.DateDeb,
+                                DateFin = x.DateFin,
+                                MailResponsablePrj = x.MailResponsablePrj,
+                                NomEquipement = x.NomEquipement,
+                                NumProjet = x.NumProjet,
+                                ZoneEquipement = x.ZoneEquipement,
+                                IdEss = x.idEss,
+                                TitreEss = x.TitreEss
+                            };
+                            ListConflit.Add(infosConfInterne);
+                        }// sinon on rajoute rien à la liste                                                                        
+                    }
+
                 }
             }          
             return ListConflit;
