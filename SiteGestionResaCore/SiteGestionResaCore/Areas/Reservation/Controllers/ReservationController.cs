@@ -1018,6 +1018,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
                     ViewBag.IsConfirOutside = true;
+                    ViewBag.IdEssaiModifie = zonesReservation.IdEssaiXAjoutEquip;
                 }
                 else // réservation standard
                 {

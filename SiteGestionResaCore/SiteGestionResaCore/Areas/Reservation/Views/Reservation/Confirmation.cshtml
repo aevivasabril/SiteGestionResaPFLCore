@@ -11,7 +11,7 @@
         <h2>Merci! Votre demande de mise à jour réservation est prise en compte</h2>
         <h6> Vous récevrez une confirmation de validation ou refus par mail</h6>
         <br />
-        <a class="btn-link" asp-area="User" asp-action="MesReservations" asp-controller="ResasUser"> Cliquez sur ce lien pour revenir à la page mes réservations</a>
+        <a class="btn-link" asp-area="User" asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-route-id="@ViewBag.IdEssaiModifie"> Cliquez sur ce lien pour revenir à la page de modification des réservations</a>
     </div>
 }
 else // aller vers l'index
