@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Equipe.Data;
+using SiteGestionResaCore.Areas.Reservation.Data.Reservation;
 
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
 {
@@ -338,6 +339,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
             List<ReservationsJour> reservationsSemEquipement = new List<ReservationsJour>();
             CalendrierEquipChildViewModel calenChild;
+            List<SousListeEquipements> sousListeEquipements = new List<SousListeEquipements>();
 
             // 1. Obtenir la liste des equipements
             equipements = zoneEquipDb.ListeEquipements(id.Value);
@@ -359,6 +361,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 PlanningEquipements.Add(calenChild);
                 // mettre à zéro les variables
                 calenChild = null;
+                sousListeEquipements.Add(new SousListeEquipements { IdEquipement = equipements[i].id, NomEquipement = equipements[i].nom, NumGmaoEquipement = equipements[i].numGmao });
             }
 
             // Initialisation du view model pour la vue avec les valeurs obtenus ci-dessus
@@ -367,9 +370,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //Equipements = equipements,
                 NomZone = zoneEquipDb.GetNomZone(id.Value),
                 IdZone = id.Value,
-                CalendrierChildVM = PlanningEquipements, 
+                PreCalendrierChildVM = PlanningEquipements,
+                CalendEquipSelectionnes = new List<CalendrierEquipChildViewModel>(),
                 CalendVM = new CalendrierEquipChildViewModel(),
                 OpenCalendEtCreneau = "none",
+                SousListeEquipements = sousListeEquipements
             };
 
             // initialiser la date des datepicker au MOIS Selectionné
@@ -391,31 +396,81 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View(vm);
         }
 
-        public IActionResult VoirPlanningSemaine(int id)
+        public IActionResult VoirPlanningSemaine(EquipementsParZoneViewModel model)
         {
             List<ReservationsJour> reservationsEquipement = new List<ReservationsJour>();
             // Récupérer la session "EquipementZone"
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
-            CalendrierEquipChildViewModel vm = equipementZone.CalendrierChildVM.Where(l => l.idEquipement == id).First();
+            //CalendrierEquipChildViewModel vm = equipementZone.CalendrierChildVM.Where(l => l.idEquipement == id).First();
+            List<CalendrierEquipChildViewModel> CalendEquipSelectionnes = new List<CalendrierEquipChildViewModel>();
+            CalendrierEquipChildViewModel SousCalend = new CalendrierEquipChildViewModel();
+            bool AuMoinsUnEquipSelect = false;
 
-            equipementZone.CalendVM = vm;
-            equipementZone.OpenCalendEtCreneau = null;
-
-            #region Vérifier si l'utilisateur a déjà demandé un affichage planning et mettre tout au même mois
+            equipementZone.SousListeEquipements = model.SousListeEquipements;
+            
             if(equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0)
             {
-                // Mettre l'affichage du calendrier semaine au mois et année souhaitée (01/MM/YY)
-                // Recuperer les réservations pour la date souhaitée 
-                reservationsEquipement = DonneesCalendrierEquipement(false, id, new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 01), new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 07));
-                equipementZone.CalendVM.ListResas = reservationsEquipement;
+                #region Vérifier si l'utilisateur a déjà demandé un affichage planning et mettre tout au même mois
+                for (int i = 0; i < model.SousListeEquipements.Count(); i++)
+                {
+                    if(model.SousListeEquipements[i].IsEquipSelect == true)
+                    {
+                        SousCalend = new CalendrierEquipChildViewModel();
+                        // Mettre l'affichage du calendrier semaine au mois et année souhaitée (01/MM/YY)
+                        // Recuperer les réservations pour la date souhaitée 
+                        reservationsEquipement = DonneesCalendrierEquipement(false, model.SousListeEquipements[i].IdEquipement,
+                            new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 01), new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 07));
+                        SousCalend.ListResas = reservationsEquipement;
+                        SousCalend.idEquipement = model.SousListeEquipements[i].IdEquipement;
+                        SousCalend.nomEquipement = model.SousListeEquipements[i].NomEquipement;
+                        SousCalend.numGmaoEquipement = model.SousListeEquipements[i].NumGmaoEquipement;
+                        CalendEquipSelectionnes.Add(SousCalend);
+
+                        SousCalend = null;
+                        if(AuMoinsUnEquipSelect == false)
+                            AuMoinsUnEquipSelect = true;
+                    }            
+                }               
 
                 // initialiser la date des datepicker au MOIS Selectionné
                 equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+                #endregion
             }
-            #endregion
+            else
+            {
+                #region Recupérer les calendriers pour la semaine en cours si aucune recherche ou créneau n'a pas été rajouté
+
+                for(int j=0; j<model.SousListeEquipements.Count(); j++)
+                {
+                    if(model.SousListeEquipements[j].IsEquipSelect == true)
+                    {
+                        SousCalend = new CalendrierEquipChildViewModel();
+                        SousCalend = equipementZone.PreCalendrierChildVM.Where(l => l.idEquipement == model.SousListeEquipements[j].IdEquipement).FirstOrDefault();
+                        CalendEquipSelectionnes.Add(SousCalend);
+                        SousCalend = null;
+
+                        if (AuMoinsUnEquipSelect == false)
+                            AuMoinsUnEquipSelect = true;
+                    }
+                }
+                #endregion
+            }
+
+            if(AuMoinsUnEquipSelect == false)
+            {
+                ModelState.AddModelError("", "Sélectionnez au moins un équipement pour affichage du calendrier");
+                equipementZone.OpenCalendEtCreneau = "none";
+            }
+            else
+            { // Autoriser l'affichage des éléments du calendrier si au moins un équipement est sélectionné
+                equipementZone.OpenCalendEtCreneau = null;
+            }
+
+            // Rajouter le view model calendrier dans le model "EquipementZone" 
+            equipementZone.CalendEquipSelectionnes = CalendEquipSelectionnes;
 
             // Etablir une session avec les données à mettre à jour pour la vue EquipementsVsZones
             this.HttpContext.AddToSession("EquipementZone", equipementZone);
@@ -435,12 +490,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("EquipementVsZone", equipementZone);
         }
 
+        /// <summary>
+        /// Affichage du calendrier d'une date X à une date Y choisie par l'utilisateur 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model, int id)
+        public ActionResult AfficherPlanning(CalendrierEquipChildViewModel model)
         {
             // Initialisation des variables
             List<CalendrierEquipChildViewModel> PlanningEquipements = new List<CalendrierEquipChildViewModel>();
             List<ReservationsJour> reservationsEquipement = new List<ReservationsJour>();
+            List<CalendrierEquipChildViewModel> CalendEquipSelectionnes = new List<CalendrierEquipChildViewModel>();
+            CalendrierEquipChildViewModel SousCalend = new CalendrierEquipChildViewModel();
 
             // Récupérer la session "EquipementZone"
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession< EquipementsParZoneViewModel>("EquipementZone");
@@ -463,32 +526,38 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 if (model.DatePickerDu.Value <= model.DatePickerAu.Value)
                 {
                     // pour chaque model de la vue calendrier (c'est à dire pour chaque équipement)
-                    for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
+                    for (int i = 0; i < equipementZone.SousListeEquipements.Count(); i++)
                     {
-                        if (equipementZone.CalendrierChildVM[i].idEquipement == id)
+                        if (equipementZone.SousListeEquipements[i].IsEquipSelect == true)
                         {
+                            SousCalend = new CalendrierEquipChildViewModel();
                             // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                            reservationsEquipement = DonneesCalendrierEquipement(false, id, model.DatePickerDu.Value, model.DatePickerAu.Value);
-                            equipementZone.CalendVM.ListResas = reservationsEquipement;
-
-                            // initialiser la date des datepicker au MOIS Selectionné
-                            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerDu.Value.Day);
-                            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerAu.Value.Day);
-                            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1); 
-                            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-
-                            equipementZone.OpenCalendEtCreneau = null;
-
-                            // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
-                            this.HttpContext.AddToSession("EquipementZone", equipementZone);
-                            break;
+                            reservationsEquipement = DonneesCalendrierEquipement(false, equipementZone.SousListeEquipements[i].IdEquipement, model.DatePickerDu.Value, model.DatePickerAu.Value);
+                            SousCalend.ListResas = reservationsEquipement;
+                            SousCalend.idEquipement = equipementZone.SousListeEquipements[i].IdEquipement;
+                            SousCalend.nomEquipement = equipementZone.SousListeEquipements[i].NomEquipement;
+                            SousCalend.numGmaoEquipement = equipementZone.SousListeEquipements[i].NumGmaoEquipement;
+                            CalendEquipSelectionnes.Add(SousCalend);
+                            SousCalend = null;
                         }
                     }
                 }
                 else
                 {
                     ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
-                }              
+                }
+                // initialiser la date des datepicker au MOIS Selectionné
+                equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerDu.Value.Day);
+                equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerAu.Value.Day);
+                equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+                equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+
+                equipementZone.OpenCalendEtCreneau = null;
+
+                // Rajouter le view model calendrier dans le model "EquipementZone" 
+                equipementZone.CalendEquipSelectionnes = CalendEquipSelectionnes;
+                // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
+                this.HttpContext.AddToSession("EquipementZone", equipementZone);
             }
             return View("EquipementVsZone", equipementZone);
         }
@@ -499,7 +568,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="model">model view provenant de la vue partielle "_creneau"</param>
         /// <returns>Action result</returns>
         [HttpPost]
-        public ActionResult AjouterResa(CalendrierEquipChildViewModel model, int id) // model presque "vide" (contient les datetime)
+        public ActionResult AjouterResa(CalendrierEquipChildViewModel model) // model presque "vide" (contient les datetime)
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
@@ -508,18 +577,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             ZonesReservationViewModel zonesReservation = HttpContext.GetFromSession<ZonesReservationViewModel>("ZoneReservation");
 
-            int indiceChild = 0; // Sauvegarder l'indice où se trouve le CalendrierEquipChildModel correspondant à l'id           
-
-            // Initialiser le calendrierChildModel "model" de l'équipement sur le model de la vue parent avant toutes les opérations
-            for (int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
-            {     
-                if (equipementZone.CalendrierChildVM[i].idEquipement== id)
-                {
-                    // Recuperer l'indice "équipement"
-                    indiceChild = i;
-                    break;
-                }
-            }
             // DatePickerDu et DatePickerAu lançent un erreur de modelstate, il faut les supprimer de la liste d'erreur puisque ils sont pas utilisés sur cette partie
             ModelState.Remove("DatePickerDu");
             ModelState.Remove("DatePickerAu");
@@ -600,27 +657,48 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
 
                     #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
+                    bool isResaOkToAdd = false;
 
-                    bool isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, id);
-                    
-                    if( !isResaOkToAdd )
+                    for(int i = 0; i<equipementZone.CalendEquipSelectionnes.Count(); i++)
                     {
-                        ModelState.AddModelError("", "L'équipement : " + reservationDb.ObtenirNomEquipement(id) + " est indisponible aux dates choisies. Veuillez rectifier votre réservation");
-                        goto ENDT;
+                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.SousListeEquipements[i].IdEquipement);
+                        if(isResaOkToAdd == false)
+                        {
+                            if(equipementZone.SousListeEquipements.Count() == 1)
+                            {
+                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                goto ENDT;
+                            }
+                            else
+                            {
+                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                goto ENDT;
+                            }                          
+                        }
                     }
-                   
-                    #endregion
 
-                    // ajouter dans la liste des créneaux réservation progressivement
-                    equipementZone.CalendrierChildVM[indiceChild].ResaEquipement.Add(new ReservationTemp
+                    // Si on arrive ici ça veut dire que tous les équipements de la sélection utilisateur sont dispos! il faut les rajouter dans la liste des créneaux réservation
+                    for(int j= 0; j < equipementZone.CalendEquipSelectionnes.Count(); j++)
                     {
-                        date_debut = debutToSave,
-                        date_fin = finToSave
-                    });
+                        // Initialiser le calendrierChildModel "model" de l'équipement sur le model de la vue parent avant toutes les opérations
+                        for (int i = 0; i < equipementZone.PreCalendrierChildVM.Count(); i++)
+                        {     
+                            if (equipementZone.PreCalendrierChildVM[i].idEquipement== equipementZone.CalendEquipSelectionnes[j].idEquipement)
+                            {
+                                equipementZone.PreCalendrierChildVM[i].ResaEquipement.Add(
+                                    new ReservationTemp
+                                    {
+                                        date_debut = debutToSave,
+                                        date_fin = finToSave
+                                    });
+                            }
+                        }
 
+                    }
+
+                    #endregion
                     equipementZone.OpenCalendEtCreneau = "none";
 
-                    // Voir ce qu'il se passe ici!! 
                     this.HttpContext.AddToSession("EquipementZone", equipementZone);
 
                     #endregion
@@ -676,7 +754,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
-            equipementZone.CalendrierChildVM[model.IndiceChildModel].ResaEquipement.RemoveAt(model.IndiceResaEquipXChild);
+            equipementZone.PreCalendrierChildVM[model.IndiceChildModel].ResaEquipement.RemoveAt(model.IndiceResaEquipXChild);
 
             #region initialiser la date des datepicker au MOIS Selectionné
             equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
@@ -725,9 +803,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
 
             // Vider toutes les reservations pour tous les CalendrierChildVM
-            for(int i = 0; i < equipementZone.CalendrierChildVM.Count(); i++)
+            for(int i = 0; i < equipementZone.PreCalendrierChildVM.Count(); i++)
             {
-                equipementZone.CalendrierChildVM[i].ResaEquipement.Clear();
+                equipementZone.PreCalendrierChildVM[i].ResaEquipement.Clear();
             }
 
             // Sauvegarder la mise à jour de la session
@@ -844,9 +922,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Vérifier qu'au moins un équipement a été réservé
             for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
             {
-                for (int j = 0; j < zonesReservation.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
+                for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                 {
-                    if (zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count() != 0)
+                    if (zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count() != 0)
                     {
                         AtLeastOneEquipment = true;
                         goto Creation;
@@ -903,29 +981,29 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Créations des réservations par équipement 
                     for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
                     {
-                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
+                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                         {
-                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
                             {
-                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].idEquipement,
-                                    Essai, zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut,
-                                    zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin);
+                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
+                                    Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
+                                    zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
 
                                 #region Creation d'un string contenant le récap réservation
 
-                                subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
+                                subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
 
                                 mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
                                     + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                     + "   </td> </tr>";
 
 
                                 messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
                                     + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                     + "   </td> </tr>";
 
                                 #endregion
@@ -1103,32 +1181,32 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     // Créations des réservations par équipement 
                     for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
                     {
-                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
+                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                         {
-                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
                             {
-                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].idEquipement,
-                                    Essai, zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut,
-                                    zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin);
+                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
+                                    Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
+                                    zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
 
                                 // ajouter la réservation dans la liste des réservations à utiliser pour le calcul si "confidentiel"
                                 resas.Add(resa);
 
                                 #region Creation d'un string contenant le récap réservation
 
-                                subNomEquip = zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement + " )";
+                                subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
 
                                 mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
                                     + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                     + "   </td> </tr>";
 
 
                                 messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
                                     + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
                                     + "   </td> </tr>";
 
                                 #endregion

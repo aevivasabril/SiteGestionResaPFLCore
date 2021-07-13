@@ -237,15 +237,15 @@
                 <tbody>
                     @for (int i = 0; i < Model.EquipementsParZone.Count(); i++)
                     {
-                        for (int j = 0; j < Model.EquipementsParZone[i].CalendrierChildVM.Count(); j++)
+                        for (int j = 0; j < Model.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                         {
-                            for (int y = 0; y < Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            for (int y = 0; y < Model.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
                             {
                                 <tr>
                                     <th>@Model.EquipementsParZone[i].NomZone</th>
-                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].nomEquipement ( N° GMAO: @Model.EquipementsParZone[i].CalendrierChildVM[j].numGmaoEquipement )</td>
-                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()</td>
-                                    <td>@Model.EquipementsParZone[i].CalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()</td>
+                                    <td>@Model.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement ( N° GMAO: @Model.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement )</td>
+                                    <td>@Model.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()</td>
+                                    <td>@Model.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()</td>
                                 </tr>
                             }
                         }

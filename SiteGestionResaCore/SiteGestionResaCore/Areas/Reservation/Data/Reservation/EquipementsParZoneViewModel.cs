@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Reservation.Data.Reservation;
+using SiteGestionResaCore.Data;
 using System.Collections.Generic;
 
 namespace SiteGestionResaCore.Areas.Reservation.Data
@@ -25,8 +26,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         /// <summary>
         /// création du model child pour le passer à la vue partielle _CalendrierEquipement (tous les réservations par équipement)
+        /// Liste des équipements pour sauvegarder les infos à afficher sur les calendriers
         /// </summary>
-        public List<CalendrierEquipChildViewModel> CalendrierChildVM { get; set; }
+        public List<CalendrierEquipChildViewModel> PreCalendrierChildVM { get; set; }
+
+        /// <summary>
+        /// Liste contenant uniquement les équipements sélectionnées
+        /// </summary>
+        public List<CalendrierEquipChildViewModel> CalendEquipSelectionnes { get; set; }
 
         public int IndiceChildModel { get; set; }
 
@@ -45,6 +52,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// Année à sauvegarder pour synchroniser tous les datepicker de la page
         /// </summary>
         public int AnneeDatePick { get; set; }
+
+        public List<SousListeEquipements> SousListeEquipements { get; set; }
     }
     #endregion
 
