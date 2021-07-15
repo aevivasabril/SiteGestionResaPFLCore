@@ -343,6 +343,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             var resasOuv = (from essai in context.essai
                          from resa in context.reservation_projet
                          where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID && resa.equipementID == idEquipement
+                         && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                          && ( ((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut) 
                          && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
                          select resa).Distinct().ToList();
@@ -364,6 +366,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                          from resa in context.reservation_projet
                          from equip in context.equipement
                          where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID && resa.equipementID == idEquipement
+                         && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                          && ( ( dateDebut >= resa.date_debut || dateFin >= resa.date_debut) 
                          && ( dateDebut <= resa.date_fin || dateFin <= resa.date_fin ))
                          select resa).Distinct().ToList();
@@ -396,6 +400,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                  from reser in context.reservation_projet
                                  where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID
                                  && (reser.equipementID == idEquipement)
+                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)
                                  && ((dateDebut <= essai.date_sup_confidentiel) || dateFin <= essai.date_sup_confidentiel)))
                                  select essai).Distinct().ToList();
@@ -410,6 +416,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                           from equip in context.equipement
                                           from reser in context.reservation_projet
                                           where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID
+                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                           && (equip.zoneID != ApCinq && equip.zoneID != ApSix && equip.zoneID != ApSept
                                           && equip.zoneID != ApHuit && equip.zoneID != ApNeuf)
                                           && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)
@@ -448,6 +456,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             var resasOuv = (from essai in context.essai
                             from resa in context.reservation_projet
                             where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID && resa.equipementID == idEquipement
+                            && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                             && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
                             && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
                             select resa).Distinct().ToList();
@@ -468,7 +478,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             var resasRest = (from essai in context.essai
                              from resa in context.reservation_projet
                              from equip in context.equipement
-                             where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID && resa.equipementID == idEquipement 
+                             where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID && resa.equipementID == idEquipement
+                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                              && essai.id != IdEssai
                              && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
                              && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
@@ -501,6 +513,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                  from equip in context.equipement
                                  from reser in context.reservation_projet
                                  where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && (essai.id == reser.essaiID)
+                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (reser.equipementID == idEquipement)
                                  && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)
                                  && ((dateDebut <= essai.date_sup_confidentiel) || dateFin <= essai.date_sup_confidentiel)))
@@ -516,6 +530,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                           from equip in context.equipement
                                           from reser in context.reservation_projet
                                           where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && (essai.id == reser.essaiID)
+                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                           && (equip.zoneID != ApCinq && equip.zoneID != ApSix && equip.zoneID != ApSept
                                           && equip.zoneID != ApHuit && equip.zoneID != ApNeuf)
                                           && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)
@@ -562,6 +578,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 from resa in context.reservation_projet
                                 from equip in context.equipement
                                 where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                 && (equip.zoneID == ApCinq && equip.zoneID == ApSix && equip.zoneID == ApSept
                                           && equip.zoneID == ApHuit && equip.zoneID == ApNeuf)
                                 && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
@@ -581,6 +599,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 from resa in context.reservation_projet
                                 from equip in context.equipement
                                 where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                 && (equip.zoneID != ApCinq && equip.zoneID != ApSix && equip.zoneID != ApSept
                                           && equip.zoneID != ApHuit && equip.zoneID != ApNeuf)
                                 && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
@@ -605,6 +625,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                  from resa in context.reservation_projet
                                  from equip in context.equipement
                                  where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
+                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (equip.zoneID == ApCinq && equip.zoneID == ApSix && equip.zoneID == ApSept
                                           && equip.zoneID == ApHuit && equip.zoneID == ApNeuf)
                                  && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
@@ -624,6 +646,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                  from resa in context.reservation_projet
                                  from equip in context.equipement
                                  where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
+                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (equip.zoneID != ApCinq && equip.zoneID != ApSix && equip.zoneID != ApSept
                                           && equip.zoneID != ApHuit && equip.zoneID != ApNeuf)
                                  && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
@@ -652,7 +676,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 var essaiConf = (from essai in context.essai
                                  from equip in context.equipement
                                  from reser in context.reservation_projet
-                                 where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID && essai.id != IdEssai 
+                                 where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID && essai.id != IdEssai
+                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (reser.equipementID == idEquipement)
                                  && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)
                                  && ((dateDebut <= essai.date_sup_confidentiel) || dateFin <= essai.date_sup_confidentiel)))
@@ -668,6 +694,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                           from equip in context.equipement
                                           from reser in context.reservation_projet
                                           where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID && essai.id != IdEssai
+                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                           && (equip.zoneID != ApCinq && equip.zoneID != ApSix && equip.zoneID != ApSept
                                           && equip.zoneID != ApHuit && equip.zoneID != ApNeuf)
                                           && (((dateDebut >= essai.date_inf_confidentiel) || dateFin >= essai.date_inf_confidentiel)

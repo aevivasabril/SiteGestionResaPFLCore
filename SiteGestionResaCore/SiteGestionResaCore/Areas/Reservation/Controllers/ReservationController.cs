@@ -693,7 +693,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     {
                                         if (equipementZone.CalendEquipSelectionnes.Count() == 1)
                                         {
-                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
                                             goto ENDT;
                                         }
                                         else
@@ -712,7 +712,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     {
                                         if (equipementZone.CalendEquipSelectionnes.Count() == 1)
                                         {
-                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
                                             goto ENDT;
                                         }
                                         else
@@ -731,7 +731,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     {
                                         if (equipementZone.CalendEquipSelectionnes.Count() == 1)
                                         {
-                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
                                             goto ENDT;
                                         }
                                         else
