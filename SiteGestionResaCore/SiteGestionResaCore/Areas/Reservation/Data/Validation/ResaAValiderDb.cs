@@ -106,6 +106,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Validation
                                          idResa = n.id
                                      }).AnyAsync();
                     }
+                    if(essai.confidentialite == EnumConfidentialite.Confidentiel.ToString()) // un essai confidentiel n'a pas de conflit puisque il regne sur les autres
+                    {
+                        Reg = false;
+                    }
                     
 
                     if(Reg==true)

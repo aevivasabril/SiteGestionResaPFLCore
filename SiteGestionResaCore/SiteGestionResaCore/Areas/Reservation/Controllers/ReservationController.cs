@@ -658,25 +658,94 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
                     bool isResaOkToAdd = false;
-
-                    for(int i = 0; i<equipementZone.CalendEquipSelectionnes.Count(); i++)
+                    if(zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une réservation standard
                     {
-                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.SousListeEquipements[i].IdEquipement);
-                        if(isResaOkToAdd == false)
+                        for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                         {
-                            if(equipementZone.SousListeEquipements.Count() == 1)
+                            isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                            if (isResaOkToAdd == false)
                             {
-                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
-                                goto ENDT;
+                                if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                {
+                                    ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                    goto ENDT;
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                    goto ENDT;
+                                }
                             }
-                            else
-                            {
-                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
-                                goto ENDT;
-                            }                          
                         }
                     }
+                    else // cas où l'on rajoute des équipements à une réservation existante
+                    {
+                        // selon le type de confidentialité, vérifier la disponibilité des équipements
+                        // obtenir l'essai où les réservations devront être ajoutées
+                        essai Essai = projetEssaiDb.ObtenirEssai_pourCopie(zonesReservation.IdEssaiXAjoutEquip);
+                        switch (Essai.confidentialite)
+                        {
+                            case "Ouvert":
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    if (isResaOkToAdd == false)
+                                    {
+                                        if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                        {
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "Restreint":
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, true, Essai.id);
+                                    if (isResaOkToAdd == false)
+                                    {
+                                        if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                        {
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                    }
+                                }
+                                break;
+                            case "Confidentiel":
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    isResaOkToAdd = reservationDb.DispoEssaiConfidentielPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, true, Essai.id);
+                                    if (isResaOkToAdd == false)
+                                    {
+                                        if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                        {
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                    }
+                                }
+                                break;
+                        }
 
+                    }
+                   
                     // Si on arrive ici ça veut dire que tous les équipements de la sélection utilisateur sont dispos! il faut les rajouter dans la liste des créneaux réservation
                     for(int j= 0; j < equipementZone.CalendEquipSelectionnes.Count(); j++)
                     {
