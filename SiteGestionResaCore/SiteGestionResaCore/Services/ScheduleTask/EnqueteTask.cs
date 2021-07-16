@@ -46,6 +46,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             {
                 var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
+                var email = enqueteTaskDB.GetEmailCreatorEssai(essai.compte_userID);
 
                 string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
@@ -58,7 +59,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
                     
-                await emailSender.SendEmailAsync(proj.mailRespProjet, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
 
                 // Mettre à jour la date-envoi_enquete
@@ -82,6 +83,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             {
                 var essai = enqueteTaskDB.GetEssaiParEnquete(enque.essaiId);
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
+                var email = enqueteTaskDB.GetEmailCreatorEssai(essai.compte_userID);
 
                 string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
@@ -94,7 +96,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
-                await emailSender.SendEmailAsync(proj.mailRespProjet, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 // Mettre à jour la date-envoi_enquete
                 enqueteTaskDB.UpdateDateEnvoiEnquete(enque);

@@ -21,5 +21,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         List<enquete> GetEnquetesPourRelance();
 
         void UpdateDateEnvoiEnquete(enquete enquete);
+
+        string GetEmailCreatorEssai(int userID);
     }
 }

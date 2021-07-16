@@ -116,5 +116,10 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             enquete.date_envoi_enquete = DateTime.Now;
             resaDb.SaveChanges();
         }
+
+        public string GetEmailCreatorEssai(int userID)
+        {
+           return resaDb.Users.Find(userID).Email;
+        }
     }
 }
