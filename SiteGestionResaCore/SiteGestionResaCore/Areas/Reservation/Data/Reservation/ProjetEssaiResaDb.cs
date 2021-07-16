@@ -57,12 +57,17 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             IList<string> allUserRoles = await userManager.GetRolesAsync(usr);
             bool propProjOk = false;
             bool adminSiteOk = false;
-            // Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
+            bool organismeOk = false;
+
+            #region Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
+
             //propProjOk = context.projet.Where(p => p.num_projet == numProjet).Where(p => p.compte_userID == usr.Id).Any(); // PAS BON car j'ai besoin de comparer l'id user au parametre compte_userID (string)
             propProjOk = (from p in context.projet
                     where p.num_projet == numProjet && p.compte_userID == usr.Id
                     select p).Any();
-            // Si la personne n'est pas propiètaire du projet mais qu'elle est "Admin" ou "MainAdmin"
+            #endregion
+
+            #region Si la personne n'est pas propiètaire du projet mais qu'elle est "Admin" ou "MainAdmin"
             foreach (string roles in allUserRoles)
             {
                 if (roles == "Admin" || roles == "MainAdmin")
@@ -71,7 +76,24 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                     break;
                 }
             }
-            return (propProjOk || adminSiteOk);
+            #endregion
+
+            #region Autoriser les personnes d'une même organisation pour copier les infos du code projet
+
+            var propProjet = (from pr in context.projet
+                              where pr.num_projet == numProjet
+                              select pr.compte_userID).First();
+
+            var auteur = await userManager.FindByIdAsync(propProjet.ToString());
+
+            if(usr.organismeID == auteur.organismeID) // vérifier que le propiètaire appartient au même organisme de la personne qui saisi la demande
+            {
+                if(usr.organismeID != 1) // sauf si c'est l'inrae ne pas autoriser pour le moment
+                    organismeOk = true;
+            }
+
+            #endregion
+            return (propProjOk || adminSiteOk || organismeOk);
         }
 
         /// <summary>
