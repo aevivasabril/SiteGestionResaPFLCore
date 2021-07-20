@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20210720071945_AjoutModifDesSallesAlimentaires")]
+    partial class AjoutModifDesSallesAlimentaires
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,28 +53,28 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "538a2992-9160-4b47-b1c2-8d182b955df3",
+                            ConcurrencyStamp = "b7312677-b749-406e-ae29-3a3def80f7b6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "11c2ee6c-b08e-4b48-8271-4e42f435cf0f",
+                            ConcurrencyStamp = "bd4a7bcc-4e12-4c9a-8a7c-9bf0c7c3e0ba",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "b31b1be7-d922-49c4-986e-49e52d87ed48",
+                            ConcurrencyStamp = "cfe04865-b29d-4484-bc14-0b3c8a17a1b8",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "b13a9366-544a-4b83-91b2-b505efba8ded",
+                            ConcurrencyStamp = "72103ce0-f2f5-49c7-87c9-93aebf2bd142",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         });
@@ -420,7 +422,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 183,
                             mobile = true,
-                            nom = "Mini-cuve N°1 (100L)",
+                            nom = "Mini-cuve N°1 (150L)",
                             numGmao = "ECUV0003",
                             zoneID = 17
                         },
