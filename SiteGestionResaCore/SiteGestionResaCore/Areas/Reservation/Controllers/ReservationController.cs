@@ -568,7 +568,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         /// <param name="model">model view provenant de la vue partielle "_creneau"</param>
         /// <returns>Action result</returns>
         [HttpPost]
-        public ActionResult AjouterResa(CalendrierEquipChildViewModel model) // model presque "vide" (contient les datetime)
+        public async Task<ActionResult> AjouterResaAsync(CalendrierEquipChildViewModel model) // model presque "vide" (contient les datetime)
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
@@ -635,10 +635,21 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     #region Vérifier que la date début du créneaux à rajouter est inférieur ou égal à une semaine avant la réservation
 
+                    // Autoriser les utilisateurs logistic à faire des réservations tardives
+                    // Obtenir le ID d'authentification AspNet
+                    var userResa = await userManager.FindByIdAsync(User.GetUserId());
+                    var allUserRoles = await userManager.GetRolesAsync(userResa);
+                    bool IsLogistic = false;
+                    // Vérifier si la personne est dans le groupe des "Logistic"
+                    if(allUserRoles.Contains("Logistic"))
+                    {
+                        IsLogistic = true;
+                    }
+
                     TimeSpan diff = debutToSave - DateTime.Now;
                     if (zonesReservation.IdEssaiXAjoutEquip == 0) // Dans le cas de réservation standard vérifier le seuil de 7 jours avant 
                     {
-                        if (diff.Days < 6)
+                        if (diff.Days < 3 && IsLogistic == false) // Délai de 3 jours pour les personnes qui sont pas dans le groupe des utilisateurs "Logistic"
                         {
                             ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins d'une semaine avant l'essai");
                             goto ENDT;
