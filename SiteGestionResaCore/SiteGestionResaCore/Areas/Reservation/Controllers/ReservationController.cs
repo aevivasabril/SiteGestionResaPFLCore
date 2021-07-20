@@ -1221,7 +1221,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     mssLogis = @"<html>
                             <body> 
                             <p> Bonjour, <br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
-                                " saisie par l'utilisateur: " + Proj.mailRespProjet + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> "
+                                " saisie par l'utilisateur: " + user.Email + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> "
                                 + "</p>";
 
                     mssLogis += @"<table>
