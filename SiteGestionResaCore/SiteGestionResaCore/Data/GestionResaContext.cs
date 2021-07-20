@@ -316,7 +316,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true },
                 new equipement { id = 249, nom = "Congelateur", zoneID = 16, numGmao = "CONG0013", mobile = false }, new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false }, 
                 new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false }, new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false },
-                new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "", mobile = false }});
+                new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false }});
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
                 new ld_destination { id = 2, nom_destination = "Plan HACCP" },
