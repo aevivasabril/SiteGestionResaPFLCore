@@ -53,7 +53,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         //isEssaiModifiable = false;
                         break;
                     case "Validate":
-                        StatusEssai = "Essai Validée";
+                        StatusEssai = "Essai Validé";
                         break;
                     case "WaitingValidation":
                         StatusEssai = "Essai en attente de validation";
