@@ -61,7 +61,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 }
 
                 // Vérifier si l'essai est supprimable
-                bool ReadyToSupp = IsEssaiReadyToSupp(i.id);
+                bool ReadyToSupp = IsEssaiModifiableOuSupp(i.id);
 
                 // Vérifier si il faut afficher le partial view infos essai pour un des essais
                 if(IdEssai != 0) // signifie que une des vues infos essai ou infos réservation devra être affichée
@@ -103,10 +103,8 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return resaDB.essai.FirstOrDefault(e => e.id == IdEssai);
         }
 
-        public bool IsEssaiModifiable(int IdEssai)
+        public bool IsEssaiModifiableOuSupp(int IdEssai)
         {
-            DateTime dateBegin = new DateTime();
-
             var essai = resaDB.essai.First(e=>e.id == IdEssai);
             // si l'essai est refusé ou annulé alors essai non modifiable
             if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
@@ -116,31 +114,10 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
                 var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
 
-                bool IsFirstSearch = true;
-                if (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                {
-                    // la date début de l'essai est déjà calculé
-                    dateBegin = essai.date_inf_confidentiel.Value;
-                }
-                else
-                {
-                    foreach (var x in resas)
-                    {
-
-                        // Pour tous les autres cas, retrouver la date à laquel commence l'essai (date la plus récente)
-                        if (IsFirstSearch == true)
-                        {
-                            dateBegin = x.date_debut;
-                            IsFirstSearch = false;
-                        }
-                        else
-                        {
-                            if (dateBegin > x.date_debut)
-                                dateBegin = x.date_debut;
-                        }
-                    }
-                }
-                TimeSpan diff = DateTime.Today - dateBegin;
+                // Retrouver la date la plus recente des réservations
+                var dateInf = resas.OrderBy(r => r.date_debut).ToList();                
+                
+                TimeSpan diff = DateTime.Today - dateInf[0].date_debut;
                 // Il faut que l'utilisateur puisse modifier la réservation 2 jours après début de l'essai s'il a un pb d'approvissionement
                 if (diff.Days <= 2)  // 
                     return true;
@@ -492,10 +469,8 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return IsChangeOk;
         }
 
-        private bool IsEssaiReadyToSupp(int IdEssai)
+        /*private bool IsEssaiReadyToSupp(int IdEssai)
         {
-            DateTime dateBegin = new DateTime();
-
             var essai = resaDB.essai.First(e => e.id == IdEssai);
             // si l'essai est refusé ou annulé alors essai non modifiable
             if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
@@ -505,37 +480,16 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
                 var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
 
-                bool IsFirstSearch = true;
-                if (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                {
-                    // la date début de l'essai est déjà calculé
-                    dateBegin = essai.date_inf_confidentiel.Value;
-                }
-                else
-                {
-                    foreach (var x in resas)
-                    {
+                // Retrouver la date la plus recente des réservations
+                var dateInf = resas.OrderBy(r => r.date_debut).ToList();
 
-                        // Pour tous les autres cas, retrouver la date à laquel commence l'essai (date la plus récente)
-                        if (IsFirstSearch == true)
-                        {
-                            dateBegin = x.date_debut;
-                            IsFirstSearch = false;
-                        }
-                        else
-                        {
-                            if (dateBegin > x.date_debut)
-                                dateBegin = x.date_debut;
-                        }
-                    }
-                }
-                TimeSpan diff = DateTime.Today - dateBegin;
+                TimeSpan diff = DateTime.Today - dateInf[0].date_debut;
                  
                 if (diff.Days<2) // Permettre de supprimer une réservation maximum 2 jours après le début de l'essai
                     return true;
                 else
                     return false;
             }
-        }
+        }*/
     }
 }

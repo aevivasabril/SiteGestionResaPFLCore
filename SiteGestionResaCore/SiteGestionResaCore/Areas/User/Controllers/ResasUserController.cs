@@ -68,7 +68,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             ess = resasUserDB.ObtenirEssaiPourModif(id);
 
-            var isModif = resasUserDB.IsEssaiModifiable(id);
+            var isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
             if (isModif)
             {
                 infos = new ConsultInfosEssaiChildVM();
@@ -297,7 +297,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             var user = await userManager.FindByIdAsync(User.GetUserId());
 
             // vérifier si cet essai est modifiable 
-            var isModif = resasUserDB.IsEssaiModifiable(id);
+            var isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
 
             // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
             MyReservationsViewModel vm = new MyReservationsViewModel()

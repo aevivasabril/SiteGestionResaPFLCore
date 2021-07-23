@@ -14,7 +14,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         essai ObtenirEssaiPourModif(int IdEssai);
 
-        bool IsEssaiModifiable(int IdEssai);
+        bool IsEssaiModifiableOuSupp(int IdEssai);
 
         List<ld_produit_in> ListProduitEntree();
 
