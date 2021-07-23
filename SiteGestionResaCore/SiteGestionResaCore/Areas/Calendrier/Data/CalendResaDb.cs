@@ -60,6 +60,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
         public ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup)
         {
+            ResasEquipParJour resasEquipTEMP = new ResasEquipParJour();
             ResasEquipParJour resasEquip = new ResasEquipParJour();
             DateTimeFormatInfo dateTimeFormats = null;
             DateTime dateSeuilInf = new DateTime();                                                 // RESTREINT: Date à comparer sur chaque réservation pour trouver le seuil inferieur
@@ -73,7 +74,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             essai[] SubInfosEssai = new essai[] { };
             List<essai> InfosEssai = new List<essai>();
             equipement Equipement = resaDB.equipement.First(x => x.id == IdEquipement);     // Equipement à enqueter
-
 
             // CORRECTION: initialisation des dateTime pour trouver les réservations se chevauchant (4 dates differentes)
             DateTime DatEnqDebMatin = DateRecup; // date debut matin
@@ -127,7 +127,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                         #region Confidentialité ouverte
 
-                        resasEquip = ResaConfidentialiteOuverte(ess, infosResa, IdEquipement, DateRecup);
+                        resasEquipTEMP = ResaConfidentialiteOuverte(ess, infosResa, IdEquipement, DateRecup);
 
                         #endregion
 
@@ -136,7 +136,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                         #region Confidentialité "Restreint"
 
-                        resasEquip = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement s'il est dans la zone des réservations "Restreint"
+                        resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement s'il est dans la zone des réservations "Restreint"
                                              
                         #endregion
 
@@ -150,14 +150,24 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" blocage uniquement de la zone "Confidentiel"
-                            resasEquip = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
+                            resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
                         }
                         else // Si équipement présent dans la zone PFL alors le bloquer si les dates se chevauchent
                         {
-                            resasEquip = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
+                            resasEquipTEMP = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
                         }
                         #endregion
-                        break;
+                        break;                                           
+                }
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach(var res in resasEquipTEMP.ListResasMatin)
+                {
+                    resasEquip.ListResasMatin.Add(res);
+                }
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach (var res in resasEquipTEMP.ListResasAprem)
+                {
+                    resasEquip.ListResasAprem.Add(res);
                 }
             }
 
@@ -277,6 +287,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                     if ( DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString()) 
                         && DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()) )
                     {
+                        #region vérifier si l'essai n'est pas déjà dans la liste Matin
                         // vérifier si l'essai n'est pas déjà dans la liste Matin
                         var EssaiDejaAjouteMatin = EquipVsResa.ListResasMatin.Any(e => e.IdEssai == ess.id);
                         var EssaiDejaAjouteAprem = EquipVsResa.ListResasAprem.Any(e => e.IdEssai == ess.id);
@@ -338,7 +349,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                                 EquipVsResa.ListResasAprem.Add(infosResa);
                             }
                         }
-                    }                   
+                        #endregion
+                    }
                 }
             }
             return EquipVsResa;
@@ -355,14 +367,18 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         public ResasEquipParJour ResaConfidentialiteConf(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
         {
             ResasEquipParJour EquipVsResa = new ResasEquipParJour();
-
+            int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
+            int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
+            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
+            int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
             var resas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id);
 
             foreach (var resa in resas)
             {
                 var equip = resaDB.equipement.First(e => e.id == resa.equipementID);
-                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
-                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
+                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) &&
+                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
                     !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
                 {
                     if (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString())
