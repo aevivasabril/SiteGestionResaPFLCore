@@ -136,93 +136,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                         #region Confidentialité "Restreint"
 
-                        bool IsFirstSearchOnEssai = true;
-
-                        #region Recherche des dates superieur et inferieur pour chaque essai
-
-                        foreach (var resa in resaDB.reservation_projet.Where(r => r.essaiID == ess.id))
-                        {
-                            if (resaDB.equipement.Where(e => e.id == resa.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone concerné
-                            {
-                                // Cas 1: l'équipement est dans une des zones dont le conflit ne fait pas partie
-                                if (Equipement.zoneID.Equals(EnumZonesPfl.HaloirAp7) || Equipement.zoneID.Equals(EnumZonesPfl.SalleAp5) ||
-                                    Equipement.zoneID.Equals(EnumZonesPfl.SalleAp6) || Equipement.zoneID.Equals(EnumZonesPfl.SalleAp8) ||
-                                    Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || Equipement.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
-                                {
-                                    // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
-                                    resasEquip = ResaConfidentialiteOuverte(ess, infosResa, IdEquipement, DateRecup);
-                                }
-                                else // Cas 2: pour toutes les autres zones, calculer la date seuil inferieur et superieur parmi toutes les réservations(blocage de la zone)
-                                {
-                                    if (IsFirstSearchOnEssai == true) // Executer que lors de la premiere réservation de la liste 
-                                    {
-                                        IsFirstSearchOnEssai = false;
-                                        dateSeuilInf = resa.date_debut;
-                                        dateSeuilSup = resa.date_fin;
-                                    }
-                                    else
-                                    {
-                                        // Recherche des dates superieur et inferieur sur toutes les réservations
-                                        if (resa.date_debut.CompareTo(dateSeuilInf) <= 0) // resa.date_debut <= dateSeuilInf)
-                                        {
-                                            dateSeuilInf = resa.date_debut;
-                                        }
-                                        if (resa.date_fin.CompareTo(dateSeuilSup) >= 0)  // resa.date_fin >= dateSeuilSup)
-                                        {
-                                            dateSeuilSup = resa.date_fin;
-                                        }
-                                    }
-                                    ResaAGarder = resa;
-                                    IsEquipInZone = true;
-                                }
-                            }
-                        }
-
-                        #endregion
-
-                        #region Bloquer l'équipement si la dateResa est dans les dates seuils rétrouvées
-
-                        if ((IsEquipInZone == true) && (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(dateSeuilInf.ToShortDateString()))
-                            && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(dateSeuilSup.ToShortDateString()))) // si l'équipement est dans la zone et que la date enqueté est dans le seuil
-                        {
-                            if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(dateSeuilInf.ToShortDateString())) // début
-                            {
-                                // Regarder pour définir le créneau
-                                if (dateSeuilInf.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
-                                {
-                                    resasEquip.ListResasAprem.Add(infosResa);
-                                    //Resas.InfosResaMatin.Add(null); // Matin vide
-                                }
-                                else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
-                                {
-                                    resasEquip.ListResasMatin.Add(infosResa);
-                                    resasEquip.ListResasAprem.Add(infosResa);
-                                }
-                            }
-                            else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(dateSeuilSup.ToShortDateString())) // fin
-                            {
-                                // Regarder pour définir le créneau
-                                if (dateSeuilSup.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
-                                {
-                                    resasEquip.ListResasMatin.Add(infosResa);
-                                    //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
-                                }
-                                else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
-                                {
-                                    resasEquip.ListResasMatin.Add(infosResa);
-                                    resasEquip.ListResasAprem.Add(infosResa);
-                                }
-                            }
-                            else
-                            {
-                                // Ajouter cette résa sur le créneau matin et aprèm 
-                                resasEquip.ListResasMatin.Add(infosResa);
-                                resasEquip.ListResasAprem.Add(infosResa);
-                            }
-                            IsEquipInZone = false;
-                        }
-
-                        #endregion
+                        resasEquip = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement s'il est dans la zone des réservations "Restreint"
+                                             
                         #endregion
 
                         break;
@@ -234,73 +149,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
                             Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
                         {
-                            // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
-                            resasEquip = ResaConfidentialiteOuverte(ess, infosResa, IdEquipement, DateRecup);
+                            // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" blocage uniquement de la zone "Confidentiel"
+                            resasEquip = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
                         }
-                        else
+                        else // Si équipement présent dans la zone PFL alors le bloquer si les dates se chevauchent
                         {
-                            // Vérifier si l'essai contient au moins un équipement appartenant à la zone PFL
-                            bool equipReservePFL = false;
-
-                            var listResas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id).ToList();
-                            foreach(var res in listResas)
-                            {
-                                // vérifier s'il y a des réservations sur la PFL 
-                                // obtenir l'équipement
-                                var equip = resaDB.equipement.First(e => e.id == res.equipementID);
-                                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) &&
-                                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
-                                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
-                                {
-                                    equipReservePFL = true;
-                                    break;
-                                }
-                            }
-                            
-                            if(equipReservePFL == true)
-                            {
-                                if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(ess.date_inf_confidentiel.Value.ToShortDateString()))   //Bonne manière de comparer les dates converties en shortstring!
-                                && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(ess.date_sup_confidentiel.Value.ToShortDateString())))
-                                {
-                                    // Créer une réservation uniquement pour avoir l'accès à l'essai (A modifier)
-                                    ResaAGarder = new reservation_projet { equipementID = IdEquipement, essaiID = ess.id, date_debut = ess.date_inf_confidentiel.Value, date_fin = ess.date_sup_confidentiel.Value, essai = ess };
-
-                                    if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(ess.date_inf_confidentiel.Value.ToShortDateString())) // début
-                                    {
-                                        // Regarder pour définir le créneau
-                                        if (ess.date_inf_confidentiel.Value.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
-                                        {
-                                            resasEquip.ListResasAprem.Add(infosResa);
-                                        }
-                                        else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
-                                        {
-                                            resasEquip.ListResasMatin.Add(infosResa);
-                                            resasEquip.ListResasAprem.Add(infosResa);
-                                        }
-                                    }
-                                    else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(ess.date_sup_confidentiel.Value.ToShortDateString())) // fin
-                                    {
-                                        // Regarder pour définir le créneau
-                                        if (ess.date_sup_confidentiel.Value.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
-                                        {
-                                            resasEquip.ListResasMatin.Add(infosResa);
-                                            //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
-                                        }
-                                        else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
-                                        {
-                                            resasEquip.ListResasMatin.Add(infosResa);
-                                            resasEquip.ListResasAprem.Add(infosResa);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // Ajouter cette résa sur le créneau matin et aprèm 
-                                        resasEquip.ListResasMatin.Add(infosResa);
-                                        resasEquip.ListResasAprem.Add(infosResa);
-                                    }
-                                }
-                            }
-                            
+                            resasEquip = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
                         }
                         #endregion
                         break;
@@ -406,6 +260,177 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         EquipVsResa.ListResasAprem.Add(infosResa);
                     }
                 }
+            }
+            return EquipVsResa;
+        }
+
+        public ResasEquipParJour ResaConfidentialiteRestreint(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
+        {
+            ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+
+            var resas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id);
+
+            foreach (var resa in resas)
+            {
+                if (resaDB.equipement.Where(e => e.id == resa.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                {
+                    if ( DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString()) 
+                        && DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()) )
+                    {
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.ListResasMatin.Any(e => e.IdEssai == ess.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.ListResasAprem.Any(e => e.IdEssai == ess.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_debut.ToShortDateString())) // début
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_fin.ToShortDateString())) // fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                            {
+                                EquipVsResa.ListResasMatin.Add(infosResa);
+                            }
+                            if (!EssaiDejaAjouteAprem)
+                            {
+                                EquipVsResa.ListResasAprem.Add(infosResa);
+                            }
+                        }
+                    }                   
+                }
+            }
+            return EquipVsResa;
+        }
+
+        /// <summary>
+        /// Planning équipement si essai "Confidentiel"
+        /// </summary>
+        /// <param name="ess"></param>
+        /// <param name="infosResa"></param>
+        /// <param name="Equipement"></param>
+        /// <param name="DateRecup"></param>
+        /// <returns></returns>
+        public ResasEquipParJour ResaConfidentialiteConf(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
+        {
+            ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+
+            var resas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id);
+
+            foreach (var resa in resas)
+            {
+                var equip = resaDB.equipement.First(e => e.id == resa.equipementID);
+                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
+                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
+                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
+                {
+                    if (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString())
+                    && DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()))
+                    {
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.ListResasMatin.Any(e => e.IdEssai == ess.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.ListResasAprem.Any(e => e.IdEssai == ess.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_debut.ToShortDateString())) // début
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_fin.ToShortDateString())) // fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                }
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                            {
+                                EquipVsResa.ListResasMatin.Add(infosResa);
+                            }
+                            if (!EssaiDejaAjouteAprem)
+                            {
+                                EquipVsResa.ListResasAprem.Add(infosResa);
+                            }
+                        }
+                    }
+                }                           
             }
             return EquipVsResa;
         }
