@@ -16,8 +16,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         string ObtenirNomEquipement(int id);
 
-        bool DispoEssaiRestreintPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, bool Ajout, int IdEssai);
+        bool DispoEssaiRestreintPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai);
 
-        bool DispoEssaiConfidentielPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, bool Ajout, int IdEssai);
+        bool DispoEssaiConfidentielPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai);
+
     }
 }

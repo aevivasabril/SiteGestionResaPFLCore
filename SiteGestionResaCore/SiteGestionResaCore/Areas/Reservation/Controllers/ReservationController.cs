@@ -350,7 +350,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 // initialiser pour chaque équipement 
                 calenChild = new CalendrierEquipChildViewModel();
                 // 2. en prenant l'id de chaque equipement, obtenir la list des reservations pour la semaine en cours
-                reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null);
+                reservationsSemEquipement = DonneesCalendrierEquipement(true, equipements[i].id, null, null); // TODO: Pas nécessaire?? new List<ReservationsJour>()
                 calenChild.ListResas = reservationsSemEquipement;
                 calenChild.idEquipement = equipements[i].id;
                 calenChild.nomEquipement = equipements[i].nom;
@@ -651,7 +651,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     {
                         if (diff.Days < 3 && IsLogistic == false) // Délai de 3 jours pour les personnes qui sont pas dans le groupe des utilisateurs "Logistic"
                         {
-                            ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins d'une semaine avant l'essai");
+                            ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins de 3 jours avant l'essai");
                             goto ENDT;
                         }
                     }
@@ -718,7 +718,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             case "Restreint":
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
-                                    isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, true, Essai.id);
+                                    isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
                                     if (isResaOkToAdd == false)
                                     {
                                         if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -737,7 +737,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             case "Confidentiel":
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
-                                    isResaOkToAdd = reservationDb.DispoEssaiConfidentielPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, true, Essai.id);
+                                    isResaOkToAdd = reservationDb.DispoEssaiConfidentielPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
                                     if (isResaOkToAdd == false)
                                     {
                                         if (equipementZone.CalendEquipSelectionnes.Count() == 1)
