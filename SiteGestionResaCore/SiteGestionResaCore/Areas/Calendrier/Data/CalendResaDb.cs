@@ -37,36 +37,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return resaDB.equipement.Where(e=>e.zoneID == ZoneID).Distinct().ToList();
         }
 
-        /*public InfosCalenZone ResasEquipementsParZone(DateTime DateRecup, int NbJours, int ZoneId)
-        {
-            InfosCalenZone infos = new InfosCalenZone();
-
-            // Obtenir la liste des équipements disponibles dans la zone
-            List<equipement> equipements = resaDB.equipement.Where(e => e.zoneID == ZoneId).Distinct().ToList();
-
-            // pour chaque équipement obtenir les réservations sur les dates souhaitées
-            foreach(var equip in equipements)
-            {
-
-                infos = new InfosCalenZone 
-                { 
-                    IdZone = ZoneId, NomZone = resaDB.zone.Where(z => z.id == ZoneId).Select(z => z.nom_zone).ToString() 
-                };
-
-            }
-
-            return infos;
-        }*/
-
         public ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup)
         {
             ResasEquipParJour resasEquipTEMP = new ResasEquipParJour();
             ResasEquipParJour resasEquip = new ResasEquipParJour();
             DateTimeFormatInfo dateTimeFormats = null;
-            DateTime dateSeuilInf = new DateTime();                                                 // RESTREINT: Date à comparer sur chaque réservation pour trouver le seuil inferieur
-            DateTime dateSeuilSup = new DateTime();
             reservation_projet ResaAGarder = new reservation_projet();                              // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
-            bool IsEquipInZone = false;
 
             DateTime JourCalendrier;
             string NomJour;
@@ -152,7 +128,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" blocage uniquement de la zone "Confidentiel"
                             resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
                         }
-                        else // Si équipement présent dans la zone PFL alors le bloquer si les dates se chevauchent
+                        else // Si équipement présent dans la zone PFL alors le bloquer selon la réservation
                         {
                             resasEquipTEMP = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
                         }
@@ -255,7 +231,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
                         {
                             EquipVsResa.ListResasMatin.Add(infosResa);
-                            //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
                         }
                         else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
                         {
@@ -300,7 +275,6 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                                 if (!EssaiDejaAjouteAprem)
                                 {
                                     EquipVsResa.ListResasAprem.Add(infosResa);
-                                    //Resas.InfosResaMatin.Add(null); // Matin vide
                                 }
                             }
                             else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
@@ -377,6 +351,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             foreach (var resa in resas)
             {
                 var equip = resaDB.equipement.First(e => e.id == resa.equipementID);
+                // Equipement dans la zone PFL
                 if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) &&
                     !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
                     !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))

@@ -651,7 +651,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     {
                         if (diff.Days < 3 && IsLogistic == false) // Délai de 3 jours pour les personnes qui sont pas dans le groupe des utilisateurs "Logistic"
                         {
-                            ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins d'une semaine avant l'essai");
+                            ModelState.AddModelError("", "Vous ne pouvez pas réserver un équipement à moins de 3 jours avant l'essai");
                             goto ENDT;
                         }
                     }
