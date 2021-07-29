@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20210729134532_AjoutDesEquipesSTLO")]
+    partial class AjoutDesEquipesSTLO
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,28 +53,28 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "c19f6894-aaec-4724-b646-4a79a9c91319",
+                            ConcurrencyStamp = "7c720f97-f71e-4a18-83a2-1196672d454d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "0d7442f2-d39a-4689-9977-ac71d03e1369",
+                            ConcurrencyStamp = "72f4530a-3c05-486e-b89c-30175d82d5fa",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "59fae6a4-643b-4822-89b6-4bb933c81123",
+                            ConcurrencyStamp = "da448997-5164-4504-ac6a-ead79c0fcb11",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "ea8131af-deed-4ab6-8367-46856eab523f",
+                            ConcurrencyStamp = "12aa6d7a-6ad4-4a3a-87a6-9f3de0642f8d",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         });
@@ -1605,9 +1607,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.Property<bool?>("compteInactif")
                         .HasColumnType("bit");
-
-                    b.Property<int?>("equipeID")
-                        .HasColumnType("int");
 
                     b.Property<string>("nom")
                         .IsRequired()

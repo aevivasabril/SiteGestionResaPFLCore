@@ -110,5 +110,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             return await userManager.GetUsersInRoleAsync("MainAdmin");
         }
+
+        /// <summary>
+        /// Liste des organismes déclarés sur la BDD
+        /// </summary>
+        /// <returns>liste des organismes </returns>
+        public List<ld_equipes_stlo> ObtenirListEquips()
+        {
+            return context.ld_equipes_stlo.ToList();
+        }
     }
 }

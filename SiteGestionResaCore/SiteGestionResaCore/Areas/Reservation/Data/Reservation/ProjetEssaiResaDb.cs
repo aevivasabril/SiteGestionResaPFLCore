@@ -58,6 +58,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             bool propProjOk = false;
             bool adminSiteOk = false;
             bool organismeOk = false;
+            bool equipeOk = false;
 
             #region Vérifier que le numéro de projet existe et que la personne qui fait la réservation est la propiètaire du projet
 
@@ -88,12 +89,26 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             if(usr.organismeID == auteur.organismeID) // vérifier que le propiètaire appartient au même organisme de la personne qui saisi la demande
             {
-                if(usr.organismeID != 1) // sauf si c'est l'inrae ne pas autoriser pour le moment
+                if (usr.organismeID != 1) // sauf si c'est l'inrae ne pas autoriser pour le moment
+                {
                     organismeOk = true;
+                }
+                else
+                {
+                    // Si l'organisme est "INRAE" alors vérifier l'appartenance à une même équipe
+                    if(usr.equipeID.Value == auteur.equipeID.Value)
+                        // Alors permettre la copie à la personne d'une même équipe
+                        equipeOk = true;
+                }
             }
-
+            else
+            {
+                // si la personne n'appartient pas au même organisme mais qu'ils sont dans la même équipe (cas particulier de françoise)
+                if (usr.equipeID.Value == auteur.equipeID.Value)
+                    equipeOk = true;
+            }
             #endregion
-            return (propProjOk || adminSiteOk || organismeOk);
+            return (propProjOk || adminSiteOk || organismeOk || equipeOk);
         }
 
         /// <summary>

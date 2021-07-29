@@ -29,5 +29,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         Task<IList<utilisateur>> ObtenirMainAdmUsersAsync();
 
+        List<ld_equipes_stlo> ObtenirListEquips();
+
     }
 }

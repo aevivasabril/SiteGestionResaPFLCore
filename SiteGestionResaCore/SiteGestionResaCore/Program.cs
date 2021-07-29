@@ -33,7 +33,7 @@ namespace SiteGestionResaCore
                     var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<utilisateur>>();
                     if(await UserManager.FindByEmailAsync(options.Value.email) == null)
                     {
-                        var usr = new utilisateur { Email = options.Value.email, UserName = options.Value.email, nom = options.Value.nom, prenom = options.Value.prenom, EmailConfirmed = true, organismeID = 1 };
+                        var usr = new utilisateur { Email = options.Value.email, UserName = options.Value.email, nom = options.Value.nom, prenom = options.Value.prenom, EmailConfirmed = true, organismeID = 1, equipeID = 6 };
                         await UserManager.CreateAsync(usr, options.Value.mdp);
                         await UserManager.AddToRoleAsync(usr, "MainAdmin");
                         await UserManager.AddToRoleAsync(usr, "Admin");

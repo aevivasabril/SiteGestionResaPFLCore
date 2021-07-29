@@ -32,7 +32,9 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<reservation_projet> reservation_projet { get; set; }
         public virtual DbSet<zone> zone { get; set; }
         public virtual DbSet<enquete> enquete { get; set; }
-       
+        public virtual DbSet<ld_equipes_stlo> ld_equipes_stlo { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -253,6 +255,12 @@ namespace SiteGestionResaCore.Data.Data
                 entity.HasMany(z => z.equipement).WithOne(e=>e.zone).HasForeignKey(e=>e.zoneID);
                
             });
+            modelBuilder.Entity<ld_equipes_stlo>(entity =>
+            {
+                entity.Property(e => e.nom_equipe)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
@@ -341,6 +349,10 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<ld_type_projet>().HasData(new ld_type_projet[] { new ld_type_projet { id = 1, nom_type_projet = "Non connu" }, new ld_type_projet { id = 2, nom_type_projet = "Recherche" }, 
                 new ld_type_projet { id = 3, nom_type_projet = "Formation/Stage" }, new ld_type_projet { id = 4 , nom_type_projet = "Industriel (cellules hébergés"} });
+
+            modelBuilder.Entity<ld_equipes_stlo>().HasData(new ld_equipes_stlo[] { new ld_equipes_stlo { id = 1, nom_equipe = "Microbio" }, new ld_equipes_stlo { id = 2, nom_equipe = "BN" },
+                new ld_equipes_stlo { id = 3, nom_equipe = "PSM" }, new ld_equipes_stlo { id = 4 , nom_equipe = "ISF"}, new ld_equipes_stlo { id = 5 , nom_equipe = "SMCF"}, 
+                new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}  });
 
             base.OnModelCreating(modelBuilder);
         }

@@ -60,6 +60,15 @@
         </div>
     </div>
     <div class="form-group">
+        @Html.LabelFor(m => m.SelectedEquipId, new { @class = "col-md-6 control-label" })
+        <div class="col-md-10">
+            <select asp-for="SelectedEquipId" asp-items="@Model.EquipItem" class="form-control">
+                <option value="-1">- Aucun -</option>
+            </select>
+            @Html.ValidationMessageFor(m => m.SelectedEquipId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default navbar-inra" value="Envoyer" />
         </div>
@@ -101,6 +110,6 @@
             }
         }
         $('#exampleModal').modal('@ViewBag.ModalState');
-        
+
     </script>
 }

@@ -61,7 +61,15 @@ namespace SiteGestionResaCore.Models
         [Range(1, 100, ErrorMessage = "Selectionnez un organisme")]
         public int SelectedOrganId { get; set; }
 
+        /// <summary>
+        /// Id de l'item selectionné pour l'organisme d'appartenance de l'utilisateur
+        /// </summary>
+        [Display(Name = "Sélectionnez un équipe STLO si vous appartenez à un (internes)")]
+        public int SelectedEquipId { get; set; }
+
         public IEnumerable<SelectListItem> OrganItem { get; set; }
-       
+
+        public IEnumerable<SelectListItem> EquipItem { get; set; }
+
     }
 }

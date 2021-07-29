@@ -110,9 +110,15 @@ namespace SiteGestionResaCore.Controllers
                 Value = f.id.ToString(),
                 Text = f.nom_organisme
             });
+            var allEquips = formulaireResaDb.ObtenirListEquips().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_equipe
+            });
             RegisterViewModel vm = new RegisterViewModel 
             {
-                OrganItem = allOrgs
+                OrganItem = allOrgs,
+                EquipItem = allEquips
             };
             return View(vm);
         }
@@ -134,7 +140,7 @@ namespace SiteGestionResaCore.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new utilisateur { UserName = model.Email, Email = model.Email, nom = model.Nom, prenom= model.Prenom, organismeID = model.SelectedOrganId };
+                var user = new utilisateur { UserName = model.Email, Email = model.Email, nom = model.Nom, prenom= model.Prenom, organismeID = model.SelectedOrganId, equipeID = model.SelectedEquipId };
                 var result = await userManager.CreateAsync(user, model.Password);
                 
                 if (result.Succeeded)
@@ -227,7 +233,13 @@ namespace SiteGestionResaCore.Controllers
                 Value = f.id.ToString(),
                 Text = f.nom_organisme
             });
+            var allEquip = formulaireResaDb.ObtenirListEquips().Select(f => new SelectListItem
+            {
+                Value = f.id.ToString(),
+                Text = f.nom_equipe
+            });
             model.OrganItem = allOrgs;
+            model.EquipItem = allEquip;
             // If we got this far, something failed, redisplay form
             return View(model);
         }
