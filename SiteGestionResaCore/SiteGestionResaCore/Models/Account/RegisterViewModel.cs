@@ -64,7 +64,7 @@ namespace SiteGestionResaCore.Models
         /// <summary>
         /// Id de l'item selectionné pour l'organisme d'appartenance de l'utilisateur
         /// </summary>
-        [Display(Name = "Sélectionnez un équipe STLO si vous appartenez à un (internes)")]
+        [Display(Name = "Sélectionnez une équipe STLO si vous appartenez à une (internes INRAE)")]
         public int SelectedEquipId { get; set; }
 
         public IEnumerable<SelectListItem> OrganItem { get; set; }
