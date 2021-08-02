@@ -120,8 +120,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         #region Confidentialité "Restreint"
 
                         //bool IsFirstSearchOnEssai = true;
+                        // Traiter comment une réservation ouverte car on bloque uniquement l'équipement en mode restreint
+                        // Comme ça l'utilisateur saura que malgré que la zone est en restreint il peut réserver des autres équipements
 
-                        ResasTemp = ResaConfidentialiteRestreint(ess, resaInfo, EquipementPlanning, dateResa);
+                        ResasTemp = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
 
                         /*#region Recherche des dates superieur et inferieur pour chaque essai
 
