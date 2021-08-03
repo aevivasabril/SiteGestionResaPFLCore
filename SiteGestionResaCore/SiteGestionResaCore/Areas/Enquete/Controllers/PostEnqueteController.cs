@@ -66,7 +66,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                     #region  Créer un excel avec les données
 
                     // Déterminer les headers tableau
-                    var headers = new string[] { headersCsv.TitreEssai, headersCsv.MailRespPro, headersCsv.DateFinManip, headersCsv.MIQun, headersCsv.MIQdeux, headersCsv.MIComm,
+                    var headers = new string[] { headersCsv.Projet, headersCsv.TitreEssai, headersCsv.MailRespPro, headersCsv.DateFinManip, headersCsv.MIQun, headersCsv.MIQdeux, headersCsv.MIComm,
                                         headersCsv.MIIQun, headersCsv.MIIQdeux, headersCsv.MIIQtrois, headersCsv.MIIQtroisConcerne, headersCsv.MIIComm,
                                         headersCsv.MIIIQun, headersCsv.MIIIQdeux, headersCsv.MIIIQtrois, headersCsv.MIIIQquatre, headersCsv.MIIIQcinq, headersCsv.MIIIComm,
                                         headersCsv.MIVQun, headersCsv.MIVQunConcerne, headersCsv.MIVQdeux, headersCsv.MIVQtrois, headersCsv.MIVComm};
@@ -82,8 +82,10 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
 
                     foreach(var enq in enquetes)
                     {
-                        var essai = postEnqueteDB.GetEssai(enq.id);
+                        var essai = postEnqueteDB.GetEssai(enq.essaiId);
                         var proj = postEnqueteDB.GetProjet(essai.projetID);
+                        csv.Append(proj.titre_projet + "(N°: "+ proj.num_projet + ")");
+                        csv.Append(";");
                         csv.Append(essai.titreEssai);
                         csv.Append(";");
                         csv.Append(proj.mailRespProjet);

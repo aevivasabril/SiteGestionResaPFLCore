@@ -7,6 +7,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data.PostEnquete
 {
     public class HeadersNotesEnquetes
     {
+        public string Projet = "Nom projet et N°";
         public string TitreEssai = "Titre essai";
         public string MailRespPro = "Mail responsable projet";
         public string DateFinManip = "Date fin des essais";
