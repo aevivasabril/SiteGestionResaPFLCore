@@ -93,6 +93,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                         csv.Append(enq.date_premier_envoi);
                         csv.Append(";");
                         // rubrique 1 question 1 
+                        Rg = new Regex(pattMIQun);
                         MatchCollection collect = Rg.Matches(enq.fichierReponse);
                         csv.Append(collect[0].Groups[1].Value);
                         csv.Append(";");
