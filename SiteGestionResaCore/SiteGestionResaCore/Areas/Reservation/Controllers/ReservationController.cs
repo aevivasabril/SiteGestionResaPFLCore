@@ -657,11 +657,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     }
                     else
                     {
-                        if (diff.Hours < 21 && diff.Days == 0) // pour permettre à une personne d'ajouter un équipement avant 10h du matin la veille de la manip
+                        if(IsLogistic == false)
                         {
-                            ModelState.AddModelError("", "Vous ne pouvez pas ajouter un équipement à votre réservation à moins d'un jour du début de votre essai!");
-                            goto ENDT;
+                            if (diff.Hours < 21 && diff.Days == 0) // pour permettre à une personne d'ajouter un équipement avant 10h du matin la veille de la manip
+                            {
+                                ModelState.AddModelError("", "Vous ne pouvez pas ajouter un équipement à votre réservation à moins d'un jour du début de votre essai!");
+                                goto ENDT;
+                            }
+                            if(diff.Days <0)
+                            {
+                                ModelState.AddModelError("", "Vous ne pouvez pas ajouter un équipement à votre réservation à une date antérieur!");
+                                goto ENDT;
+                            }
                         }
+                        
                     }
                     #endregion
 
@@ -783,12 +792,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                     #endregion
 
-                    #region initialiser la date des datepicker au MOIS Selectionné
-                    equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                    equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                    equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                    equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                    #endregion
+                    
                 }
                 else
                 {
@@ -796,6 +800,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 }
             }
             ENDT:
+            #region initialiser la date des datepicker au MOIS Selectionné
+            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            #endregion
             return View("EquipementVsZone", equipementZone); // Si error alors on recharge la page pour montrer les messages
         }
 
