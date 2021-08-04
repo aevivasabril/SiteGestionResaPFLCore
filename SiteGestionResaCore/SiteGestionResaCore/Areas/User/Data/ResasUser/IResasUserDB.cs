@@ -10,7 +10,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 {
     public interface IResasUserDB
     {
-        List<InfosResasUser> ObtenirResasUser(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai);
+        Task<List<InfosResasUser>> ObtenirResasUserAsync(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai);
 
         essai ObtenirEssaiPourModif(int IdEssai);
 

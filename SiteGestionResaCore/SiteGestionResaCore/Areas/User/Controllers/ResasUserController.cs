@@ -37,7 +37,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
-                ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0)
+                ResasUser = await resasUserDB.ObtenirResasUserAsync(user.Id, null, null, 0)
             };
             //vm.ChildVmModifEssai.infosEssai = new InfosEssai();
             return View(vm);
@@ -47,10 +47,8 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         {
             essai ess = new essai(); // Variable pour récupération d'essai
             ConsultInfosEssaiChildVM infos;
-            //ResEssaiChildViewModel childVM;
-
-            // Obtenir les infos de l'utilisateur authentifié
-            var user = await userManager.FindByIdAsync(User.GetUserId());           
+            bool isModif = false;
+            //ResEssaiChildViewModel childVM;       
 
             #region Récupérer les infos projet pour affichage dans le formulaire de modif
 
@@ -68,7 +66,22 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
             ess = resasUserDB.ObtenirEssaiPourModif(id);
 
-            var isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
+            // Obtenir les roles et vérifier s'il est "Logistic"
+            var allUserRoles = await userManager.GetRolesAsync(user);
+            bool IsLogistic = false;
+            // Vérifier si la personne est dans le groupe des "Logistic"
+            if (allUserRoles.Contains("Logistic"))
+            {
+                IsLogistic = true;
+            }
+
+            if (IsLogistic)
+                isModif = true;
+            else // vérifier si cet essai est modifiable           
+                isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
+
             if (isModif)
             {
                 infos = new ConsultInfosEssaiChildVM();
@@ -82,7 +95,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
                 // afficher les infos essai selectionné propiète style=display:none ou "" (none pas d'affichage et "" affichage)
-                ResasUser = resasUserDB.ObtenirResasUser(user.Id, "", null, id),
+                ResasUser = await resasUserDB.ObtenirResasUserAsync(user.Id, "", null, id),
                 IdEss = id,
                 ManiProjItem = usrsManip,
                 ProdItem = prodIn,
@@ -286,23 +299,34 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         ENDT:
             // Obtenir les infos de l'utilisateur authentifié
             var user = await userManager.FindByIdAsync(User.GetUserId());
-            reVM.ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0);
+            reVM.ResasUser = await resasUserDB.ObtenirResasUserAsync(user.Id, null, null, 0);
 
             return View("MesReservations", reVM);
         }
 
         public async Task<IActionResult> RecapEquipementsAsync(int id)
         {
+            bool isModif = false;
             // Obtenir les infos de l'utilisateur authentifié
             var user = await userManager.FindByIdAsync(User.GetUserId());
+            // Obtenir les roles et vérifier s'il est "Logistic"
+            var allUserRoles = await userManager.GetRolesAsync(user);
+            bool IsLogistic = false;
+            // Vérifier si la personne est dans le groupe des "Logistic"
+            if (allUserRoles.Contains("Logistic"))
+            {
+                IsLogistic = true;
+            }
 
-            // vérifier si cet essai est modifiable 
-            var isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
+            if (IsLogistic)
+                isModif = true;
+            else // vérifier si cet essai est modifiable           
+                isModif = resasUserDB.IsEssaiModifiableOuSupp(id);
 
             // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
-                ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, "", id),
+                ResasUser = await resasUserDB.ObtenirResasUserAsync(user.Id, null, "", id),
                 EquipementsReserves = resasUserDB.ResasEssai(id),
                 ConsultInfosEssai = new ConsultInfosEssaiChildVM(), 
                 IsEssaiModifiable = isModif
@@ -369,7 +393,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
             MyReservationsViewModel vm = new MyReservationsViewModel()
             {
-                ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0), 
+                ResasUser = await resasUserDB .ObtenirResasUserAsync(user.Id, null, null, 0), 
                 IdEss = id,
                 TitreEssai = resasUserDB.ObtenirEssaiPourModif(id).titreEssai
             };
@@ -407,7 +431,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             var user = await userManager.FindByIdAsync(User.GetUserId());
 
             // on envoie null et zéro pour les paramètres car pas d'ouverture des infos essai
-            vm.ResasUser = resasUserDB.ObtenirResasUser(user.Id, null, null, 0);
+            vm.ResasUser = await resasUserDB .ObtenirResasUserAsync(user.Id, null, null, 0);
             vm.IdEss = id;
             vm.TitreEssai = resasUserDB.ObtenirEssaiPourModif(id).titreEssai;
 

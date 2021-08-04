@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
@@ -15,13 +16,16 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
     {
         private readonly GestionResaContext resaDB;
         private readonly ILogger<ResasUserDB> logger;
+        private readonly UserManager<utilisateur> userManager;
 
         public ResasUserDB(
             GestionResaContext resaDB,
-            ILogger<ResasUserDB> logger)
+            ILogger<ResasUserDB> logger,
+            UserManager<utilisateur> userManager)
         {
             this.resaDB = resaDB;
             this.logger = logger;
+            this.userManager = userManager;
         }
         /// <summary>
         /// Obtenir les essais crées par l'utilisateur authentifié
@@ -30,11 +34,12 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         /// <param name="OpenPartialEssai">valeur pour le paramètre activant la vue partielle _ModifEssai : style=display:OpenPartial</param>
         /// <param name="IdEssai"> id essai dont l'ouverture de vue partielle est demandée</param>
         /// <returns></returns>
-        public List<InfosResasUser> ObtenirResasUser(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai)
+        public async Task<List<InfosResasUser>> ObtenirResasUserAsync(int IdUsr, string OpenPartialEssai, string OpenReservations, int IdEssai)
         {
             List<InfosResasUser> List = new List<InfosResasUser>();
             InfosResasUser infos = new InfosResasUser();
             string StatusEssai = "";
+            bool ReadyToSupp = false;
 
             var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
 
@@ -60,11 +65,23 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                         break;
                 }
 
-                // Vérifier si l'essai est supprimable
-                bool ReadyToSupp = IsEssaiModifiableOuSupp(i.id);
+                // Obtenir les infos de l'utilisateur authentifié
+                var user = await userManager.FindByIdAsync(IdUsr.ToString());
+                // Obtenir les roles et vérifier s'il est "Logistic"
+                var allUserRoles = await userManager.GetRolesAsync(user);
+                bool IsLogistic = false;
+                // Vérifier si la personne est dans le groupe des "Logistic"
+                if (allUserRoles.Contains("Logistic"))
+                {
+                    IsLogistic = true;
+                }
+                if (IsLogistic)
+                    ReadyToSupp = true;
+                else // vérifier si cet essai est modifiable           
+                    ReadyToSupp = IsEssaiModifiableOuSupp(i.id);
 
                 // Vérifier si il faut afficher le partial view infos essai pour un des essais
-                if(IdEssai != 0) // signifie que une des vues infos essai ou infos réservation devra être affichée
+                if (IdEssai != 0) // signifie que une des vues infos essai ou infos réservation devra être affichée
                 {
                     if(i.id == IdEssai && OpenPartialEssai!=null) // montrer la vue partielle de cet essai
                     {
@@ -106,6 +123,8 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         public bool IsEssaiModifiableOuSupp(int IdEssai)
         {
             var essai = resaDB.essai.First(e=>e.id == IdEssai);
+            var user = resaDB.Users.First(u => u.Id == essai.compte_userID);
+
             // si l'essai est refusé ou annulé alors essai non modifiable
             if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
                 return false;
