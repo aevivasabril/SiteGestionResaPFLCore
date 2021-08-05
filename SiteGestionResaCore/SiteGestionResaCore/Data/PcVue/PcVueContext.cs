@@ -20,7 +20,6 @@ namespace SiteGestionResaCore.Data.PcVue
         public virtual DbSet<tab_LOG_TRACA> tab_LOG_TRACA { get; set; }
         public virtual DbSet<tab_UA_ACT> tab_UA_ACT { get; set; }
         public virtual DbSet<tab_UA_CUV> tab_UA_CUV { get; set; }
-        public virtual DbSet<tab_UA_ECR> tab_UA_ECR { get; set; }
         public virtual DbSet<tab_UA_ENG> tab_UA_ENG { get; set; }
         public virtual DbSet<tab_UA_EVAA> tab_UA_EVAA { get; set; }
         public virtual DbSet<tab_UA_EVAB> tab_UA_EVAB { get; set; }
@@ -102,21 +101,6 @@ namespace SiteGestionResaCore.Data.PcVue
 
                 entity.HasIndex(e => e.Chrono)
                     .HasName("IX_TREND_tab_UA_CUV_CLUSTERED")
-                    .IsClustered();
-
-                entity.Property(e => e.Name)
-                    .HasMaxLength(255)
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<tab_UA_ECR>(entity =>
-            {
-                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
-                    .HasName("IX_TREND_tab_UA_ECR_PRIMARY")
-                    .IsClustered(false);
-
-                entity.HasIndex(e => e.Chrono)
-                    .HasName("IX_TREND_tab_UA_ECR_CLUSTERED")
                     .IsClustered();
 
                 entity.Property(e => e.Name)
