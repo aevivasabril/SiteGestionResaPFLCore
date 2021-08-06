@@ -20,5 +20,6 @@ namespace SiteGestionResaCore.Data
 
         public virtual zone zone { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
+        public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
     }
 }

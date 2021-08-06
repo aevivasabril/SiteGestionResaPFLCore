@@ -20,5 +20,6 @@ namespace SiteGestionResaCore.Data
 
         public virtual organisme organisme { get; set; }
         public virtual ICollection<essai> essai { get; set; }
+        public virtual ICollection<maintenance> maintenance { get; set; }
     }
 }

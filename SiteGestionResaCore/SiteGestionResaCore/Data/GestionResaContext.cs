@@ -33,6 +33,10 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<zone> zone { get; set; }
         public virtual DbSet<enquete> enquete { get; set; }
         public virtual DbSet<ld_equipes_stlo> ld_equipes_stlo { get; set; }
+        public virtual DbSet<ld_type_maintenance> ld_type_maintenance { get; set; }
+        public virtual DbSet<maintenance> maintenance { get; set; }
+        public virtual DbSet<reservation_maintenance> reservation_maintenance { get; set; }
+        public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
 
 
 
@@ -262,6 +266,73 @@ namespace SiteGestionResaCore.Data.Data
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<ld_type_maintenance>(entity =>
+            {
+                entity.Property(e => e.nom_type_maintenance)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<maintenance>(entity =>
+            {
+                entity.Property(e => e.type_maintenance).IsUnicode(false);
+
+                entity.Property(e => e.code_operation)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_intervenant_ext).IsUnicode(false);
+
+                entity.Property(e => e.description_operation).IsUnicode(false);
+
+                entity.Property(e => e.date_saisie).HasColumnType("datetime");
+
+                entity.Property(e => e.date_suppression).HasColumnType("datetime");
+
+                entity.HasOne(d => d.utilisateur)
+                    .WithMany(p => p.maintenance)
+                    .HasForeignKey(d => d.userID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_maintenance_utilisateur");
+            });
+
+            modelBuilder.Entity<reservation_maintenance>(entity =>
+            {
+                entity.Property(e => e.date_debut).HasColumnType("datetime");
+
+                entity.Property(e => e.date_fin).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.reservation_maintenance)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_reservation_maintenance_equipement");
+
+                entity.HasOne(d => d.maintenance)
+                    .WithMany(p => p.reservation_maintenance)
+                    .HasForeignKey(d => d.maintenanceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_reservation_maintenance_maintenance");
+            });
+
+            modelBuilder.Entity<resa_maint_equip_adjacent>(entity =>
+            {
+                entity.Property(e => e.date_debut).HasColumnType("datetime");
+
+                entity.Property(e => e.date_fin).HasColumnType("datetime");
+
+                entity.Property(e => e.nom_equipement).IsUnicode(false);
+
+                entity.Property(e => e.zone_affectee).IsUnicode(false);
+
+                entity.HasOne(d => d.maintenance)
+                    .WithMany(p => p.resa_maint_equip_adjacent)
+                    .HasForeignKey(d => d.maintenanceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_resa_maint_equip_adjacent_maintenance");
+            });
+
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7} });
@@ -353,6 +424,11 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<ld_equipes_stlo>().HasData(new ld_equipes_stlo[] { new ld_equipes_stlo { id = 1, nom_equipe = "Microbio" }, new ld_equipes_stlo { id = 2, nom_equipe = "BN" },
                 new ld_equipes_stlo { id = 3, nom_equipe = "PSM" }, new ld_equipes_stlo { id = 4 , nom_equipe = "ISF"}, new ld_equipes_stlo { id = 5 , nom_equipe = "SMCF"}, 
                 new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}  });
+
+            modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Panne)" },
+                new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe)" },
+                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration" }, new ld_type_maintenance { id = 5, nom_type_maintenance = "Autre" }
+            });
 
             base.OnModelCreating(modelBuilder);
         }
