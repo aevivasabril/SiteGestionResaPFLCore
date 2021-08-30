@@ -275,8 +275,9 @@ namespace SiteGestionResaCore.Data.Data
                 new zone { id = 3, nom_zone = "Préparation des laits" }, new zone { id = 4, nom_zone = "Membranes" }, new zone { id = 5, nom_zone = "Pâtes molles moulage" },
                 new zone { id = 6, nom_zone = "Pâtes molles tranchage" }, new zone { id = 7, nom_zone = "Pâtes préssées cuites" }, new zone { id = 8, nom_zone = "Innovation" }, 
                 new zone { id = 9, nom_zone = "Salle Stephan" }, new zone { id = 10, nom_zone = "Saumurage" }, new zone { id = 11, nom_zone = "Labo" }, 
-                new zone { id = 12, nom_zone = "Salle alimentaire Ap5" }, new zone { id = 13, nom_zone = "Salle alimentaire Ap6" }, new zone { id = 14, nom_zone = "Hâloir Ap7" },
-                new zone { id = 15, nom_zone = "Salle alimentaire Ap8" }, new zone { id = 16, nom_zone = "Salle alimentaire Ap9" }, new zone { id = 17, nom_zone = "Equipements mobiles" } });
+                new zone { id = 12, nom_zone = "Salle alimentaire Ap5" }, new zone { id = 13, nom_zone = "Salle alimentaire Ap6" }, new zone { id = 14, nom_zone = "Salle Ap7 A" },
+                new zone { id = 15, nom_zone = "Salle Ap7 B" }, new zone { id = 16, nom_zone = "Salle Ap7 C" }, new zone { id = 17, nom_zone = "Salle alimentaire Ap8" },
+                new zone { id = 18, nom_zone = "Salle alimentaire Ap9" }, new zone { id = 19, nom_zone = "Equipements mobiles" } });
 
             modelBuilder.Entity<equipement>().HasData(new equipement[] { new equipement { id = 162, nom = "Balance Arpège 150k", zoneID = 5, numGmao = "BAL0002", mobile = false }, new equipement { id = 163, nom = "Balance 32 Kg (KA32s)", zoneID = 9, numGmao = "BAL0003", mobile = false }, 
                 new equipement { id = 164, nom = "Balance 300Kg (ID2 + KCS300)", zoneID = 3, numGmao = "BAL0004", mobile = false }, new equipement { id = 165, nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)", zoneID = 16, numGmao = "BAL0011", mobile = true }, 
