@@ -30,8 +30,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Calendrier\Models\" />
-    <Folder Include="Areas\Maintenance\Controllers\" />
-    <Folder Include="Areas\Maintenance\Data\" />
     <Folder Include="Areas\Maintenance\Models\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
