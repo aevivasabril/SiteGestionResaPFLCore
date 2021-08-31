@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20210831130714_CorrectionSalleAp7")]
+    partial class CorrectionSalleAp7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,28 +53,28 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "71a5dea0-bed0-49d5-8e15-5509c4aa6a2e",
+                            ConcurrencyStamp = "11e21d53-127c-4e82-8789-c560750a0ac1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a8099981-36e3-49c0-892a-fc6f18a5c3e3",
+                            ConcurrencyStamp = "22dde20f-efea-480e-a3be-e578a1f7e2f4",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "04305f36-268f-4af6-9122-88d06c43c67f",
+                            ConcurrencyStamp = "f0f5996e-29bf-417f-8cf8-1481b779cd43",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "c419825a-e493-42e1-b61c-4e2640fef6d4",
+                            ConcurrencyStamp = "565f684e-4def-4b89-a7b6-3e62130b68a5",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         });
@@ -956,6 +958,14 @@ namespace SiteGestionResaCore.Migrations
                             nom = "Thermomix",
                             numGmao = "",
                             zoneID = 12
+                        },
+                        new
+                        {
+                            id = 249,
+                            mobile = false,
+                            nom = "Congelateur",
+                            numGmao = "CONG0013",
+                            zoneID = 16
                         },
                         new
                         {

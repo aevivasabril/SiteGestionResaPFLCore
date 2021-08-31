@@ -219,7 +219,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         #region Confidentialité "confidentiel" 
 
-                        if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
+                        if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7A) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7B) ||
+                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7C) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
                         {
@@ -360,7 +361,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
-            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
 
@@ -377,8 +380,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                          where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID                                        
                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                         && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSept
-                                         || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                                         && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA ||
+                                         reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
                                          && (reser.equipement.zoneID == zon)
                                          && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                          && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -389,7 +392,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             
             // Si l'équipement que l'on souhaite réserver n'est pas dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
-            if(zon == ApCinq || zon == ApSix || zon == ApSept || zon == ApHuit || zon == ApNeuf)
+            if(zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
                 var essaiConfPFL = (from essai in context.essai
@@ -398,8 +401,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC && reser.equipement.zoneID != ApHuit 
+                                    && reser.equipement.zoneID != ApNeuf)
                                     && (reser.equipement.zoneID == zon)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -419,7 +423,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
                                     && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -499,7 +504,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
-            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
 
@@ -510,7 +517,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                              where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && (essai.id == reser.essaiID)
                                              && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                             && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSept
+                                             && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
+                                                || reser.equipement.zoneID != ApSeptB || reser.equipement.zoneID != ApSeptC
                                                 || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
                                              && (reser.equipement.zoneID == zon)
                                              && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
@@ -522,7 +530,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
-            if (zon == ApCinq || zon == ApSix || zon == ApSept || zon == ApHuit || zon == ApNeuf)
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
                 var essaiConfPFL = (from essai in context.essai
@@ -531,8 +539,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                                     && (reser.equipement.zoneID == zon)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -552,7 +560,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
                                     && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -578,7 +587,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
-            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
 
@@ -596,7 +607,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                            && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSept
+                            && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                            || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
                             || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
                             && (resa.equipement.zoneID == zon)
                             && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
@@ -616,7 +628,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                            && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSept
+                            && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                            && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
                             && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
                             && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
                             && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
@@ -640,7 +653,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSept
+                                && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                                && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
                                 && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
                                 && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
                                 && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
@@ -659,7 +673,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSept
+                                && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                                || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
                                 || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
                                 && (resa.equipement.zoneID == zon)
                                 && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
@@ -685,7 +700,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 && (essai.id != IdEssai)
                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                     essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSept
+                                && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
+                                || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
                                 || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
                                 && (reser.equipement.zoneID == zon)
                                 && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
@@ -697,7 +713,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
-            if (zon == ApCinq || zon == ApSix || zon == ApSept || zon == ApHuit || zon == ApNeuf)
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
                 var essaiConfPFL = (from essai in context.essai
@@ -707,7 +723,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (essai.id != IdEssai)
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
                                     && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                                     && (reser.equipement.zoneID == zon)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
@@ -729,7 +746,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (essai.id != IdEssai)
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSept
+                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
                                     && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
@@ -806,7 +824,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
-            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
 
@@ -815,8 +835,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             foreach (var resa in resas)
             {
                 var equip = context.equipement.First(e => e.id == resa.equipementID);
-                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) &&
-                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
+                if (!equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7A) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7B) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7C) &&
+                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
                     !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
                 {
                     if (DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString())

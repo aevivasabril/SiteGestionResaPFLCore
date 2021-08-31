@@ -121,9 +121,10 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                         #region Confidentialité "confidentiel" 
 
-                        if (Equipement.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) || Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
+                        if (Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp7A) || Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp7B) ||
+                            Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp7C) || Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
                             Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
-                            Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
+                            Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //TODO:  la zone equipements mobiles devrait être bloqué?
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" blocage uniquement de la zone "Confidentiel"
                             resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
@@ -343,7 +344,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             ResasEquipParJour EquipVsResa = new ResasEquipParJour();
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
-            int ApSept = Convert.ToInt32(EnumZonesPfl.HaloirAp7);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
             var resas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id);
@@ -352,8 +355,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             {
                 var equip = resaDB.equipement.First(e => e.id == resa.equipementID);
                 // Equipement dans la zone PFL
-                if (!equip.zoneID.Equals((int)EnumZonesPfl.HaloirAp7) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) &&
-                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
+                if (!equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7A) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7B) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp7C) &&
+                    !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp5) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp6) && !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp8) &&
                     !equip.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
                 {
                     if (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString())

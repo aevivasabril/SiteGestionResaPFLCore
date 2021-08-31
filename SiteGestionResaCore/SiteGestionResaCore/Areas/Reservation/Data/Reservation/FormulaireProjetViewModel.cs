@@ -228,7 +228,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
     public enum EnumZonesPfl
     {
-        HaloirAp7 = 14,
+        SalleAp7A = 18,
+        SalleAp7B = 19,
+        SalleAp7C = 20,
         SalleAp6 = 13,
         SalleAp5 = 12,
         SalleAp9 = 16,
