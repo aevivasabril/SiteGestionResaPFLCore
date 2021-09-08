@@ -286,6 +286,8 @@ namespace SiteGestionResaCore.Data.Data
 
                 entity.Property(e => e.description_operation).IsUnicode(false);
 
+                entity.Property(e => e.raison_suppression).IsUnicode(false);
+
                 entity.Property(e => e.date_saisie).HasColumnType("datetime");
 
                 entity.Property(e => e.date_suppression).HasColumnType("datetime");

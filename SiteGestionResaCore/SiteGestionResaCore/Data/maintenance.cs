@@ -16,6 +16,8 @@ namespace SiteGestionResaCore.Data
         public string description_operation { get; set; }
         public bool? maintenance_supprime { get; set; }
         public DateTime? date_suppression { get; set; }
+
+        public string? raison_suppression { get; set; }
         public DateTime? date_saisie { get; set; }
 
         public virtual utilisateur utilisateur { get; set; }
