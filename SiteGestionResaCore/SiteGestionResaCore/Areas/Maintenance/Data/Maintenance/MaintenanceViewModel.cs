@@ -21,12 +21,20 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         public IEnumerable<SelectListItem> IntervenantItem { get; set; }
 
         /// <summary>
+        /// Code maintenance généré automatiquement dans le code. Le generer avant le remplissage du formulaire
+        /// </summary>
+        [Display(Name = "Code Maintenance automatique: ")]
+        public string CodeMaintenance { get; set; }
+
+        /// <summary>
         /// Id d'un item de la liste type intervention maintenance
         /// </summary>
-        [Display(Name = "Type de produit d'entrée")]
-        public int SelectedProductId { get; set; }
+        [Required]
+        [Display(Name = "Type d'intervention (*): ")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un type intervention")]
+        public int SelectedInterventionId { get; set; }
 
-        public IEnumerable<SelectListItem> ProductItem { get; set; }
+        public IEnumerable<SelectListItem> InterventionItem { get; set; }
 
         /// <summary>
         /// string à true ou false pour indiquer si l'intervenant est externe
@@ -42,9 +50,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         [Display(Name = "Nom de la société (*): ")]
         public string NomSociete { get; set; }
 
+
         /// <summary>
         /// String pour rajouter la description de l'opération maintenance
         /// </summary>
+        [Required(ErrorMessage = "Veuillez ajouter une description de l'opération")]
         [Display(Name = "Description intervention (*): ")]
         public string DescriptionInter { get; set; }
 

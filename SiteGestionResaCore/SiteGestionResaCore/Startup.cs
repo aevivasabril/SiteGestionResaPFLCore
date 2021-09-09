@@ -26,6 +26,7 @@ using SiteGestionResaCore.Areas.Equipe.Data.RecupData;
 using SiteGestionResaCore.Areas.Enquete.Data;
 using SiteGestionResaCore.Services.ScheduleTask;
 using SiteGestionResaCore.Areas.Enquete.Data.PostEnquete;
+using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
 
 namespace SiteGestionResaCore
 {
@@ -62,6 +63,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IEnqueteDb, EnqueteDb>();
             services.AddScoped<IEnqueteTaskDB, EnqueteTaskDB>();
             services.AddScoped<IPostEnqueteDB, PostEnqueteDB>();
+            services.AddScoped<IFormulaireIntervDB, FormulaireIntervDb>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();
