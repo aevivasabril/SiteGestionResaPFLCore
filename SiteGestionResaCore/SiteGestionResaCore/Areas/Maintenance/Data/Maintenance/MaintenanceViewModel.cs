@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 {
+    /// <summary>
+    /// Class Serializable (ouverture d'une session pour stocker des données en local) utilisée lors de la réservation des équipements 
+    /// </summary>
+    [Serializable]
     public class MaintenanceViewModel
     {
         #region Informations formulaire
