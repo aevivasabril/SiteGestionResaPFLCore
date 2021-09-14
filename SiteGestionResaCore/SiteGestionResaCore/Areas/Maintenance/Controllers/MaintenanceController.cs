@@ -311,8 +311,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                 // si enregistrement OK alors envoyer le mail
                 MsgUser = @"<html>
                             <body> 
-                            <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s): " 
-                               + inter.ZoneImpacte + ". Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s):<b> " 
+                               + inter.ZoneImpacte + "</b>. Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
                                ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention penalise vos manips en cours ou à venir." +
                                " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
                                "</p>" +
