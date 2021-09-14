@@ -36,6 +36,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                 InterventionItem = ListMaints,
                 CodeMaintenance = code
             };
+            this.HttpContext.AddToSession("FormulaireOperation", vm);
+
             return View("SaisirIntervention",vm);
         }
 
@@ -46,7 +48,12 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             if (vm.IntervenantExterne == "true") // Si l'utilisateur coche "oui" alors il est obligé de taper le nom de la sociète
                 ModelState.AddModelError("NomSociete", "Veuillez indiquer le nom de la sociète intervenante");
 
-            if(ModelState.IsValid)
+            MaintenanceViewModel model = HttpContext.GetFromSession<MaintenanceViewModel>("FormulaireOperation");
+            vm.CodeMaintenance = model.CodeMaintenance;
+            vm.IntervenantItem = model.IntervenantItem;
+            vm.InterventionItem = model.InterventionItem;
+
+            if (ModelState.IsValid)
             {
                 // Sauvegarder la session data du formulaire intervention
                 this.HttpContext.AddToSession("FormulaireOperation", vm);
@@ -58,17 +65,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             }
 
             ERR:
-                IList<utilisateur> logistMaint = await intervDb.List_utilisateurs_logistiqueAsync();
-                // Obtenir la liste des valeurs à pre-remplir pour charger le formulaire
-                var Intervenants = logistMaint.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
-                var ListMaints = intervDb.List_Type_Maintenances().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_maintenance });
-                var code = intervDb.CodeOperation();
-                vm = new MaintenanceViewModel
-                {
-                    IntervenantItem = Intervenants,
-                    InterventionItem = ListMaints,
-                    CodeMaintenance = code
-                };
+                
             return View("SaisirIntervention", vm);           
         }
 
@@ -102,69 +99,77 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             EquipementSansZoneVM equipementSansZoneVM = new EquipementSansZoneVM();
             AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
 
-            if (model.DateDebut.Value == model.DateFin.Value)
+            if(ModelState.IsValid)
             {
-                if ((Convert.ToBoolean(model.DatePickerDebut_Matin) == false) && (Convert.ToBoolean(model.DatePickerFin_Matin) == true))
+                if (model.DateDebut.Value == model.DateFin.Value)
                 {
-                    ModelState.AddModelError("", "Si la date début et la date fin sont égales, la réservation ne peut pas commencer l'après-midi et finir le matin");
-                    goto ENDT;
+                    if ((Convert.ToBoolean(model.DatePickerDebut_Matin) == false) && (Convert.ToBoolean(model.DatePickerFin_Matin) == true))
+                    {
+                        ModelState.AddModelError("", "Si la date début et la date fin sont égales, la réservation ne peut pas commencer l'après-midi et finir le matin");
+                        goto ENDT;
+                    }
+                    else
+                    {
+                        goto ADD;
+                    }
+                }
+
+                ADD:
+                if (model.DateDebut.Value <= model.DateFin.Value) // si la date debut est inférieure à la date fin alors OK
+                {
+                    // Etablir l'heure de début et de fin selon les créneaux choisis (Matin ou après-midi)
+                    #region Définition des dates réservation avec l'heure selon le créneau choisi
+                    // Definition date debut
+
+                    if (Convert.ToBoolean(model.DatePickerDebut_Matin) == true) // definir l'heure de début à 7h
+                    {
+                        debutToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 7, 0, 0, DateTimeKind.Local);
+                    }
+                    else // Début de manip l'après-midi à 13h
+                    {
+                        debutToSave = new DateTime(model.DateDebut.Value.Year,
+                            model.DateDebut.Value.Month, model.DateDebut.Value.Day, 13, 0, 0, DateTimeKind.Local);
+                    }
+                    // Definition date fin
+                    if (Convert.ToBoolean(model.DatePickerFin_Matin) == true)
+                    {
+                        finToSave = new DateTime(model.DateFin.Value.Year,
+                            model.DateFin.Value.Month, model.DateFin.Value.Day, 12, 0, 0, DateTimeKind.Local);
+                    }
+                    else // Fin de la manip 18h
+                    {
+                        finToSave = new DateTime(model.DateFin.Value.Year,
+                            model.DateFin.Value.Month, model.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
+                    }
+                    #endregion
+                    // complèter le model avec les informations de l'intervention 
+                    equipementSansZoneVM.DateDebut = debutToSave;
+                    equipementSansZoneVM.DateFin = finToSave;
+                    equipementSansZoneVM.DescriptionProbleme = model.DescriptionProbleme;
+                    equipementSansZoneVM.ZoneImpacte = model.ZoneImpacte;
+
+                    vm.ListEquipsSansZone.Add(equipementSansZoneVM);
+                    // Ajouter dans le model pour afficher uniquement la liste
+                    model.ListEquipsSansZone = new List<EquipementSansZoneVM>();
+                    model.ListEquipsSansZone.Add(equipementSansZoneVM);
+
+                    // Ouvrir une session pour le viewmodel de la vue AjoutEquipements
+                    // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
+                    vm.OuvrirEquipSansZone = "none";
+                    this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+                    return View("AjoutEquipements", vm);
                 }
                 else
                 {
-                    goto ADD;
+                    ModelState.AddModelError("", "La date fin de réservation ne peut pas être inférieure à la date début");
                 }
-            }
-
-            ADD:
-            if (model.DateDebut.Value <= model.DateFin.Value) // si la date debut est inférieure à la date fin alors OK
-            { 
-                // Etablir l'heure de début et de fin selon les créneaux choisis (Matin ou après-midi)
-                #region Définition des dates réservation avec l'heure selon le créneau choisi
-                // Definition date debut
-
-                if (Convert.ToBoolean(model.DatePickerDebut_Matin) == true) // definir l'heure de début à 7h
-                {
-                    debutToSave = new DateTime(model.DateDebut.Value.Year,
-                        model.DateDebut.Value.Month, model.DateDebut.Value.Day, 7, 0, 0, DateTimeKind.Local);
-                }
-                else // Début de manip l'après-midi à 13h
-                {
-                    debutToSave = new DateTime(model.DateDebut.Value.Year,
-                        model.DateDebut.Value.Month, model.DateDebut.Value.Day, 13, 0, 0, DateTimeKind.Local);
-                }
-                // Definition date fin
-                if (Convert.ToBoolean(model.DatePickerFin_Matin) == true)
-                {
-                    finToSave = new DateTime(model.DateFin.Value.Year,
-                        model.DateFin.Value.Month, model.DateFin.Value.Day, 12, 0, 0, DateTimeKind.Local);
-                }
-                else // Fin de la manip 18h
-                {
-                    finToSave = new DateTime(model.DateFin.Value.Year,
-                        model.DateFin.Value.Month, model.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
-                }
-                #endregion
-                // complèter le model avec les informations de l'intervention 
-                equipementSansZoneVM.DateDebut = debutToSave;
-                equipementSansZoneVM.DateFin = finToSave;
-                equipementSansZoneVM.DescriptionProbleme = model.DescriptionProbleme;
-                equipementSansZoneVM.ZoneImpacte = model.ZoneImpacte;
-
-                vm.ListEquipsSansZone.Add(equipementSansZoneVM);
-                // Ajouter dans le model pour afficher uniquement la liste
-                model.ListEquipsSansZone = new List<EquipementSansZoneVM>();
-                model.ListEquipsSansZone.Add(equipementSansZoneVM);
-
-                // Ouvrir une session pour le viewmodel de la vue AjoutEquipements
-                // Sauvegarder la session avec les données à mettre à jour pour la vue EquipementsVsZones
-                vm.OuvrirEquipSansZone = "none";
-                this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
-                return View("AjoutEquipements", vm);
             }
             else
             {
-                ModelState.AddModelError("", "La date fin de réservation ne peut pas être inférieure à la date début");
+                goto ENDT;
             }
+               
             // TODO: Voir si c'est nécessaire de mettre des limites pour le choix 
             /*TimeSpan diff = debutToSave - DateTime.Now;
             if (diff.Hours < 8 && diff.Days == 0) // pour permettre à une personne d'ajouter un équipement avant 10h du matin la veille de la manip
@@ -178,8 +183,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                 goto ENDT;
             }*/
             ENDT:
-
-            return View("AjoutEquipements", model);
+            
+            return View("AjoutEquipements", vm);
         }
 
 
@@ -195,12 +200,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
 
         public IActionResult FermerAjoutSansZone()
         {
-            AjoutEquipementsViewModel vm = new AjoutEquipementsViewModel()
-            {
-                EquipementSansZoneVM = new EquipementSansZoneVM(),
-                ListEquipsSansZone = new List<EquipementSansZoneVM>(),
-                OuvrirEquipSansZone = "none"
-            };
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+            vm.OuvrirEquipSansZone = "none";
             return View("AjoutEquipements", vm);
         }
 
@@ -214,6 +215,66 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             HttpContext.Session.Remove("FormulaireOperation");
 
             return RedirectToAction("Index", "Home", new { area = "" });
+        }
+
+        public IActionResult SupprimerCreneauInterv(int? i)
+        {
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+            vm.IdPourSuppressionSansZone = i.Value;
+
+            // Variable pour "afficher" le modal pop up de confirmation de suppression
+            ViewBag.modalSupp = "show";
+
+            // Enregistrer la mise à jour dans la session
+            this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+
+            return View("AjoutEquipements", vm);
+        }
+
+        [HttpPost]
+        public IActionResult SupprimerCreneauInterv(AjoutEquipementsViewModel model)
+        {
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+
+            vm.ListEquipsSansZone.RemoveAt(model.IdPourSuppressionSansZone);
+
+            // Enregistrer la mise à jour dans la session
+            this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+
+            return View("AjoutEquipements", vm);
+        }
+
+        /// <summary>
+        /// Action pour annuler les créneaux des interventions saisis pour revenir vers la vue formulaire intervention
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> AnnulerIntervAsync()
+        {
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+
+            // Vider toutes les reservations pour tous les CalendrierChildVM
+            vm.ListEquipsSansZone.Clear();
+
+            // Enregistrer la mise à jour dans la session
+            this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+
+            MaintenanceViewModel formulaire = HttpContext.GetFromSession<MaintenanceViewModel>("FormulaireOperation");
+            //Obtenir la liste des utilisateurs logistique
+            IList<utilisateur> logistMaint = await intervDb.List_utilisateurs_logistiqueAsync();
+            // Obtenir la liste des valeurs à pre-remplir pour charger le formulaire
+            var Intervenants = logistMaint.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+            var ListMaints = intervDb.List_Type_Maintenances().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_maintenance });
+            var code = intervDb.CodeOperation();
+
+            formulaire.IntervenantItem = Intervenants;
+            formulaire.InterventionItem = ListMaints;
+            
+            return View("SaisirIntervention", formulaire);
+        }
+
+        public IActionResult ValiderInterventions(AjoutEquipementsViewModel model)
+        {
+            return View();
         }
     }
 }

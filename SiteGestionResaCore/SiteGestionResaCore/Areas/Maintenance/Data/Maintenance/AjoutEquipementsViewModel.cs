@@ -52,5 +52,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 
         public List<EquipementSansZoneVM> ListEquipsSansZone { get; set; }
 
+        public int IdPourSuppressionSansZone { get; set; }
+
     }
 }
