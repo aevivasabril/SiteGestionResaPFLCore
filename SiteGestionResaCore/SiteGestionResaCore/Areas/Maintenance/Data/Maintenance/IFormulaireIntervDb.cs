@@ -11,5 +11,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         List<ld_type_maintenance> List_Type_Maintenances();
         Task<IList<utilisateur>> List_utilisateurs_logistiqueAsync();
         string CodeOperation();
+        maintenance AjoutMaintenance(MaintenanceViewModel vm);
+        bool EnregistrerIntervSansZone(EquipementSansZoneVM sansZoneVM, maintenance maint);
+        List<utilisateur> ObtenirListUtilisateursSite();
     }
 }

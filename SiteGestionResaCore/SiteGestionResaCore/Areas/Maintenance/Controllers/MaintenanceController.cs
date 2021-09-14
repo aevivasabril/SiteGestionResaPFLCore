@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
+using SiteGestionResaCore.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
     public class MaintenanceController : Controller
     {
         private readonly IFormulaireIntervDB intervDb;
+        private readonly IEmailSender emailSender;
 
         public MaintenanceController(
-            IFormulaireIntervDB intervDb)
+            IFormulaireIntervDB intervDb,
+            IEmailSender emailSender)
         {
             this.intervDb = intervDb;
+            this.emailSender = emailSender;
         }
 
         public async Task<IActionResult> SaisirInterventionAsync()
@@ -43,7 +47,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SoumettreInfosMaintAsync(MaintenanceViewModel vm)
+        public IActionResult SoumettreInfosMaint(MaintenanceViewModel vm)
         {
             if (vm.IntervenantExterne == "true") // Si l'utilisateur coche "oui" alors il est obligé de taper le nom de la sociète
                 ModelState.AddModelError("NomSociete", "Veuillez indiquer le nom de la sociète intervenante");
@@ -64,9 +68,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                 goto ERR;
             }
 
-            ERR:
-                
-            return View("SaisirIntervention", vm);           
+        ERR:
+
+            return View("SaisirIntervention", vm);
         }
 
         public IActionResult AjoutEquipements()
@@ -272,9 +276,83 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             return View("SaisirIntervention", formulaire);
         }
 
-        public IActionResult ValiderInterventions(AjoutEquipementsViewModel model)
+        public async Task<IActionResult> ValiderInterventionsAsync(AjoutEquipementsViewModel model)
         {
-            return View();
+            string MsgUser = "";
+            // Retry pour envoi mail
+            int NumberOfRetries = 5;
+            var retryCount = NumberOfRetries;
+            var success = false;
+
+            #region Validation des interventions sur des péripheriques à la PFL
+            // Récuperer ma session avec les créneaux d'intervention
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+
+            // Créer l'opération de maintenance à partir de ma session
+            MaintenanceViewModel formulaire = HttpContext.GetFromSession<MaintenanceViewModel>("FormulaireOperation");
+
+            // Traiter chaque créneau d'intervention saisie 
+            #region Enregistrer en base de données et envoyer le mail pour informer les utilisateurs
+
+            // Création de l'opération de maintenance
+            maintenance maintenance = intervDb.AjoutMaintenance(formulaire);
+
+            foreach (var inter in vm.ListEquipsSansZone)
+            {
+                bool IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
+                if(!IsOk)
+                {
+                    ModelState.AddModelError("DescriptionProbleme", "Problème pour ajouter une nouvelle intervention sans zone, essayez à nouveau");
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Problème pour ajouter le(s) interventions sans zone, essayez à nouveau";
+                    return View("AjoutEquipements", vm);
+                }
+
+                // si enregistrement OK alors envoyer le mail
+                MsgUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s): " 
+                               + inter.ZoneImpacte + ". Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
+                               ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention penalise vos manips en cours ou à venir." +
+                               " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
+                               "</p>" +
+                               "</body>" +
+                               "</html>";
+
+                // obtenir la liste des utilisateurs
+                List<utilisateur> users = intervDb.ObtenirListUtilisateursSite();
+
+                // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                foreach (var usr in users)
+                {
+                    success = false;
+                    while (!success && retryCount > 0)
+                    {
+                        try
+                        {
+                            await emailSender.SendEmailAsync(usr.Email, "Dépannage materiel commun et utilités PFL", MsgUser);
+                            success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            retryCount--;
+                            if (retryCount == 0)
+                            {
+                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                ViewBag.AfficherMessage = true;
+                                ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                return View("AjoutEquipements", vm);
+                            }
+                        }
+                    }
+                }                   
+            }
+            #endregion
+
+            // Afficher message pour indiquer que l'opération s'est bien passé
+            #endregion
+
+            return View("AjoutEquipements", vm);
         }
     }
 }

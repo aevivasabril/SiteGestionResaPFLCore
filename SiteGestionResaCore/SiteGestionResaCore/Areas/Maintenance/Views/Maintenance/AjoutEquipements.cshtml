@@ -6,8 +6,10 @@
 }
 
 <hr />
-<h2>Ajout des équipements concernés par l'intervention</h2>
-<h5>Cliquez sur les liens pour rajouter des équipements</h5>
+<h2 class="text-center">Ajout des équipements concernés par l'intervention</h2>
+<h5 class="text-center">Cliquez sur les liens pour rajouter des équipements</h5>
+<h6 class="text-center">Un problème sur un "Equipements sans zone" bloque les manips en cours et à venir. Si vous déclarez une intervention
+    pour un équipement sans zone un mail sera envoyé à tous les utilisateurs pour les inviter à annuler ou décaler leurs manips</h6>
 <hr />
 
 <div class="form-group text-center">
@@ -16,6 +18,11 @@
 <div class="form-group text-center">
     <a class="btn btn-secondary" href="~/Maintenance/Maintenance/AjouterEquipsReserv">Ajouter des équipements présents sur les zones</a>
 </div>
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:red"><strong> @ViewBag.Message</strong> </h5>
+}
 
 <div class="hide" style="display:@Model.OuvrirEquipSansZone" id="AjoutSansZone">
     @Html.ValidationSummary(false, "", new { @class = "text-danger" })

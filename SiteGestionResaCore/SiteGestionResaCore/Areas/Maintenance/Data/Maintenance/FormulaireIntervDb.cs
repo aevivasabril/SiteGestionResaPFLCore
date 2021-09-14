@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -12,13 +13,16 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
     public class FormulaireIntervDb: IFormulaireIntervDB
     {
         private readonly GestionResaContext context;
+        private readonly ILogger<FormulaireIntervDb> logger;
         private readonly UserManager<utilisateur> userManager;
 
         public FormulaireIntervDb(
             GestionResaContext context,
+            ILogger<FormulaireIntervDb> logger,
             UserManager<utilisateur> userManager)
         {
             this.context = context;
+            this.logger = logger;
             this.userManager = userManager;
         }
         public List<ld_type_maintenance> List_Type_Maintenances()
@@ -31,9 +35,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
             return await userManager.GetUsersInRoleAsync("Logistic");
         }
 
-        // TODO: vérifier cette méthode!! 
         /// <summary>
         /// Retourner un code d'intervention automatiquement à donner à chaque opération
+        /// méthode testé! 14/09/2021
         /// </summary>
         /// <returns></returns>
         public string CodeOperation()
@@ -61,6 +65,55 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
                 Code = "INTERV" + intCinqChiffres;               
             }
             return Code;
+        }
+
+        public maintenance AjoutMaintenance(MaintenanceViewModel vm)
+        {
+            var usr = context.Users.First(u => u.Id == vm.SelectedIntervenantID);
+            maintenance maintenance = new maintenance
+            {
+                code_operation = vm.CodeMaintenance,
+                type_maintenance = context.ld_type_maintenance.First(m => m.id == vm.SelectedInterventionId).nom_type_maintenance,
+                userID = usr.Id,
+                intervenant_externe = Convert.ToBoolean(vm.IntervenantExterne),
+                nom_intervenant_ext = vm.NomSociete,
+                date_saisie = DateTime.Now,
+                description_operation = vm.DescriptionInter
+            };
+
+            context.maintenance.Add(maintenance);
+            context.SaveChanges();
+
+            return maintenance;
+        }
+
+        public bool EnregistrerIntervSansZone(EquipementSansZoneVM sansZoneVM, maintenance maint)
+        {
+            try
+            {
+                resa_maint_equip_adjacent resaSansZone = new resa_maint_equip_adjacent
+                {
+                    date_debut = sansZoneVM.DateDebut,
+                    date_fin = sansZoneVM.DateFin,
+                    maintenanceID = maint.id,
+                    nom_equipement = sansZoneVM.DescriptionProbleme,
+                    zone_affectee = sansZoneVM.ZoneImpacte
+                };
+
+                context.resa_maint_equip_adjacent.Add(resaSansZone);
+                context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de l'ajout d'une opération de maintenance");
+                return false;
+            }
+
+            return true;
+        }
+        public List<utilisateur> ObtenirListUtilisateursSite()
+        {
+            return context.Users.Distinct().ToList();
         }
     }
 }
