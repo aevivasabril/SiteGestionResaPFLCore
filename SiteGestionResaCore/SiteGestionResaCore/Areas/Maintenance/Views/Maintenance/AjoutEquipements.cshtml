@@ -6,9 +6,9 @@
 }
 
 <hr />
-<h2 class="text-center">Ajout des équipements concernés par l'intervention</h2>
-<h5 class="text-center">Cliquez sur les liens pour rajouter des équipements</h5>
-<h6 class="text-center">Un problème sur un "Equipements sans zone" bloque les manips en cours et à venir. Si vous déclarez une intervention
+<h2 class="text-center">Cliquez sur les liens pour rajouter des équipements à l'intervention</h2>
+
+<h6 class="text-center">Un problème sur un "Equipement sans zone" bloque les manips en cours et à venir. Si vous déclarez une intervention
     pour un équipement sans zone un mail sera envoyé à tous les utilisateurs pour les inviter à annuler et décaler leurs manips</h6>
 <br />
 <h6 class="text-center">Si vous déclarez une intervention de "Maintenance curative (panne)" pour un équipement dans les zones, les essais se déroulant entre les dates d'intervention 
@@ -16,10 +16,10 @@
 <hr />
 
 <div class="form-group text-center">
-    <a class="btn btn-secondary" href="~/Maintenance/Maintenance/AjouterEquipsSansZone">Ajouter des équipements sans Zone</a>
+    <a class="btn btn-secondary" asp-action="AjouterEquipsSansZone" asp-controller="Maintenance" asp-area="Maintenance">Ajouter des équipements sans Zone</a>
 </div>
 <div class="form-group text-center">
-    <a class="btn btn-secondary" href="~/Maintenance/Maintenance/AjouterEquipsReserv">Ajouter des équipements présents sur les zones</a>
+    <a class="btn btn-secondary" asp-action="PlanZonesReserXIntervention" asp-controller="Reservation" asp-area="Reservation">Ajouter des équipements présents sur les zones</a>
 </div>
 
 @if (ViewBag.AfficherMessage == true)
@@ -167,12 +167,12 @@
                 @for (int i = 0; i < Model.ListEquipsSansZone.Count(); i++)
                 {
                     <tr>
-                        <th scope="row">@Model.ListEquipsSansZone[i].DescriptionProbleme</th>
-                        <td>@Model.ListEquipsSansZone[i].ZoneImpacte</td>
-                        <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortDateString()</td>
-                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortDateString()</td>
-                        <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortTimeString()</td>
-                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortTimeString()</td>
+                        <th scope="row"></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td>@Html.ActionLink("Supprimer", "SupprimerCreneauInterv", new { i = i })</td>
                     </tr>
 

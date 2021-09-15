@@ -1454,8 +1454,24 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             return View("PlanZonesReservation",vm);
         }
 
+        /// <summary>
+        /// Action pour ouvrir le plan des zones pour intervention (maintenance!)
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult PlanZonesReserXIntervention()
+        {
+            ZonesReservationViewModel vm = new ZonesReservationViewModel()
+            {
+                Zones = zoneEquipDb.ListeZones(),
+                ReservationXIntervention = true
+            };
+            // Etablir une session avec les données à mettre à jour pour la vue principale
+            this.HttpContext.AddToSession("ZoneReservation", vm);
+            return View("PlanZonesReservation", vm);
+        }
+
         #region Méthodes complémentaires
-       
+
         /// <summary>
         /// Méthode permettant de retourner les réservations à afficher sur le calendrier
         /// </summary>
