@@ -51,7 +51,6 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-
                             ConcurrencyStamp = "71a5dea0-bed0-49d5-8e15-5509c4aa6a2e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
@@ -59,7 +58,6 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 2,
-
                             ConcurrencyStamp = "a8099981-36e3-49c0-892a-fc6f18a5c3e3",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
@@ -67,7 +65,6 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 3,
-
                             ConcurrencyStamp = "04305f36-268f-4af6-9122-88d06c43c67f",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
@@ -961,7 +958,8 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "",
                             zoneID = 12
                         },
-                        
+                        new
+                        {
                             id = 250,
                             mobile = false,
                             nom = "Salle AP5",
