@@ -265,7 +265,8 @@ namespace SiteGestionResaCore.Data.Data
                     .IsRequired()
                     .IsUnicode(false);
             });
-
+            
+            // NOTE IMPORTANTE:!!!! ne jamais remplacer un id car on perd l'ordre logique! si equipement EFFACE ALORS ID EFFACE et pas reutilisé!! 
             modelBuilder.Entity<ld_type_maintenance>(entity =>
             {
                 entity.Property(e => e.nom_type_maintenance)
@@ -347,9 +348,12 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<zone>().HasData(new zone[] { new zone { id = 1, nom_zone = "Concentration & Sechage" }, new zone { id = 2, nom_zone = "Dépotage & Stockage" },
                 new zone { id = 3, nom_zone = "Préparation des laits" }, new zone { id = 4, nom_zone = "Membranes" }, new zone { id = 5, nom_zone = "Pâtes molles moulage" },
                 new zone { id = 6, nom_zone = "Pâtes molles tranchage" }, new zone { id = 7, nom_zone = "Pâtes préssées cuites" }, new zone { id = 8, nom_zone = "Innovation" }, 
-                new zone { id = 9, nom_zone = "Salle Stephan" }, new zone { id = 10, nom_zone = "Saumurage" }, new zone { id = 11, nom_zone = "Labo" }, 
-                new zone { id = 12, nom_zone = "Salle alimentaire Ap5" }, new zone { id = 13, nom_zone = "Salle alimentaire Ap6" }, new zone { id = 14, nom_zone = "Hâloir Ap7" },
-                new zone { id = 15, nom_zone = "Salle alimentaire Ap8" }, new zone { id = 16, nom_zone = "Salle alimentaire Ap9" }, new zone { id = 17, nom_zone = "Equipements mobiles" } });
+
+                new zone { id = 9, nom_zone = "Salle Stephan" }, new zone { id = 10, nom_zone = "Saumurage" }, new zone { id = 11, nom_zone = "Labo" },
+                new zone { id = 12, nom_zone = "Salle alimentaire Ap5" }, new zone { id = 13, nom_zone = "Salle alimentaire Ap6" }, 
+                new zone { id = 15, nom_zone = "Salle alimentaire Ap8" }, new zone { id = 16, nom_zone = "Salle alimentaire Ap9" }, new zone { id = 17, nom_zone = "Equipements mobiles" },
+                new zone { id = 18, nom_zone = "Salle AP7 A" }, new zone { id = 19, nom_zone = "Salle AP7 B" }, new zone { id = 20, nom_zone = "Salle AP7 C" }
+            });
 
             modelBuilder.Entity<equipement>().HasData(new equipement[] { new equipement { id = 162, nom = "Balance Arpège 150k", zoneID = 5, numGmao = "BAL0002", mobile = false }, new equipement { id = 163, nom = "Balance 32 Kg (KA32s)", zoneID = 9, numGmao = "BAL0003", mobile = false }, 
                 new equipement { id = 164, nom = "Balance 300Kg (ID2 + KCS300)", zoneID = 3, numGmao = "BAL0004", mobile = false }, new equipement { id = 165, nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)", zoneID = 16, numGmao = "BAL0011", mobile = true }, 
@@ -395,10 +399,12 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true },
                 new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true },
                 new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true },
-                new equipement { id = 249, nom = "Congelateur", zoneID = 16, numGmao = "CONG0013", mobile = false }, new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false }, 
-                new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false }, new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false },
+
+                new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false }, new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false }, new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false },
                 new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false },
-                new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }
+
+                new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false },
+                new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false }
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
