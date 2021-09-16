@@ -48,11 +48,16 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         [Display(Name = "Créneau fin")]
         public string DatePickerFin_Matin { get; set; }
 
-        public EquipementSansZoneVM EquipementSansZoneVM { get; set; }
+        //public EquipementSansZoneVM EquipementSansZoneVM { get; set; }
 
         public List<EquipementSansZoneVM> ListEquipsSansZone { get; set; }
 
         public int IdPourSuppressionSansZone { get; set; }
+
+        /// <summary>
+        /// Liste des équipements présents dans les zones concernés par une intervention
+        /// </summary>
+        public List<EquipementDansZone> ListEquipsDansZones { get; set; }
 
     }
 }

@@ -446,6 +446,28 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return context.equipement.First(e => e.id == id).nom;
         }
 
+        public string ObtenirNomTypeMaintenance(int id)
+        {
+            return context.ld_type_maintenance.First(l => l.id == id).nom_type_maintenance;
+        }
+
+        public List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement)
+        {
+            List<essai> ListEssais = new List<essai>();
+            //var ZonEquip = context.equipement.First(e => e.id == idEquipement).zoneID;
+            int ZoneIdEquipement = context.zone.First(z => z.id == context.equipement.First(e => e.id == idEquipement).zoneID).id;
+            ListEssais = (from essai in context.essai
+                            from equip in context.equipement
+                            from reser in context.reservation_projet
+                            where (essai.id == reser.essaiID
+                            && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == ZoneIdEquipement))
+                            && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
+                            && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
+                            select essai).Distinct().ToList();
+
+            return ListEssais;
+        }
+
         #region Vérification de disponibilité d'un équipement pour AJOUT
 
         public bool DispoEssaiRestreintPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai)

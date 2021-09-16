@@ -20,5 +20,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         bool DispoEssaiConfidentielPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai);
 
+        string ObtenirNomTypeMaintenance(int id);
+
+        List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement);
+
     }
 }

@@ -77,8 +77,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
         {
             AjoutEquipementsViewModel vm = new AjoutEquipementsViewModel()
             {
-                EquipementSansZoneVM = new EquipementSansZoneVM(),
+                //EquipementSansZoneVM = new EquipementSansZoneVM(),
                 ListEquipsSansZone = new List<EquipementSansZoneVM>(),
+                ListEquipsDansZones = new List<EquipementDansZone>(),
                 OuvrirEquipSansZone = "none"
             };
             this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
