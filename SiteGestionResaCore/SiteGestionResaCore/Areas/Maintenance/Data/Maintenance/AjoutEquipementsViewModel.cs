@@ -54,6 +54,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 
         public int IdPourSuppressionSansZone { get; set; }
 
+        public int IdPoursuppressionDansZone { get; set; }
+
         /// <summary>
         /// Liste des équipements présents dans les zones concernés par une intervention
         /// </summary>

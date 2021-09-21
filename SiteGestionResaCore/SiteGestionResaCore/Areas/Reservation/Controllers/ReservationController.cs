@@ -660,10 +660,128 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         DateDebutInterv = debutToSave,
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
+                                        NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
                                     };
+                                    MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
+                                    this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
                                 }
                                 break;
                             default: // Je mets "default" car tous les autres types d'intervention seront traités de la même manière
+
+                                #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
+
+                                #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
+                                bool isResaOkToAdd = false;
+                                if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une réservation standard
+                                {
+                                    for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                    {
+                                        // Je fais la vérification comme pour une réservation standard considerant que la maintenance surveillera à ne pas avoir des essais aux mêmes dates
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        if (isResaOkToAdd == false)
+                                        {
+                                            if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                            {
+                                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                        }
+                                    }
+                                }
+                                else // cas où l'on rajoute des équipements à une réservation existante
+                                {
+                                    #region Si jamais on rajoute des équipements sur une intervention
+                                    // selon le type de confidentialité, vérifier la disponibilité des équipements
+                                    // obtenir l'essai où les réservations devront être ajoutées
+                                    /*essai Essai = projetEssaiDb.ObtenirEssai_pourCopie(zonesReservation.IdEssaiXAjoutEquip);
+                                    switch (Essai.confidentialite)
+                                    {
+                                        case "Ouvert":
+                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                            {
+                                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                                if (isResaOkToAdd == false)
+                                                {
+                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                                    {
+                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
+                                                        goto ENDT;
+                                                    }
+                                                    else
+                                                    {
+                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                        goto ENDT;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case "Restreint":
+                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                            {
+                                                isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
+                                                if (isResaOkToAdd == false)
+                                                {
+                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                                    {
+                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
+                                                        goto ENDT;
+                                                    }
+                                                    else
+                                                    {
+                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                        goto ENDT;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        case "Confidentiel":
+                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                            {
+                                                isResaOkToAdd = reservationDb.DispoEssaiConfidentielPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
+                                                if (isResaOkToAdd == false)
+                                                {
+                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                                    {
+                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
+                                                        goto ENDT;
+                                                    }
+                                                    else
+                                                    {
+                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                        goto ENDT;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                    }*/
+                                    #endregion
+                                }
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
+                                    //List<essai> ListEssaiXAnnulation = reservationDb.ObtenirListEssaiXAnnulation(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    EquipementDansZone equipementDansZone = new EquipementDansZone
+                                    {
+                                        EssaisXAnnulation = new List<essai>(),
+                                        DateDebutInterv = debutToSave,
+                                        DateFinInterv = finToSave,
+                                        IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
+                                        NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                    };
+                                    MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
+                                    this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
+                                }
+                                #endregion
+
+                                #endregion
+
                                 break;
                         }
                     } 
@@ -842,6 +960,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
             equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
             #endregion
+
             return View("EquipementVsZone", equipementZone); // Si error alors on recharge la page pour montrer les messages
         }
 
@@ -956,18 +1075,23 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             // Sauvegarder la mise à jour de la session
             this.HttpContext.AddToSession("ZoneReservation", zonesReservation);
-
-            if(zonesReservation.IdEssaiXAjoutEquip == 0) // si il s'agit d'une réservation standard
+            if(zonesReservation.IdEssaiXAjoutEquip == 0 && zonesReservation.ReservationXIntervention == true) // Intervention maintenance
+            {
+                return RedirectToAction("AjoutEquipementsExterne", "Maintenance", new { area = "Maintenance" });
+            }
+            if(zonesReservation.IdEssaiXAjoutEquip == 0 && zonesReservation.ReservationXIntervention == false) // si il s'agit d'une réservation standard
             {
                 // Récupérer la session "FormulaireProjet" pour revenir au formulaire
                 FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
                 return View("FormulaireProjet", formulaire);
             }
-            else
+            if(zonesReservation.IdEssaiXAjoutEquip !=0) // Modification d'une réservation
             {
                 return RedirectToAction("ModifierEquipResa", "ResasUser", new { area = "User", id= zonesReservation.IdEssaiXAjoutEquip });
-            }          
-
+            }
+            // Récupérer la session "FormulaireProjet" pour revenir au formulaire
+            FormulaireProjetViewModel form = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
+            return View("FormulaireProjet", form);
         }
 
         /// <summary>
@@ -1030,9 +1154,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Récupérer les infos remplisses dans le formulaire projet/essai
             FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
 
-            #endregion
+            #endregion          
 
-            // Pour retrouver l'erreur quand j'essai de créer la list en RELEASE
+            // Pour retrouver l'erreur quand j'essaie de créer la list en RELEASE
             try
             {
                 resas = new List<reservation_projet>();
@@ -1064,25 +1188,36 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         Creation:
             if (AtLeastOneEquipment) // si au moins un équipement est réservé!
             {
-                #region Vérifier s'il s'agit d'une réservation standard ou un ajout des équipements dans un essai existant
-                if (zonesReservation.IdEssaiXAjoutEquip != 0) // il s'agit d'un ajout des équipements dans un essai existant! (modification réservation)
+                #region Distinguer les opérations de maintenance ou réservations
+
+                if (zonesReservation.ReservationXIntervention) // Si ReservationXIntervention = true alors il s'agit d'une intervention maintenance
                 {
-                    #region Ajouter des équipements à un essai ou diriger vers la page d'erreur
+                    
+                    return RedirectToAction("AjoutEquipementsExterne", "Maintenance", new { area = "Maintenance" });
+                }
+                else
+                { // Réservation standard ou pour ajout des équipements
 
-                    // obtenir l'essai où les réservations devront être ajoutées
-                    Essai = projetEssaiDb.ObtenirEssai_pourCopie(zonesReservation.IdEssaiXAjoutEquip);
+                    #region Vérifier s'il s'agit d'une réservation standard ou un ajout des équipements dans un essai existant
 
-                    // obtenir le projet 
-                    Proj = projetEssaiDb.ObtenirProjXEssai(Essai.projetID);
+                    if (zonesReservation.IdEssaiXAjoutEquip != 0) // il s'agit d'un ajout des équipements dans un essai existant! (modification réservation)
+                    {
+                        #region Ajouter des équipements à un essai ou diriger vers la page d'erreur
 
-                    // Remplir le message à envoyer aux admins pour notifier la réservation
-                    mssLogis = @"<html>
+                        // obtenir l'essai où les réservations devront être ajoutées
+                        Essai = projetEssaiDb.ObtenirEssai_pourCopie(zonesReservation.IdEssaiXAjoutEquip);
+
+                        // obtenir le projet 
+                        Proj = projetEssaiDb.ObtenirProjXEssai(Essai.projetID);
+
+                        // Remplir le message à envoyer aux admins pour notifier la réservation
+                        mssLogis = @"<html>
                             <body> 
                             <p> Bonjour, <br> " + "L'utilisateur: " + user.Email + " " + " vient d'ajouter des équipements dans sa réservation pour le projet : <b> " + Proj.num_projet + "</b> (Essai N°: " + Essai.id + " ) " +
-                                " " + ". Récapitulatif des équipements ajoutés: <br> "
-                                + "</p>";
+                                    " " + ". Récapitulatif des équipements ajoutés: <br> "
+                                    + "</p>";
 
-                    mssLogis += @"<table>
+                        mssLogis += @"<table>
                                 <tr>
                                     <th> Zone </th>
                                     <th> Equipement </th>
@@ -1090,13 +1225,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 	                                <th> Date fin </th>
                                 </tr>";
 
-                    // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
-                    messUser = @"<html>
+                        // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
+                        messUser = @"<html>
                             <body> 
                             <p> Bonjour, <br><br> Vous avez ajouté des équipements sur votre essai, projet N° : <b> " + Proj.num_projet + "</b> (Essai N°: " + Essai.id + " ) " +
-                                ". " + "Voici le récapitulatif des réservations par équipement ajoutés: <br> "
-                                + "</p>";
-                    messUser += @"<table>
+                                    ". " + "Voici le récapitulatif des réservations par équipement ajoutés: <br> "
+                                    + "</p>";
+                        messUser += @"<table>
                                 <tr>
                                     <th> Zone </th>
                                     <th> Equipement </th>
@@ -1104,46 +1239,46 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 	                                <th> Date fin </th>
                                 </tr>";
 
-                    // Créations des réservations par équipement 
-                    for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
-                    {
-                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
+                        // Créations des réservations par équipement 
+                        for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
                         {
-                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                             {
-                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
-                                    Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
-                                    zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
+                                for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
+                                {
+                                    resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
+                                        Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
+                                        zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
 
-                                #region Creation d'un string contenant le récap réservation
+                                    #region Creation d'un string contenant le récap réservation
 
-                                subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
+                                    subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
 
-                                mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
-                                    + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
-                                    + "   </td> </tr>";
+                                    mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
+                                        + "   </td>" + "<td>   " + subNomEquip
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                        + "   </td> </tr>";
 
 
-                                messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
-                                    + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
-                                    + "   </td> </tr>";
+                                    messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
+                                        + "   </td>" + "<td>   " + subNomEquip
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                        + "   </td> </tr>";
 
-                                #endregion
+                                    #endregion
+                                }
                             }
                         }
-                    }
 
 
-                    // Changer le status de l'essai à Waiting4Valid
-                    projetEssaiDb.UpdateStatusEssai(Essai);
+                        // Changer le status de l'essai à Waiting4Valid
+                        projetEssaiDb.UpdateStatusEssai(Essai);
 
-                    #region Envoi du mail récapitulatif à l'utilisateur
-                    // Envoyer le mail récapitulatif utilisateur
-                    messUser += @"</table>                               
+                        #region Envoi du mail récapitulatif à l'utilisateur
+                        // Envoyer le mail récapitulatif utilisateur
+                        messUser += @"</table>                               
                                 <p>
                                 <br>Votre demande sera traitée dans les plus brefs délais.<br><br>
 	                                L'équipe PFL,
@@ -1151,53 +1286,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 </body>
                                 </html>";
 
-                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-
-                    while (!success && retryCount > 0)
-                    {
-                        try
-                        {
-                            await emailSender.SendEmailAsync(user.Email, "Récapitulatif Mise à jour réservation", messUser);
-                            success = true;
-                        }
-                        catch (Exception e)
-                        {
-                            retryCount--;
-
-                            if (retryCount == 0)
-                            {
-                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region Envoi de mail notifications aux "Admin"/"Logistic"
-
-                    // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
-                    UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
-
-                    //sb_admin.Append("\n\nL'équipe PFL.");
-                    mssLogis += @"</table>                               
-                                <p>
-                                <br>L'équipe PFL,
-                                </p>
-                                </body>
-                                </html>";
-
-                    for (int index = 0; index < UsersLogistic.Count(); index++)
-                    {
-                        NumberOfRetries = 5;
-                        retryCount = NumberOfRetries;
-                        success = false;
+                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
 
                         while (!success && retryCount > 0)
                         {
                             try
                             {
-                                await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Modification réservation à valider", mssLogis);
+                                await emailSender.SendEmailAsync(user.Email, "Récapitulatif Mise à jour réservation", messUser);
                                 success = true;
                             }
                             catch (Exception e)
@@ -1206,82 +1301,122 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                                 if (retryCount == 0)
                                 {
-                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
                                     return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
                                 }
                             }
                         }
-                    }
 
-                    #endregion
+                        #endregion
 
-                    #region reverifier la date inférieure et supérieure si essai "confidentiel"
+                        #region Envoi de mail notifications aux "Admin"/"Logistic"
 
-                    if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                    {
-                        // obtenir toutes les réservations après modification
-                        resas = projetEssaiDb.ObtenirResasEssai(Essai.id);
-                        foreach (var reservation in resas)
+                        // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
+                        UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
+
+                        //sb_admin.Append("\n\nL'équipe PFL.");
+                        mssLogis += @"</table>                               
+                                <p>
+                                <br>L'équipe PFL,
+                                </p>
+                                </body>
+                                </html>";
+
+                        for (int index = 0; index < UsersLogistic.Count(); index++)
                         {
-                            if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
+                            NumberOfRetries = 5;
+                            retryCount = NumberOfRetries;
+                            success = false;
+
+                            while (!success && retryCount > 0)
                             {
-                                IsFirstResa = false;
-                                dateSeuilInf = reservation.date_debut;
-                                dateSeuilSup = reservation.date_fin;
-                            }
-                            else
-                            {
-                                // Recherche des dates superieur et inferieur sur toutes les réservations
-                                if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
+                                try
                                 {
-                                    dateSeuilInf = reservation.date_debut;
+                                    await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Modification réservation à valider", mssLogis);
+                                    success = true;
                                 }
-                                if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
+                                catch (Exception e)
                                 {
-                                    dateSeuilSup = reservation.date_fin;
+                                    retryCount--;
+
+                                    if (retryCount == 0)
+                                    {
+                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                        return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
+                                    }
                                 }
                             }
                         }
-                        //Mettre à jour l'essai avec les dates seuil
-                        projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
+
+                        #endregion
+
+                        #region Reverifier la date inférieure et supérieure si essai "confidentiel"
+
+                        if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                        {
+                            // obtenir toutes les réservations après modification
+                            resas = projetEssaiDb.ObtenirResasEssai(Essai.id);
+                            foreach (var reservation in resas)
+                            {
+                                if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
+                                {
+                                    IsFirstResa = false;
+                                    dateSeuilInf = reservation.date_debut;
+                                    dateSeuilSup = reservation.date_fin;
+                                }
+                                else
+                                {
+                                    // Recherche des dates superieur et inferieur sur toutes les réservations
+                                    if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
+                                    {
+                                        dateSeuilInf = reservation.date_debut;
+                                    }
+                                    if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
+                                    {
+                                        dateSeuilSup = reservation.date_fin;
+                                    }
+                                }
+                            }
+                            //Mettre à jour l'essai avec les dates seuil
+                            projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
+                        }
+
+                        #endregion
+
+                        #endregion
+
+                        // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
+                        ViewBag.IsConfirOutside = true;
+                        ViewBag.IdEssaiModifie = zonesReservation.IdEssaiXAjoutEquip;
                     }
-
-                    #endregion
-
-                    #endregion
-
-                    // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
-                    ViewBag.IsConfirOutside = true;
-                    ViewBag.IdEssaiModifie = zonesReservation.IdEssaiXAjoutEquip;
-                }
-                else // réservation standard
-                {
-                    #region Créer la réservation "standard" ou diriger vers la page d'erreur
-
-                    //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
-                    if (projetEssaiDb.ProjetExists(formulaire.NumProjet))
+                    else // réservation standard
                     {
-                        Proj = projetEssaiDb.ObtenirProjet_pourCopie(formulaire.NumProjet);
-                    }
-                    else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
-                    {
-                        Proj = projetEssaiDb.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
-                            formulaire.SelectedRespProjId, formulaire.NumProjet, formulaire.SelectedProvenanceId, formulaire.DescriptionProjet, myDateTime, user);
-                    }
+                        #region Créer la réservation "standard" ou diriger vers la page d'erreur
 
-                    // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
-                    Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId,
-                        formulaire.PrecisionProduitIn, formulaire.QuantiteProduit, formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO,
-                        formulaire.TitreEssai); 
+                        //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
+                        if (projetEssaiDb.ProjetExists(formulaire.NumProjet))
+                        {
+                            Proj = projetEssaiDb.ObtenirProjet_pourCopie(formulaire.NumProjet);
+                        }
+                        else // si le projet n'existe pas alors l'ajouter dans la base de données + l'essai
+                        {
+                            Proj = projetEssaiDb.CreationProjet(formulaire.TitreProjet, formulaire.SelectTypeProjetId, formulaire.SelectFinancementId, formulaire.SelectedOrganId,
+                                formulaire.SelectedRespProjId, formulaire.NumProjet, formulaire.SelectedProvenanceId, formulaire.DescriptionProjet, myDateTime, user);
+                        }
 
-                    // Remplir le message à envoyer aux admins pour notifier la réservation
-                    mssLogis = @"<html>
+                        // Creation d'essai (à mettre à jour si l'essai est "Confidentiel") 
+                        Essai = projetEssaiDb.CreationEssai(Proj, user, myDateTime, formulaire.ConfidentialiteEssai, formulaire.SelectedManipulateurID, formulaire.SelectedProductId,
+                            formulaire.PrecisionProduitIn, formulaire.QuantiteProduit, formulaire.SelectedProveProduitId, formulaire.SelectedDestProduit, formulaire.TransportSTLO,
+                            formulaire.TitreEssai);
+
+                        // Remplir le message à envoyer aux admins pour notifier la réservation
+                        mssLogis = @"<html>
                             <body> 
                             <p> Bonjour, <br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
-                                " saisie par l'utilisateur: " + user.Email + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> "
-                                + "</p>";
+                                    " saisie par l'utilisateur: " + user.Email + " " + " vient d'être rajoutée. Récapitulatif des réservations par équipement: <br> "
+                                    + "</p>";
 
-                    mssLogis += @"<table>
+                        mssLogis += @"<table>
                                 <tr>
                                     <th> Zone </th>
                                     <th> Equipement </th>
@@ -1289,14 +1424,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 	                                <th> Date fin </th>
                                 </tr>";
 
-                    // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
-                    messUser = @"<html>
+                        // Remplir le message à envoyer à l'utilisateur avec récap des équipements réservés
+                        messUser = @"<html>
                             <body> 
                             <p> Bonjour, <br><br> La demande de réservation pour le projet N° : <b> " + formulaire.NumProjet + "</b> (Essai N°: " + Essai.id + " ) " +
-                                " est pris en compte. " + "Récapitulatif des réservations par équipement: <br> "
-                                + "</p>";
-                    //sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
-                    messUser += @"<table>
+                                    " est pris en compte. " + "Récapitulatif des réservations par équipement: <br> "
+                                    + "</p>";
+                        //sb_user.Append(String.Format("{0,55} {1,135} {2,60}\n\n", "Equipement", "Date début", "Date Fin"));
+                        messUser += @"<table>
                                 <tr>
                                     <th> Zone </th>
                                     <th> Equipement </th>
@@ -1304,76 +1439,76 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 	                                <th> Date fin </th>
                                 </tr>";
 
-                    // Créations des réservations par équipement 
-                    for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
-                    {
-                        for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
+                        // Créations des réservations par équipement 
+                        for (int i = 0; i < zonesReservation.EquipementsParZone.Count(); i++)
                         {
-                            for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
+                            for (int j = 0; j < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM.Count(); j++)
                             {
-                                resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
-                                    Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
-                                    zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
+                                for (int y = 0; y < zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement.Count(); y++)
+                                {
+                                    resa = reservationDb.CreationReservation(zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].idEquipement,
+                                        Essai, zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut,
+                                        zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin);
 
-                                // ajouter la réservation dans la liste des réservations à utiliser pour le calcul si "confidentiel"
-                                resas.Add(resa);
+                                    // ajouter la réservation dans la liste des réservations à utiliser pour le calcul si "confidentiel"
+                                    resas.Add(resa);
 
-                                #region Creation d'un string contenant le récap réservation
+                                    #region Creation d'un string contenant le récap réservation
 
-                                subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
+                                    subNomEquip = zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].nomEquipement + " ( N°GMAO: " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].numGmaoEquipement + " )";
 
-                                mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
-                                    + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
-                                    + "   </td> </tr>";
+                                    mssLogis += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
+                                        + "   </td>" + "<td>   " + subNomEquip
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                        + "   </td> </tr>";
 
 
-                                messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
-                                    + "   </td>" + "<td>   " + subNomEquip
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
-                                    + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
-                                    + "   </td> </tr>";
+                                    messUser += @" <tr> <td>" + zonesReservation.EquipementsParZone[i].NomZone
+                                        + "   </td>" + "<td>   " + subNomEquip
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_debut.ToString()
+                                        + "   </td>" + "<td>   " + zonesReservation.EquipementsParZone[i].PreCalendrierChildVM[j].ResaEquipement[y].date_fin.ToString()
+                                        + "   </td> </tr>";
 
-                                #endregion
+                                    #endregion
+                                }
                             }
                         }
-                    }
 
-                    #region date inférieure et supérieure si essai "confidentiel"
+                        #region date inférieure et supérieure si essai "confidentiel"
 
-                    if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                    {
-                        foreach (var reservation in resas)
+                        if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                         {
-                            if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
+                            foreach (var reservation in resas)
                             {
-                                IsFirstResa = false;
-                                dateSeuilInf = reservation.date_debut;
-                                dateSeuilSup = reservation.date_fin;
-                            }
-                            else
-                            {
-                                // Recherche des dates superieur et inferieur sur toutes les réservations
-                                if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
+                                if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
                                 {
+                                    IsFirstResa = false;
                                     dateSeuilInf = reservation.date_debut;
-                                }
-                                if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
-                                {
                                     dateSeuilSup = reservation.date_fin;
                                 }
+                                else
+                                {
+                                    // Recherche des dates superieur et inferieur sur toutes les réservations
+                                    if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
+                                    {
+                                        dateSeuilInf = reservation.date_debut;
+                                    }
+                                    if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
+                                    {
+                                        dateSeuilSup = reservation.date_fin;
+                                    }
+                                }
                             }
+                            //Mettre à jour l'essai avec les dates seuil
+                            projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
                         }
-                        //Mettre à jour l'essai avec les dates seuil
-                        projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
-                    }
 
-                    #endregion
+                        #endregion
 
-                    #region Envoi du mail récapitulatif à l'utilisateur
-                    // Envoyer le mail récapitulatif utilisateur
-                    messUser += @"</table>                               
+                        #region Envoi du mail récapitulatif à l'utilisateur
+                        // Envoyer le mail récapitulatif utilisateur
+                        messUser += @"</table>                               
                                 <p>
                                 <br>Votre demande sera traitée dans les plus brefs délais.<br><br>
 	                                L'équipe PFL,
@@ -1381,53 +1516,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 </body>
                                 </html>";
 
-                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-
-                    while (!success && retryCount > 0)
-                    {
-                        try
-                        {
-                            await emailSender.SendEmailAsync(user.Email, "Récapitulatif Réservation", messUser);
-                            success = true;
-                        }
-                        catch (Exception e)
-                        {
-                            retryCount--;
-
-                            if (retryCount == 0)
-                            {
-                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
-                            }
-                        }
-                    }
-
-                    #endregion
-
-                    #region Envoi de mail notifications aux "Admin"/"Logistic"
-
-                    // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
-                    UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
-
-                    //sb_admin.Append("\n\nL'équipe PFL.");
-                    mssLogis += @"</table>                               
-                                <p>
-                                <br>L'équipe PFL,
-                                </p>
-                                </body>
-                                </html>";
-
-                    for (int index = 0; index < UsersLogistic.Count(); index++)
-                    {
-                        NumberOfRetries = 5;
-                        retryCount = NumberOfRetries;
-                        success = false;
+                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
 
                         while (!success && retryCount > 0)
                         {
                             try
                             {
-                                await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Notification de réservation pour validation", mssLogis);
+                                await emailSender.SendEmailAsync(user.Email, "Récapitulatif Réservation", messUser);
                                 success = true;
                             }
                             catch (Exception e)
@@ -1436,19 +1531,62 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                                 if (retryCount == 0)
                                 {
-                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
                                     return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
                                 }
                             }
                         }
+
+                        #endregion
+
+                        #region Envoi de mail notifications aux "Admin"/"Logistic"
+
+                        // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
+                        UsersLogistic = await equipeResaDb.ObtenirUsersLogisticAsync();
+
+                        //sb_admin.Append("\n\nL'équipe PFL.");
+                        mssLogis += @"</table>                               
+                                <p>
+                                <br>L'équipe PFL,
+                                </p>
+                                </body>
+                                </html>";
+
+                        for (int index = 0; index < UsersLogistic.Count(); index++)
+                        {
+                            NumberOfRetries = 5;
+                            retryCount = NumberOfRetries;
+                            success = false;
+
+                            while (!success && retryCount > 0)
+                            {
+                                try
+                                {
+                                    await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Notification de réservation pour validation", mssLogis);
+                                    success = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    retryCount--;
+
+                                    if (retryCount == 0)
+                                    {
+                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                        return View("PlanZonesReservation", zonesReservation);  //or handle error and break/return
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #endregion
+
+                        // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
+                        ViewBag.IsConfirOutside = false;
                     }
 
                     #endregion
-
-                    #endregion
-
-                    // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
-                    ViewBag.IsConfirOutside = false;
                 }
                 #endregion
             }

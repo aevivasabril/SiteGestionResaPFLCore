@@ -16,6 +16,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 
         public DateTime DateFinInterv { get; set; }
 
-        //public int ZoneEquipIntervId { get; set; }
+        public string NomEquipement { get; set; }
+
+        public string ZoneImpacte { get; set; }
     }
 }

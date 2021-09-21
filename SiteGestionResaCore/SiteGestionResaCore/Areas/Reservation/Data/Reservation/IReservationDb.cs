@@ -24,5 +24,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement);
 
+        string ObtenirNomZoneImpacte(int IdEquipement);
+
     }
 }

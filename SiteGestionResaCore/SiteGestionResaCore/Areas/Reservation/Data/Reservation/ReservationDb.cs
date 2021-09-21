@@ -446,6 +446,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return context.equipement.First(e => e.id == id).nom;
         }
 
+        public string ObtenirNomZoneImpacte(int IdEquipement)
+        {
+            return context.zone.First(e => e.id == context.equipement.First(e => e.id == IdEquipement).zoneID).nom_zone;
+        }
+
         public string ObtenirNomTypeMaintenance(int id)
         {
             return context.ld_type_maintenance.First(l => l.id == id).nom_type_maintenance;

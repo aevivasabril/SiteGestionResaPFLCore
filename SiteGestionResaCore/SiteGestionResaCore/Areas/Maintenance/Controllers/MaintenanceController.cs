@@ -73,6 +73,18 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             return View("SaisirIntervention", vm);
         }
 
+        /// <summary>
+        /// Action qui traite le retour à partir de l'action "ValiderResa" du controleur "Reservation" 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult AjoutEquipementsExterne()
+        {
+            // Récupérer la session AjoutEquipementsViewModel 
+            AjoutEquipementsViewModel MaintenanceEquipements = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+            MaintenanceEquipements.OuvrirEquipSansZone = "none";
+            return View("AjoutEquipements", MaintenanceEquipements);
+        }
+
         public IActionResult AjoutEquipements()
         {
             AjoutEquipementsViewModel vm = new AjoutEquipementsViewModel()
@@ -222,13 +234,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             return RedirectToAction("Index", "Home", new { area = "" });
         }
 
-        public IActionResult SupprimerCreneauInterv(int? i)
+        public IActionResult SupprimerIntervSans(int? i)
         {
             AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
             vm.IdPourSuppressionSansZone = i.Value;
 
             // Variable pour "afficher" le modal pop up de confirmation de suppression
-            ViewBag.modalSupp = "show";
+            ViewBag.modalSuppSans = "show";
 
             // Enregistrer la mise à jour dans la session
             this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
@@ -237,11 +249,39 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
         }
 
         [HttpPost]
-        public IActionResult SupprimerCreneauInterv(AjoutEquipementsViewModel model)
+        public IActionResult SupprimerIntervSans(AjoutEquipementsViewModel model)
         {
             AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
 
             vm.ListEquipsSansZone.RemoveAt(model.IdPourSuppressionSansZone);
+
+            // Enregistrer la mise à jour dans la session
+            this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+
+            return View("AjoutEquipements", vm);
+        }
+
+
+        public IActionResult SupprimerIntervDans(int? i)
+        {
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+            vm.IdPourSuppressionSansZone = i.Value;
+
+            // Variable pour "afficher" le modal pop up de confirmation de suppression
+            ViewBag.modalSuppDans = "show";
+
+            // Enregistrer la mise à jour dans la session
+            this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
+
+            return View("AjoutEquipements", vm);
+        }
+
+        [HttpPost]
+        public IActionResult SupprimerIntervDans(AjoutEquipementsViewModel model)
+        {
+            AjoutEquipementsViewModel vm = HttpContext.GetFromSession<AjoutEquipementsViewModel>("AjoutEquipementsViewModel");
+
+            vm.ListEquipsDansZones.RemoveAt(model.IdPoursuppressionDansZone);
 
             // Enregistrer la mise à jour dans la session
             this.HttpContext.AddToSession("AjoutEquipementsViewModel", vm);
@@ -292,12 +332,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             // Créer l'opération de maintenance à partir de ma session
             MaintenanceViewModel formulaire = HttpContext.GetFromSession<MaintenanceViewModel>("FormulaireOperation");
 
-            // Traiter chaque créneau d'intervention saisie 
-            #region Enregistrer en base de données et envoyer le mail pour informer les utilisateurs
+            // Traiter chaque créneau d'intervention saisie pour les Equipements sans zone
+            #region Enregistrer en base de données et envoyer le mail pour informer les utilisateurs (EQUIPEMENTS SANS ZONE)
 
             // Création de l'opération de maintenance
             maintenance maintenance = intervDb.AjoutMaintenance(formulaire);
 
+            // Pas de notion pour le type de maintenance pour les équipements sans zone
             foreach (var inter in vm.ListEquipsSansZone)
             {
                 bool IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
@@ -314,13 +355,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                             <body> 
                             <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s):<b> " 
                                + inter.ZoneImpacte + "</b>. Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
-                               ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention penalise vos manips en cours ou à venir." +
+                               ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
                                " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
                                "</p>" +
                                "</body>" +
                                "</html>";
 
-                // obtenir la liste des utilisateurs
+                // Obtenir la liste des utilisateurs
                 List<utilisateur> users = intervDb.ObtenirListUtilisateursSite();
 
                 // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
@@ -350,10 +391,86 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             }
             #endregion
 
-            // Afficher message pour indiquer que l'opération s'est bien passé
+            #region Traiter les équipements pour intervention qui sont dans une zone (EQUIPEMENTS DANS UNE ZONE)
+
+            if (maintenance.type_maintenance.Equals("Maintenance curative (Panne)"))
+            {
+                // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
+                // Obtenir la liste des essais à supprimer
+                foreach (var equipementDansZone in vm.ListEquipsDansZones)
+                {
+                    foreach (var ess in equipementDansZone.EssaisXAnnulation)
+                    {
+                        if (intervDb.UpdateEssai(ess.id).resa_refuse == null) // essai pas encore annulé
+                        {
+                            intervDb.AnnulerEssai(ess, formulaire.CodeMaintenance);
+                            // Envoyer le mail au propiètaire de l'essai
+                            // obtenir le mail du propietaire
+                            string mail = intervDb.ObtenirMailUser(ess.compte_userID);
+                            MsgUser = @"<html>
+                                            <body> 
+                                            <p> Bonjour, <br><br> L'équipe PFL vous informe que votre essai N° " + ess.id + ".Titre essai: <b>" + ess.titreEssai +
+                                            "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés de votre essai. " +
+                                            "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
+                                            "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +
+                                            "</p>" +
+                                            "</body>" +
+                                            "</html>";
+
+                            success = false;
+                            retryCount = 5;
+                            while (!success && retryCount > 0)
+                            {
+                                try
+                                {
+                                    await emailSender.SendEmailAsync(mail, "Votre essai est annulé", MsgUser);
+                                    success = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    retryCount--;
+                                    if (retryCount == 0)
+                                    {
+                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                        ViewBag.AfficherMessage = true;
+                                        ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                        return View("AjoutEquipements", vm);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                if (!IsOk)
+                {
+                    ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                    return View("AjoutEquipements", vm);
+                }
+            }
+            else
+            { // Dans tous les autres cas, normalement la personne qui saisie l'intervention veille à ne pas faire de conflit (avec un essai "Restreint")
+
+                bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                if (!IsOk)
+                {
+                    ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                    return View("AjoutEquipements", vm);
+                }
+            }
+            // Ajouter les interventions de maintenance dans la BDD
+            //intervDb.AjoutInterventions(vm.ListEquipsDansZones, vm.ListEquipsSansZone, maintenance.id);
+
             #endregion
 
-            return View("AjoutEquipements", vm);
+            #endregion
+
+            return View("Confirmation");
         }
     }
 }

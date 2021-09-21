@@ -121,8 +121,8 @@
                     <th scope="col">Description problème</th>
                     <th scope="col">Zone impactée</th>
                     <th scope="col">Date Début</th>
-                    <th scope="col">Date Fin</th>
                     <th scope="col">Heure Début</th>
+                    <th scope="col">Date Fin</th>
                     <th scope="col">Heure Fin</th>
                     <th scope="col">Action</th>
                 </tr>
@@ -134,10 +134,10 @@
                         <th scope="row">@Model.ListEquipsSansZone[i].DescriptionProbleme</th>
                         <td>@Model.ListEquipsSansZone[i].ZoneImpacte</td>
                         <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortDateString()</td>
-                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortDateString()</td>
                         <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortTimeString()</td>
+                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortDateString()</td>
                         <td>@Model.ListEquipsSansZone[i].DateFin.ToShortTimeString()</td>
-                        <td>@Html.ActionLink("Supprimer", "SupprimerCreneauInterv", new { i = i })</td>
+                        <td>@Html.ActionLink("Supprimer", "SupprimerIntervSans", new { i = i })</td>
                     </tr>
 
                 }
@@ -154,26 +154,26 @@
         <table class="table table-hover">
             <thead class="navbar-inra">
                 <tr>
-                    <th scope="col">Description problème</th>
+                    <th scope="col">Nom équipement</th>
                     <th scope="col">Zone impactée</th>
                     <th scope="col">Date Début</th>
-                    <th scope="col">Date Fin</th>
                     <th scope="col">Heure Début</th>
+                    <th scope="col">Date Fin</th>
                     <th scope="col">Heure Fin</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.ListEquipsSansZone.Count(); i++)
+                @for (int i = 0; i < Model.ListEquipsDansZones.Count(); i++)
                 {
                     <tr>
-                        <th scope="row"></th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td>@Html.ActionLink("Supprimer", "SupprimerCreneauInterv", new { i = i })</td>
+                        <th scope="row">@Model.ListEquipsDansZones[i].NomEquipement</th>
+                        <td>@Model.ListEquipsDansZones[i].ZoneImpacte</td>
+                        <td>@Model.ListEquipsDansZones[i].DateDebutInterv.ToShortDateString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateDebutInterv.ToShortTimeString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateFinInterv.ToShortDateString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateFinInterv.ToShortTimeString()</td>
+                        <td>@Html.ActionLink("Supprimer", "SupprimerIntervDans", new { i = i })</td>
                     </tr>
 
                 }
@@ -194,9 +194,9 @@
 </form>
 
 <!--Pop up pour confirmer l'annulation intervention'-->
-<form asp-action="SupprimerCreneauInterv" asp-controller="Maintenance" method="post">
+<form asp-action="SupprimerIntervSans" asp-controller="Maintenance" method="post">
     <!-- Modal pop-up d'info-->
-    <div class="modal fade" id="suppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal fade" id="suppModalSans" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -218,16 +218,46 @@
     </div>
 </form>
 
+<!--Pop up pour confirmer l'annulation intervention'-->
+<form asp-action="SupprimerIntervDans" asp-controller="Maintenance" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppModalDans" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau intervention sans zone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau d'intervention?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @Html.HiddenFor(m => m.IdPoursuppressionDansZone)
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts
 {
     <!-- JS includes -->
     <script type="text/javascript">
     @{
-        if (ViewBag.modalSupp == null)
+        if (ViewBag.modalSuppSans == null)
         {
-            ViewBag.modalSupp = "hide";
+            ViewBag.modalSuppSans = "hide";
+        }
+        if (ViewBag.modalSuppDans == null)
+        {
+            ViewBag.modalSuppDans = "hide";
         }
     }
-    $('#suppModal').modal('@ViewBag.modalSupp');
+    $('#suppModalSans').modal('@ViewBag.modalSuppSans');
+    $('#suppModalDans').modal('@ViewBag.modalSuppDans');
     </script>
 }

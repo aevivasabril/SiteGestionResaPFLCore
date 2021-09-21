@@ -115,5 +115,52 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         {
             return context.Users.Distinct().ToList();
         }
+
+        public void AnnulerEssai(essai ess, string codeMaint)
+        {
+            var essa = context.essai.First(e => e.id == ess.id);
+            essa.resa_refuse = true;
+            essa.raison_refus = "Essai annulé automatiquement suite à l'intervention N°: " + codeMaint;
+            context.SaveChanges();
+        }
+
+        public string ObtenirMailUser(int idUser)
+        {
+            return context.Users.First(i => i.Id == idUser).Email;
+        }
+
+        public bool EnregistrerIntervsDansZone(List<EquipementDansZone> EquipDansZone, maintenance maint)
+        {
+            bool isOk = false;
+            // ajouter les interventions dans des zones
+            foreach (var i in EquipDansZone)
+            {
+                try
+                {
+                    reservation_maintenance resa = new reservation_maintenance
+                    {
+                        date_debut = i.DateDebutInterv,
+                        date_fin = i.DateFinInterv,
+                        equipementID = i.IdEquipementXIntervention,
+                        maintenanceID = maint.id
+                    };
+                    context.reservation_maintenance.Add(resa);
+                    context.SaveChanges();
+                    isOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e.ToString(), "Problème lors de l'ajout d'une opération de maintenance");
+                    isOk = false;
+                }
+
+            }
+            return isOk;
+        }
+
+        public essai UpdateEssai(int essId)
+        {
+            return context.essai.First(e => e.id == essId);
+        }
     }
 }
