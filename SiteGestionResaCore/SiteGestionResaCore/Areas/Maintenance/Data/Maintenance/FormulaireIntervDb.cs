@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -40,6 +41,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         /// méthode testé! 14/09/2021
         /// </summary>
         /// <returns></returns>
+        /// TODO: penser à filtrer par année peut-être car quand on aura plein des maintenances cela peut ralentir le traitement!
         public string CodeOperation()
         {
             string Code = "";
@@ -120,6 +122,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         {
             var essa = context.essai.First(e => e.id == ess.id);
             essa.resa_refuse = true;
+            essa.status_essai = EnumStatusEssai.Refuse.ToString();
             essa.raison_refus = "Essai annulé automatiquement suite à l'intervention N°: " + codeMaint;
             context.SaveChanges();
         }
