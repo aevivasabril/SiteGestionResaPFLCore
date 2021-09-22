@@ -23,5 +23,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         essai ObtenirEssai(int IdEssai);
 
         projet ObtenirProjetEssai(essai Essai);
+
+        InfosAffichageMaint ObtenirInfosInter(int IdMaint);
     }
 }

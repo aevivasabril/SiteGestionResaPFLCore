@@ -45,6 +45,12 @@
                     <label>Zone "occupée"</label>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color: #70cff0" disabled="True">Bleu</button>
+                    <label>Intervention de maintenance</label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -107,7 +113,7 @@
                 </tr>
             </thead>
 
-            <!-- Normalement 17 zones -->
+            <!-- Normalement 19 zones -->
             @for (int j = 0; j < Model.ListResasZone.Count(); j++)
             {
                 <tr>
@@ -142,7 +148,9 @@
                         @for (int x = 0; x < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu.Count(); x++)
                         {
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
-                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() != 0)
+
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() != 0 ||
+                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count() != 0)
                                 {
                                     @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
                                     {
@@ -159,11 +167,20 @@
                                             </a>
                                         }
                                     }
+                                    @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count(); z++)
+                                    {
+                                        <a href="#" onclick="DisplayModalInterv(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin[z].IdMaint)">
+                                            <strong>Intervention </strong>
+                                        </a>
+                                    }
                                 }
+
                             </td>
 
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
-                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() != 0)
+
+                                @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() != 0 ||
+                                    @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count() != 0)
                                 {
                                     @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
                                     {
@@ -181,6 +198,12 @@
                                         }
 
                                     }
+                                    @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count(); z++)
+                                    {
+                                        <a href="#" onclick="DisplayModalInterv(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem[z].IdMaint)">
+                                            <strong>Intervention</strong>
+                                        </a>
+                                    }
                                 }
                             </td>
                         }
@@ -191,7 +214,9 @@
     </div>
 </div>
 
-<div id="modal_data"></div>
+<div id="modal_data_resa"></div>
+
+<div id="modal_data_interv"></div>
 
 @section Scripts
 {
@@ -217,8 +242,22 @@
                     url: "@Url.Action("VoirInfosEssai", "Calendrier", new { Area = "Calendrier" })?id=" + id,
                     type: 'POST',
                     success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
-                        $("#modal_data").html(html);
+                        $("#modal_data_resa").html(html);
                         $("#InfoResaJour").modal('show');
+                    }
+                });
+            }
+        }
+
+        function DisplayModalInterv(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosInterv", "Calendrier", new { Area = "Calendrier" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#modal_data_interv").html(html);
+                        $("#InfoIntervJour").modal('show');
                     }
                 });
             }

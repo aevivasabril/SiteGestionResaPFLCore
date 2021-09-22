@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Reservation.Data.Reservation;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;

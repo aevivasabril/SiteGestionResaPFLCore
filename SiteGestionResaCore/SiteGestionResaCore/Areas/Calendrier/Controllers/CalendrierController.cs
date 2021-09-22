@@ -93,6 +93,19 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             return PartialView ("_InfosResaCalendrier", InfosResa);
         }
 
+        /// <summary>
+        /// Ouverture du pop-up pour affichage des infos opération Maintenance
+        /// </summary>
+        /// <param name="id">Id maintenance</param>
+        /// <returns></returns>
+        public IActionResult VoirInfosInterv(int id)
+        {
+            // Obtenir les infos à afficher pour l'intervention maintenance demandé
+            InfosAffichageMaint InfosInterv = CalendResaDb.ObtenirInfosInter(id);
+
+            return PartialView("_InfosIntervCalendrier", InfosInterv);
+        }
+
 
         #region Méthodes supplementaires
 
@@ -223,10 +236,11 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     {
                         ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
                         // Vérifier la disponibilité de la zone (juste pour affichage) 
-                        if (EquipResaJour.ListResasMatin.Count() > 0) // vérifier uniquement                 
+                        if (EquipResaJour.ListResasMatin.Count() > 0 || EquipResaJour.InfosIntervMatin.Count() > 0) 
+                            // Vérifier pour les opérations de maintenance et les réservations            
                             ZonOccupeMatin = true;
 
-                        if (EquipResaJour.ListResasAprem.Count() > 0 && occupation.IsZoneOccupeAprem != true)
+                        if ((EquipResaJour.ListResasAprem.Count() > 0 || EquipResaJour.InfosIntervAprem.Count() > 0) && occupation.IsZoneOccupeAprem != true)
                             ZonOccupeAprem = true;
                     }
 

@@ -279,9 +279,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (Resas.InfosResaAprem.Count() == 1)
                 {
                     if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
-                        Resas.CouleurFondAprem = "#fdc0be"; // rouge (validée et occupée)
+                        Resas.CouleurFondAprem = "#70cff0"; // rouge (validée et occupée)
                     else if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
-                        Resas.CouleurFondAprem = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
+                        Resas.CouleurFondAprem = "#70cff0";  // Couleur beige pour indiquer que la réservation est en attente
                 }
 
               

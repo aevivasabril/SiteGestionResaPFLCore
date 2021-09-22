@@ -1,0 +1,48 @@
+﻿@model InfosAffichageMaint
+
+<!-- Modal pour affichage des infos "Reservation"-->
+<div class="modal fade" id="InfoIntervJour" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Infos intervention maintenance</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
+                <table class="table table-sm table-borderless">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Description opération</th>
+                            <td>@Model.DescriptionOperation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Code opération</th>
+                            <td>@Model.CodeOperation</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Id Maintenance</th>
+                            <td>@Model.IdMaint</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Mail opérateur intervention</th>
+                            <td>@Model.MailOperateur</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Type de maintenance</th>
+                            <td>@Model.TypeMaintenance</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>

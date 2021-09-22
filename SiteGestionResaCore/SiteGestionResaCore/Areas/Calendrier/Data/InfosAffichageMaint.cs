@@ -10,7 +10,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         public int IdMaint { get; set; }
         public string CodeOperation { get; set; }
         public string TypeMaintenance { get; set; }
-        //public string MailOperateur { get; set; }
+        public string MailOperateur { get; set; }
         public string DescriptionOperation { get; set; }       
     }
 }
