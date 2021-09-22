@@ -435,7 +435,7 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Panne)" },
                 new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe)" },
-                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration" }, new ld_type_maintenance { id = 5, nom_type_maintenance = "Autre" }
+                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration" }
             });
 
             base.OnModelCreating(modelBuilder);
