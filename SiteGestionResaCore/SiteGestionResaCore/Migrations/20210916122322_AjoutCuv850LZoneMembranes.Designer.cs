@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20210916122322_AjoutCuv850LZoneMembranes")]
+    partial class AjoutCuv850LZoneMembranes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1395,45 +1397,6 @@ namespace SiteGestionResaCore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("SiteGestionResaCore.Data.ld_type_maintenance", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("nom_type_maintenance")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.ToTable("ld_type_maintenance");
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1,
-                            nom_type_maintenance = "Maintenance curative (Panne)"
-                        },
-                        new
-                        {
-                            id = 2,
-                            nom_type_maintenance = "Maintenance préventive (Interne)"
-                        },
-                        new
-                        {
-                            id = 3,
-                            nom_type_maintenance = "Maintenance préventive (Externe)"
-                        },
-                        new
-                        {
-                            id = 4,
-                            nom_type_maintenance = "Amélioration"
-                        });
-                });
-
             modelBuilder.Entity("SiteGestionResaCore.Data.ld_type_projet", b =>
                 {
                     b.Property<int>("id")
@@ -1471,57 +1434,6 @@ namespace SiteGestionResaCore.Migrations
                             id = 4,
                             nom_type_projet = "Industriel (cellules hébergés"
                         });
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.maintenance", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("code_operation")
-                        .IsRequired()
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50)
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("date_saisie")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("date_suppression")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("description_operation")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<bool>("intervenant_externe")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("maintenance_supprime")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("nom_intervenant_ext")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("raison_suppression")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("type_maintenance")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<int>("userID")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("userID");
-
-                    b.ToTable("maintenance");
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.organisme", b =>
@@ -1633,65 +1545,6 @@ namespace SiteGestionResaCore.Migrations
                     b.HasIndex("organismeID");
 
                     b.ToTable("projet");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.resa_maint_equip_adjacent", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("date_debut")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime>("date_fin")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("maintenanceID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("nom_equipement")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("zone_affectee")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.HasIndex("maintenanceID");
-
-                    b.ToTable("resa_maint_equip_adjacent");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.reservation_maintenance", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("date_debut")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime>("date_fin")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("equipementID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("maintenanceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("equipementID");
-
-                    b.HasIndex("maintenanceID");
-
-                    b.ToTable("reservation_maintenance");
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.reservation_projet", b =>
@@ -2012,45 +1865,12 @@ namespace SiteGestionResaCore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SiteGestionResaCore.Data.maintenance", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.utilisateur", "utilisateur")
-                        .WithMany("maintenance")
-                        .HasForeignKey("userID")
-                        .HasConstraintName("FK_maintenance_utilisateur")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SiteGestionResaCore.Data.projet", b =>
                 {
                     b.HasOne("SiteGestionResaCore.Data.organisme", "organisme")
                         .WithMany("projet")
                         .HasForeignKey("organismeID")
                         .HasConstraintName("FK_projet_organisme");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.resa_maint_equip_adjacent", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.maintenance", "maintenance")
-                        .WithMany("resa_maint_equip_adjacent")
-                        .HasForeignKey("maintenanceID")
-                        .HasConstraintName("FK_resa_maint_equip_adjacent_maintenance")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.reservation_maintenance", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
-                        .WithMany("reservation_maintenance")
-                        .HasForeignKey("equipementID")
-                        .HasConstraintName("FK_reservation_maintenance_equipement")
-                        .IsRequired();
-
-                    b.HasOne("SiteGestionResaCore.Data.maintenance", "maintenance")
-                        .WithMany("reservation_maintenance")
-                        .HasForeignKey("maintenanceID")
-                        .HasConstraintName("FK_reservation_maintenance_maintenance")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.reservation_projet", b =>

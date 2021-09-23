@@ -394,7 +394,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 234, nom = "Pompe de transfert de lait 58L/min (bleue)", zoneID = 2, numGmao = "POMPE0006", mobile = true }, new equipement { id = 235, nom = "Presse à fromage verticale", zoneID = 7, numGmao = "PRES0002", mobile = false }, 
                 new equipement { id = 236, nom = "Presse à fromage horizontale", zoneID = 7, numGmao = "PRES0003", mobile = false }, new equipement { id = 237, nom = "Tranche-caillé", zoneID = 6, numGmao = "TRAN0001", mobile = false }, 
                 new equipement { id = 238, nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h", zoneID = 3, numGmao = "ACTALIA", mobile = false }, new equipement { id = 239, nom = "Camion collecte", zoneID = 2, numGmao = "", mobile = true }, 
-                new equipement { id = 240, nom = "Bac de saumurage", zoneID = 10, numGmao = "ECUV0015", mobile = false }, new equipement { id = 241, nom = "3 cuves fromagerie 200 Litres", zoneID = 7, numGmao = "ACTALIA", mobile = false }, 
+                new equipement { id = 240, nom = "Bac de saumurage", zoneID = 10, numGmao = "ECUV0015", mobile = false }, new equipement { id = 241, nom = "3 cuves fromagerie 200 Litres", zoneID = 7, numGmao = "ECUV0034, ECUV0035, ECUV0036", mobile = false }, 
                 new equipement { id = 242, nom = "Hotte PSM", zoneID = 12, numGmao = "", mobile = false }, new equipement { id = 243, nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", zoneID = 8, numGmao = "PILOT0022", mobile = false }, 
                 new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true },
                 new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true },
@@ -404,7 +404,8 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false },
 
                 new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false },
-                new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false }
+                new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false },
+                new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false }
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 

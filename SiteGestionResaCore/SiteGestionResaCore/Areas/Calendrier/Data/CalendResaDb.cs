@@ -108,7 +108,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                     StatusEssai = ess.status_essai,
                     Confidentialite = ess.confidentialite
                 };
-
+                
                 switch (ess.confidentialite)
                 {
                     case "Ouvert": // Dans ce cas: je regarde si mon équipement est concerné par cet essai et je bloque uniquement l'équipement
@@ -346,8 +346,17 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         }
                         else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                         {
-                            EquipVsResa.ListResasMatin.Add(infosResa);
-                            EquipVsResa.ListResasAprem.Add(infosResa);
+                            // Vérifier si il s'agit d'une demi journée (juste l'aprèm)
+                            if (resa.date_fin.Hour.Equals(12) && (resa.date_fin.ToShortDateString() == DateRecup.ToShortDateString()) ) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                EquipVsResa.ListResasMatin.Add(infosResa);
+                                //Resas.InfosResaMatin.Add(null); // Matin vide
+                            }
+                            else  // si l'heure de fin est 18h alors on rajoute sur les 2
+                            {
+                                EquipVsResa.ListResasMatin.Add(infosResa);
+                                EquipVsResa.ListResasAprem.Add(infosResa);
+                            }
                         }
                     }
                     else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
@@ -404,13 +413,25 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             }
                             else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                             {
-                                if (!EssaiDejaAjouteMatin)
+                                // Regarder pour définir le créneau
+                                if (resa.date_fin.Hour.Equals(12) && (resa.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
                                 {
-                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatin.Add(infosResa);
+                                    }
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
                                 }
-                                if (!EssaiDejaAjouteAprem)
+                                else // si l'heure de fin est 18h alors on rajoute sur les 2
                                 {
-                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatin.Add(infosResa);
+                                    }
+                                    if (!EssaiDejaAjouteAprem)
+                                    {
+                                        EquipVsResa.ListResasAprem.Add(infosResa);
+                                    }
                                 }
                             }
                         }
@@ -503,13 +524,25 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             }
                             else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
                             {
-                                if (!EssaiDejaAjouteMatin)
+                                // Regarder pour définir le créneau
+                                if (resa.date_fin.Hour.Equals(12) && (resa.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
                                 {
-                                    EquipVsResa.ListResasMatin.Add(infosResa);
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatin.Add(infosResa);
+                                    }
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
                                 }
-                                if (!EssaiDejaAjouteAprem)
+                                else // si l'heure de fin est 18h alors on rajoute sur les 2
                                 {
-                                    EquipVsResa.ListResasAprem.Add(infosResa);
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatin.Add(infosResa);
+                                    }
+                                    if (!EssaiDejaAjouteAprem)
+                                    {
+                                        EquipVsResa.ListResasAprem.Add(infosResa);
+                                    }
                                 }
                             }
                         }
