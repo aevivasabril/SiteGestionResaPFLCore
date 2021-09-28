@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SiteGestionResaCore.Areas.Calendrier.Data
+namespace SiteGestionResaCore.Models.Maintenance
 {
     public class InfosAffichageMaint
     {

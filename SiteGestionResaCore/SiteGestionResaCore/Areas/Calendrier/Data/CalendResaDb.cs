@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -44,7 +45,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             ResasEquipParJour resasEquipTEMP = new ResasEquipParJour();
             ResasEquipParJour resasEquip = new ResasEquipParJour();
             DateTimeFormatInfo dateTimeFormats = null;
-            reservation_projet ResaAGarder = new reservation_projet();                              // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
+            reservation_projet ResaAGarder = new reservation_projet();     // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
 
             DateTime JourCalendrier;
             string NomJour;
@@ -162,7 +163,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             #endregion
 
-            #region Informations interventions maintenance
+            #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions)
 
             var maints = (from interMaint in resaDB.reservation_maintenance
                           from maint in resaDB.maintenance
@@ -187,7 +188,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                 }
             }
 
-            foreach(var m in InfosInterv)
+            foreach(var m in InfosInterv.Distinct())
             {
                 InfosAffichageMaint affichageMaint = new InfosAffichageMaint
                 {
@@ -199,7 +200,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                 #region Determiner les créneaux des interventions
 
-                resasEquipTEMP = IntervEquipParJour(m, affichageMaint, IdEquipement, DateRecup);
+                resasEquipTEMP = IntervEquipParJour(m, affichageMaint, Equipement, DateRecup);
 
                 // Stocker les valeurs rétrouves pour cet essai 
                 foreach (var intMatin in resasEquipTEMP.InfosIntervMatin)
@@ -280,47 +281,72 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return resasEquip;
         }
 
-        public ResasEquipParJour IntervEquipParJour(maintenance maint, InfosAffichageMaint infosAffichage, int IdEquipement, DateTime DateRecup)
+        public ResasEquipParJour IntervEquipParJour(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
         {
             ResasEquipParJour EquipVsResa = new ResasEquipParJour();
 
             foreach (var resaInter in resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
             {
-                if ((resaInter.equipementID == IdEquipement) && (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
-                    && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
+                if (resaDB.equipement.Where(e => e.id == resaInter.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
                 {
-                    if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
+                    if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
+                        && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
                     {
-                        // Regarder pour définir le créneau
-                        if (resaInter.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.InfosIntervMatin.Any(e => e.IdMaint == maint.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.InfosIntervAprem.Any(e => e.IdMaint == maint.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
                         {
-                            EquipVsResa.InfosIntervAprem.Add(infosAffichage);
-                            //Resas.InfosResaMatin.Add(null); // Matin vide
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if(!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                //Resas.InfosResaMatin.Add(null); // Matin vide
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                // Vérifier si il s'agit d'une demi journée (juste l'aprèm)
+                                if (resaInter.date_fin.Hour.Equals(12) && (resaInter.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                                else  // si l'heure de fin est 18h alors on rajoute sur les 2
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    if (!EssaiDejaAjouteAprem)
+                                        EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                }
+                            }
                         }
-                        else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
                         {
-                            EquipVsResa.InfosIntervMatin.Add(infosAffichage);
-                            EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                if(!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                            }
                         }
-                    }
-                    else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
-                    {
-                        // Regarder pour définir le créneau
-                        if (resaInter.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                        else // date à l'intérieur du seuil de réservation
                         {
-                            EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                                EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            if (!EssaiDejaAjouteAprem)
+                                EquipVsResa.InfosIntervAprem.Add(infosAffichage);
                         }
-                        else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
-                        {
-                            EquipVsResa.InfosIntervMatin.Add(infosAffichage);
-                            EquipVsResa.InfosIntervAprem.Add(infosAffichage);
-                        }
-                    }
-                    else // date à l'intérieur du seuil de réservation
-                    {
-                        // Ajouter cette résa sur le créneau matin et aprèm 
-                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
-                        EquipVsResa.InfosIntervAprem.Add(infosAffichage);
                     }
                 }
             }

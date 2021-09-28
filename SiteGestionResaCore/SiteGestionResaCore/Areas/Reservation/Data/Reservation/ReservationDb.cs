@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -45,6 +46,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         // VOIR si cette méthode marche
         public ReservationsJour ObtenirReservationsJourEssai(DateTime dateResa, int IdEquipement)
         {
+            #region Variables pour les essais
             // Variables
             ReservationsJour Resas = new ReservationsJour();
             ReservationsJour ResasTemp = new ReservationsJour();
@@ -71,7 +73,15 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             if (jourName == "samedi" || jourName == "dimanche")
                 goto ENDT;
-                
+
+            #endregion
+
+            #region Variables pour les Interventions
+
+            List<maintenance> InfosInterv = new List<maintenance>();
+
+            #endregion
+
             //TODO: question pour christophe: Comment faire une recherche en regardant la date aussi??? 
             SubInfosEssai = (from resa in context.reservation_projet
                             from essa in context.essai
@@ -119,98 +129,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
                         #region Confidentialité "Restreint"
 
-                        //bool IsFirstSearchOnEssai = true;
                         // Traiter comment une réservation ouverte car on bloque uniquement l'équipement en mode restreint
                         // Comme ça l'utilisateur saura que malgré que la zone est en restreint il peut réserver des autres équipements
 
-                        ResasTemp = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
-
-                        /*#region Recherche des dates superieur et inferieur pour chaque essai
-
-                        foreach (var resa in context.reservation_projet.Where(r => r.essaiID == ess.id))
-                        {
-                            if (context.equipement.Where(e=>e.id == resa.equipementID).First().zoneID.Value == EquipementPlanning.zoneID) // si l'équipement objet du "planning" est dans la zone concerné
-                            {
-                                // Cas 1: l'équipement est dans une des zones dont le conflit ne fait pas partie
-                                if (EquipementPlanning.zoneID.Equals(EnumZonesPfl.HaloirAp7) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp5) ||
-                                    EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals(EnumZonesPfl.SalleAp8) ||
-                                    EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles))
-                                {
-                                    // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
-                                    // Lors du calendrier et de la validation on devra voir un conflit TODO: vérifier!
-                                    Resas = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
-                                }
-                                else // Cas 2: pour toutes les autres zones, calculer la date seuil inferieur et superieur parmi toutes les réservations(blocage de la zone)
-                                {
-                                    if (IsFirstSearchOnEssai == true) // Executer que lors de la premiere réservation de la liste 
-                                    {
-                                        IsFirstSearchOnEssai = false;
-                                        dateSeuilInf = resa.date_debut;
-                                        dateSeuilSup = resa.date_fin;
-                                    }
-                                    else
-                                    {
-                                        // Recherche des dates superieur et inferieur sur toutes les réservations
-                                        if (resa.date_debut.CompareTo(dateSeuilInf) <= 0) // resa.date_debut <= dateSeuilInf)
-                                        {
-                                            dateSeuilInf = resa.date_debut;
-                                        }
-                                        if (resa.date_fin.CompareTo(dateSeuilSup) >= 0)  // resa.date_fin >= dateSeuilSup)
-                                        {
-                                            dateSeuilSup = resa.date_fin;
-                                        }
-                                    }
-                                    ResaAGarder = resa;
-                                    IsEquipInZone = true;
-                                }
-                            }
-                        }
-
-                        #endregion
-
-                        #region Bloquer l'équipement si la dateResa est dans les dates seuils rétrouvées
-
-                        if ( (IsEquipInZone == true) && ( DateTime.Parse(dateResa.ToShortDateString()) >= DateTime.Parse(dateSeuilInf.ToShortDateString()) ) 
-                            && ( DateTime.Parse(dateResa.ToShortDateString()) <= DateTime.Parse(dateSeuilSup.ToShortDateString()) ) ) // si l'équipement est dans la zone et que la date enqueté est dans le seuil
-                        {
-                            if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(dateSeuilInf.ToShortDateString()) ) // début
-                            {
-                                // Regarder pour définir le créneau
-                                if (dateSeuilInf.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
-                                {
-                                    Resas.InfosResaAprem.Add(resaInfo);
-                                    //Resas.InfosResaMatin.Add(null); // Matin vide
-                                }
-                                else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
-                                {
-                                    Resas.InfosResaMatin.Add(resaInfo);
-                                    Resas.InfosResaAprem.Add(resaInfo);
-                                }
-                            }
-                            else if ( DateTime.Parse(dateResa.ToShortDateString()) == DateTime.Parse(dateSeuilSup.ToShortDateString()) ) // fin
-                            {
-                                // Regarder pour définir le créneau
-                                if (dateSeuilSup.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
-                                {
-                                    Resas.InfosResaMatin.Add(resaInfo);
-                                    //Resas.InfosResaAprem.Add(null); // Aprèm vide TODO: voir si on peut ajouter un element null!!
-                                }
-                                else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
-                                {
-                                    Resas.InfosResaMatin.Add(resaInfo);
-                                    Resas.InfosResaAprem.Add(resaInfo);
-                                }
-                            }
-                            else
-                            {
-                                // Ajouter cette résa sur le créneau matin et aprèm 
-                                Resas.InfosResaMatin.Add(resaInfo);
-                                Resas.InfosResaAprem.Add(resaInfo);
-                            }
-                            IsEquipInZone = false;
-                        }
-
-                        #endregion*/
+                        ResasTemp = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);     
                         
                         #endregion
 
@@ -248,7 +170,62 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 }
             }
 
-            #region Gestion nom du jour et couleurs pour l'affichage
+            #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions)
+
+            var maints = (from interMaint in context.reservation_maintenance
+                          from maint in context.maintenance
+                          where interMaint.maintenanceID == maint.id &&
+                          ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
+                          && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
+                          select maint).Distinct().ToArray();
+
+
+            // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
+            foreach (var maint in maints)
+            {
+                var resaMaint = context.reservation_maintenance.Where(r => r.maintenanceID == maint.id).ToList();
+                foreach (var resEs in resaMaint)
+                {
+                    if ((DatEnqDebMatin >= resEs.date_debut || DatEnqDebAprem >= resEs.date_debut) &&
+                        (DatEnqFinMatin <= resEs.date_fin || DatEnqFinAprem <= resEs.date_fin))
+                    {
+                        InfosInterv.Add(maint);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var m in InfosInterv)
+            {
+                InfosAffichageMaint affichageMaint = new InfosAffichageMaint
+                {
+                    IdMaint = m.id,
+                    CodeOperation = m.code_operation,
+                    DescriptionOperation = m.description_operation,
+                    TypeMaintenance = m.type_maintenance,
+                    MailOperateur = context.Users.First(u=>u.Id == m.userID).Email
+                };
+
+                #region Determiner les créneaux des interventions
+
+                ResasTemp = IntervEquipParJour(m, affichageMaint, EquipementPlanning, dateResa);
+
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach (var intMatin in ResasTemp.InfosIntervMatin)
+                {
+                    Resas.InfosIntervMatin.Add(intMatin);
+                }
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach (var intAprem in ResasTemp.InfosIntervAprem)
+                {
+                    Resas.InfosIntervAprem.Add(intAprem);
+                }
+                #endregion
+            }
+
+            #endregion
+
+        #region Gestion nom du jour et couleurs pour l'affichage
 
         ENDT:
             // Obtenir le nom du jour 
@@ -279,18 +256,28 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (Resas.InfosResaAprem.Count() == 1)
                 {
                     if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
-                        Resas.CouleurFondAprem = "#70cff0"; // rouge (validée et occupée)
+                        Resas.CouleurFondAprem = "#fdc0be"; // rouge (validée et occupée)
                     else if (Resas.InfosResaAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
-                        Resas.CouleurFondAprem = "#70cff0";  // Couleur beige pour indiquer que la réservation est en attente
+                        Resas.CouleurFondAprem = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
                 }
 
-              
+
+                /// Définition des couleurs maintenance (regne sur les essais)  
+                if (Resas.InfosIntervMatin.Count() == 1)
+                {
+                    Resas.CouleurFondMatin = "#70cff0"; // blue opération maintenance en cours
+                }
+                if (Resas.InfosIntervAprem.Count() == 1)
+                {
+                    Resas.CouleurFondAprem = "#70cff0"; // bleu opération maintenance en cours
+                }
+
                 // CODE COULEUR DISPO SUR: https://encycolorpedia.fr/
                 // Definir les couleurs de fond pour indiquer si le créneau est occupé ou pas
-                if (Resas.InfosResaMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
-                    Resas.CouleurFondMatin = "#a2d9d4"; // matin dispo (Vert)
-                if (Resas.InfosResaAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
-                    Resas.CouleurFondAprem = "#a2d9d4"; // Aprèm libre (Vert)
+                if (Resas.InfosResaMatin.Count() == 0 && Resas.InfosIntervMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
+                    Resas.CouleurFondMatin = "#c2e6e2"; // matin dispo (Vert)
+                if (Resas.InfosResaAprem.Count() == 0 && Resas.InfosIntervAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
+                    Resas.CouleurFondAprem = "#c2e6e2"; // Aprèm libre (Vert)
             }
             else // si jour samedi ou dimanche alors mettre en fond gris
             {
@@ -312,12 +299,17 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <param name="dateFin"></param>
         /// <param name="idEquipement"></param>
         /// <returns></returns>
-        public bool VerifDisponibilitéEquipement(DateTime dateDebut, DateTime dateFin, int idEquipement)
+        public bool VerifDisponibilitéEquipement(DateTime dateDebut, DateTime dateFin, int idEquipement, string confidentialite)
         {
             bool estOuvertDisponible = false;
             bool estRestreintDispo = false;
-            bool estConfidentielDispoPFL = false;
-            bool estConfidentielDispoZA = false;
+            bool estConfidentielDispo = false;
+            bool estInterventionDispo = false;
+
+            // Récupérer l'id zone pour l'équipement enquêté
+            var zon = (from equip in context.equipement
+                       where equip.id == idEquipement
+                       select equip.zoneID.Value).First();
 
             #region Vérification sur les réservations du type "Ouvert" où il faut juste vérifier par l'ID equipement
 
@@ -366,51 +358,28 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
-
-            // Récupérer l'id zone pour l'équipement enquêté
-            var zon = (from equip in context.equipement
-                       where equip.id == idEquipement
-                       select equip.zoneID.Value).First();
-
-            // requete pour trouver les essais "confidentiels" avec les mêmes dates (Zones alimentaires)
-            // l'équipement pour réservation est dans la zone des salles alimentaires (même traitement que sur une réservation restreint
-            var essaiConfZonesAlim = (from essai in context.essai
-                                         from equip in context.equipement
-                                         from reser in context.reservation_projet
-                                         where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID                                        
-                                         && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                            essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                         && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA ||
-                                         reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
-                                         && (reser.equipement.zoneID == zon)
-                                         && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                         && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                         select essai).Distinct().ToList();
-
-                if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoZA = true;
-            
-            // Si l'équipement que l'on souhaite réserver n'est pas dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
+         
+            // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
             if(zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
-                // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
-                var essaiConfPFL = (from essai in context.essai
-                                    from equip in context.equipement
-                                    from reser in context.reservation_projet
-                                    where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
-                                    && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                        essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
-                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC && reser.equipement.zoneID != ApHuit 
-                                    && reser.equipement.zoneID != ApNeuf)
-                                    && (reser.equipement.zoneID == zon)
-                                    && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                    && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                    select essai).Distinct().ToList();
+                // requete pour trouver les essais "confidentiels" avec les mêmes dates (Zones alimentaires)
+                // l'équipement pour réservation est dans la zone des salles alimentaires (même traitement que sur une réservation restreint
+                var essaiConfZonesAlim = (from essai in context.essai
+                                          from equip in context.equipement
+                                          from reser in context.reservation_projet
+                                          where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID
+                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                          && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA ||
+                                          reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                                          && (reser.equipement.zoneID == zon)
+                                          && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
+                                          && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
+                                          select essai).Distinct().ToList();
 
-                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
+                    estConfidentielDispo = true;
             }
             else
             {
@@ -431,13 +400,79 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     select essai).Distinct().ToList();
 
                 if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                    estConfidentielDispo = true;        
             }
+
+
+            #region Vérification sur les opérations de maintenance
+
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            {            
+
+                #region Vérification sur les opérations de maintenance salles alimentaires
+                // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+                var IntervZon = (from maint in context.maintenance
+                                 from resaMaint in context.reservation_maintenance
+                                 from equip in context.equipement
+                                 where maint.id == resaMaint.maintenanceID
+                                 && (resaMaint.equipement.zoneID == zon)
+                                 && (resaMaint.equipement.zoneID == ApCinq || resaMaint.equipement.zoneID == ApSix || resaMaint.equipement.zoneID == ApSeptA
+                                 || resaMaint.equipement.zoneID == ApSeptB || resaMaint.equipement.zoneID == ApSeptC || resaMaint.equipement.zoneID == ApHuit
+                                 || resaMaint.equipement.zoneID == ApNeuf)
+                                 && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                 && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                 select maint).Distinct().ToList();
+
+                if (IntervZon.Count() == 0)
+                    estInterventionDispo = true;
+
+                #endregion
+            }
+            else
+            {        
+                #region Vérification sur les opérations de maintenance ZONE PFL
+                // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+                if(confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                {
+                    var IntervZon = (from maint in context.maintenance
+                                     from resaMaint in context.reservation_maintenance
+                                     from equip in context.equipement
+                                     where maint.id == resaMaint.maintenanceID
+                                     && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
+                                     && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC && resaMaint.equipement.zoneID != ApHuit
+                                     && resaMaint.equipement.zoneID != ApNeuf)
+                                     && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                     && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                     select maint).Distinct().ToList();
+
+                    if (IntervZon.Count() == 0)
+                        estInterventionDispo = true;
+                }
+                else
+                { // pour les réservatins ouvertes et restreint vérifier que l'equipement n'est pas dans la zone d'intervention
+                    var IntervZon = (from maint in context.maintenance
+                                     from resaMaint in context.reservation_maintenance
+                                     from equip in context.equipement
+                                     where maint.id == resaMaint.maintenanceID
+                                     && (resaMaint.equipement.zoneID == zon)
+                                     && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
+                                     && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC && resaMaint.equipement.zoneID != ApHuit
+                                     && resaMaint.equipement.zoneID != ApNeuf)
+                                     && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                     && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                     select maint).Distinct().ToList();
+
+                    if (IntervZon.Count() == 0)
+                        estInterventionDispo = true;
+                }
                 
-                       
+                #endregion
+            }
             #endregion
 
-            return (estOuvertDisponible && estRestreintDispo && estConfidentielDispoPFL && estConfidentielDispoZA); // OK
+            #endregion
+
+            return (estOuvertDisponible && estRestreintDispo && estConfidentielDispo && estInterventionDispo); // OK
         }
 
 
@@ -456,16 +491,26 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return context.ld_type_maintenance.First(l => l.id == id).nom_type_maintenance;
         }
 
+        /// <summary>
+        /// méthode qui vérifie les essais utilisant le même équipement pour intervention où la même zone
+        /// pas besoin de vérifier la confidentialité car dès moment où la zone soit bloqué c'est OK
+        /// </summary>
+        /// <param name="debutToSave"></param>
+        /// <param name="finToSave"></param>
+        /// <param name="idEquipement"></param>
+        /// <returns></returns>
         public List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement)
         {
             List<essai> ListEssais = new List<essai>();
             //var ZonEquip = context.equipement.First(e => e.id == idEquipement).zoneID;
+            //TODO: vérifier! !
             int ZoneIdEquipement = context.zone.First(z => z.id == context.equipement.First(e => e.id == idEquipement).zoneID).id;
             ListEssais = (from essai in context.essai
                             from equip in context.equipement
                             from reser in context.reservation_projet
                             where (essai.id == reser.essaiID
-                            && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == ZoneIdEquipement))
+                            && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == ZoneIdEquipement) 
+                            || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                             && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
                             && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
                             select essai).Distinct().ToList();
@@ -473,7 +518,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return ListEssais;
         }
 
-        #region Vérification de disponibilité d'un équipement pour AJOUT
 
         public bool DispoEssaiRestreintPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai)
         {
@@ -481,13 +525,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             bool estOuvertDisponible = false;
             bool estRestreintDispo = false;
-            bool estConfidentielDispoZone = false;
-            bool estConfidentielDispoPFL = false;
+            bool estConfidentielDispo = false;
+            bool estInterventionDispo = false;
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
                        where equip.id == idEquipement
                        select equip.zoneID.Value).First();
+
+            // Variable pour vérifier la dispo des equipements (sur les operations de maintenance
+            var confidentialite = context.essai.First(e => e.id == IdEssai).confidentialite;
 
             #region Vérification sur les réservations du type "Ouvert" où il faut juste vérifier par l'ID equipement
             // TODO: Conflit
@@ -537,44 +584,27 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
 
-            // requete pour trouver les essais "confidentiels" avec les mêmes dates
-            var essaiConfZonesAlim = (from essai in context.essai
-                                             from equip in context.equipement
-                                             from reser in context.reservation_projet
-                                             where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && (essai.id == reser.essaiID)
-                                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                             && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
-                                                || reser.equipement.zoneID != ApSeptB || reser.equipement.zoneID != ApSeptC
-                                                || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
-                                             && (reser.equipement.zoneID == zon)
-                                             && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                             && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                             select essai).Distinct().ToList();
-
-            if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                estConfidentielDispoZone = true;
-
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
-            // réservations est dans la même zone, au mêmes dates et en mode confidentiel
+            // réservations est dans la même zone, aux mêmes dates et en mode confidentiel
             if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
-                // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
-                var essaiConfPFL = (from essai in context.essai
-                                    from equip in context.equipement
-                                    from reser in context.reservation_projet
-                                    where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
-                                    && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                        essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
-                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
-                                    && (reser.equipement.zoneID == zon)
-                                    && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                    && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                    select essai).Distinct().ToList();
+                // requete pour trouver les essais "confidentiels" avec les mêmes dates
+                var essaiConfZonesAlim = (from essai in context.essai
+                                          from equip in context.equipement
+                                          from reser in context.reservation_projet
+                                          where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && (essai.id == reser.essaiID)
+                                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                             essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                          && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
+                                             || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
+                                             || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                                          && (reser.equipement.zoneID == zon)
+                                          && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
+                                          && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
+                                          select essai).Distinct().ToList();
 
-                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
+                    estConfidentielDispo = true;
             }
             else
             {
@@ -595,22 +625,36 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     select essai).Distinct().ToList();
 
                 if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                    estConfidentielDispo = true;
             }
-
             #endregion
 
-            return (estOuvertDisponible && estRestreintDispo && estConfidentielDispoPFL && estConfidentielDispoZone);
+            #region Vérification sur les opérations de maintenance
+
+            // si l'équipement que l'on rajoute dans un essai RESTREINT est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+            var IntervZon = (from maint in context.maintenance
+                                from resaMaint in context.reservation_maintenance
+                                from equip in context.equipement
+                                where maint.id == resaMaint.maintenanceID
+                                && (resaMaint.equipement.zoneID == zon)
+                                && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                select maint).Distinct().ToList();
+
+            if (IntervZon.Count() == 0)
+                estInterventionDispo = true;                  
+            
+            #endregion
+
+            return (estOuvertDisponible && estRestreintDispo && estConfidentielDispo && estInterventionDispo);
         }
 
         public bool DispoEssaiConfidentielPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai)
         {
-            bool estOuvertDisponiblePFL = false;
-            bool estOuvertDisponibleZone = false;
-            bool estRestreintDispoPFL = false;
-            bool estRestreintDispoZone = false;
-            bool estConfidentielDispoPFL = false;
-            bool estConfidentielDispoZone = false;
+            bool estOuvertDisponible = false;
+            bool estRestreintDispo = false;
+            bool estConfidentielDispo = false;
+            bool estInterventionDispo = false;
 
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
@@ -627,139 +671,129 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             #region Vérification sur les réservations du type "Ouvert" où il faut juste vérifier par l'ID equipement
 
-            // requete complète pour trouver les réservations où leur essai est "ouvert", l'id equipement est égal a idEquipement et la date souhaitée pour réservation est déjà prise
-            var resasOuvZon = (from essai in context.essai
-                            from resa in context.reservation_projet
-                            from equip in context.equipement
-                            where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
-                            && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                            && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
-                            || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
-                            || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
-                            && (resa.equipement.zoneID == zon)
-                            && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
-                            && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
-                            select resa).Distinct().ToList();
+            if(zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            {
+                // requete complète pour trouver les réservations où leur essai est "ouvert", l'id equipement est égal a idEquipement et la date souhaitée pour réservation est déjà prise
+                var resasOuvZon = (from essai in context.essai
+                                   from resa in context.reservation_projet
+                                   from equip in context.equipement
+                                   where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
+                                   && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                       essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                   && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                                   || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
+                                   || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
+                                   && (resa.equipement.zoneID == zon)
+                                   && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                   && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                   select resa).Distinct().ToList();
 
-            // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
-            // sont differents mais dans la même zone (réservations validées ou à valider)
-            // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
-            if (resasOuvZon.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
-                estOuvertDisponibleZone = true;
+                // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
+                // sont differents mais dans la même zone (réservations validées ou à valider)
+                // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
+                if (resasOuvZon.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
+                    estOuvertDisponible = true;
+            }
+            else
+            {
+                // comme il s'agit d'une réservation confidentiel il faut que la zone PFL soit libre
+                var resasOuvPFL = (from essai in context.essai
+                                   from resa in context.reservation_projet
+                                   from equip in context.equipement
+                                   where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
+                                   && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                       essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                   && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                                   && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
+                                   && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                   && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                   && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                   select resa).Distinct().ToList();
 
-            // requete complète pour trouver les réservations où leur essai est "ouvert", l'id equipement est égal a idEquipement et la date souhaitée pour réservation est déjà prise
-            var resasOuvPFL = (from essai in context.essai
-                            from resa in context.reservation_projet
-                            from equip in context.equipement
-                            where essai.confidentialite == EnumConfidentialite.Ouvert.ToString() && essai.id == resa.essaiID
-                            && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                            && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
-                            && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
-                            && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
-                            && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
-                            && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
-                            select resa).Distinct().ToList();
+                // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
+                // sont differents mais dans la même zone (réservations validées ou à valider)
+                // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
+                if (resasOuvPFL.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
+                    estOuvertDisponible = true;
 
-            // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
-            // sont differents mais dans la même zone (réservations validées ou à valider)
-            // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
-            if (resasOuvPFL.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
-                estOuvertDisponiblePFL = true;
-            
+            }
 
             #endregion
 
             #region Vérification sur les réservations "Restreint" 
 
-            // requete pour recuperer les reservation dont il s'agit d'un essai "Restreint" pour cet équipement et où les dates sont déjà réservés
-            var resasRestPFL = (from essai in context.essai
-                                from resa in context.reservation_projet
-                                from equip in context.equipement
-                                where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
-                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
-                                && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
-                                && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
-                                && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
-                                && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
-                                select resa).Distinct().ToList();
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            {
+                // requete pour recuperer les reservation dont il s'agit d'un essai "Restreint" pour cet équipement et où les dates sont déjà réservés
+                var resasRestZone = (from essai in context.essai
+                                     from resa in context.reservation_projet
+                                     from equip in context.equipement
+                                     where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
+                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                     essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                     && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                                     || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
+                                     || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
+                                     && (resa.equipement.zoneID == zon)
+                                     && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
+                                     && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
+                                     select resa).Distinct().ToList();
 
-            // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
-            // sont differents mais dans la même zone (réservations validées ou à valider)
-            // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
-            if (resasRestPFL.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
-                estRestreintDispoPFL = true;
+                // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
+                // sont differents mais dans la même zone (réservations validées ou à valider)
+                // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
+                if (resasRestZone.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
+                    estRestreintDispo = true;
+            }
+            else
+            {
+                // requete pour recuperer les reservation dont il s'agit d'un essai "Restreint" pour cet équipement et où les dates sont déjà réservés
+                var resasRestPFL = (from essai in context.essai
+                                    from resa in context.reservation_projet
+                                    from equip in context.equipement
+                                    where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
+                                    && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                    && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                                    && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
+                                    && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                    && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
+                                    && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
+                                    select resa).Distinct().ToList();
 
-            // requete pour recuperer les reservation dont il s'agit d'un essai "Restreint" pour cet équipement et où les dates sont déjà réservés
-            var resasRestZone = (from essai in context.essai
-                                from resa in context.reservation_projet
-                                from equip in context.equipement
-                                where essai.confidentialite == EnumConfidentialite.Restreint.ToString() && essai.id == resa.essaiID
-                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
-                                || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
-                                || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
-                                && (resa.equipement.zoneID == zon)
-                                && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
-                                && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
-                                select resa).Distinct().ToList();
-
-            // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
-            // sont differents mais dans la même zone (réservations validées ou à valider)
-            // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
-            if (resasRestZone.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
-                estRestreintDispoZone = true;
-            
-
+                // lors de la validation des réservations mettre un conflit si une des 2 résas sont "RESTREINT" et que les équipement
+                // sont differents mais dans la même zone (réservations validées ou à valider)
+                // Pas de blocage pour réserver un autre équipement dans cette zone! jusqu'à la validation 
+                if (resasRestPFL.Count() == 0) // si aucune réservation directe sur l"equipement alors on peut réserver
+                    estRestreintDispo = true;
+            }
+  
             #endregion
 
             #region Vérification sur les réservations "Confidentiel"
-
-            // requete pour trouver les essais "confidentiels" avec les mêmes dates
-            var essaiConfZone = (from essai in context.essai
-                                from equip in context.equipement
-                                from reser in context.reservation_projet
-                                where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID 
-                                && (essai.id != IdEssai)
-                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
-                                || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
-                                || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
-                                && (reser.equipement.zoneID == zon)
-                                && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                select essai).Distinct().ToList();
-
-            if (essaiConfZone.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                estConfidentielDispoZone = true;
 
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
             if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
-                // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
-                var essaiConfPFL = (from essai in context.essai
-                                    from equip in context.equipement
-                                    from reser in context.reservation_projet
-                                    where ((essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID)
-                                    && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
-                                        essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                    && (essai.id != IdEssai)
-                                    && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
-                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
-                                    && (reser.equipement.zoneID == zon)
-                                    && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
-                                    && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
-                                    select essai).Distinct().ToList();
+                // requete pour trouver les essais "confidentiels" avec les mêmes dates
+                var essaiConfZone = (from essai in context.essai
+                                     from equip in context.equipement
+                                     from reser in context.reservation_projet
+                                     where (essai.confidentialite == EnumConfidentialite.Confidentiel.ToString() && essai.id == reser.essaiID
+                                     && (essai.id != IdEssai)
+                                     && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                     && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
+                                     || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
+                                     || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                                     && (reser.equipement.zoneID == zon)
+                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
+                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
+                                     select essai).Distinct().ToList();
 
-                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                if (essaiConfZone.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
+                    estConfidentielDispo = true;
             }
             else
             {
@@ -781,15 +815,147 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     select essai).Distinct().ToList();
 
                 if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
-                    estConfidentielDispoPFL = true;
+                    estConfidentielDispo = true;
+            }
+            #endregion
+
+            #region Vérification sur les opérations de maintenance
+
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            {
+                // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+                var IntervZonAlim = (from maint in context.maintenance
+                                    from resaMaint in context.reservation_maintenance
+                                    from equip in context.equipement
+                                    where maint.id == resaMaint.maintenanceID
+                                    && (resaMaint.equipement.zoneID == ApCinq || resaMaint.equipement.zoneID == ApSix || resaMaint.equipement.zoneID == ApSeptA
+                                    || resaMaint.equipement.zoneID == ApSeptB || resaMaint.equipement.zoneID == ApSeptC
+                                    || resaMaint.equipement.zoneID == ApHuit || resaMaint.equipement.zoneID == ApNeuf)
+                                    && (resaMaint.equipement.zoneID == zon)
+                                    && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                    && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                    select maint).Distinct().ToList();
+                if (IntervZonAlim.Count() == 0)
+                    estInterventionDispo = true;
+            }
+            else
+            { // si l'équipement est dans la zone PFL alors il doit pas y avoir aucune maintenance sur la PFL
+                // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+                var IntervZonPFL = (from maint in context.maintenance
+                                    from resaMaint in context.reservation_maintenance
+                                    from equip in context.equipement
+                                    where maint.id == resaMaint.maintenanceID
+                                    && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
+                                    && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC
+                                    && resaMaint.equipement.zoneID != ApHuit && resaMaint.equipement.zoneID != ApNeuf)
+                                    && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                    && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                    select maint).Distinct().ToList();
+
+                if (IntervZonPFL.Count() == 0)
+                    estInterventionDispo = true;           
+            }
+
+
+            #endregion
+
+            return (estOuvertDisponible && estRestreintDispo && estConfidentielDispo && estInterventionDispo);
+        }
+
+
+
+        /// <summary>
+        /// méthode pour déterminer la disponibilité d'une zone pour intervention
+        /// Vérification des essais et des opérations de maintenance
+        /// </summary>
+        /// <param name="dateDebut"></param>
+        /// <param name="dateFin"></param>
+        /// <param name="idEquipement"></param>
+        /// <returns></returns>
+        public bool ZoneDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement)
+        {
+            bool resaOk = false;
+            bool interOk = false;
+
+            int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
+            int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
+            int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
+            int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+
+            // Récupérer l'id zone pour l'équipement enquêté
+            var zon = (from equip in context.equipement
+                       where equip.id == idEquipement
+                       select equip.zoneID.Value).First();
+
+            #region disponibilité sur les essais
+
+            // Si l'équipement où l'on intervient est dans la PFL alors il faut vérifier qu'il n'y a pas des essais confidentiels aux mêmes dates
+            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            if (zon != ApCinq || zon != ApSix || zon != ApSeptA || zon != ApSeptB || zon != ApSeptC || zon != ApHuit || zon != ApNeuf)
+            {
+                // Vérifier la disponibilité sur les essais qu'ont au moins un materiel dans la même zone
+                // TODO: Vérifier si ça marche pour les résas confidentielles
+                var resasZon = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                from equip in context.equipement
+                                where essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (resa.equipement.zoneID == zon || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                                && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
+                                && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasZon.Count() == 0)
+                    resaOk = true;
+            }
+            else
+            {
+                var resasZon = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                from equip in context.equipement
+                                where essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (resa.equipement.zoneID == zon)
+                                && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                                || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
+                                || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasZon.Count() == 0)
+                    resaOk = true;
             }
 
             #endregion
 
-            return (estOuvertDisponiblePFL && estOuvertDisponibleZone && estRestreintDispoPFL && estRestreintDispoZone && estConfidentielDispoPFL && estConfidentielDispoZone);
-        }
+            #region disponibilité sur les interventions
 
-        #endregion
+            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            var IntervZon = (from maint in context.maintenance
+                             from resaMaint in context.reservation_maintenance
+                             from equip in context.equipement
+                             where maint.id == resaMaint.maintenanceID
+                             && (resaMaint.equipement.zoneID == zon)
+                             && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                             && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                             select maint).Distinct().ToList();
+
+            if (IntervZon.Count() == 0)
+                interOk = true;
+
+            #endregion
+
+            return (resaOk && interOk);
+        }
 
         #region méthodes externes
 
@@ -954,6 +1120,65 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             }
 
             return Resas;
+        }
+
+        public ReservationsJour IntervEquipParJour(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
+        {
+            ReservationsJour EquipVsResa = new ReservationsJour();
+
+            foreach (var resaInter in context.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
+            {
+                if (context.equipement.Where(e => e.id == resaInter.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                {
+                    if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
+                        && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
+                    {
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                //Resas.InfosResaMatin.Add(null); // Matin vide
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                // Vérifier si il s'agit d'une demi journée (juste l'aprèm)
+                                if (resaInter.date_fin.Hour.Equals(12) && (resaInter.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                                {
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                                else  // si l'heure de fin est 18h alors on rajoute sur les 2
+                                {
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                            }
+                        }
+                        else // date à l'intérieur du seuil de réservation
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                        }
+                    }
+                }
+            }
+            return EquipVsResa;
         }
 
         ReservationsJour ResaConfidentialiteRestreint(essai ess, ReservationInfos infosResa, equipement Equipement, DateTime DateRecup)

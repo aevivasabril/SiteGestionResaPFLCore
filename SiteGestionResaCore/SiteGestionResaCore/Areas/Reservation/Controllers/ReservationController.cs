@@ -406,12 +406,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             List<CalendrierEquipChildViewModel> CalendEquipSelectionnes = new List<CalendrierEquipChildViewModel>();
             CalendrierEquipChildViewModel SousCalend = new CalendrierEquipChildViewModel();
             bool AuMoinsUnEquipSelect = false;
+            DateTime timeToday = DateTime.Today;
 
             equipementZone.SousListeEquipements = model.SousListeEquipements;
             
             if(equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0)
             {
                 #region Vérifier si l'utilisateur a déjà demandé un affichage planning et mettre tout au même mois
+
                 for (int i = 0; i < model.SousListeEquipements.Count(); i++)
                 {
                     if(model.SousListeEquipements[i].IsEquipSelect == true)
@@ -420,7 +422,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         // Mettre l'affichage du calendrier semaine au mois et année souhaitée (01/MM/YY)
                         // Recuperer les réservations pour la date souhaitée 
                         reservationsEquipement = DonneesCalendrierEquipement(false, model.SousListeEquipements[i].IdEquipement,
-                            new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 01), new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 07));
+                            new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, timeToday.Day), new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, timeToday.AddDays(7).Day));
                         SousCalend.ListResas = reservationsEquipement;
                         SousCalend.idEquipement = model.SousListeEquipements[i].IdEquipement;
                         SousCalend.nomEquipement = model.SousListeEquipements[i].NomEquipement;
@@ -438,6 +440,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+
                 #endregion
             }
             else
@@ -672,13 +675,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
 
                                 #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
+
                                 bool isResaOkToAdd = false;
-                                if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une réservation standard
+                                if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une intervention reservation standard
                                 {
                                     for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
                                         // Je fais la vérification comme pour une réservation standard considerant que la maintenance surveillera à ne pas avoir des essais aux mêmes dates
-                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        isResaOkToAdd = reservationDb.ZoneDisponibleXIntervention(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                         if (isResaOkToAdd == false)
                                         {
                                             if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -688,7 +692,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                             }
                                             else
                                             {
-                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
                                                 goto ENDT;
                                             }
                                         }
@@ -830,12 +834,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
 
                         #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
+
                         bool isResaOkToAdd = false;
+                        // Récupérer la session "FormulaireProjet" pour obtenir la confidentialité de l'essai
+                        FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
+
                         if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une réservation standard
                         {
                             for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                             {
-                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, formulaire.ConfidentialiteEssai);
                                 if (isResaOkToAdd == false)
                                 {
                                     if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -845,7 +853,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     }
                                     else
                                     {
-                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
                                         goto ENDT;
                                     }
                                 }
@@ -861,7 +869,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 case "Ouvert":
                                     for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
-                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, formulaire.ConfidentialiteEssai);
                                         if (isResaOkToAdd == false)
                                         {
                                             if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -871,7 +879,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                             }
                                             else
                                             {
-                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
                                                 goto ENDT;
                                             }
                                         }
@@ -890,7 +898,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                             }
                                             else
                                             {
-                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
                                                 goto ENDT;
                                             }
                                         }
@@ -909,7 +917,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                             }
                                             else
                                             {
-                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
                                                 goto ENDT;
                                             }
                                         }
@@ -955,10 +963,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             }
             ENDT:
             #region initialiser la date des datepicker au MOIS Selectionné
-            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateDebut.Value.Day);
+            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateFin.Value.Day);
+            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateDebut.Value.Day);
+            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateFin.Value.Day);
             #endregion
 
             return View("EquipementVsZone", equipementZone); // Si error alors on recharge la page pour montrer les messages

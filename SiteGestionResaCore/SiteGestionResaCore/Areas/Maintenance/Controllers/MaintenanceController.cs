@@ -324,6 +324,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             int NumberOfRetries = 5;
             var retryCount = NumberOfRetries;
             var success = false;
+            string MsgLogist = "";
+            IList<utilisateur> UsersLogistic = await intervDb.List_utilisateurs_logistiqueAsync();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
 
             #region Validation des interventions sur des péripheriques à la PFL
             // Récuperer ma session avec les créneaux d'intervention
@@ -439,6 +441,46 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                     }
                                 }
                             }
+
+                            #region Envoyer un mail aux utilisateurs logistique
+                            MsgLogist = @"<html>
+                                            <body> 
+                                            <p> Bonjour, <br><br> Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:" 
+                                            + ess.id + ".Titre essai: <b>" + ess.titreEssai + " (Propietaire de l'essai: " + intervDb.ObtenirMailUser(ess.compte_userID) + ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
+                                            "<br><br> </p> <p>L'équipe PFL, " +
+                                            "</p>" +
+                                            "</body>" +
+                                            "</html>";
+
+                            for (int index = 0; index < UsersLogistic.Count(); index++)
+                            {
+                                NumberOfRetries = 5;
+                                retryCount = NumberOfRetries;
+                                success = false;
+
+                                while (!success && retryCount > 0)
+                                {
+                                    try
+                                    {
+                                        await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Opération de maintenance annulant un essai", MsgLogist);
+                                        success = true;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        retryCount--;
+
+                                        if (retryCount == 0)
+                                        {
+                                            ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                            ViewBag.AfficherMessage = true;
+                                            ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                            return View("AjoutEquipements", vm);
+                                        }
+                                    }
+                                }
+                            }
+                            #endregion
                         }
                     }
                 }

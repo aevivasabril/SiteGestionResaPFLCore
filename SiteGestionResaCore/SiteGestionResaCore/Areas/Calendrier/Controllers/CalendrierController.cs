@@ -8,6 +8,7 @@ using SiteGestionResaCore.Areas.Calendrier.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.PcVue;
 using SiteGestionResaCore.Extensions;
+using SiteGestionResaCore.Models.Maintenance;
 
 namespace SiteGestionResaCore.Areas.Calendrier.Controllers
 {
