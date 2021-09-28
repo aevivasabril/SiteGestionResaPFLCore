@@ -412,7 +412,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                             MsgUser = @"<html>
                                             <body> 
                                             <p> Bonjour, <br><br> L'équipe PFL vous informe que votre essai N° " + ess.id + ".Titre essai: <b>" + ess.titreEssai +
-                                            "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés de votre essai. " +
+                                            "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates, sur un des équipements réservés de votre essai ou dans la même zone." +
                                             "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
                                             ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
                                             "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +

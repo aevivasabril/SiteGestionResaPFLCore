@@ -502,18 +502,56 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement)
         {
             List<essai> ListEssais = new List<essai>();
-            //var ZonEquip = context.equipement.First(e => e.id == idEquipement).zoneID;
+
+            int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
+            int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
+            int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
+            int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+
+            // Récupérer l'id zone pour l'équipement enquêté
             //TODO: vérifier! !
-            int ZoneIdEquipement = context.zone.First(z => z.id == context.equipement.First(e => e.id == idEquipement).zoneID).id;
-            ListEssais = (from essai in context.essai
-                            from equip in context.equipement
-                            from reser in context.reservation_projet
-                            where (essai.id == reser.essaiID
-                            && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == ZoneIdEquipement) 
-                            || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                            && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
-                            && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
-                            select essai).Distinct().ToList();
+            int zon = context.zone.First(z => z.id == context.equipement.First(e => e.id == idEquipement).zoneID).id;
+
+            #region disponibilité sur les essais
+
+            // Si l'équipement où l'on intervient est dans la PFL alors il faut vérifier qu'il n'y a pas des essais confidentiels aux mêmes dates
+            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            {
+                // Vérifier la disponibilité sur les essais qui ont au moins un materiel dans la même zone
+                // TODO: Vérifier
+                // pour les zones alimentaires annuler uniquement les essais qui utilisent le même équipement car
+                // les utilisateurs peuvent continuer à travailler très probablement sur les autres équipements de la zone
+                ListEssais = (from essai in context.essai
+                              from equip in context.equipement
+                              from reser in context.reservation_projet
+                              where (essai.id == reser.essaiID
+                              && (reser.equipementID == idEquipement)
+                              && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
+                                || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
+                                || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                              && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
+                              && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
+                              select essai).Distinct().ToList();
+
+            }
+            else
+            { // Equipements dans la Zone PFL
+                ListEssais = (from essai in context.essai
+                              from equip in context.equipement
+                              from reser in context.reservation_projet
+                              where (essai.id == reser.essaiID
+                              && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == zon)
+                              || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                              && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
+                              && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
+                              select essai).Distinct().ToList();
+            }
+
+            #endregion           
 
             return ListEssais;
         }
@@ -898,13 +936,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             {
                 // Vérifier la disponibilité sur les essais qu'ont au moins un materiel dans la même zone
                 // TODO: Vérifier si ça marche pour les résas confidentielles
+                // J'ai enlevé la condition confidentiel car l'essai peut se derouler sauf si ça touche la même zone de mon intervention ou le même équipement
                 var resasZon = (from essai in context.essai
                                 from resa in context.reservation_projet
                                 from equip in context.equipement
                                 where essai.id == resa.essaiID
                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                     essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID == zon || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                && (resa.equipement.zoneID == zon) //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                                 && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
                                 && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
                                 && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
