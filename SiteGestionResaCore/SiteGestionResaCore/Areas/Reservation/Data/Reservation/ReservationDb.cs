@@ -932,10 +932,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             // Si l'équipement où l'on intervient est dans la PFL alors il faut vérifier qu'il n'y a pas des essais confidentiels aux mêmes dates
             // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
-            if (zon != ApCinq || zon != ApSix || zon != ApSeptA || zon != ApSeptB || zon != ApSeptC || zon != ApHuit || zon != ApNeuf)
+            if (zon != ApCinq && zon != ApSix && zon != ApSeptA && zon != ApSeptB && zon != ApSeptC && zon != ApHuit && zon != ApNeuf)
             {
                 // Vérifier la disponibilité sur les essais qu'ont au moins un materiel dans la même zone
-                // TODO: Vérifier si ça marche pour les résas confidentielles
                 // J'ai enlevé la condition confidentiel car l'essai peut se derouler sauf si ça touche la même zone de mon intervention ou le même équipement
                 var resasZon = (from essai in context.essai
                                 from resa in context.reservation_projet
@@ -943,7 +942,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 where essai.id == resa.essaiID
                                 && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                     essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                                && (resa.equipement.zoneID == zon) //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                && (resa.equipement.zoneID == zon || resa.equipementID == idEquipement) //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                                 && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
                                 && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
                                 && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
@@ -955,7 +954,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                     resaOk = true;
             }
             else
-            {
+            { // dans le cas des zones alimentaires alors on vérifie qu'il n'y a pas des essais dans la même zone de l'intervention
                 var resasZon = (from essai in context.essai
                                 from resa in context.reservation_projet
                                 from equip in context.equipement
