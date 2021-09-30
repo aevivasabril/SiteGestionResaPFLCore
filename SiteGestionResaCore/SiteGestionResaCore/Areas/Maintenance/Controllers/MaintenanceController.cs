@@ -49,7 +49,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
         [ValidateAntiForgeryToken]
         public IActionResult SoumettreInfosMaint(MaintenanceViewModel vm)
         {
-            if (vm.IntervenantExterne == "true") // Si l'utilisateur coche "oui" alors il est obligé de taper le nom de la sociète
+            if (vm.IntervenantExterne == "true" && vm.NomSociete == null) // Si l'utilisateur coche "oui" alors il est obligé de taper le nom de la sociète
                 ModelState.AddModelError("NomSociete", "Veuillez indiquer le nom de la sociète intervenante");
 
             MaintenanceViewModel model = HttpContext.GetFromSession<MaintenanceViewModel>("FormulaireOperation");
@@ -337,139 +337,114 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             // Traiter chaque créneau d'intervention saisie pour les Equipements sans zone
             #region Enregistrer en base de données et envoyer le mail pour informer les utilisateurs (EQUIPEMENTS SANS ZONE)
 
+            // Afficher message pour indiquer qu'il faut saisir au moins un équipement
+            if (vm.ListEquipsDansZones.Count() == 0 && vm.ListEquipsSansZone.Count() == 0)
+            {
+                ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Vous devez choisir au moins un équipement";
+                return View("AjoutEquipements", vm);
+            }
+
             // Création de l'opération de maintenance
             maintenance maintenance = intervDb.AjoutMaintenance(formulaire);
 
             // Pas de notion pour le type de maintenance pour les équipements sans zone
-            foreach (var inter in vm.ListEquipsSansZone)
+            if(vm.ListEquipsSansZone.Count()! == 0)
             {
-                bool IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
-                if(!IsOk)
+                foreach (var inter in vm.ListEquipsSansZone)
                 {
-                    ModelState.AddModelError("DescriptionProbleme", "Problème pour ajouter une nouvelle intervention sans zone, essayez à nouveau");
-                    ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Problème pour ajouter le(s) interventions sans zone, essayez à nouveau";
-                    return View("AjoutEquipements", vm);
-                }
-
-                // si enregistrement OK alors envoyer le mail
-                MsgUser = @"<html>
-                            <body> 
-                            <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s):<b> " 
-                               + inter.ZoneImpacte + "</b>. Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
-                               ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
-                               " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
-                               "</p>" +
-                               "</body>" +
-                               "</html>";
-
-                // Obtenir la liste des utilisateurs
-                List<utilisateur> users = intervDb.ObtenirListUtilisateursSite();
-
-                // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-                foreach (var usr in users)
-                {
-                    success = false;
-                    while (!success && retryCount > 0)
+                    bool IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
+                    if (!IsOk)
                     {
-                        try
+                        ModelState.AddModelError("DescriptionProbleme", "Problème pour ajouter une nouvelle intervention sans zone, essayez à nouveau");
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème pour ajouter le(s) interventions sans zone, essayez à nouveau";
+                        return View("AjoutEquipements", vm);
+                    }
+
+                    // si enregistrement OK alors envoyer le mail
+                    MsgUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s):<b> "
+                                   + inter.ZoneImpacte + "</b>. Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
+                                   ". " + "Cet intervention aura lieu du: <b> " + inter.DateDebut + "</b> au <b> " + inter.DateFin + "</b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
+                                   " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
+                                   "</p>" +
+                                   "</body>" +
+                                   "</html>";
+
+                    // Obtenir la liste des utilisateurs
+                    List<utilisateur> users = intervDb.ObtenirListUtilisateursSite();
+
+                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                    foreach (var usr in users)
+                    {
+                        success = false;
+                        while (!success && retryCount > 0)
                         {
-                            await emailSender.SendEmailAsync(usr.Email, "Dépannage materiel commun et utilités PFL", MsgUser);
-                            success = true;
-                        }
-                        catch (Exception e)
-                        {
-                            retryCount--;
-                            if (retryCount == 0)
+                            try
                             {
-                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                ViewBag.AfficherMessage = true;
-                                ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
-                                return View("AjoutEquipements", vm);
+                                await emailSender.SendEmailAsync(usr.Email, "Dépannage materiel commun et utilités PFL", MsgUser);
+                                success = true;
+                            }
+                            catch (Exception e)
+                            {
+                                retryCount--;
+                                if (retryCount == 0)
+                                {
+                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                    ViewBag.AfficherMessage = true;
+                                    ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                    return View("AjoutEquipements", vm);
+                                }
                             }
                         }
                     }
-                }                   
+                }
             }
-            #endregion
 
-            #region Traiter les équipements pour intervention qui sont dans une zone (EQUIPEMENTS DANS UNE ZONE)
-
-            if (maintenance.type_maintenance.Equals("Maintenance curative (Panne)"))
+            if (vm.ListEquipsDansZones.Count() != 0)
             {
-                // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
-                // Obtenir la liste des essais à supprimer
-                foreach (var equipementDansZone in vm.ListEquipsDansZones)
+                #region Traiter les équipements pour intervention qui sont dans une zone (EQUIPEMENTS DANS UNE ZONE)
+
+                if (maintenance.type_maintenance.Equals("Maintenance curative (Panne)"))
                 {
-                    foreach (var ess in equipementDansZone.EssaisXAnnulation)
+                    // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
+                    // Obtenir la liste des essais à supprimer
+                    foreach (var equipementDansZone in vm.ListEquipsDansZones)
                     {
-                        if (intervDb.UpdateEssai(ess.id).resa_refuse == null) // essai pas encore annulé
+                        foreach (var ess in equipementDansZone.EssaisXAnnulation)
                         {
-                            intervDb.AnnulerEssai(ess, formulaire.CodeMaintenance);
-                            // Envoyer le mail au propiètaire de l'essai
-                            // obtenir le mail du propietaire
-                            string mail = intervDb.ObtenirMailUser(ess.compte_userID);
-                            MsgUser = @"<html>
+                            if (intervDb.UpdateEssai(ess.id).resa_refuse == null) // essai pas encore annulé
+                            {
+                                intervDb.AnnulerEssai(ess, formulaire.CodeMaintenance);
+                                // Envoyer le mail au propiètaire de l'essai
+                                // obtenir le mail du propietaire
+                                string mail = intervDb.ObtenirMailUser(ess.compte_userID);
+                                MsgUser = @"<html>
                                             <body> 
                                             <p> Bonjour, <br><br> L'équipe PFL vous informe que votre essai N° " + ess.id + ".Titre essai: <b>" + ess.titreEssai +
-                                            "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates, sur un des équipements réservés de votre essai ou dans la même zone." +
-                                            "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
-                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
-                                            "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +
-                                            "</p>" +
-                                            "</body>" +
-                                            "</html>";
+                                                "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates, sur un des équipements réservés de votre essai ou dans la même zone." +
+                                                "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                                ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
+                                                "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +
+                                                "</p>" +
+                                                "</body>" +
+                                                "</html>";
 
-                            success = false;
-                            retryCount = 5;
-                            while (!success && retryCount > 0)
-                            {
-                                try
-                                {
-                                    await emailSender.SendEmailAsync(mail, "Votre essai est annulé", MsgUser);
-                                    success = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    retryCount--;
-                                    if (retryCount == 0)
-                                    {
-                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                        ViewBag.AfficherMessage = true;
-                                        ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
-                                        return View("AjoutEquipements", vm);
-                                    }
-                                }
-                            }
-
-                            #region Envoyer un mail aux utilisateurs logistique
-                            MsgLogist = @"<html>
-                                            <body> 
-                                            <p> Bonjour, <br><br> Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:" 
-                                            + ess.id + ".Titre essai: <b>" + ess.titreEssai + " (Propietaire de l'essai: " + intervDb.ObtenirMailUser(ess.compte_userID) + ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
-                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
-                                            "<br><br> </p> <p>L'équipe PFL, " +
-                                            "</p>" +
-                                            "</body>" +
-                                            "</html>";
-
-                            for (int index = 0; index < UsersLogistic.Count(); index++)
-                            {
-                                NumberOfRetries = 5;
-                                retryCount = NumberOfRetries;
                                 success = false;
-
+                                retryCount = 5;
                                 while (!success && retryCount > 0)
                                 {
                                     try
                                     {
-                                        await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Opération de maintenance annulant un essai", MsgLogist);
+                                        await emailSender.SendEmailAsync(mail, "Votre essai est annulé", MsgUser);
                                         success = true;
                                     }
                                     catch (Exception e)
                                     {
                                         retryCount--;
-
                                         if (retryCount == 0)
                                         {
                                             ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
@@ -479,40 +454,81 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         }
                                     }
                                 }
+
+                                #region Envoyer un mail aux utilisateurs logistique
+                                MsgLogist = @"<html>
+                                            <body> 
+                                            <p> Bonjour, <br><br> Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
+                                                + ess.id + ".Titre essai: <b>" + ess.titreEssai + " (Propietaire de l'essai: " + intervDb.ObtenirMailUser(ess.compte_userID) + ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                                ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
+                                                "<br><br> </p> <p>L'équipe PFL, " +
+                                                "</p>" +
+                                                "</body>" +
+                                                "</html>";
+
+                                for (int index = 0; index < UsersLogistic.Count(); index++)
+                                {
+                                    NumberOfRetries = 5;
+                                    retryCount = NumberOfRetries;
+                                    success = false;
+
+                                    while (!success && retryCount > 0)
+                                    {
+                                        try
+                                        {
+                                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Opération de maintenance annulant un essai", MsgLogist);
+                                            success = true;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            retryCount--;
+
+                                            if (retryCount == 0)
+                                            {
+                                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                                ViewBag.AfficherMessage = true;
+                                                ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                                return View("AjoutEquipements", vm);
+                                            }
+                                        }
+                                    }
+                                }
+                                #endregion
                             }
-                            #endregion
                         }
                     }
+                    bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                    if (!IsOk)
+                    {
+                        ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                        return View("AjoutEquipements", vm);
+                    }
                 }
-                bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
-                if (!IsOk)
-                {
-                    ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
-                    ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
-                    return View("AjoutEquipements", vm);
-                }
-            }
-            else
-            { // Dans tous les autres cas, normalement la personne qui saisie l'intervention veille à ne pas faire de conflit (avec un essai "Restreint")
+                else
+                { // Dans tous les autres cas, normalement la personne qui saisie l'intervention veille à ne pas faire de conflit (avec un essai "Restreint")
 
-                bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
-                if (!IsOk)
-                {
-                    ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
-                    ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
-                    return View("AjoutEquipements", vm);
+                    bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                    if (!IsOk)
+                    {
+                        ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                        return View("AjoutEquipements", vm);
+                    }
                 }
+
+                #endregion
             }
-            // Ajouter les interventions de maintenance dans la BDD
-            //intervDb.AjoutInterventions(vm.ListEquipsDansZones, vm.ListEquipsSansZone, maintenance.id);
 
             #endregion
+
 
             #endregion
 
             return View("Confirmation");
         }
+
     }
 }

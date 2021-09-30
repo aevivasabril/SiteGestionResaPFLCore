@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Maintenance.Data.Consultation;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SiteGestionResaCore.Areas.Maintenance.Data.Consultation;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
@@ -165,5 +166,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         {
             return context.essai.First(e => e.id == essId);
         }
+
+ 
     }
 }
