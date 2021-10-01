@@ -45,6 +45,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                 {
                     DateDebut = inter.date_debut,
                     DateFin = inter.date_fin,
+                    CodeMaint = maint.code_operation,
                     DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
                     IdResMaint = inter.id,
                     NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
@@ -80,6 +81,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                     DateFin = inter.date_fin,
                     DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
                     IdResMaint = inter.id,
+                    CodeMaint = maint.code_operation,
                     NomEquipement = inter.nom_equipement,
                     ZoneAffecte = inter.zone_affectee,
                     OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,

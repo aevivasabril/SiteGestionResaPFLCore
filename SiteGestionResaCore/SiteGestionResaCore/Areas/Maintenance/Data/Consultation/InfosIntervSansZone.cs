@@ -9,6 +9,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
     {
         public int IdResMaint { get; set; } // Id reservation_maintenance
         public string TypeMaintenance { get; set; }
+        public string CodeMaint { get; set; }
         public string DescriptifMaint { get; set; }
         public string OperateurPFL { get; set; }
         public string NomIntervExterne { get; set; }
