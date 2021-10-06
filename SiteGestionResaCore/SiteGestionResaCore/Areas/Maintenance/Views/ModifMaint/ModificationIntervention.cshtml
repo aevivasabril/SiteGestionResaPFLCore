@@ -29,3 +29,180 @@
         </div>
     }
 </div>
+
+<div class="hide" style="display:@Model.OpenModifInter">
+
+    <hr />
+    <h6 class="text-center">INFORMATIONS MAINTENANCE</h6>
+    <hr />
+    <div class="form-group">
+        @Html.LabelFor(m => m.InfosMaint.CodeOperation, new { @class = "col-md-4 control-label" })
+        <input name="CodeOperation" asp-for="@Model.InfosMaint.CodeOperation" type="text" class="col-md-4" disabled="disabled" /> @*Je mets à disabled car on peut pas modifier les infos maintenance*@
+        @Html.ValidationMessageFor(m => m.InfosMaint.CodeOperation, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            @Html.LabelFor(m => m.InfosMaint.TypeMaintenance, new { @class = "col-md-4 control-label" })
+            <input name="TypeMaintenance" asp-for="@Model.InfosMaint.TypeMaintenance" class="col-md-5" type="text" disabled="disabled" />
+            @Html.ValidationMessageFor(m => m.InfosMaint.TypeMaintenance, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group col-md-5">
+            @Html.LabelFor(m => m.InfosMaint.EmailAuteur, new { @class = "col-md-6 control-label" })
+            <input name="EmailAuteur" asp-for="@Model.InfosMaint.EmailAuteur" class="col-md-5" type="text" disabled="disabled" />
+            @Html.ValidationMessageFor(m => m.InfosMaint.EmailAuteur, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            @Html.LabelFor(m => m.InfosMaint.DescriptionOperation, new { @class = "col-md-4 control-label" })
+            <input name="DescriptionOperation" asp-for="@Model.InfosMaint.DescriptionOperation" class="col-md-6" type="text" disabled="disabled" />
+            @Html.ValidationMessageFor(m => m.InfosMaint.DescriptionOperation, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group col-md-5">
+            @Html.LabelFor(m => m.InfosMaint.NomIntervenantExt, new { @class = "col-md-6 control-label" })
+            <input name="NomIntervenantExt" asp-for="@Model.InfosMaint.NomIntervenantExt" type="text" disabled="disabled" />
+            @Html.ValidationMessageFor(m => m.InfosMaint.NomIntervenantExt, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <br />
+
+    <hr />
+    @*<form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">*@
+    <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Interventions équipements communs</h5>
+        <div class="fixed_head_inter">
+            <div class="row justify-content-center">
+                <table class="table table-striped table-bordered justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Description équipement</th>
+                            <th scope="col">Date début</th>
+                            <th scope="col">Date fin</th>
+                            <th scope="col">Zone affectée</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ListEquipsCommuns)
+                        {
+                            <tr>
+                                <td>@x.NomEquipement</td>
+                                <td>@x.DateDebut</td>
+                                <td>
+                                    <form asp-action="ModifierInterCom" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@x.IdInterv">
+                                        <div class="form-row justify-content-center">
+                                            @x.DateFin                                           
+                                        </div>                                     
+                                        <input type="submit" class="btn btn-default navbar-inra" value="Changer date fin" name="action" />
+                                    </form>
+                                </td>
+                                <td>@x.ZoneAffectee</td>
+                                <td>
+                                    <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.IdInterv">Valider</a>
+                                    <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.IdInterv">Refuser</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    @*</form>*@
+    <hr />
+
+    <form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">
+        <div class="col-sm-12 col-md-12 text-center">
+            <h5 class="text-center">Interventions équipements PFL</h5>
+            <div class="fixed_head_inter">
+                <div class="row justify-content-center">
+                    <table class="table table-striped justify-content-center table-sm">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Nom équipement</th>
+                                <th scope="col">Date début</th>
+                                <th scope="col">Date fin</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var x in Model.ListeEquipsPfl)
+                            {
+                                <tr>
+                                    <td><a href="#">@x.NomEquipement</a></td>
+                                    <td><a href="#">@x.DateDebut</a></td>
+                                    <td><a href="#">@x.DateFin</a></td>
+                                    <td>
+                                        <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.Id">Valider</a>
+                                        <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.Id">Refuser</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+    <hr />
+</div>
+
+
+<!-- Modal pour affichage de la confirmation "Refuser"-->
+<form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervCom" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ModifierDate" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Modifier date fin d'intervention équipement commun</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <div class="form-row">
+                        <div class="form-group col-sm-5 col-md-5">
+                            @Html.Label("Date Fin:  ")
+                            <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
+                            @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
+                            <label class="col-md-2 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-4 col-md-4">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.modalModif == null)
+            {
+                ViewBag.modalModif = "hide";
+            }         
+        }
+        $('#ModifierDate').modal('@ViewBag.modalModif');
+
+    </script>
+}

@@ -178,3 +178,17 @@ textarea {
     height: auto;
     display: block;
 }
+
+.fixed_head_inter {
+    overflow-y: auto;
+    height: 250px;
+    overflow-x: auto;
+    width: 1000px;
+}
+
+    .fixed_head_inter thead th {
+        position: sticky;
+        top: 0;
+        background: whitesmoke;
+        z-index: 2;
+    }
