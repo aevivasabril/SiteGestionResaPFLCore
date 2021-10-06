@@ -63,17 +63,24 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         public List<EquipCommunXInterv> ListMaintAdj(int IdMaint)
         {
             List<EquipCommunXInterv> List = new List<EquipCommunXInterv>();
+            bool finie = false;
             var listIntervCommun = context.resa_maint_equip_adjacent.Where(r => r.maintenanceID == IdMaint).ToList();
 
             foreach (var maint in listIntervCommun)
             {
+                if(maint.date_fin < DateTime.Today)
+                    finie = true;
+                else
+                    finie = false;
+
                 EquipCommunXInterv equipCommunXInterv = new EquipCommunXInterv
                 {
                     DateDebut = maint.date_debut,
                     DateFin = maint.date_fin,
                     IdInterv = maint.id,
                     NomEquipement = maint.nom_equipement,
-                    ZoneAffectee = maint.zone_affectee
+                    ZoneAffectee = maint.zone_affectee,
+                    IsIntervFinie = finie
                 };
 
                 List.Add(equipCommunXInterv);
@@ -85,17 +92,22 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         public List<EquipPflXIntervention> ListIntervPFL(int IdMaint)
         {
             List<EquipPflXIntervention> List = new List<EquipPflXIntervention>();
-
+            bool finie = false;
             var listMaintPfl = context.reservation_maintenance.Where(r => r.maintenanceID == IdMaint).ToList();
 
             foreach(var maint in listMaintPfl)
             {
+                if (maint.date_fin < DateTime.Today)
+                    finie = true;
+                else
+                    finie = false;
                 EquipPflXIntervention equipPflXIntervention = new EquipPflXIntervention 
                 {
                     DateDebut = maint.date_debut,
                     DateFin = maint.date_fin,
                     Id = maint.id,
-                    NomEquipement = context.equipement.First(e=>e.id == maint.equipementID).nom
+                    NomEquipement = context.equipement.First(e=>e.id == maint.equipementID).nom,
+                    IsIntervFinie = finie
                 };
 
                 List.Add(equipPflXIntervention);

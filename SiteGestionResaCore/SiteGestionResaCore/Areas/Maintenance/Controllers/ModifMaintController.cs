@@ -94,7 +94,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
                 Model.IdIntervCom = id;
                 Model.OpenModifInter = vm.Ouvert;
-                Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
+                Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id); // On met à jour uniquement les interventions communs 
 
                 ViewBag.modalModif = "show";
                 return View("ModificationIntervention", Model);
@@ -139,7 +139,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                     {
                         try
                         {
-                            await emailSender.SendEmailAsync(usr.Email, "Dépannage materiel commun et utilités PFL", MsgUser);
+                            await emailSender.SendEmailAsync(usr.Email, "Mise à jour intervention dépannage materiel commun", MsgUser);
                             success = true;
                         }
                         catch (Exception e)
@@ -148,9 +148,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                             if (retryCount == 0)
                             {
                                 ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                ViewBag.AfficherMessage = true;
-                                ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
-                                return View("AjoutEquipements", vm);
+                                //ViewBag.AfficherMessage = true;
+                                //ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                return View("ModificationIntervention", vm);
                             }
                         }
                     }
@@ -166,6 +166,101 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 return View("ModificationIntervention", Model);
             }
             
+        }
+
+        /// <summary>
+        /// Action pour mettre à jour la date fin avec la date actuelle pour indiquer que l'intervention est finie
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public IActionResult IntervCommunFini(int id)
+        {          
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            Model.IdIntervCom = id;
+
+            ViewBag.modalValid = "show";
+            return View("ModificationIntervention", Model);
+        }
+
+        /// <summary>
+        /// Action pour confirmer la finalisation d'une intervention
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> ConfirmIntervComAsync(int id)
+        {
+            DateTime NewDate = new DateTime();
+            bool success = false;
+            var retryCount = 5;
+            string MsgUser = "";
+
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+
+            // Obtenir les infos maintenance
+            maintenance maint = modifMaintDb.ObtenirMaintenance(id);
+
+            // Déterminer si on est le matin ou l'aprèm
+            if (DateTime.Today.Hour > 7 && DateTime.Today.Hour < 12) // heure fin à mettre au format du matin
+            {
+                NewDate = new DateTime(DateTime.Today.Year,
+                    DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0, DateTimeKind.Local);
+            }
+            else // Heure fin aprèm
+            {
+                NewDate = new DateTime(DateTime.Today.Year,
+                    DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0, DateTimeKind.Local);
+            }
+
+            // Mettre à jour la date pour l'intervention des équipements communs
+            DateTime AncienneDateFin = modifMaintDb.ChangeDateFinEquipCommun(id, NewDate);
+
+            resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
+
+            // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
+            // si enregistrement OK alors envoyer le mail
+            MsgUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
+                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE CLOTUREE.</b>"
+                           + "<p> Vous pouvez désormais réutiliser ces équipements. </p> <p>L'équipe PFL, " +
+                           "</p>" +
+                           "</body>" +
+                           "</html>";
+            // Obtenir la liste des utilisateurs
+            List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
+
+            // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+            foreach (var usr in users)
+            {
+                success = false;
+                while (!success && retryCount > 0)
+                {
+                    try
+                    {
+                        await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retryCount--;
+                        if (retryCount == 0)
+                        {
+                            ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                            return View("ModificationIntervention", Model);
+                        }
+                    }
+                }
+            }
+
+            Model.IdIntervCom = id;
+            Model.OpenModifInter = Model.Ouvert;
+            Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
+
+            ViewBag.modalModif = "";
+            return View("ModificationIntervention", Model);
+        
         }
     }
 }

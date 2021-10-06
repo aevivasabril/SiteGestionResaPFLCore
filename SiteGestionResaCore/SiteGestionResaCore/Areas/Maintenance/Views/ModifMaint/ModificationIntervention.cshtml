@@ -31,7 +31,7 @@
 </div>
 
 <div class="hide" style="display:@Model.OpenModifInter">
-
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <hr />
     <h6 class="text-center">INFORMATIONS MAINTENANCE</h6>
     <hr />
@@ -91,15 +91,21 @@
                                 <td>
                                     <form asp-action="ModifierInterCom" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@x.IdInterv">
                                         <div class="form-row justify-content-center">
-                                            @x.DateFin                                           
-                                        </div>                                     
-                                        <input type="submit" class="btn btn-default navbar-inra" value="Changer date fin" name="action" />
+                                            @x.DateFin
+                                        </div>
+                                        @if (x.IsIntervFinie == false)
+                                        {
+                                            <input type="submit" class="btn btn-default navbar-inra" value="Changer date fin" name="action" />
+                                        }
                                     </form>
                                 </td>
                                 <td>@x.ZoneAffectee</td>
                                 <td>
-                                    <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.IdInterv">Valider</a>
-                                    <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.IdInterv">Refuser</a>
+                                    @if (x.IsIntervFinie == false)
+                                    {
+                                        <a class="btn navbar-inra" asp-action="IntervCommunFini" asp-area="Maintenance" asp-controller="ModifMaint" asp-route-id="@x.IdInterv">Intervention Finie</a>
+                                    }
+
                                 </td>
                             </tr>
                         }
@@ -148,7 +154,7 @@
 </div>
 
 
-<!-- Modal pour affichage de la confirmation "Refuser"-->
+<!-- Modal pour choisir une nouvelle date-->
 <form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervCom" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ModifierDate" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -192,17 +198,50 @@
     </div>
 </form>
 
+<!-- Modal pour affichage de la confirmation "intervention finie"-->
+<form asp-action="ConfirmIntervCom" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervCom" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ValidFinIntervCom" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Intervention Finie </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold">
+                        Si vous indiquez que l'intervention est finie, la date fin de cet opération sera 
+                        mise à jour avec la date courante et un mail sera envoyé à tous les utilisateurs pour les informer.
+                        Voulez-vous continuer?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <input type="submit" class="btn btn-primary" value="Oui" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-    <script>
+<script>
         @{
             if (ViewBag.modalModif == null)
             {
                 ViewBag.modalModif = "hide";
-            }         
+            }
+            if (ViewBag.modalValid == null)
+            {
+                ViewBag.modalValid = "hide";
+            }
         }
         $('#ModifierDate').modal('@ViewBag.modalModif');
+        $('#ValidFinIntervCom').modal('@ViewBag.modalValid');
 
-    </script>
+</script>
 }
