@@ -329,7 +329,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false },
                 new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false },
                 new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false },
-                new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false }
+                new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0079", mobile = true }
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
