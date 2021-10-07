@@ -544,8 +544,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                               from equip in context.equipement
                               from reser in context.reservation_projet
                               where (essai.id == reser.essaiID
-                              && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == zon)
-                              || essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                              && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == zon))
+                              //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                               && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
                               && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
                               select essai).Distinct().ToList();
