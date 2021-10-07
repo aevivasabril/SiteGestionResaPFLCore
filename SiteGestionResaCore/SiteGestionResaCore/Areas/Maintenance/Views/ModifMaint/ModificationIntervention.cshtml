@@ -31,7 +31,7 @@
 </div>
 
 <div class="hide" style="display:@Model.OpenModifInter">
-@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <hr />
     <h6 class="text-center">INFORMATIONS MAINTENANCE</h6>
     <hr />
@@ -67,7 +67,6 @@
     <br />
 
     <hr />
-    @*<form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">*@
     <div class="col-sm-12 col-md-12 text-center">
         <h5 class="text-center">Interventions équipements communs</h5>
         <div class="fixed_head_inter">
@@ -105,7 +104,6 @@
                                     {
                                         <a class="btn navbar-inra" asp-action="IntervCommunFini" asp-area="Maintenance" asp-controller="ModifMaint" asp-route-id="@x.IdInterv">Intervention Finie</a>
                                     }
-
                                 </td>
                             </tr>
                         }
@@ -114,42 +112,52 @@
             </div>
         </div>
     </div>
-    @*</form>*@
     <hr />
 
-    <form asp-action="ModifierInterCommun" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">
-        <div class="col-sm-12 col-md-12 text-center">
-            <h5 class="text-center">Interventions équipements PFL</h5>
-            <div class="fixed_head_inter">
-                <div class="row justify-content-center">
-                    <table class="table table-striped justify-content-center table-sm">
-                        <thead class="thead-dark">
+    <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Interventions équipements PFL</h5>
+        <div class="fixed_head_inter">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nom équipement</th>
+                            <th scope="col">Date début</th>
+                            <th scope="col">Date fin</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ListeEquipsPfl)
+                        {
                             <tr>
-                                <th scope="col">Nom équipement</th>
-                                <th scope="col">Date début</th>
-                                <th scope="col">Date fin</th>
-                                <th scope="col">Actions</th>
+                                <td>@x.NomEquipement</td>
+                                <td>@x.DateDebut</td>
+                                <td>
+                                    <form asp-action="ModifierInterPfl" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@x.Id">
+                                        <div class="form-row justify-content-center">
+                                            @x.DateFin
+                                        </div>
+                                        @if (x.IsIntervFinie == false)
+                                        {
+                                            <input type="submit" class="btn btn-default navbar-inra" value="Changer date fin" name="action" />
+                                        }
+                                    </form>
+                                </td>
+                                <td>
+                                    @if (x.IsIntervFinie == false)
+                                    {
+                                        <a class="btn navbar-inra" asp-action="IntervPflFini" asp-area="Maintenance" asp-controller="ModifMaint" asp-route-id="@x.Id">Intervention Finie</a>
+                                    }
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var x in Model.ListeEquipsPfl)
-                            {
-                                <tr>
-                                    <td><a href="#">@x.NomEquipement</a></td>
-                                    <td><a href="#">@x.DateDebut</a></td>
-                                    <td><a href="#">@x.DateFin</a></td>
-                                    <td>
-                                        <a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.Id">Valider</a>
-                                        <a class="btn navbar-inra" asp-action="RefuserEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.Id">Refuser</a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    </form>
+    </div>
+
     <hr />
 </div>
 
@@ -212,7 +220,7 @@
                 </div>
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold">
-                        Si vous indiquez que l'intervention est finie, la date fin de cet opération sera 
+                        Si vous indiquez que l'intervention est finie, la date fin de cet opération sera
                         mise à jour avec la date courante et un mail sera envoyé à tous les utilisateurs pour les informer.
                         Voulez-vous continuer?
                     </p>
@@ -220,6 +228,51 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
                     <input type="submit" class="btn btn-primary" value="Oui" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!-- Modal pour choisir une nouvelle date intervPfl-->
+<form asp-action="ModifierIntervPfl" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervPfl" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ModifierDatePfl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Modifier date fin d'intervention équipement PFL</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <div class="form-row">
+                        <div class="form-group col-sm-5 col-md-5">
+                            @Html.Label("Date Fin:  ")
+                            <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
+                            @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
+                            <label class="col-md-2 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-4 col-md-4">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
                 </div>
             </div>
         </div>
@@ -239,9 +292,14 @@
             {
                 ViewBag.modalValid = "hide";
             }
+            if (ViewBag.modalModifPfl == null)
+            {
+                ViewBag.modalModifPfl = "hide";
+            }
         }
         $('#ModifierDate').modal('@ViewBag.modalModif');
         $('#ValidFinIntervCom').modal('@ViewBag.modalValid');
+        $('#ModifierDatePfl').modal('@ViewBag.modalModifPfl');
 
 </script>
 }

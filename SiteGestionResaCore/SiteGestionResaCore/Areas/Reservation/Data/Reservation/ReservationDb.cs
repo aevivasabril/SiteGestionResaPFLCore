@@ -529,10 +529,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                               from equip in context.equipement
                               from reser in context.reservation_projet
                               where (essai.id == reser.essaiID
-                              && (reser.equipementID == idEquipement)
+                              && (reser.equipementID == idEquipement) && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                               && (reser.equipement.zoneID == ApCinq || reser.equipement.zoneID == ApSix || reser.equipement.zoneID == ApSeptA
                                 || reser.equipement.zoneID == ApSeptB || reser.equipement.zoneID == ApSeptC
-                                || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)
+                                || reser.equipement.zoneID == ApHuit || reser.equipement.zoneID == ApNeuf)                                
                               && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
                               && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
                               select essai).Distinct().ToList();
@@ -545,6 +546,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                               from reser in context.reservation_projet
                               where (essai.id == reser.essaiID
                               && ((reser.equipement.id == idEquipement) || (reser.equipement.zoneID == zon))
+                              && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
+                                    && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
                               //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                               && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
                               && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))

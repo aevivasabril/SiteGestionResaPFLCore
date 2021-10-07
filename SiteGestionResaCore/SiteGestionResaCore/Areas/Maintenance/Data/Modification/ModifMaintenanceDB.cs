@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
+using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -25,6 +26,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             this.logger = logger;
             this.userManager = userManager;
         }
+        /// <summary>
+        /// Obtenir infos sur la maintenance à partir de son code operation INTERV00000
+        /// </summary>
+        /// <param name="CodeIntervention">code INTERV12345</param>
+        /// <returns></returns>
         public MaintenanceInfos ObtenirInfosMaint(string CodeIntervention)
         {
             var mainte = context.maintenance.First(m => m.code_operation.Equals(CodeIntervention));
@@ -53,8 +59,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                 return false;
             else
                 return true;
-            //return false;
-        }
+        }  
+
         /// <summary>
         /// Retourne la liste des équipements communs dont l'id maintenance est égal à IdMaint
         /// </summary>
@@ -88,7 +94,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
 
             return List;
         }
-
+        /// <summary>
+        /// Liste des interventions par maintenance reservation_maintenance
+        /// </summary>
+        /// <param name="IdMaint">id maintenance</param>
+        /// <returns></returns>
         public List<EquipPflXIntervention> ListIntervPFL(int IdMaint)
         {
             List<EquipPflXIntervention> List = new List<EquipPflXIntervention>();
@@ -131,20 +141,195 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             return dateFin;
         }
 
+        /// <summary>
+        /// Obtenir liste des utilisateurs du site pour envoie des mails
+        /// </summary>
+        /// <returns></returns>
         public List<utilisateur> ObtenirListUtilisateursSite()
         {
             return context.Users.Distinct().ToList();
         }
 
-        public maintenance ObtenirMaintenance(int IdresaEquipComm)
+        /// <summary>
+        /// Obtenir les infos maintenance à partir d'une des réservations sur un équipement commun
+        /// </summary>
+        /// <param name="IdresaEquipComm"></param>
+        /// <returns></returns>
+        public maintenance ObtenirMaintenanceXInterv(int IdresaEquipComm)
         {
             var resa = context.resa_maint_equip_adjacent.First(r => r.id == IdresaEquipComm);
             return context.maintenance.First(m => m.id == resa.maintenanceID);
         }
 
+        /// <summary>
+        /// Obtenir les interventions usr les équipements commun sur une maintenance
+        /// </summary>
+        /// <param name="IdresaEquipComm"> id resa équipement commun x intervention</param>
+        /// <returns></returns>
         public resa_maint_equip_adjacent ObtenirIntervEquiComm(int IdresaEquipComm)
         {
             return context.resa_maint_equip_adjacent.First(r => r.id == IdresaEquipComm);
+        }
+
+        /// <summary>
+        /// Obtenir intervention sur un équipement PFL à partir de son id
+        /// </summary>
+        /// <param name="IdresaEquipPfl"></param>
+        /// <returns></returns>
+        public reservation_maintenance ObtenirIntervEquipPfl(int IdresaEquipPfl)
+        {
+            return context.reservation_maintenance.First(r => r.id == IdresaEquipPfl);
+        }
+
+        /// <summary>
+        /// Obtenir les infos maintenance à partir de l'id d'une intervention liée sur un des équipements pfl
+        /// </summary>
+        /// <param name="IdresaEquipPfl"></param>
+        /// <returns></returns>
+        public maintenance ObtenirMaintenanceXIntervPFl(int IdresaEquipPfl)
+        {
+            var resa = context.reservation_maintenance.First(r => r.id == IdresaEquipPfl);
+            return context.maintenance.First(m => m.id == resa.maintenanceID);
+        }
+
+        /// <summary>
+        /// Mettre à jour un essai pour l'annuler
+        /// </summary>
+        /// <param name="ess">essai</param>
+        /// <param name="codeMaint">code operation maintenances</param>
+        public void AnnulerEssai(essai ess, string codeMaint)
+        {
+            var essa = context.essai.First(e => e.id == ess.id);
+            essa.resa_refuse = true;
+            essa.status_essai = EnumStatusEssai.Refuse.ToString();
+            essa.raison_refus = "Essai annulé automatiquement suite à l'intervention N°: " + codeMaint;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Obtenir mail utilisateur propietaire d'un essai
+        /// </summary>
+        /// <param name="iduser"></param>
+        /// <returns></returns>
+        public string ObtenirMailUser(int iduser)
+        {
+            return context.Users.First(i => i.Id == iduser).Email;
+        }
+
+        /// <summary>
+        /// Liste des utilisateurs dont le role égal logistic
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<utilisateur>> List_utilisateurs_logistiqueAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("Logistic");
+        }
+
+        /// <summary>
+        /// Changer la date fin pour une intervetion équipement PFL
+        /// </summary>
+        /// <param name="IdResaPfl"></param>
+        /// <param name="NewDateFin"></param>
+        public void ChangeDateFinEquipPFL(int IdResaPfl, DateTime NewDateFin)
+        {
+            reservation_maintenance resa = context.reservation_maintenance.First(r => r.id == IdResaPfl);
+            resa.date_fin = NewDateFin;
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Vérifier s'une zone est dispo pour midification des date fin!
+        /// toutes les interventions sauf les pannes (maintenance curative)
+        /// </summary>
+        /// <param name="dateDebut"></param>
+        /// <param name="dateFin"></param>
+        /// <param name="idEquipement"></param>
+        /// <param name="Idmaintenance"></param>
+        /// <returns></returns>
+        public bool ModifZoneDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement, int Idmaintenance)
+        {
+            bool resaOk = false;
+            bool interOk = false;
+
+            int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
+            int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
+            int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
+            int ApSeptB = Convert.ToInt32(EnumZonesPfl.SalleAp7B);
+            int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
+            int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
+            int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+
+            // Récupérer l'id zone pour l'équipement enquêté
+            var zon = (from equip in context.equipement
+                       where equip.id == idEquipement
+                       select equip.zoneID.Value).First();
+
+            #region disponibilité sur les essais
+
+            // Si l'équipement où l'on intervient est dans la PFL alors il faut vérifier qu'il n'y a pas des essais confidentiels aux mêmes dates
+            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            if (zon != ApCinq && zon != ApSix && zon != ApSeptA && zon != ApSeptB && zon != ApSeptC && zon != ApHuit && zon != ApNeuf)
+            {
+                // Vérifier la disponibilité sur les essais qu'ont au moins un materiel dans la même zone
+                // J'ai enlevé la condition confidentiel car l'essai peut se derouler sauf si ça touche la même zone de mon intervention ou le même équipement
+                var resasZon = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                from equip in context.equipement
+                                where essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (resa.equipement.zoneID == zon || resa.equipementID == idEquipement) //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
+                                && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
+                                && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
+                                && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasZon.Count() == 0)
+                    resaOk = true;
+            }
+            else
+            { // dans le cas des zones alimentaires alors on vérifie qu'il n'y a pas des essais dans la même zone de l'intervention
+                var resasZon = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                from equip in context.equipement
+                                where essai.id == resa.essaiID
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (resa.equipement.zoneID == zon)
+                                && (resa.equipement.zoneID == ApCinq || resa.equipement.zoneID == ApSix || resa.equipement.zoneID == ApSeptA
+                                || resa.equipement.zoneID == ApSeptB || resa.equipement.zoneID == ApSeptC
+                                || resa.equipement.zoneID == ApHuit || resa.equipement.zoneID == ApNeuf)
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasZon.Count() == 0)
+                    resaOk = true;
+            }
+
+            #endregion
+
+            #region disponibilité sur les interventions
+
+            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            // vérifier qu'il ne s'agit pas de la même opération de maintenance
+            var IntervZon = (from maint in context.maintenance
+                             from resaMaint in context.reservation_maintenance
+                             from equip in context.equipement
+                             where maint.id == resaMaint.maintenanceID
+                             && (resaMaint.equipement.zoneID == zon) && (maint.id != Idmaintenance)
+                             && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                             && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                             select maint).Distinct().ToList();
+
+            if (IntervZon.Count() == 0)
+                interOk = true;
+
+            #endregion
+
+            return (resaOk && interOk);
         }
     }
 }

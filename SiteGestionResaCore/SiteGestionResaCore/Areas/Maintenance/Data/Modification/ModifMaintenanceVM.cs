@@ -26,6 +26,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         public int IdIntervCom { get; set; }
 
         /// <summary>
+        /// Id intervention équipement PFL
+        /// </summary>
+        public int IdIntervPfl { get; set; }
+
+        /// <summary>
         /// Date fin pour créneau réservation
         /// </summary>
         [Required(ErrorMessage = "Le champ 'Date Fin' est requis")]
