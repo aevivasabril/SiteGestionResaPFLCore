@@ -33,7 +33,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         /// <returns></returns>
         public MaintenanceInfos ObtenirInfosMaint(string CodeIntervention)
         {
+            string MaintSupprimee = "";
             var mainte = context.maintenance.First(m => m.code_operation.Equals(CodeIntervention));
+
+            if (mainte.maintenance_supprime == null)
+                MaintSupprimee = "NON";
+            else
+                MaintSupprimee = "OUI";
+
             MaintenanceInfos infos = new MaintenanceInfos
             {
                 IdMaint = mainte.id,
@@ -41,7 +48,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                 CodeOperation = mainte.code_operation,
                 DescriptionOperation = mainte.description_operation,
                 EmailAuteur = context.Users.First(u => u.Id == mainte.userID).Email,
-                TypeMaintenance = mainte.type_maintenance
+                TypeMaintenance = mainte.type_maintenance,
+                MaintenanceSupprime = MaintSupprimee
             };
 
             return infos;
@@ -319,6 +327,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                              from resaMaint in context.reservation_maintenance
                              from equip in context.equipement
                              where maint.id == resaMaint.maintenanceID
+                             && (maint.maintenance_supprime != true)
                              && (resaMaint.equipement.zoneID == zon) && (maint.id != Idmaintenance)
                              && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                              && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
@@ -330,6 +339,42 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             #endregion
 
             return (resaOk && interOk);
+        }
+
+        /// <summary>
+        /// Méthode pour annuler une intervention maintenance
+        /// </summary>
+        /// <param name="IdMaintenance"></param>
+        /// <param name="raisonSupp"></param>
+        /// <returns></returns>
+        public bool SupprimerMaintenance(int IdMaintenance, string raisonSupp)
+        {
+            bool SuppMaintOk = false;
+            maintenance maint = context.maintenance.First(m => m.id == IdMaintenance);
+            maint.maintenance_supprime = true;
+            maint.date_suppression = DateTime.Now;
+            maint.raison_suppression = raisonSupp;
+            try
+            {
+                context.SaveChanges();
+                SuppMaintOk = true;
+            }
+            catch(Exception e)
+            {
+                SuppMaintOk = false;
+                logger.LogError(e, "Impossible de changer la maintenance N°" + IdMaintenance);
+            }
+            return SuppMaintOk;
+        }
+
+        public string ObtenirCodeIntervention(int IdMaintenance)
+        {
+            return context.maintenance.First(m => m.id == IdMaintenance).code_operation;
+        }
+
+        public maintenance ObtenirMaintenanceByID(int IdMaintenance)
+        {
+            return context.maintenance.First(m => m.id == IdMaintenance);
         }
     }
 }

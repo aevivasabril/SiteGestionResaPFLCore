@@ -31,6 +31,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         public int IdIntervPfl { get; set; }
 
         /// <summary>
+        /// Raison de la suppression
+        /// </summary>
+        public string RaisonSuppression { get; set; }
+
+        /// <summary>
         /// Date fin pour créneau réservation
         /// </summary>
         [Required(ErrorMessage = "Le champ 'Date Fin' est requis")]

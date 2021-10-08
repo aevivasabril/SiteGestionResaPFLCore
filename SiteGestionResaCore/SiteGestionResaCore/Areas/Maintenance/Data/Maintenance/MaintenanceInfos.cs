@@ -24,5 +24,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 
         [Display(Name = "Description opération: ")]
         public string DescriptionOperation { get; set; }
+
+        /// <summary>
+        /// Variable pour indiquer si la maintenance est supprimée
+        /// </summary>
+        [Display(Name = "Maintenance supprimée? : ")]
+        public string MaintenanceSupprime { get; set; }
     }
 }

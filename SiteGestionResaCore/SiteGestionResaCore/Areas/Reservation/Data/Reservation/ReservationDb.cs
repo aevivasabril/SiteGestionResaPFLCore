@@ -174,8 +174,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             var maints = (from interMaint in context.reservation_maintenance
                           from maint in context.maintenance
-                          where interMaint.maintenanceID == maint.id &&
-                          ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
+                          where (interMaint.maintenanceID == maint.id)
+                          && (maint.maintenance_supprime != true)
+                          &&((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
                           && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
                           select maint).Distinct().ToArray();
 
@@ -415,6 +416,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                  from resaMaint in context.reservation_maintenance
                                  from equip in context.equipement
                                  where maint.id == resaMaint.maintenanceID
+                                 && (maint.maintenance_supprime != true)
                                  && (resaMaint.equipement.zoneID == zon)
                                  && (resaMaint.equipement.zoneID == ApCinq || resaMaint.equipement.zoneID == ApSix || resaMaint.equipement.zoneID == ApSeptA
                                  || resaMaint.equipement.zoneID == ApSeptB || resaMaint.equipement.zoneID == ApSeptC || resaMaint.equipement.zoneID == ApHuit
@@ -438,6 +440,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                      from resaMaint in context.reservation_maintenance
                                      from equip in context.equipement
                                      where maint.id == resaMaint.maintenanceID
+                                     && (maint.maintenance_supprime != true)
                                      && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
                                      && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC && resaMaint.equipement.zoneID != ApHuit
                                      && resaMaint.equipement.zoneID != ApNeuf)
@@ -454,6 +457,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                      from resaMaint in context.reservation_maintenance
                                      from equip in context.equipement
                                      where maint.id == resaMaint.maintenanceID
+                                     && (maint.maintenance_supprime != null)
                                      && (resaMaint.equipement.zoneID == zon)
                                      && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
                                      && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC && resaMaint.equipement.zoneID != ApHuit
@@ -680,6 +684,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 from resaMaint in context.reservation_maintenance
                                 from equip in context.equipement
                                 where maint.id == resaMaint.maintenanceID
+                                && (maint.maintenance_supprime != true)
                                 && (resaMaint.equipement.zoneID == zon)
                                 && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                 && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
@@ -872,6 +877,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     from resaMaint in context.reservation_maintenance
                                     from equip in context.equipement
                                     where maint.id == resaMaint.maintenanceID
+                                    && (maint.maintenance_supprime != true)
                                     && (resaMaint.equipement.zoneID == ApCinq || resaMaint.equipement.zoneID == ApSix || resaMaint.equipement.zoneID == ApSeptA
                                     || resaMaint.equipement.zoneID == ApSeptB || resaMaint.equipement.zoneID == ApSeptC
                                     || resaMaint.equipement.zoneID == ApHuit || resaMaint.equipement.zoneID == ApNeuf)
@@ -889,6 +895,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     from resaMaint in context.reservation_maintenance
                                     from equip in context.equipement
                                     where maint.id == resaMaint.maintenanceID
+                                    && (maint.maintenance_supprime != true)
                                     && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
                                     && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC
                                     && resaMaint.equipement.zoneID != ApHuit && resaMaint.equipement.zoneID != ApNeuf)
@@ -983,11 +990,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
             #region disponibilité sur les interventions
 
-            // Vérifier qu'il y a pas autre maintenance sur ces dates et sur la même zone
+            // Vérifier qu'il y a pas autre maintenance (non supprimée) sur ces dates et sur la même zone
             var IntervZon = (from maint in context.maintenance
                              from resaMaint in context.reservation_maintenance
                              from equip in context.equipement
                              where maint.id == resaMaint.maintenanceID
+                             && (maint.maintenance_supprime != true)
                              && (resaMaint.equipement.zoneID == zon)
                              && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                              && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))

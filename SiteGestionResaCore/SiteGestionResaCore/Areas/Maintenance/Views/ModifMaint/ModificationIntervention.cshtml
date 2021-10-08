@@ -64,6 +64,13 @@
             @Html.ValidationMessageFor(m => m.InfosMaint.NomIntervenantExt, "", new { @class = "text-danger" })
         </div>
     </div>
+    <div class="form-row">
+        <div class="form-group col-md-7">
+            @Html.LabelFor(m => m.InfosMaint.MaintenanceSupprime, new { @class = "col-md-5 control-label" })
+            <input name="MaintenanceSupprime" asp-for="@Model.InfosMaint.MaintenanceSupprime" class="col-md-6" type="text" disabled="disabled" />
+            @Html.ValidationMessageFor(m => m.InfosMaint.MaintenanceSupprime, "", new { @class = "text-danger" })
+        </div>
+    </div>
     <br />
 
     <hr />
@@ -159,6 +166,14 @@
     </div>
 
     <hr />
+    <form asp-action="SupprimerMaintenance" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">
+        <div class="form-group row">
+            <div class="offset-5 col-md-1">
+                <input type="submit" class="btn btn-default navbar-inra" value="Supprimer maintenance" name="action" />
+            </div>
+        </div>
+    </form>
+
 </div>
 
 
@@ -279,6 +294,68 @@
     </div>
 </form>
 
+<!-- Modal pour affichage de la confirmation "intervention finie"-->
+<form asp-action="ConfirmIntervPfl" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervPfl" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="ValidFinIntervPfl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog modal-sm navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Intervention PFL Finie </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold">
+                        Si vous indiquez que l'intervention est finie, la date fin de cet opération sera
+                        mise à jour avec la date courante.
+                        Voulez-vous continuer?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+                    <input type="submit" class="btn btn-primary" value="Oui" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal pour affichage de la confirmation "Refuser"-->
+<form asp-action="SupprimerOpeMaint" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.InfosMaint.IdMaint" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="SupprimerMaint" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression Maintenance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Etês-vous sûr de vouloir supprimer l'opération de maintenance?
+                    </p>
+                    <p>Indiquez le(s) raison(s) de suppression: </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.RaisonSuppression, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.RaisonSuppression, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
@@ -296,10 +373,20 @@
             {
                 ViewBag.modalModifPfl = "hide";
             }
+            if (ViewBag.modalValidPfl == null)
+            {
+                ViewBag.modalValidPfl = "hide";
+            }
+            if (ViewBag.modalSuppression == null)
+            {
+                ViewBag.modalSuppression = "hide";
+            }
         }
         $('#ModifierDate').modal('@ViewBag.modalModif');
         $('#ValidFinIntervCom').modal('@ViewBag.modalValid');
         $('#ModifierDatePfl').modal('@ViewBag.modalModifPfl');
+        $('#ValidFinIntervPfl').modal('@ViewBag.modalValidPfl');
+        $('#SupprimerMaint').modal('@ViewBag.modalSuppression');
 
 </script>
 }

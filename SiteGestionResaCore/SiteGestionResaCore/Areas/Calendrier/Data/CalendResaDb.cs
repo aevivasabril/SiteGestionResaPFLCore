@@ -167,8 +167,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             var maints = (from interMaint in resaDB.reservation_maintenance
                           from maint in resaDB.maintenance
-                          where interMaint.maintenanceID == maint.id &&
-                          ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
+                          where (interMaint.maintenanceID == maint.id)
+                          && (maint.maintenance_supprime != true)
+                          && ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
                           && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
                           select maint).Distinct().ToArray();
 

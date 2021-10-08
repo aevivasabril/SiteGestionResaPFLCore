@@ -58,7 +58,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             }
             else
             {
-                ModelState.AddModelError("NumMaintenance", "Le numéro d'intervention n'existe pas!");
+                ModelState.AddModelError("NumMaintenance", "Le numéro d'intervention n'existe pas ou l'opération a été annulée");
                 vm.OpenModifInter = vm.Ferme;
                 vm.InfosMaint = new MaintenanceInfos();
                 vm.ListEquipsCommuns = new List<EquipCommunXInterv>();
@@ -124,7 +124,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         vm.DateFin.Value.Month, vm.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                 }
 
-                if (NewDate < DateTime.Today)
+                if (NewDate < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Sélectionnez une date supérieure à aujourd'hui");
                     // Récupérer la session VM
@@ -202,16 +202,25 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <summary>
         /// Action pour mettre à jour la date fin avec la date actuelle pour indiquer que l'intervention est finie
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id resa_maint_equip_adjacent</param>
         /// <returns></returns>
         public IActionResult IntervCommunFini(int id)
         {          
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
             Model.IdIntervCom = id;
-
-            ViewBag.modalValid = "show";
-            return View("ModificationIntervention", Model);
+            // Vérifier que la date d'aujourd'hui est supérieur à la date début intervention pour pouvoir finir l'intervention
+            var inter = modifMaintDb.ObtenirIntervEquiComm(id);
+            if(inter.date_debut < DateTime.Now) // on peut modifier 
+            {
+                ViewBag.modalValid = "show";
+                return View("ModificationIntervention", Model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "L'intervention n'ayant pas commencée encore, vous ne pouvez pas clôturer l'opération");
+                return View("ModificationIntervention", Model);
+            }     
         }
 
         /// <summary>
@@ -233,7 +242,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             maintenance maint = modifMaintDb.ObtenirMaintenanceXInterv(id);
 
             // Déterminer si on est le matin ou l'aprèm
-            if (DateTime.Today.Hour > 7 && DateTime.Today.Hour < 12) // heure fin à mettre au format du matin
+            if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 12) // heure fin à mettre au format du matin
             {
                 NewDate = new DateTime(DateTime.Today.Year,
                     DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0, DateTimeKind.Local);
@@ -255,7 +264,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                             <body> 
                             <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
                            + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE CLOTUREE.</b>"
-                           + "<p> Vous pouvez désormais réutiliser ces équipements. </p> <p>L'équipe PFL, " +
+                           + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
                            "</p>" +
                            "</body>" +
                            "</html>";
@@ -354,7 +363,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         vm.DateFin.Value.Month, vm.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                 }
 
-                if (NewDate < DateTime.Today)
+                if (NewDate < DateTime.Now)
                 {
                     ModelState.AddModelError("", "Sélectionnez une date et un créneau supérieur à aujourd'hui");
                     Model.IdIntervPfl = id;
@@ -461,7 +470,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                             bool DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
                             if (!DateOkPourModif)
                             {
-                                ModelState.AddModelError("", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
+                                ModelState.AddModelError("DateFin", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
                                 Model.IdIntervCom = id;
                                 Model.OpenModifInter = vm.Ouvert;
                                 //Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id); //Mettre à jour uniquement les interventions PFL
@@ -486,6 +495,158 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             }
             return View("ModificationIntervention", Model);
+        }
+
+        
+        public IActionResult IntervPflFini(int id)
+        {
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            Model.IdIntervPfl = id;
+            // Vérifier que la date d'aujourd'hui est supérieur à la date début intervention pour pouvoir finir l'intervention
+            var inter = modifMaintDb.ObtenirIntervEquipPfl(id);
+            if (inter.date_debut < DateTime.Now) // on peut modifier 
+            {
+                ViewBag.modalValidPfl = "show";
+                return View("ModificationIntervention", Model);
+            }
+            else
+            {
+                ModelState.AddModelError("", "L'intervention n'ayant pas commencée encore, vous ne pouvez pas clôturer l'opération");
+                return View("ModificationIntervention", Model);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ConfirmIntervPfl(int id)
+        {
+            // Obtenir les infos maintenance
+            maintenance maint = modifMaintDb.ObtenirMaintenanceXIntervPFl(id);
+
+            DateTime NewDate = new DateTime();
+            // Déterminer si on est le matin ou l'aprèm
+            if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 12) // heure fin à mettre au format du matin
+            {
+                NewDate = new DateTime(DateTime.Today.Year,
+                    DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0, DateTimeKind.Local);
+            }
+            else // Heure fin aprèm
+            {
+                NewDate = new DateTime(DateTime.Today.Year,
+                    DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0, DateTimeKind.Local);
+            }
+            // modifier la datefin pour l'intervention
+            modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id);
+
+            return View("ModificationIntervention", Model);
+        }
+
+        /// <summary>
+        /// Action pour ouvrir une pop-up et saisir la raison de suppression
+        /// </summary>
+        /// <param name="id">id maintenance</param>
+        /// <returns></returns>
+        public IActionResult SupprimerMaintenance(int id)
+        {
+            // Prendre en compte les maintenances supprimées lors du chargement du calendrier 
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            //Model.IdIntervPfl = id;
+            Model.OpenModifInter = Model.Ouvert;
+
+            ViewBag.modalSuppression = "show";
+            return View("ModificationIntervention", Model);
+        }
+
+        /// <summary>
+        /// Action pour supression de maintenance
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <param name="id">id maintenance</param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> SupprimerOpeMaintAsync(ModifMaintenanceVM vm, int id)
+        {
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            string MsgUser = "";
+            bool success = false;
+            int retryCount = 4;
+
+            if (vm.RaisonSuppression != null)
+            {
+                // si type de maintenance = curative (panne) alors envoyer un mail à tout le monde
+                maintenance maint = modifMaintDb.ObtenirMaintenanceByID(id);
+
+                bool IsOK = modifMaintDb.SupprimerMaintenance(id, vm.RaisonSuppression);
+
+                if (IsOK) // intervention supprimée
+                {
+                    if (maint.type_maintenance == "Maintenance curative (Panne)")
+                    {
+                        // envoyer mail aux utilisateurs PFL pour les informer de la suppression
+                        // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
+                        // si enregistrement OK alors envoyer le mail
+                        MsgUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
+                                       + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE SUPPRIMEE.</b>"
+                                       + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
+                                       "</p>" +
+                                       "</body>" +
+                                       "</html>";
+                        // Obtenir la liste des utilisateurs
+                        List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
+
+                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                        foreach (var usr in users)
+                        {
+                            success = false;
+                            while (!success && retryCount > 0)
+                            {
+                                try
+                                {
+                                    await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
+                                    success = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    retryCount--;
+                                    if (retryCount == 0)
+                                    {
+                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                        return View("ModificationIntervention", Model);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    /*string code = modifMaintDb.ObtenirCodeIntervention(id);
+                    Model.InfosMaint = modifMaintDb.ObtenirInfosMaint(code);
+                    Model.OpenModifInter = vm.Ouvert;
+                    Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(id);*/
+                    return View("ConfirmationSupInterv");
+                }
+                else
+                {
+                    ModelState.AddModelError("RaisonSuppression", "Un problème a été recontré lors de la supression de l'intervention, réessayez ultériurement");
+                    Model.OpenModifInter = vm.Ouvert;
+                    ViewBag.modalSuppression = "show";
+                    return View("ModificationIntervention", Model);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("RaisonSuppression", "Vous devez saisir au moins une raison de supression");
+                Model.OpenModifInter = Model.Ouvert;
+
+                ViewBag.modalSuppression = "show";
+                return View("ModificationIntervention", Model);
+            }
         }
     }
 }

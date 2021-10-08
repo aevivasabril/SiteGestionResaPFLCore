@@ -24,5 +24,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         Task<IList<utilisateur>> List_utilisateurs_logistiqueAsync();
         void ChangeDateFinEquipPFL(int IdResaPfl, DateTime NewDateFin);
         bool ModifZoneDisponibleXIntervention(DateTime datedebut, DateTime datefin, int idEquipement, int Idmaintenance);
+        bool SupprimerMaintenance(int IdMaintenance, string raisonSupp);
+        string ObtenirCodeIntervention(int IdMaintenance);
+        maintenance ObtenirMaintenanceByID(int IdMaintenance);
     }
 }
