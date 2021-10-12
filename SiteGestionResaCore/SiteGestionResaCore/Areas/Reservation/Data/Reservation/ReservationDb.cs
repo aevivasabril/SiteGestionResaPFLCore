@@ -496,7 +496,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         }
 
         /// <summary>
-        /// méthode qui vérifie les essais utilisant le même équipement pour intervention où la même zone
+        /// Méthode qui vérifie les essais utilisant le même équipement pour intervention où la même zone
         /// pas besoin de vérifier la confidentialité car dès moment où la zone soit bloqué c'est OK
         /// </summary>
         /// <param name="debutToSave"></param>
@@ -555,7 +555,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
                                     && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
-                              //|| essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
                               && (((debutToSave >= reser.date_debut) || finToSave >= reser.date_debut)
                               && ((debutToSave <= reser.date_fin) || finToSave <= reser.date_fin)))
                               select essai).Distinct().ToList();
