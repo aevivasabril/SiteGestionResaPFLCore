@@ -576,6 +576,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
         {
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
+            //List<essai> EssaisXAnnulation = new List<essai>();
 
             // Récupérer la session "EquipementZone" https://stackoverflow.com/questions/27517912/persisting-information-between-two-view-requests-in-mvc (VOIR CE LIEN)
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
@@ -652,14 +653,47 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         // Vérifier le type d'intervention pour décider l'action de vérification à exécuter
                         switch(nomTypeInterv)
                         {
-                            case "Maintenance curative (Panne)":
+                            case "Maintenance curative (Dépannage)":
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
+                                    // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
+                                    // Si false alors une intervention est déjà déclarée pour les mêmes dates sur la zone
+                                    if(reservationDb.VerifDisponibilitZoneEquipSurInterventions(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement) == false )
+                                    {
+                                        ModelState.AddModelError("", "Zone indisponible car une intervention est déjà déclarée aux mêmes dates sur un des équipements");
+                                        goto ENDT;
+                                    }
                                     // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
-                                    List<essai> ListEssaiXAnnulation = reservationDb.ObtenirListEssaiXAnnulation(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                     EquipementDansZone equipementDansZone = new EquipementDansZone
                                     {
-                                        EssaisXAnnulation = ListEssaiXAnnulation,
+                                        ResasXAnnulation = reservationDb.ObtenirListResasXAnnulationZone(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        DateDebutInterv = debutToSave,
+                                        DateFinInterv = finToSave,
+                                        IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
+                                        NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                    };
+                                    
+                                    MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
+                                    this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
+                                }
+                                break;
+                            case "Maintenance curative (Dépannage sans blocage zone)": 
+                            case "Equipement en panne":
+                                // Vérifier qu'il n'y pas des interventions sur le même équipement à ces dates                               
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    // TODO: il faut vérifier sur les interventions blocant la zone aussi!
+                                    if(reservationDb.VerifDisponibilitEquipSurInterventions(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement) == false)
+                                    {
+                                        ModelState.AddModelError("", "Equipement indisponible car une intervention est déjà déclarée aux mêmes dates");
+                                        goto ENDT;
+                                    }
+                                    var resas = reservationDb.ObtenirListResasXAnnulationEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
+                                    EquipementDansZone equipementDansZone = new EquipementDansZone
+                                    {
+                                        ResasXAnnulation = resas,
                                         DateDebutInterv = debutToSave,
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
@@ -669,110 +703,76 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
                                 }
-                                break;
-                            default: // Je mets "default" car tous les autres types d'intervention seront traités de la même manière
-
-                                #region Sauvegarde réservation dans la liste des créneaux saisies (seulement View model)
+                                break;                           
+                            case "Maintenance préventive (Interne)": 
+                            case "Maintenance préventive (Externe)":
+                            case "Amélioration":
+                                bool isResaOkToAdd = false;
 
                                 #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
-
-                                bool isResaOkToAdd = false;
-                                if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une intervention reservation standard
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
-                                    for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                    // Vérifier qu'il n'y a pas une autre intervention sur la zone aux mêmes dates que l'intervention qu'on déclare
+                                    isResaOkToAdd = reservationDb.ZoneDisponibleXIntervention(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    if (isResaOkToAdd == false)
                                     {
-                                        // Je fais la vérification comme pour une réservation standard considerant que la maintenance surveillera à ne pas avoir des essais aux mêmes dates
-                                        isResaOkToAdd = reservationDb.ZoneDisponibleXIntervention(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
-                                        if (isResaOkToAdd == false)
+                                        if (equipementZone.CalendEquipSelectionnes.Count() == 1)
                                         {
-                                            if (equipementZone.CalendEquipSelectionnes.Count() == 1)
-                                            {
-                                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
-                                                goto ENDT;
-                                            }
-                                            else
-                                            {
-                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
-                                                goto ENDT;
-                                            }
+                                            ModelState.AddModelError("", "Equipement ou zone indisponible pour les dates choisies. Consultez le calendrier et rectifiez votre réservation");
+                                            goto ENDT;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                    }
+                                    // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
+                                    //List<essai> ListEssaiXAnnulation = reservationDb.ObtenirListEssaiXAnnulation(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    EquipementDansZone equipementDansZone = new EquipementDansZone
+                                    {
+                                        ResasXAnnulation = new List<int>(),
+                                        DateDebutInterv = debutToSave,
+                                        DateFinInterv = finToSave,
+                                        IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
+                                        NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                    };
+                                    MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
+                                    this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
+                                }
+                                #endregion
+                                break;
+                            case "Maintenance préventive (Interne sans blocage de zone)":
+                            case "Maintenance préventive (Externe sans blocage de zone)":
+                            case "Amélioration (sans blocage de zone)":
+                                isResaOkToAdd = false;                                
+                                for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                {
+                                    // Je fais la vérification comme pour une réservation standard considerant que la maintenance surveillera à ne pas avoir des essais aux mêmes dates
+                                    isResaOkToAdd = reservationDb.EquipementDisponibleXIntervention(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                    if (isResaOkToAdd == false)
+                                    {
+                                        if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                        {
+                                            ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                            goto ENDT;
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
+                                            goto ENDT;
                                         }
                                     }
                                 }
-                                else // cas où l'on rajoute des équipements à une réservation existante
-                                {
-                                    #region Si jamais on rajoute des équipements sur une intervention
-                                    // selon le type de confidentialité, vérifier la disponibilité des équipements
-                                    // obtenir l'essai où les réservations devront être ajoutées
-                                    /*essai Essai = projetEssaiDb.ObtenirEssai_pourCopie(zonesReservation.IdEssaiXAjoutEquip);
-                                    switch (Essai.confidentialite)
-                                    {
-                                        case "Ouvert":
-                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
-                                            {
-                                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
-                                                if (isResaOkToAdd == false)
-                                                {
-                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
-                                                    {
-                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
-                                                        goto ENDT;
-                                                    }
-                                                    else
-                                                    {
-                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
-                                                        goto ENDT;
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                        case "Restreint":
-                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
-                                            {
-                                                isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
-                                                if (isResaOkToAdd == false)
-                                                {
-                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
-                                                    {
-                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
-                                                        goto ENDT;
-                                                    }
-                                                    else
-                                                    {
-                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
-                                                        goto ENDT;
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                        case "Confidentiel":
-                                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
-                                            {
-                                                isResaOkToAdd = reservationDb.DispoEssaiConfidentielPourAjout(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, Essai.id);
-                                                if (isResaOkToAdd == false)
-                                                {
-                                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
-                                                    {
-                                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
-                                                        goto ENDT;
-                                                    }
-                                                    else
-                                                    {
-                                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier et veuillez rectifier votre réservation");
-                                                        goto ENDT;
-                                                    }
-                                                }
-                                            }
-                                            break;
-                                    }*/
-                                    #endregion
-                                }
+                                #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
                                     // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
                                     //List<essai> ListEssaiXAnnulation = reservationDb.ObtenirListEssaiXAnnulation(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                     EquipementDansZone equipementDansZone = new EquipementDansZone
                                     {
-                                        EssaisXAnnulation = new List<essai>(),
+                                        ResasXAnnulation = new List<int>(),
                                         DateDebutInterv = debutToSave,
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
@@ -783,12 +783,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
                                 }
                                 #endregion
-
-                                #endregion
-
-                                break;
+                                break;                                                                               
                         }
-                    } 
+                    }
                     else
                     { // Cas des réservations standard
                         #region Vérifier que la date début du créneaux à rajouter est inférieur ou égal à une semaine avant la réservation
@@ -843,7 +840,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         {
                             for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                             {
-                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, formulaire.ConfidentialiteEssai);
+                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                 if (isResaOkToAdd == false)
                                 {
                                     if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -869,7 +866,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 case "Ouvert":
                                     for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
-                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement, formulaire.ConfidentialiteEssai);
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                         if (isResaOkToAdd == false)
                                         {
                                             if (equipementZone.CalendEquipSelectionnes.Count() == 1)
@@ -1358,39 +1355,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                         #endregion
 
-                        #region Reverifier la date inférieure et supérieure si essai "confidentiel"
-
-                        if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                        {
-                            // obtenir toutes les réservations après modification
-                            resas = projetEssaiDb.ObtenirResasEssai(Essai.id);
-                            foreach (var reservation in resas)
-                            {
-                                if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
-                                {
-                                    IsFirstResa = false;
-                                    dateSeuilInf = reservation.date_debut;
-                                    dateSeuilSup = reservation.date_fin;
-                                }
-                                else
-                                {
-                                    // Recherche des dates superieur et inferieur sur toutes les réservations
-                                    if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
-                                    {
-                                        dateSeuilInf = reservation.date_debut;
-                                    }
-                                    if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
-                                    {
-                                        dateSeuilSup = reservation.date_fin;
-                                    }
-                                }
-                            }
-                            //Mettre à jour l'essai avec les dates seuil
-                            projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
-                        }
-
-                        #endregion
-
                         #endregion
 
                         // envoyer une variable pour savoir si la confirmation doit envoyer vers l'area user (Vue mes reservations) ou vers l'accueil (réservation standard)
@@ -1482,37 +1446,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 }
                             }
                         }
-
-                        #region date inférieure et supérieure si essai "confidentiel"
-
-                        if (Essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
-                        {
-                            foreach (var reservation in resas)
-                            {
-                                if (IsFirstResa == true) // Executer que lors de la premiere réservation de la liste 
-                                {
-                                    IsFirstResa = false;
-                                    dateSeuilInf = reservation.date_debut;
-                                    dateSeuilSup = reservation.date_fin;
-                                }
-                                else
-                                {
-                                    // Recherche des dates superieur et inferieur sur toutes les réservations
-                                    if (reservation.date_debut.CompareTo(dateSeuilInf) <= 0) // (resa.date_debut <= dateSeuilInf)
-                                    {
-                                        dateSeuilInf = reservation.date_debut;
-                                    }
-                                    if (reservation.date_fin.CompareTo(dateSeuilSup) >= 0)  // (resa.date_fin >= dateSeuilSup)
-                                    {
-                                        dateSeuilSup = reservation.date_fin;
-                                    }
-                                }
-                            }
-                            //Mettre à jour l'essai avec les dates seuil
-                            projetEssaiDb.UpdateEssai(Essai, dateSeuilInf, dateSeuilSup);
-                        }
-
-                        #endregion
 
                         #region Envoi du mail récapitulatif à l'utilisateur
                         // Envoyer le mail récapitulatif utilisateur

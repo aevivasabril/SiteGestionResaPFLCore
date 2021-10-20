@@ -8,7 +8,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 {
     public class EquipementDansZone
     {
-        public List<essai> EssaisXAnnulation { get; set; }
+        public List<int> ResasXAnnulation { get; set; } // contient les id's des reservations projet à supprimer
 
         public int IdEquipementXIntervention { get; set; }
 

@@ -334,11 +334,16 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             string MsgUser = "";
             string MsgLogist = "";
             IList<utilisateur> UsersLogistic = await modifMaintDb.List_utilisateurs_logistiqueAsync();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
+            List<int> ListResasXAnnulation = new List<int>();
+            essai essXres = new essai();
+            string NomEquipement = "";
+            bool DateOkPourModif = false;
 
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXIntervPFl(id);
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+
             // Si la personne n'a pas choisi de date ou créneau
             if (ModelState.IsValid == false) // la date choisie doit etre superieure à la date d'aujourd'hui
             {
@@ -377,29 +382,194 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 {
                     // récupérer l'intervention reservation_maintenance
                     var intervention = modifMaintDb.ObtenirIntervEquipPfl(id);
-
+                    NomEquipement = modifMaintDb.NomEquipement(intervention.equipementID);
                     switch (maint.type_maintenance)
                     {
-                        case "Maintenance curative (Panne)":
-                            // Si un nouveau essai a été rajoutée alors les annuler (essais non refusés et non supprimés)
-                            List<essai> ListEssaiXAnnulation = reservationDb.ObtenirListEssaiXAnnulation(intervention.date_debut, NewDate, intervention.equipementID);
-                            // Annuler l'essai et envoyer mail au propiètaire pour l'informer
-                            foreach (var ess in ListEssaiXAnnulation)
+                        case "Equipement en panne":
+                        case "Maintenance curative (Dépannage sans blocage zone)":
+                            // Vérifier la disponibilité sur les interventions
+                            DateOkPourModif = modifMaintDb.VerifDisponibilitEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID);
+                            if (!DateOkPourModif)
                             {
-                                modifMaintDb.AnnulerEssai(ess, maint.code_operation);
-                                string mail = modifMaintDb.ObtenirMailUser(ess.compte_userID);
+                                ModelState.AddModelError("DateFin", "La date choisie est en conflit avec une autre intervention. Vérifier la disponibilité sur le calendrier PFL");
+                                Model.IdIntervCom = id;
+                                Model.OpenModifInter = vm.Ouvert;
+                                //Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id); //Mettre à jour uniquement les interventions PFL
+
+                                ViewBag.modalModifPfl = "show";
+                                return View("ModificationIntervention", Model);
+                            }
+                            else
+                            {
+                                // Si un nouveau essai utilise l'équipement alors les annuler (essais non refusés et non supprimés)
+                                ListResasXAnnulation = reservationDb.ObtenirListResasXAnnulationEquipement(intervention.date_debut, NewDate, intervention.equipementID);
+                                // Annuler l'essai et envoyer mail au propiètaire pour l'informer
+                                foreach (var Idreservation in ListResasXAnnulation)
+                                {
+                                    essXres = modifMaintDb.ObtenirEssai(Idreservation);
+                                    bool isOk = modifMaintDb.SupprimerReservation(Idreservation);
+                                    if (!isOk)
+                                    {
+                                        ModelState.AddModelError("", "Problème pour supprimer le créneau de réservation");
+                                        ViewBag.AfficherMessage = true;
+                                        ViewBag.Message = "Problème pour supprimer le créneau de réservation";
+                                        return View("AjoutEquipements", vm);
+                                    }
+                                    string mail = modifMaintDb.ObtenirMailUser(essXres.compte_userID);
+
+                                    #region Mail à envoyer
+                                    if (maint.type_maintenance.Equals("Equipement en panne"))
+                                    {
+                                        MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'un des équipements réservés sur votre essai N° " + essXres.id + " est en panne." +
+                                            "Titre essai: <b>" + essXres.titreEssai + "</b> Le créneaux réservé pour cet équipement vient d'être supprimé automatiquement." +
+                                            "<br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
+                                            ".<br>Code Intervention: <b>" + maint.code_operation + ".</b> <br> Equipement concerné :<b> " + NomEquipement +
+                                            "</b>.<br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, " +
+                                            "</p>" +
+                                            "</body>" +
+                                            "</html>";
+
+                                        MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipement <b>" + NomEquipement + "</b> a été déclaré en PANNE provocant l'annulation automatique d'une réservation " +
+                                            "de l'essai N°: " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail +
+                                            ")</b>. <br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
+                                            ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" +
+                                            "<br><br> </p> <p>L'équipe PFL, " +
+                                            "</p>" +
+                                            "</body>" +
+                                            "</html>";
+                                    }
+                                    else
+                                    {
+                                        MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
+                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage) sera appliquée les mêmes dates," +
+                                            " sur un des équipements réservés. <br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
+                                            ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.Equipement concerné: " + NomEquipement +
+                                            "<br><br> <p>Nous nous excusons du dérangement. </p></p> <p>L'équipe PFL, </p>" +
+                                            "</body>" +
+                                            "</html>";
+
+                                        MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
+                                            + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
+                                            maint.description_operation + "</b>" + ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" + "Equipement: " +
+                                            NomEquipement + "<br><br> </p> <p>L'équipe PFL, </p>" +
+                                            "</body>" +
+                                            "</html>";
+                                    }
+                                    #endregion
+
+                                    #region Envoi de mail pour le propiètaire essai
+
+                                    success = false;
+                                    retryCount = 5;
+                                    while (!success && retryCount > 0)
+                                    {
+                                        try
+                                        {
+                                            await emailSender.SendEmailAsync(mail, "Modification automatique de votre essai", MsgUser);
+                                            success = true;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            retryCount--;
+                                            if (retryCount == 0)
+                                            {
+                                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                                return View("ModificationIntervention", Model);
+                                            }
+                                        }
+                                    }
+                                    #endregion
+
+                                    #region Envoyer un mail aux utilisateurs logistique
+
+                                    for (int index = 0; index < UsersLogistic.Count(); index++)
+                                    {
+                                        NumberOfRetries = 5;
+                                        retryCount = NumberOfRetries;
+                                        success = false;
+
+                                        while (!success && retryCount > 0)
+                                        {
+                                            try
+                                            {
+                                                await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Mise à jour Opération de maintenancei", MsgLogist);
+                                                success = true;
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                retryCount--;
+
+                                                if (retryCount == 0)
+                                                {
+                                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                                    return View("ModificationIntervention", Model);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    #endregion
+                                }
+                                // modifier la datefin pour l'intervention
+                                modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
+                            }                           
+                            break;
+                        case "Maintenance curative (Dépannage)": // blocage de toute la zone concernée
+                            // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
+                            // Si false alors une intervention est déjà déclarée pour les mêmes dates sur la zone
+                            if (reservationDb.VerifDisponibilitZoneEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID) == false)
+                            {
+                                ModelState.AddModelError("DateFin", "La date choisie est en conflit avec une autre intervention ayant lieu sur la même zone. Vérifiez la disponibilité sur le calendrier PFL");
+                                Model.IdIntervCom = id;
+                                Model.OpenModifInter = vm.Ouvert;
+
+                                ViewBag.modalModifPfl = "show";
+                                return View("ModificationIntervention", Model);
+                            }
+                            // Si un nouveau essai a été rajoutée alors les annuler (essais non refusés et non supprimés)
+                            ListResasXAnnulation = reservationDb.ObtenirListResasXAnnulationZone(intervention.date_debut, NewDate, intervention.equipementID);
+                            // Annuler l'essai et envoyer mail au propiètaire pour l'informer
+                            foreach (var IDreser in ListResasXAnnulation)
+                            {
+                                essXres = modifMaintDb.ObtenirEssai(IDreser);
+                                bool isOk = modifMaintDb.SupprimerReservation(IDreser);
+                                if (!isOk)
+                                {
+                                    ModelState.AddModelError("", "Problème pour supprimer le créneau de réservation");
+                                    ViewBag.AfficherMessage = true;
+                                    ViewBag.Message = "Problème pour supprimer le créneau de réservation";
+                                    return View("AjoutEquipements", vm);
+                                }
+
+                                string mail = modifMaintDb.ObtenirMailUser(essXres.compte_userID);
+
+                                MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'un des équipements réservés sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
+                                        "</b> vient d'être supprimé automatiquement." + "<br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates, sur " +
+                                        "cet équipement ou dans la même zone.<br><br> Descriptif du problème: <b>" + maint.description_operation + "</b>" +
+                                        ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br> Equipement concerné: " + NomEquipement +
+                                        "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, </p>" +
+                                        "</body>" +
+                                        "</html>";
+
+                                MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
+                                        + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
+                                        maint.description_operation + "</b>" + ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" +
+                                        "Suppression de la réservation sur l'équipement: " + NomEquipement + "<br><br> </p> <p>L'équipe PFL, </p>" +
+                                        "</body>" +
+                                        "</html>";
 
                                 #region Envoi de mail pour le propiètaire essai
-                                MsgUser = @"<html>
-                                            <body> 
-                                            <p> Bonjour, <br><br> L'équipe PFL vous informe que votre essai N° " + ess.id + ".Titre essai: <b>" + ess.titreEssai +
-                                                    "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates, sur un des équipements réservés de votre essai ou dans la même zone." +
-                                                    "<br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
-                                                    ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
-                                                    "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +
-                                                    "</p>" +
-                                                    "</body>" +
-                                                    "</html>";
 
                                 success = false;
                                 retryCount = 5;
@@ -407,7 +577,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                 {
                                     try
                                     {
-                                        await emailSender.SendEmailAsync(mail, "Votre essai est annulé", MsgUser);
+                                        await emailSender.SendEmailAsync(mail, "Modification automatique de votre essai", MsgUser);
                                         success = true;
                                     }
                                     catch (Exception e)
@@ -423,16 +593,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                 #endregion
 
                                 #region Envoyer un mail aux utilisateurs logistique
-                                MsgLogist = @"<html>
-                                            <body> 
-                                            <p> Bonjour, <br><br> La date fin pour une maintenance curative (Panne) a été prolongée, cet opération rentre en conflit avec un des équipements réservés sur l'essai N°:"
-                                                + ess.id + ".Titre essai: <b>" + ess.titreEssai + " (Propietaire de l'essai: " + modifMaintDb.ObtenirMailUser(ess.compte_userID) + ")</b>. <br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
-                                                ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" +
-                                                "<br><br> </p> <p>L'équipe PFL, " +
-                                                "</p>" +
-                                                "</body>" +
-                                                "</html>";
-
+                                
                                 for (int index = 0; index < UsersLogistic.Count(); index++)
                                 {
                                     NumberOfRetries = 5;
@@ -443,7 +604,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                     {
                                         try
                                         {
-                                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Mise à jour Opération de maintenance annulant un essai", MsgLogist);
+                                            await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Mise à jour Opération de maintenance", MsgLogist);
                                             success = true;
                                         }
                                         catch (Exception e)
@@ -462,12 +623,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                             }
                             // modifier la datefin pour l'intervention
                             modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
-
                             break;
-                        default:
+                        case "Maintenance préventive (Interne)": // vérifier que la zone est dispo
+                        case "Maintenance préventive (Externe)":
+                        case "Amélioration":
                             // Si un essai est en conflit alors indiquer à l'opérateur de choisir une autre date
-                            // Vérifier que la date choisie ne se croise pas avec des autres essais pu maintenances
-                            bool DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
+                            // Vérifier que la date choisie ne se croise pas avec des autres essais ou maintenances
+                            DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
                             if (!DateOkPourModif)
                             {
                                 ModelState.AddModelError("DateFin", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
@@ -484,15 +646,35 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                 modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
                             }
                             break;
+                        case "Maintenance préventive (Interne sans blocage de zone)":
+                        case "Maintenance préventive (Externe sans blocage de zone)":
+                        case "Amélioration (sans blocage de zone)":
+                            // Si un essai est en conflit alors indiquer à l'opérateur de choisir une autre date
+                            // Vérifier que la date choisie ne se croise pas avec des autres essais ou maintenances
+                            DateOkPourModif = modifMaintDb.ModifEquipementDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
+                            if (!DateOkPourModif)
+                            {
+                                ModelState.AddModelError("DateFin", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
+                                Model.IdIntervCom = id;
+                                Model.OpenModifInter = vm.Ouvert;
+                                //Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id); //Mettre à jour uniquement les interventions PFL
+
+                                ViewBag.modalModifPfl = "show";
+                                return View("ModificationIntervention", Model);
+                            }
+                            else
+                            {
+                                // modifier la date fin de mon intervention
+                                modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
+                            }
+                            break;                      
                     }
                     Model.IdIntervPfl = id;
                     Model.OpenModifInter = Model.Ouvert;
                     Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id);
                     // Sauvegarder la session data du view model car il a les infos sur l'intervention complète
                     this.HttpContext.AddToSession("ModifMaintVM", Model);
-                }
-                
-
+                }             
             }
             return View("ModificationIntervention", Model);
         }

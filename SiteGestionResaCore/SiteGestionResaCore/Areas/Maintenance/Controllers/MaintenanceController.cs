@@ -320,12 +320,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
         public async Task<IActionResult> ValiderInterventionsAsync(AjoutEquipementsViewModel model)
         {
             string MsgUser = "";
+            bool IsOk = false;
             // Retry pour envoi mail
             int NumberOfRetries = 5;
             var retryCount = NumberOfRetries;
             var success = false;
             string MsgLogist = "";
             IList<utilisateur> UsersLogistic = await intervDb.List_utilisateurs_logistiqueAsync();         // Liste des Administrateurs/Logistic à récupérer pour envoi de notification
+            essai essXres = new essai();
 
             #region Validation des interventions sur des péripheriques à la PFL
             // Récuperer ma session avec les créneaux d'intervention
@@ -349,12 +351,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
             // Création de l'opération de maintenance
             maintenance maintenance = intervDb.AjoutMaintenance(formulaire);
 
+            #region Liste des équipements sans zone
             // Pas de notion pour le type de maintenance pour les équipements sans zone
-            if(vm.ListEquipsSansZone.Count()! == 0)
+            if (vm.ListEquipsSansZone.Count() != 0)
             {
                 foreach (var inter in vm.ListEquipsSansZone)
                 {
-                    bool IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
+                    IsOk = intervDb.EnregistrerIntervSansZone(inter, maintenance);
                     if (!IsOk)
                     {
                         ModelState.AddModelError("DescriptionProbleme", "Problème pour ajouter une nouvelle intervention sans zone, essayez à nouveau");
@@ -404,35 +407,111 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                     }
                 }
             }
+            #endregion
+
+            #region Liste des équipements dans zone
 
             if (vm.ListEquipsDansZones.Count() != 0)
             {
                 #region Traiter les équipements pour intervention qui sont dans une zone (EQUIPEMENTS DANS UNE ZONE)
 
-                if (maintenance.type_maintenance.Equals("Maintenance curative (Panne)"))
+                switch (maintenance.type_maintenance)
                 {
-                    // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
-                    // Obtenir la liste des essais à supprimer
-                    foreach (var equipementDansZone in vm.ListEquipsDansZones)
-                    {
-                        foreach (var ess in equipementDansZone.EssaisXAnnulation)
+                    case "Maintenance curative (Dépannage)":
+                    case "Equipement en panne":
+                    case "Maintenance curative (Dépannage sans blocage zone)":
+                        // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
+                        // Obtenir la liste des essais à supprimer
+                        #region Annulation des essais et envoie de mail selon le cas d'intervention
+
+                        foreach (var equipementDansZone in vm.ListEquipsDansZones)
                         {
-                            if (intervDb.UpdateEssai(ess.id).resa_refuse == null) // essai pas encore annulé
+                            foreach (var IDreser in equipementDansZone.ResasXAnnulation)
                             {
-                                intervDb.AnnulerEssai(ess, formulaire.CodeMaintenance);
+                                essXres = intervDb.ObtenirEssai(IDreser);
+                                bool isOk = intervDb.SupprimerReservation(IDreser);
+                                if (!isOk)
+                                {
+                                    ModelState.AddModelError("", "Problème pour supprimer le créneau de réservation");
+                                    ViewBag.AfficherMessage = true;
+                                    ViewBag.Message = "Problème pour supprimer le créneau de réservation";
+                                    return View("AjoutEquipements", vm);
+                                }
                                 // Envoyer le mail au propiètaire de l'essai
-                                // obtenir le mail du propietaire
-                                string mail = intervDb.ObtenirMailUser(ess.compte_userID);
-                                MsgUser = @"<html>
-                                            <body> 
-                                            <p> Bonjour, <br><br> L'équipe PFL vous informe que votre essai N° " + ess.id + ".Titre essai: <b>" + ess.titreEssai +
-                                                "</b> vient d'être annulé automatiquement." + "<br>Une maintenance curative (Panne) sera appliquée les mêmes dates, sur un des équipements réservés de votre essai ou dans la même zone." +
-                                                "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
-                                                ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Prenez contact avec l'équipe pour reprogrammer votre essai" +
-                                                "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, " +
-                                                "</p>" +
-                                                "</body>" +
-                                                "</html>";
+                                string mail = intervDb.ObtenirMailUser(essXres.compte_userID);
+                                if (maintenance.type_maintenance.Equals("Equipement en panne")) // Envoie de mail selon le type d'intervention
+                                {
+                                    #region Mails à envoyer
+                                    MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'un des équipements réservés sur votre essai N° " + essXres.id + " est en panne." +
+                                        "Titre essai: <b>" + essXres.titreEssai + "</b> Le créneaux réservé pour cet équipement vient d'être supprimé automatiquement." +
+                                        "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                        ".<br>Code Intervention: <b>" + formulaire.CodeMaintenance + ".</b> <br> Equipement concerné :<b> " + equipementDansZone.NomEquipement +
+                                        "</b>.<br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, " +
+                                        "</p>" +
+                                        "</body>" +
+                                        "</html>";
+
+                                    MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipement <b>" + equipementDansZone.NomEquipement + "</b> a été déclaré en PANNE provocant l'annulation automatique d'une réservation " +
+                                        "de l'essai N°: " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail +
+                                        ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                        ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
+                                        "<br><br> </p> <p>L'équipe PFL, " +
+                                        "</p>" +
+                                        "</body>" +
+                                        "</html>";
+                                    #endregion
+                                }
+                                else if (maintenance.type_maintenance.Equals("Maintenance curative (Dépannage)"))
+                                {
+                                    #region Mails à envoyer
+                                    MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
+                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage) sera appliquée les mêmes dates, sur un " +
+                                            "des équipements réservés de votre essai ou dans la même zone.<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Equipement concerné: <b>" + equipementDansZone.NomEquipement +                                          
+                                            "</b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
+                                            "</body>" +
+                                            "</html>";
+
+                                    MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
+                                        + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
+                                        formulaire.DescriptionInter + "</b>" + ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" + 
+                                        "Suppression de la réservation sur l'équipement: <b>" + equipementDansZone.NomEquipement + "</b><br><br> </p> <p>L'équipe PFL, </p>" +
+                                        "</body>" +
+                                        "</html>";
+                                    #endregion
+                                }
+                                else // cas if(maintenance.type_maintenance.Equals("Maintenance curative (Dépannage sans blocage zone)"))
+                                {
+                                    #region Mails à envoyer
+                                    MsgUser = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
+                                        "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage sans blocage de zone) sera appliquée " +
+                                        "les mêmes dates, sur un des équipements réservés de votre essai." +
+                                        "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
+                                        ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.Equipement concerné: <b>" + equipementDansZone.NomEquipement +
+                                        "</b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
+                                        "</body>" +
+                                        "</html>";
+
+                                    MsgLogist = @"<html>
+                                        <body> 
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage sans blocage de zone) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
+                                        + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
+                                        formulaire.DescriptionInter + "</b>" + ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" + "Equipement: <b>" +
+                                        equipementDansZone.NomEquipement + "</b><br><br> </p> <p>L'équipe PFL, </p>" +
+                                        "</body>" +
+                                        "</html>";
+                                    #endregion
+                                }
 
                                 success = false;
                                 retryCount = 5;
@@ -440,7 +519,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                 {
                                     try
                                     {
-                                        await emailSender.SendEmailAsync(mail, "Votre essai est annulé", MsgUser);
+                                        await emailSender.SendEmailAsync(mail, "Mise à jour de votre essai", MsgUser);
                                         success = true;
                                     }
                                     catch (Exception e)
@@ -457,15 +536,6 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                 }
 
                                 #region Envoyer un mail aux utilisateurs logistique
-                                MsgLogist = @"<html>
-                                            <body> 
-                                            <p> Bonjour, <br><br> Une maintenance curative (Panne) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
-                                                + ess.id + ".Titre essai: <b>" + ess.titreEssai + " (Propietaire de l'essai: " + intervDb.ObtenirMailUser(ess.compte_userID) + ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
-                                                ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
-                                                "<br><br> </p> <p>L'équipe PFL, " +
-                                                "</p>" +
-                                                "</body>" +
-                                                "</html>";
 
                                 for (int index = 0; index < UsersLogistic.Count(); index++)
                                 {
@@ -494,32 +564,32 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         }
                                     }
                                 }
-                                #endregion
+                                #endregion                               
                             }
                         }
-                    }
-                    bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
-                    if (!IsOk)
-                    {
-                        ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
-                        ViewBag.AfficherMessage = true;
-                        ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
-                        return View("AjoutEquipements", vm);
-                    }
-                }
-                else
-                { // Dans tous les autres cas, normalement la personne qui saisie l'intervention veille à ne pas faire de conflit (avec un essai "Restreint")
+                        IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                        if (!IsOk)
+                        {
+                            ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                            ViewBag.AfficherMessage = true;
+                            ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                            return View("AjoutEquipements", vm);
+                        }
+                        #endregion
 
-                    bool IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
-                    if (!IsOk)
-                    {
-                        ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
-                        ViewBag.AfficherMessage = true;
-                        ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
-                        return View("AjoutEquipements", vm);
-                    }
+                        break;
+                    default:// Tous les autres cas on envoie pas de mail de notification, on enregistre uniquement les interventions        
+                        // Dans tous les autres cas, normalement la personne qui saisie l'intervention veille à ne pas faire de conflit (avec un essai "Restreint")
+                        IsOk = intervDb.EnregistrerIntervsDansZone(vm.ListEquipsDansZones, maintenance);
+                        if (!IsOk)
+                        {
+                            ModelState.AddModelError("", "Problème pour enregistrer les créneaux d'intervention.");
+                            ViewBag.AfficherMessage = true;
+                            ViewBag.Message = "Problème pour enregistrer les créneaux d'intervention.";
+                            return View("AjoutEquipements", vm);
+                        }
+                        break;
                 }
-
                 #endregion
             }
 
@@ -528,8 +598,10 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
 
             #endregion
 
+
+            #endregion
+
             return View("Confirmation");
         }
-
     }
 }

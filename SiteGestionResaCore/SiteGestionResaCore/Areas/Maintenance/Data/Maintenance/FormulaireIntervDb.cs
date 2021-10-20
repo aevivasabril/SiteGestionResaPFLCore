@@ -119,13 +119,20 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
             return context.Users.Distinct().ToList();
         }
 
-        public void AnnulerEssai(essai ess, string codeMaint)
+        public bool SupprimerReservation(int IDres)
         {
-            var essa = context.essai.First(e => e.id == ess.id);
-            essa.resa_refuse = true;
-            essa.status_essai = EnumStatusEssai.Refuse.ToString();
-            essa.raison_refus = "Essai annulé automatiquement suite à l'intervention N°: " + codeMaint;
-            context.SaveChanges();
+            try
+            {
+                reservation_projet resa = context.reservation_projet.First(r => r.id == IDres);
+                context.reservation_projet.Remove(resa);
+                context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la suppression réservation suite à intervention");
+                return false;
+            }
+            return true;
         }
 
         public string ObtenirMailUser(int idUser)
@@ -162,11 +169,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
             return isOk;
         }
 
-        public essai UpdateEssai(int essId)
+        public essai ObtenirEssai(int resaID)
         {
-            return context.essai.First(e => e.id == essId);
+            return context.essai.First(e => e.id == context.reservation_projet.First(r => r.id == resaID).essaiID);
         }
-
- 
     }
 }

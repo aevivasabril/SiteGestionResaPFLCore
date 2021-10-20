@@ -12,7 +12,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         ReservationsJour ObtenirReservationsJourEssai(DateTime dateResa, int IdEquipement);
 
-        bool VerifDisponibilitéEquipement(DateTime dateDebut, DateTime dateFin, int idEquipement, string Confidentialite);
+        bool VerifDisponibilitéEquipement(DateTime dateDebut, DateTime dateFin, int idEquipement);
 
         string ObtenirNomEquipement(int id);
 
@@ -22,11 +22,18 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         string ObtenirNomTypeMaintenance(int id);
 
-        List<essai> ObtenirListEssaiXAnnulation(DateTime debutToSave, DateTime finToSave, int idEquipement);
+        List<int> ObtenirListResasXAnnulationZone(DateTime debutToSave, DateTime finToSave, int idEquipement);
+
+        List<int> ObtenirListResasXAnnulationEquipement(DateTime debutToSave, DateTime finToSave, int idEquipement);
 
         string ObtenirNomZoneImpacte(int IdEquipement);
 
         bool ZoneDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement);
+
+        bool EquipementDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement);
+
+        bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement);
+        bool VerifDisponibilitEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement);
 
     }
 }

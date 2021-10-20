@@ -15,11 +15,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
         maintenance AjoutMaintenance(MaintenanceViewModel vm);
         bool EnregistrerIntervSansZone(EquipementSansZoneVM sansZoneVM, maintenance maint);
         List<utilisateur> ObtenirListUtilisateursSite();
-        void AnnulerEssai(essai ess, string codeMaintenance);
+        bool SupprimerReservation(int IDres);
         string ObtenirMailUser(int idUser);
         //bool AjoutInterventions(List<EquipementDansZone> listeDans, List<EquipementSansZoneVM> listSans, int MaintId);
         bool EnregistrerIntervsDansZone(List<EquipementDansZone> EquipDansZone, maintenance maint);
-        essai UpdateEssai(int essId);
+        essai ObtenirEssai(int essId);
 
     }
 }
