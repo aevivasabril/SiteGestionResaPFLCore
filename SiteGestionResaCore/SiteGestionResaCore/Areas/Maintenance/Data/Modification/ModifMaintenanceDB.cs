@@ -151,11 +151,12 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
 
         /// <summary>
         /// Obtenir liste des utilisateurs du site pour envoie des mails
+        /// utilisateurs avec un compte actif!
         /// </summary>
         /// <returns></returns>
         public List<utilisateur> ObtenirListUtilisateursSite()
         {
-            return context.Users.Distinct().ToList();
+            return context.Users.Where(u=>u.compteInactif != true).ToList();
         }
 
         /// <summary>

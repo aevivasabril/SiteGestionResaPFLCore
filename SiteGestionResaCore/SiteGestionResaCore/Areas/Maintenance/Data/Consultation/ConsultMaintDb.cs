@@ -33,27 +33,31 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
-                if (maint.intervenant_externe != false)
+
+                if(maint.maintenance_supprime != true)
                 {
-                    NomIntervExt = maint.nom_intervenant_ext;
-                }
-                else
-                {
-                    NomIntervExt = "";
-                }
-                InfosIntervDansPFL info = new InfosIntervDansPFL
-                {
-                    DateDebut = inter.date_debut,
-                    DateFin = inter.date_fin,
-                    CodeMaint = maint.code_operation,
-                    DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
-                    IdResMaint = inter.id,
-                    NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
-                    OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
-                    TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
-                    NomIntervExterne = NomIntervExt
-                };
-                ListPFL.Add(info);
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosIntervDansPFL info = new InfosIntervDansPFL
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        CodeMaint = maint.code_operation,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        NomIntervExterne = NomIntervExt
+                    };
+                    ListPFL.Add(info);
+                }            
             }
             return ListPFL;
         }
@@ -67,29 +71,33 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
-                if (maint.intervenant_externe != false)
-                {
-                    NomIntervExt = maint.nom_intervenant_ext;
-                }
-                else
-                {
-                    NomIntervExt = "";
-                }
-                InfosIntervSansZone info = new InfosIntervSansZone
-                {
-                    DateDebut = inter.date_debut,
-                    DateFin = inter.date_fin,
-                    DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
-                    IdResMaint = inter.id,
-                    CodeMaint = maint.code_operation,
-                    NomEquipement = inter.nom_equipement,
-                    ZoneAffecte = inter.zone_affectee,
-                    OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
-                    TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
-                    NomIntervExterne = NomIntervExt
-                };
 
-                ListSansZone.Add(info);
+                if(maint.maintenance_supprime != true)
+                {
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosIntervSansZone info = new InfosIntervSansZone
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        CodeMaint = maint.code_operation,
+                        NomEquipement = inter.nom_equipement,
+                        ZoneAffecte = inter.zone_affectee,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        NomIntervExterne = NomIntervExt
+                    };
+
+                    ListSansZone.Add(info);
+                }                
             }
             return ListSansZone;
         }

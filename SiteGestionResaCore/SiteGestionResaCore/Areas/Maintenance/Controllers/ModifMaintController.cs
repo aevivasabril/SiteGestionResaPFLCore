@@ -341,6 +341,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXIntervPFl(id);
+
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
 
@@ -368,12 +369,25 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         vm.DateFin.Value.Month, vm.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                 }
 
-                if (NewDate < DateTime.Now)
+                if (NewDate < DateTime.Now )
                 {
-                    ModelState.AddModelError("", "Sélectionnez une date et un créneau supérieur à aujourd'hui");
+                    ModelState.AddModelError("DateFin", "Sélectionnez une date et un créneau supérieur à aujourd'hui");
                     Model.IdIntervPfl = id;
                     Model.OpenModifInter = vm.Ouvert;
                     Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id); //Mettre à jour uniquement les interventions PFL
+
+                    ViewBag.modalModifPfl = "show";
+                    return View("ModificationIntervention", Model);
+                }
+                // Vérifier que la date fin choisie n'est pas inferieure à la date debut intervention
+                reservation_maintenance resa = modifMaintDb.ObtenirIntervEquipPfl(id);
+
+                if (NewDate < resa.date_debut)
+                {
+                    ModelState.AddModelError("DateFin", "Sélectionnez une date fin supérieure à la date début intervention");
+                    Model.IdIntervPfl = id;
+                    Model.OpenModifInter = vm.Ouvert;
+                    Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id); 
 
                     ViewBag.modalModifPfl = "show";
                     return View("ModificationIntervention", Model);
@@ -700,10 +714,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         }
 
         [HttpPost]
-        public IActionResult ConfirmIntervPfl(int id)
+        public async Task<IActionResult> ConfirmIntervPflAsync(int id)
         {
+            string MsgUser = "";
+            bool success = false;
+            int retryCount = 4;
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXIntervPFl(id);
+            // Récupérer la session VM
+            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
 
             DateTime NewDate = new DateTime();
             // Déterminer si on est le matin ou l'aprèm
@@ -717,10 +736,43 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 NewDate = new DateTime(DateTime.Today.Year,
                     DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0, DateTimeKind.Local);
             }
+
             // modifier la datefin pour l'intervention
             modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
-            // Récupérer la session VM
-            ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            // Envoyer un mail à tous les utilisateurs pour indiquer que l'intervention est finie
+            MsgUser = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
+                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE SUPPRIMEE.</b>"
+                           + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
+                           "</p>" +
+                           "</body>" +
+                           "</html>";
+            // Obtenir la liste des utilisateurs comptes actifs
+            List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
+
+            // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+            foreach (var usr in users)
+            {
+                success = false;
+                while (!success && retryCount > 0)
+                {
+                    try
+                    {
+                        await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retryCount--;
+                        if (retryCount == 0)
+                        {
+                            ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                            return View("ModificationIntervention", Model);
+                        }
+                    }
+                }
+            }
             Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id);
 
             return View("ModificationIntervention", Model);
@@ -733,7 +785,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <returns></returns>
         public IActionResult SupprimerMaintenance(int id)
         {
-            // Prendre en compte les maintenances supprimées lors du chargement du calendrier 
+            // Prendre en compte les maintenances supprimées lors du chargement du calendrier, pas de limites de date par contre autoriser uniquement les 
+            // utilisateurs "LogistAdmin" pour supprimer les essais
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
             //Model.IdIntervPfl = id;
@@ -760,57 +813,48 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             if (vm.RaisonSuppression != null)
             {
-                // si type de maintenance = curative (panne) alors envoyer un mail à tout le monde
                 maintenance maint = modifMaintDb.ObtenirMaintenanceByID(id);
 
                 bool IsOK = modifMaintDb.SupprimerMaintenance(id, vm.RaisonSuppression);
 
                 if (IsOK) // intervention supprimée
                 {
-                    if (maint.type_maintenance == "Maintenance curative (Panne)")
-                    {
-                        // envoyer mail aux utilisateurs PFL pour les informer de la suppression
-                        // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
-                        // si enregistrement OK alors envoyer le mail
-                        MsgUser = @"<html>
-                            <body> 
-                            <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
-                                       + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE SUPPRIMEE.</b>"
-                                       + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
-                                       "</p>" +
-                                       "</body>" +
-                                       "</html>";
-                        // Obtenir la liste des utilisateurs
-                        List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
+                    // envoyer mail aux utilisateurs PFL pour les informer de la suppression (pour toutes les interventions) 
+                    // TODO: voir si on laisse cet envoi de mail ou si on le supprime pour le moment je le laisse
+                    // si enregistrement OK alors envoyer le mail
+                    MsgUser = @"<html>
+                        <body> 
+                        <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
+                                    + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE SUPPRIMEE.</b>"
+                                    + "<p> Vous pouvez désormais réserver. </p> <p>L'équipe PFL, " +
+                                    "</p>" +
+                                    "</body>" +
+                                    "</html>";
+                    // Obtenir la liste des utilisateurs
+                    List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
 
-                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-                        foreach (var usr in users)
+                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                    foreach (var usr in users)
+                    {
+                        success = false;
+                        while (!success && retryCount > 0)
                         {
-                            success = false;
-                            while (!success && retryCount > 0)
+                            try
                             {
-                                try
+                                await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
+                                success = true;
+                            }
+                            catch (Exception e)
+                            {
+                                retryCount--;
+                                if (retryCount == 0)
                                 {
-                                    await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
-                                    success = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    retryCount--;
-                                    if (retryCount == 0)
-                                    {
-                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                        return View("ModificationIntervention", Model);
-                                    }
+                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                    return View("ModificationIntervention", Model);
                                 }
                             }
                         }
-                    }
-
-                    /*string code = modifMaintDb.ObtenirCodeIntervention(id);
-                    Model.InfosMaint = modifMaintDb.ObtenirInfosMaint(code);
-                    Model.OpenModifInter = vm.Ouvert;
-                    Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(id);*/
+                    }                 
                     return View("ConfirmationSupInterv");
                 }
                 else
@@ -830,5 +874,6 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 return View("ModificationIntervention", Model);
             }
         }
+
     }
 }
