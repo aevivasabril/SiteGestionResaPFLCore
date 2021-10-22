@@ -37,6 +37,7 @@ namespace SiteGestionResaCore
                         await UserManager.CreateAsync(usr, options.Value.mdp);
                         await UserManager.AddToRoleAsync(usr, "MainAdmin");
                         await UserManager.AddToRoleAsync(usr, "Admin");
+                        await UserManager.AddToRoleAsync(usr, "LogisticMaint");
                     }
                 }
             }

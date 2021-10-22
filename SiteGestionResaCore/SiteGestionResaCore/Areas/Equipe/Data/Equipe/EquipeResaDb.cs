@@ -216,5 +216,50 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         {
             return context.essai.Where(e=> e.compte_userID == user.Id).Count();
         }
+
+        /// <summary>
+        /// Obtenir la liste des admin "logistic maintenance"
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<utilisateur>> ObtenirUsersIntervAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("LogisticMaint");
+        }
+
+        public async Task AddingAdminToInterv(int id)
+        {
+            var user = await context.Users.FindAsync(id);
+            // Submit the changes to the database.
+            try
+            {
+                // Obtenir les rôles utilisateur
+                var allUserRoles = await userManager.GetRolesAsync(user);
+                if (!allUserRoles.Contains("LogisticMaint"))
+                {
+                    // Pas la peine de vérifier s'il est dans le groupe Admin (vérification déjà faite sur l'équipeViewModel)
+                    await userManager.AddToRoleAsync(user, "LogisticMaint");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Problème pour ajouter un admin dans le groupe maintenance");
+            }
+        }
+
+        /// <summary>
+        /// Méthode pour retirer à un utilisateur le rôle "LogisticMaint"
+        /// </summary>
+        /// <param name="id"></param>
+        public async Task RemoveLogisticMaintRoleAsync(int id)
+        {
+            try
+            {
+                await userManager.RemoveFromRoleAsync(await context.Users.FindAsync(id), "LogisticMaint");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Problème requete pour retirer les droits LogisticMaint");
+            }
+        }
     }
 }
