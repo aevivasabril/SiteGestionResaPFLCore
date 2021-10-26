@@ -833,28 +833,71 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
 
                         bool isResaOkToAdd = false;
-                        // Récupérer la session "FormulaireProjet" pour obtenir la confidentialité de l'essai
-                        FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
 
                         if (zonesReservation.IdEssaiXAjoutEquip == 0) // Utiliser la vérification pour une réservation standard
                         {
-                            for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                            // Récupérer la session "FormulaireProjet" pour obtenir la confidentialité de l'essai
+                            FormulaireProjetViewModel formulaire = HttpContext.GetFromSession<FormulaireProjetViewModel>("FormulaireResa");
+                            switch (formulaire.ConfidentialiteEssai)
                             {
-                                isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
-                                if (isResaOkToAdd == false)
-                                {
-                                    if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                case "Ouvert":
+                                    for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
-                                        ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
-                                        goto ENDT;
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipementOuvert(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        if (isResaOkToAdd == false)
+                                        {
+                                            if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                            {
+                                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                        }
                                     }
-                                    else
+                                    break;
+                                case "Restreint":
+                                    for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
-                                        ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
-                                        goto ENDT;
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipementRestreint(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        if (isResaOkToAdd == false)
+                                        {
+                                            if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                            {
+                                                ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("", "Les équipements sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                        }
                                     }
-                                }
-                            }
+                                    break;
+                                case "Confidentiel":
+                                    for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
+                                    {
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipementConfidentiel(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        if (isResaOkToAdd == false)
+                                        {
+                                            if (equipementZone.CalendEquipSelectionnes.Count() == 1)
+                                            {
+                                                ModelState.AddModelError("", "Un des équipements de la zone est pris aux mêmes dates. Veuillez consulter le calendrier et rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("", "Certains équipements de la zone sont indisponibles pour les dates choisies. Consultez le calendrier PFL et veuillez rectifier votre réservation");
+                                                goto ENDT;
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }   
                         }
                         else // cas où l'on rajoute des équipements à une réservation existante
                         {
@@ -866,7 +909,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 case "Ouvert":
                                     for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                     {
-                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipement(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
+                                        isResaOkToAdd = reservationDb.VerifDisponibilitéEquipementOuvert(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement);
                                         if (isResaOkToAdd == false)
                                         {
                                             if (equipementZone.CalendEquipSelectionnes.Count() == 1)

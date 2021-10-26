@@ -371,9 +371,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                             <body> 
                             <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une intervention du type  : <b> " + maintenance.type_maintenance + "</b> aura lieu dans la ou les zone(s):<b> "
                                    + inter.ZoneImpacte + "</b>. Descriptif du problème: <b>" + inter.DescriptionProbleme + "</b>" +
-                                   ". " + "Cet intervention aura lieu à partir du: <b> " + inter.DateDebut + "</b> au <b> et sera finie provisoirement le " + inter.DateFin +
-                                   "</b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
-                                   "Vous recevrez un mail pour indiquer la fin de l'opération. En attendant, Merci d'annuler vos essais. </p> <p>L'équipe PFL, " +
+                                   ". " + "Cet intervention aura lieu à partir du: <b> " + inter.DateDebut + "</b> et sera finie provisoirement le <b>" + inter.DateFin +
+                                   "</b> </p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
+                                   "Vous recevrez un mail pour indiquer la fin de l'opération.  Si vous ne recevez pas un mail de fin " +
+                                   "d'intervention avant la date de fin provisoire, considerez l'opération comme clôturée. En attendant, Merci d'annuler vos essais." +
+                                   " </p> <p>L'équipe PFL, " +
                                    "</p>" +
                                    "</body>" +
                                    "</html>";
