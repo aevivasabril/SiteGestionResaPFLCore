@@ -1,5 +1,7 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Reservation.Data.Reservation;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Models;
+using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             InfosResaMatin = new List<ReservationInfos>();
             InfosResaAprem = new List<ReservationInfos>();
+            InfosIntervAprem = new List<InfosAffichageMaint>();
+            InfosIntervMatin = new List<InfosAffichageMaint>();
         }
 
         /// <summary>
@@ -41,8 +45,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public List<ReservationInfos> InfosResaAprem { get; set; }
 
-        // TODO: Créer le tableau !!!! maintenance pour le jour en question 
-        //maintenance [] InfosMaintenance { get; set; }
+        public List<InfosAffichageMaint> InfosIntervMatin { get; set; }
+        public List<InfosAffichageMaint> InfosIntervAprem { get; set; }
 
         // TODO: Créer le tableau !!!! métrologie pour le jour en question
         // metrologie [] InfosMetrologie { get; set; }

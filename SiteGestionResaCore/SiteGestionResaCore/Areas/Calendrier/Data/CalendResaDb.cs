@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -39,10 +40,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
         public ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup)
         {
+            #region Variables pour les essais
+
             ResasEquipParJour resasEquipTEMP = new ResasEquipParJour();
             ResasEquipParJour resasEquip = new ResasEquipParJour();
             DateTimeFormatInfo dateTimeFormats = null;
-            reservation_projet ResaAGarder = new reservation_projet();                              // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
+            reservation_projet ResaAGarder = new reservation_projet();     // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
 
             DateTime JourCalendrier;
             string NomJour;
@@ -61,6 +64,16 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             // Traduire le nom du jour en cours de l'anglais au Français
             dateTimeFormats = new CultureInfo("fr-FR").DateTimeFormat;
             string jourName = DateRecup.ToString("dddd", dateTimeFormats);
+
+            #endregion
+
+            #region Variables pour les Interventions
+
+            List<maintenance> InfosInterv = new List<maintenance>();
+
+            #endregion
+
+            #region Liste des essais uniquement pour la date en question
 
             if (jourName == "samedi" || jourName == "dimanche")
                 goto ENDT;
@@ -113,7 +126,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         #region Confidentialité "Restreint"
 
                         resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement s'il est dans la zone des réservations "Restreint"
-                                             
+
                         #endregion
 
                         break;
@@ -134,23 +147,97 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             resasEquipTEMP = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
                         }
                         #endregion
-                        break;                                           
+                        break;
                 }
-                // Stocker les valeurs rétrouves pour cet essai 
-                foreach(var res in resasEquipTEMP.ListResasMatin)
+                // Stocker les valeurs rétrouvés pour cet essai 
+                foreach (var res in resasEquipTEMP.ListResasMatin)
                 {
                     resasEquip.ListResasMatin.Add(res);
                 }
-                // Stocker les valeurs rétrouves pour cet essai 
+                // Stocker les valeurs rétrouvés pour cet essai 
                 foreach (var res in resasEquipTEMP.ListResasAprem)
                 {
                     resasEquip.ListResasAprem.Add(res);
                 }
             }
 
-            #region Gestion nom du jour et couleurs pour l'affichage
+            #endregion
 
-            ENDT:
+            #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions)
+
+            var maints = (from interMaint in resaDB.reservation_maintenance
+                          from maint in resaDB.maintenance
+                          where (interMaint.maintenanceID == maint.id)
+                          && (maint.maintenance_supprime != true)
+                          && ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
+                          && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
+                          select maint).Distinct().ToArray();
+
+
+            // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
+            foreach (var maint in maints)
+            {
+                var resaMaint = resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id).ToList();
+                foreach (var resEs in resaMaint)
+                {
+                    if ((DatEnqDebMatin >= resEs.date_debut || DatEnqDebAprem >= resEs.date_debut) &&
+                        (DatEnqFinMatin <= resEs.date_fin || DatEnqFinAprem <= resEs.date_fin))
+                    {
+                        InfosInterv.Add(maint);
+                        break;
+                    }
+                }
+            }
+
+            foreach(var m in InfosInterv.Distinct())
+            {
+                InfosAffichageMaint affichageMaint = new InfosAffichageMaint
+                {
+                    IdMaint = m.id,
+                    CodeOperation = m.code_operation,
+                    DescriptionOperation = m.description_operation,
+                    TypeMaintenance = m.type_maintenance
+                };
+
+                #region Determiner les créneaux des interventions selon leur type
+
+                switch(m.type_maintenance)
+                {
+                    case "Equipement en panne":
+                    case "Maintenance curative (Dépannage sans blocage zone)":
+                    case "Maintenance préventive (Interne sans blocage de zone)":
+                    case "Maintenance préventive (Externe sans blocage de zone)":
+                    case "Amélioration (sans blocage de zone)":
+                        resasEquipTEMP = IntervEquipParJourEquipement(m, affichageMaint, Equipement, DateRecup);
+                        break;
+                    case "Maintenance curative (Dépannage)":
+                    case "Maintenance préventive (Interne)":
+                    case "Maintenance préventive (Externe)":
+                    case "Amélioration":
+                        resasEquipTEMP = IntervEquipParJourZone(m, affichageMaint, Equipement, DateRecup);
+                        break;
+                }
+
+                //resasEquipTEMP = IntervEquipParJourZone(m, affichageMaint, Equipement, DateRecup);
+
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach (var intMatin in resasEquipTEMP.InfosIntervMatin)
+                {
+                    resasEquip.InfosIntervMatin.Add(intMatin);
+                }
+                // Stocker les valeurs rétrouves pour cet essai 
+                foreach (var intAprem in resasEquipTEMP.InfosIntervAprem)
+                {
+                    resasEquip.InfosIntervAprem.Add(intAprem);
+                }
+                #endregion
+            }
+
+        #endregion
+
+        #region Gestion nom du jour et couleurs pour l'affichage
+
+        ENDT:
                 // Obtenir le nom du jour 
                 JourCalendrier = DateRecup; // enregistrer la date en question
                 NomJour = DateRecup.ToString("dddd", dateTimeFormats); // Reecrire le nom du jour car lors de l'appel de la méthode ResaConfidentialiteOuverte()
@@ -184,12 +271,21 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             resasEquip.CouleurAprem = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
                     }
 
+                    // Définition des couleurs maintenance (regne sur les essais) 
+                    if(resasEquip.InfosIntervMatin.Count() == 1)
+                    {
+                        resasEquip.CouleurMatin = "#70cff0"; // blue opération maintenance en cours
+                    }
+                    if(resasEquip.InfosIntervAprem.Count() == 1)
+                    {
+                        resasEquip.CouleurAprem = "#70cff0"; // bleu opération maintenance en cours
+                    }
 
                     // CODE COULEUR DISPO SUR: https://encycolorpedia.fr/
                     // Definir les couleurs de fond pour indiquer si le créneau est occupé ou pas
-                    if (resasEquip.ListResasMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
+                    if (resasEquip.ListResasMatin.Count() == 0 && resasEquip.InfosIntervMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
                         resasEquip.CouleurMatin = "#c2e6e2"; // matin dispo (Vert)
-                    if (resasEquip.ListResasAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
+                    if (resasEquip.ListResasAprem.Count() == 0 && resasEquip.InfosIntervAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
                         resasEquip.CouleurAprem = "#c2e6e2"; // Aprèm libre (Vert)
                 }
                 else // si jour samedi ou dimanche alors mettre en fond gris
@@ -201,6 +297,166 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             #endregion
 
             return resasEquip;
+        }
+
+        /// <summary>
+        /// Ajout des réservations matin et aprèm s'il s'agit de la même zone
+        /// </summary>
+        /// <param name="maint"></param>
+        /// <param name="infosAffichage"></param>
+        /// <param name="Equipement"></param>
+        /// <param name="DateRecup"></param>
+        /// <returns></returns>
+        public ResasEquipParJour IntervEquipParJourZone(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
+        {
+            ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+
+            foreach (var resaInter in resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
+            {
+                if (resaDB.equipement.Where(e => e.id == resaInter.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                {
+                    if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
+                        && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
+                    {
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.InfosIntervMatin.Any(e => e.IdMaint == maint.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.InfosIntervAprem.Any(e => e.IdMaint == maint.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if(!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                //Resas.InfosResaMatin.Add(null); // Matin vide
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                // Vérifier si il s'agit d'une demi journée (juste l'aprèm)
+                                if (resaInter.date_fin.Hour.Equals(12) && (resaInter.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                                else  // si l'heure de fin est 18h alors on rajoute sur les 2
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    if (!EssaiDejaAjouteAprem)
+                                        EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                if(!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                            }
+                        }
+                        else // date à l'intérieur du seuil de réservation
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                                EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            if (!EssaiDejaAjouteAprem)
+                                EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                        }
+                    }
+                }
+            }
+            return EquipVsResa;
+        }
+
+        /// <summary>
+        /// Ajout des réservations matin et aprèm s'il s'agit du même équipement
+        /// </summary>
+        /// <param name="maint"></param>
+        /// <param name="infosAffichage"></param>
+        /// <param name="Equipement"></param>
+        /// <param name="DateRecup"></param>
+        /// <returns></returns>
+        public ResasEquipParJour IntervEquipParJourEquipement(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
+        {
+            ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+
+            foreach (var resaInter in resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
+            {
+                if (Equipement.id == resaInter.equipementID) // si l'équipement objet du "planning" est le même alors il devra être bloqué
+                {
+                    if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
+                        && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
+                    {
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.InfosIntervMatin.Any(e => e.IdMaint == maint.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.InfosIntervAprem.Any(e => e.IdMaint == maint.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_debut.ToShortDateString())) // si dateResa égal à resa.date_debut
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if (!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                //Resas.InfosResaMatin.Add(null); // Matin vide
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                // Vérifier si il s'agit d'une demi journée (juste l'aprèm)
+                                if (resaInter.date_fin.Hour.Equals(12) && (resaInter.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                                else  // si l'heure de fin est 18h alors on rajoute sur les 2
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                        EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                    if (!EssaiDejaAjouteAprem)
+                                        EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resaInter.date_fin.ToShortDateString())) // si dateResa égal à resa.date_fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resaInter.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                    EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                                if (!EssaiDejaAjouteAprem)
+                                    EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                            }
+                        }
+                        else // date à l'intérieur du seuil de réservation
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                                EquipVsResa.InfosIntervMatin.Add(infosAffichage);
+                            if (!EssaiDejaAjouteAprem)
+                                EquipVsResa.InfosIntervAprem.Add(infosAffichage);
+                        }
+                    }
+                }
+            }
+            return EquipVsResa;
         }
 
         public ResasEquipParJour ResaConfidentialiteOuverte(essai ess, InfosAffichageResa infosResa, int IdEquipement, DateTime DateRecup)
@@ -483,6 +739,19 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return Infos;
         }
 
+        public InfosAffichageMaint ObtenirInfosInter(int IdMaint)
+        {
+            maintenance maint = resaDB.maintenance.First(m => m.id == IdMaint);
+            InfosAffichageMaint infosMaint = new InfosAffichageMaint
+            {
+                IdMaint = IdMaint,
+                CodeOperation = maint.code_operation,
+                DescriptionOperation = maint.description_operation,
+                MailOperateur = resaDB.Users.First(u=>u.Id == maint.userID).Email,
+                TypeMaintenance = maint.type_maintenance
+            };
+            return infosMaint;
+        }
         public essai ObtenirEssai(int IdEssai)
         {
             return resaDB.essai.First(e => e.id == IdEssai);

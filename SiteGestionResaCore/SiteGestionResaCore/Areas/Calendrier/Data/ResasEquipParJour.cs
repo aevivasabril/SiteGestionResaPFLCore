@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SiteGestionResaCore.Models.Maintenance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         {
             ListResasMatin = new List<InfosAffichageResa>();
             ListResasAprem = new List<InfosAffichageResa>();
+            InfosIntervAprem = new List<InfosAffichageMaint>();
+            InfosIntervMatin = new List<InfosAffichageMaint>();
         }
 
         /// <summary>
@@ -26,6 +29,10 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         public List<InfosAffichageResa> ListResasMatin { get; set; }
 
         public List<InfosAffichageResa> ListResasAprem { get; set; }
+
+        public List<InfosAffichageMaint> InfosIntervMatin { get; set; }
+
+        public List<InfosAffichageMaint> InfosIntervAprem { get; set; }
 
         /// <summary>
         /// Couleur de fond selon occupation (Matin)

@@ -1,0 +1,87 @@
+﻿@model SiteGestionResaCore.Areas.Maintenance.Data.Maintenance.MaintenanceViewModel
+
+@{
+    ViewBag.Title = "DéclarationMaintenance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h2>Saisir une nouvelle intervention</h2>
+<h5>Remplissez les informations concernant l'opération et suivez les indications</h5>
+<hr />
+
+<div class="form-group row">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm("SoumettreInfosMaint", "Maintenance", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        <h6><strong>INFORMATIONS INTERVENTION</strong></h6>
+        <hr />
+        @Html.AntiForgeryToken()
+        <div class="form-row">
+            <div class="form-group col-md-5 col-lg-5">
+                @Html.LabelFor(m => m.SelectedIntervenantID, new { @class = "control-label" })
+                <select asp-for="SelectedIntervenantID" asp-items="@Model.IntervenantItem" class="form-control">
+                    <option value="-1">- Sélectionnez l'Intervenant -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedIntervenantID, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group offset-1 col-md-6 col-lg-6">
+                @Html.LabelFor(m => m.SelectedInterventionId, new { @class = "control-label" })
+                <select asp-for="SelectedInterventionId" asp-items="@Model.InterventionItem" class="form-control">
+                    <option value="-1">- Sélectionnez le type d'intervention -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedInterventionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="form-row">
+                @Html.LabelFor(m => m.CodeMaintenance, new { @class = "col-md-6 control-label" })
+                <div class="row">
+                    @Html.TextBoxFor(m => m.CodeMaintenance, new { @class = "col-md-8 form-control", disabled = "disabled" })
+                    @Html.ValidationMessageFor(m => m.CodeMaintenance, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            @Html.LabelFor(m => m.IntervenantExterne, new { @class = "col-md-6 control-label" })
+            @Html.ValidationMessageFor(m => m.IntervenantExterne, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-6">
+                    @Html.RadioButtonFor(m => m.IntervenantExterne, "true")
+                    <label class="col-md-5 control-label">Oui</label>
+                </div>
+                <div class="col-6">
+                    @Html.RadioButtonFor(m => m.IntervenantExterne, "false")
+                    <label class="col-md-5 control-label">Non</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="form-group">
+            <div class="form-row">
+                @Html.LabelFor(m => m.NomSociete, new { @class = "col-md-6 control-label" })
+                <div class="row">
+                    @Html.TextBoxFor(m => m.NomSociete, new { @class = "col-md-12 form-control" })
+                    @Html.ValidationMessageFor(m => m.NomSociete, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                @Html.LabelFor(m => m.DescriptionInter, new { @class = "col-md-6 control-label" })
+                @Html.TextBoxFor(m => m.DescriptionInter, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.DescriptionInter, "", new { @class = "text-danger" })
+            </div>           
+        </div>
+        <br />
+        <div class="form-group row">
+            <div class="col-md-2">
+                <a class="btn btn-primary" asp-action="AnnulerDemandeInter" asp-controller="Maintenance" asp-area="Maintenance">Annuler</a>
+            </div>
+            <div class="offset-9 col-md-1">
+                <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
+            </div>
+        </div>
+    }
+</div>

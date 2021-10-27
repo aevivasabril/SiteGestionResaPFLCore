@@ -78,6 +78,25 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         /// Nom de l'ActionResult à utiliser sur un utilisateur (refuser ou valider)
         /// </summary>
         public string ActionName { get; set; }
+
+        /// <summary>
+        /// Id de l'administrateur selectionné pour l'ajout dans le rôle "LogisticMaint"
+        /// </summary>
+        [Range(1, 100, ErrorMessage = "Sélectionnez un administrateur")]
+        public int AdminToIntervId { get; set; }
+
+        private IList<utilisateur> _ListAdminInterv = new List<utilisateur>();
+        /// <summary>
+        /// List des utilisateurs dont le rôle est 'LogisticInterv'
+        /// </summary>
+        public IList<utilisateur> ListAdminInterv
+        {
+            get { return _ListAdminInterv; }
+            set { _ListAdminInterv = value; }
+        }
+
+        public IEnumerable<SelectListItem> MaintItem { get; set; }
+
     }
 
     /// <summary>

@@ -32,6 +32,12 @@
                     <label>Disponible</label>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color: #70cff0" disabled="True">Bleu</button>
+                    <label>Intervention de maintenance</label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -162,6 +168,10 @@
                                                         <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
                                                     }
                                                 }
+                                                @foreach (var i in y.InfosIntervMatin)
+                                                {
+                                                    <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>                                                  
+                                                }
                                             </td>
                                         }
                                     </tr>
@@ -189,6 +199,10 @@
                                                     {
                                                         <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
                                                     }
+                                                }
+                                                @foreach (var i in y.InfosIntervAprem)
+                                                {
+                                                    <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>                                                  
                                                 }
                                             </td>
                                         }

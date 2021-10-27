@@ -1,0 +1,91 @@
+﻿@model SiteGestionResaCore.Areas.Maintenance.Data.Consultation.ConsultInterventionVM
+
+@{
+    ViewBag.Title = "ConsultInterventions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+@*<h1 class="text-center">Interventions de maintenance équipements PFL et materiel commun</h1>*@
+<br />
+
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Liste des interventions équipements PFL (visibles sur le calendrier)</h5>
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Descriptif maintenance</th>
+                            <th scope="col">Code maintenance</th>
+                            <th scope="col">Type de maintenance</th>
+                            <th scope="col">Opérateur PFL</th>
+                            <th scope="col">Intervenant externe?</th>
+                            <th scope="col">Nom Equipement</th>
+                            <th scope="col">Date début</th>
+                            <th scope="col">Date fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ListIntervDansPFL)
+                        {
+                            <tr>
+                                <td>@x.DescriptifMaint</td>
+                                <td>@x.CodeMaint</td>
+                                <td>@x.TypeMaintenance</td>
+                                <td>@x.OperateurPFL</td>
+                                <td>@x.NomIntervExterne</td>
+                                <td>@x.NomEquipement</td>
+                                <td>@x.DateDebut</td>
+                                <td>@x.DateFin</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Liste des interventions équipements communs</h5>
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Descriptif maintenance (mettre lien) </th>
+                            <th scope="col">Code maintenance</th>
+                            <th scope="col">Type de maintenance</th>
+                            <th scope="col">Opérateur PFL</th>
+                            <th scope="col">Intervenant externe?</th>
+                            <th scope="col">Nom Equipement</th>
+                            <th scope="col">Zone affectée</th>
+                            <th scope="col">Date début</th>
+                            <th scope="col">Date fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var y in Model.ListIntervSansZone)
+                        {
+                            <tr>
+                                <td>@y.DescriptifMaint</td>
+                                <td>@y.CodeMaint</td>
+                                <td>@y.TypeMaintenance</td>    
+                                <td>@y.OperateurPFL</td>
+                                <td>@y.NomIntervExterne</td>
+                                <td>@y.NomEquipement</td>
+                                <td>@y.ZoneAffecte</td>
+                                <td>@y.DateDebut</td>
+                                <td>@y.DateFin</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

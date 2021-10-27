@@ -1,8 +1,7 @@
 ﻿using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Calendrier.Data
 {
@@ -23,5 +22,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         essai ObtenirEssai(int IdEssai);
 
         projet ObtenirProjetEssai(essai Essai);
+
+        InfosAffichageMaint ObtenirInfosInter(int IdMaint);
     }
 }

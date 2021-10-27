@@ -9,6 +9,7 @@ namespace SiteGestionResaCore.Data
         public equipement()
         {
             reservation_projet = new HashSet<reservation_projet>();
+            reservation_maintenance = new HashSet<reservation_maintenance>();
         }
 
         public int id { get; set; }
@@ -20,5 +21,6 @@ namespace SiteGestionResaCore.Data
 
         public virtual zone zone { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
+        public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
     }
 }

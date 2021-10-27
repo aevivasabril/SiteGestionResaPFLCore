@@ -33,6 +33,10 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<zone> zone { get; set; }
         public virtual DbSet<enquete> enquete { get; set; }
         public virtual DbSet<ld_equipes_stlo> ld_equipes_stlo { get; set; }
+        public virtual DbSet<ld_type_maintenance> ld_type_maintenance { get; set; }
+        public virtual DbSet<maintenance> maintenance { get; set; }
+        public virtual DbSet<reservation_maintenance> reservation_maintenance { get; set; }
+        public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
 
 
 
@@ -263,6 +267,75 @@ namespace SiteGestionResaCore.Data.Data
             });
             
             // NOTE IMPORTANTE:!!!! ne jamais remplacer un id car on perd l'ordre logique! si equipement EFFACE ALORS ID EFFACE et pas reutilisé!! 
+            modelBuilder.Entity<ld_type_maintenance>(entity =>
+            {
+                entity.Property(e => e.nom_type_maintenance)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<maintenance>(entity =>
+            {
+                entity.Property(e => e.type_maintenance).IsUnicode(false);
+
+                entity.Property(e => e.code_operation)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_intervenant_ext).IsUnicode(false);
+
+                entity.Property(e => e.description_operation).IsUnicode(false);
+
+                entity.Property(e => e.raison_suppression).IsUnicode(false);
+
+                entity.Property(e => e.date_saisie).HasColumnType("datetime");
+
+                entity.Property(e => e.date_suppression).HasColumnType("datetime");
+
+                entity.HasOne(d => d.utilisateur)
+                    .WithMany(p => p.maintenance)
+                    .HasForeignKey(d => d.userID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_maintenance_utilisateur");
+            });
+
+            modelBuilder.Entity<reservation_maintenance>(entity =>
+            {
+                entity.Property(e => e.date_debut).HasColumnType("datetime");
+
+                entity.Property(e => e.date_fin).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.reservation_maintenance)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_reservation_maintenance_equipement");
+
+                entity.HasOne(d => d.maintenance)
+                    .WithMany(p => p.reservation_maintenance)
+                    .HasForeignKey(d => d.maintenanceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_reservation_maintenance_maintenance");
+            });
+
+            modelBuilder.Entity<resa_maint_equip_adjacent>(entity =>
+            {
+                entity.Property(e => e.date_debut).HasColumnType("datetime");
+
+                entity.Property(e => e.date_fin).HasColumnType("datetime");
+
+                entity.Property(e => e.nom_equipement).IsUnicode(false);
+
+                entity.Property(e => e.zone_affectee).IsUnicode(false);
+
+                entity.HasOne(d => d.maintenance)
+                    .WithMany(p => p.resa_maint_equip_adjacent)
+                    .HasForeignKey(d => d.maintenanceID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_resa_maint_equip_adjacent_maintenance");
+            });
+
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7} });
@@ -270,11 +343,14 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>[] { new IdentityRole<int> { Name="Admin", Id = 1, NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString()},
                 new IdentityRole<int> { Name = "Utilisateur", Id = 2 , NormalizedName="UTILISATEUR", ConcurrencyStamp = Guid.NewGuid().ToString()}, 
                 new IdentityRole<int> { Name = "MainAdmin", Id = 3, NormalizedName="MAINADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() }, 
-                new IdentityRole<int> { Name="Logistic", Id = 4, NormalizedName="LOGISTIC", ConcurrencyStamp = Guid.NewGuid().ToString()} });
+                new IdentityRole<int> { Name="Logistic", Id = 4, NormalizedName="LOGISTIC", ConcurrencyStamp = Guid.NewGuid().ToString()},
+                new IdentityRole<int> { Name="LogisticMaint", Id = 5, NormalizedName="LOGISTICMAINT", ConcurrencyStamp = Guid.NewGuid().ToString()}
+            });
 
             modelBuilder.Entity<zone>().HasData(new zone[] { new zone { id = 1, nom_zone = "Concentration & Sechage" }, new zone { id = 2, nom_zone = "Dépotage & Stockage" },
                 new zone { id = 3, nom_zone = "Préparation des laits" }, new zone { id = 4, nom_zone = "Membranes" }, new zone { id = 5, nom_zone = "Pâtes molles moulage" },
                 new zone { id = 6, nom_zone = "Pâtes molles tranchage" }, new zone { id = 7, nom_zone = "Pâtes préssées cuites" }, new zone { id = 8, nom_zone = "Innovation" }, 
+
                 new zone { id = 9, nom_zone = "Salle Stephan" }, new zone { id = 10, nom_zone = "Saumurage" }, new zone { id = 11, nom_zone = "Labo" },
                 new zone { id = 12, nom_zone = "Salle alimentaire Ap5" }, new zone { id = 13, nom_zone = "Salle alimentaire Ap6" }, 
                 new zone { id = 15, nom_zone = "Salle alimentaire Ap8" }, new zone { id = 16, nom_zone = "Salle alimentaire Ap9" }, new zone { id = 17, nom_zone = "Equipements mobiles" },
@@ -325,8 +401,10 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true },
                 new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true },
                 new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true },
+
                 new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false }, new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false }, new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false },
                 new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false },
+
                 new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false },
                 new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false },
                 new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0079", mobile = true }
@@ -357,6 +435,15 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<ld_equipes_stlo>().HasData(new ld_equipes_stlo[] { new ld_equipes_stlo { id = 1, nom_equipe = "Microbio" }, new ld_equipes_stlo { id = 2, nom_equipe = "BN" },
                 new ld_equipes_stlo { id = 3, nom_equipe = "PSM" }, new ld_equipes_stlo { id = 4 , nom_equipe = "ISF"}, new ld_equipes_stlo { id = 5 , nom_equipe = "SMCF"}, 
                 new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}  });
+
+            modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Dépannage)" },
+                new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe)" },
+                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration" }, new ld_type_maintenance { id = 5, nom_type_maintenance = "Equipement en panne" },
+                new ld_type_maintenance { id = 6, nom_type_maintenance = "Maintenance curative (Dépannage sans blocage zone)" }, 
+                new ld_type_maintenance { id = 7, nom_type_maintenance = "Maintenance préventive (Interne sans blocage de zone)" },
+                new ld_type_maintenance { id = 8, nom_type_maintenance = "Maintenance préventive (Externe sans blocage de zone)" },
+                new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" }
+            });
 
             base.OnModelCreating(modelBuilder);
         }

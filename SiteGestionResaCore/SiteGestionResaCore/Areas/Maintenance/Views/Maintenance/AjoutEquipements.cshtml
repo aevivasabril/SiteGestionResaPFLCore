@@ -1,0 +1,263 @@
+﻿@model SiteGestionResaCore.Areas.Maintenance.Data.Maintenance.AjoutEquipementsViewModel
+
+@{
+    ViewBag.Title = "AjoutEquipements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h2 class="text-center">Cliquez sur les liens pour rajouter des équipements à l'intervention</h2>
+
+<h6 class="text-center">Un problème sur un "Equipement sans zone" bloque les manips en cours et à venir. Si vous déclarez une intervention
+    pour un équipement sans zone un mail sera envoyé à tous les utilisateurs pour les inviter à annuler et décaler leurs manips</h6>
+<br />
+<h6 class="text-center">Si vous déclarez une intervention de "Maintenance curative (panne)" pour un équipement dans les zones, les essais se déroulant entre les dates d'intervention 
+    sur cet equipement seront annulés automatiquement, l'utilisateur recevra un mail de notification d'annulation</h6>
+<hr />
+
+<div class="form-group text-center">
+    <a class="btn btn-secondary" asp-action="AjouterEquipsSansZone" asp-controller="Maintenance" asp-area="Maintenance">Ajouter des équipements sans Zone</a>
+</div>
+<div class="form-group text-center">
+    <a class="btn btn-secondary" asp-action="PlanZonesReserXIntervention" asp-controller="Reservation" asp-area="Reservation">Ajouter des équipements présents sur les zones</a>
+</div>
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:red"><strong> @ViewBag.Message</strong> </h5>
+}
+
+<div class="hide" style="display:@Model.OuvrirEquipSansZone" id="AjoutSansZone">
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <div class="container">
+        <form asp-action="AjouterEquipsSansZone" asp-controller="Maintenance" asp-area="Maintenance" method="post">
+            <h5 class="text-center"><strong>Completez les informations sur l'équipement sans zone à bloquer</strong></h5>
+            <hr />
+            <div class="form-group row">
+                <div class="col-sm-5 col-md-5">
+                    <div class="form-group">
+                        <div class="form-row">
+                            @Html.LabelFor(m => m.DescriptionProbleme, new { @class = "col-md-12 control-label" })
+                            @Html.TextBoxFor(m => m.DescriptionProbleme, new { @class = "col-md-12 form-control" })
+                            @Html.ValidationMessageFor(m => m.DescriptionProbleme, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            @Html.LabelFor(m => m.ZoneImpacte, new { @class = "col-md-12 control-label" })
+                            @Html.TextBoxFor(m => m.ZoneImpacte, new { @class = "col-md-12 form-control" })
+                            @Html.ValidationMessageFor(m => m.ZoneImpacte, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-7 col-md-7">
+                    <div class="form-row">
+                        <div class="form-group col-sm-4 col-md-4">
+                            <!--Date picker -->
+                            @Html.Label("Date Début: ")
+                            <input class="form-control" name="DateDebut" asp-for="@Model.DateDebut" type="date" />
+                            @Html.ValidationMessageFor(m => m.DateDebut, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="true" />
+                            <label class="col-md-10 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="false" />
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-sm-4 col-md-4">
+                            @Html.Label("Date Fin: ")
+                            <input class="form-control" name="DateFin" asp-for="@Model.DateFin" type="date" />
+                            @Html.ValidationMessageFor(m => m.DateFin, "", new { @class = "text-danger" })
+                            <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
+                            <label class="col-md-10 control-label">Matin</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group col-sm-3 col-md-3">
+                            <br />
+                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
+                            <label class="col-md-10 control-label">Après-midi</label>
+                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-2">
+                    <a class="btn btn-link" asp-action="FermerAjoutSansZone" asp-controller="Maintenance" asp-area="Maintenance">Fermer</a>
+                </div>
+                <!-- pour passer l'id equipement et l'id zone à la méthode AddReservation() -->
+                <div class="col-sm-4 col-md-4 offset-5 ">
+                    <input type="submit" class="btn btn-outline-success" value="Ajouter intervention" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+<br />
+<div class="form-group row">
+    <div class="col-sm-12 col-md-12">
+        <h3 class="text-center"><strong>Récapitulatif des interventions (Equipements sans zone) </strong></h3>
+        <h6 class="text-center">Vérifiez les créneaux ajoutés, si vous souhaitez modifier un créneau, supprimez-les et rajoutez si besoin</h6>
+        <table class="table table-hover">
+            <thead class="navbar-inra">
+                <tr>
+                    <th scope="col">Description problème</th>
+                    <th scope="col">Zone impactée</th>
+                    <th scope="col">Date Début</th>
+                    <th scope="col">Heure Début</th>
+                    <th scope="col">Date Fin</th>
+                    <th scope="col">Heure Fin</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListEquipsSansZone.Count(); i++)
+                {
+                    <tr>
+                        <th scope="row">@Model.ListEquipsSansZone[i].DescriptionProbleme</th>
+                        <td>@Model.ListEquipsSansZone[i].ZoneImpacte</td>
+                        <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortDateString()</td>
+                        <td>@Model.ListEquipsSansZone[i].DateDebut.ToShortTimeString()</td>
+                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortDateString()</td>
+                        <td>@Model.ListEquipsSansZone[i].DateFin.ToShortTimeString()</td>
+                        <td>@Html.ActionLink("Supprimer", "SupprimerIntervSans", new { i = i })</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr />
+<br />
+<div class="form-group row">
+    <div class="col-sm-12 col-md-12">
+        <h3 class="text-center"><strong>Récapitulatif des interventions (Equipements dans les zones) </strong></h3>
+        <h6 class="text-center">Vérifiez les créneaux ajoutés, si vous souhaitez modifier un créneau, supprimez-les et rajoutez si besoin</h6>
+        <table class="table table-hover">
+            <thead class="navbar-inra">
+                <tr>
+                    <th scope="col">Nom équipement</th>
+                    <th scope="col">Zone impactée</th>
+                    <th scope="col">Date Début</th>
+                    <th scope="col">Heure Début</th>
+                    <th scope="col">Date Fin</th>
+                    <th scope="col">Heure Fin</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListEquipsDansZones.Count(); i++)
+                {
+                    <tr>
+                        <th scope="row">@Model.ListEquipsDansZones[i].NomEquipement</th>
+                        <td>@Model.ListEquipsDansZones[i].ZoneImpacte</td>
+                        <td>@Model.ListEquipsDansZones[i].DateDebutInterv.ToShortDateString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateDebutInterv.ToShortTimeString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateFinInterv.ToShortDateString()</td>
+                        <td>@Model.ListEquipsDansZones[i].DateFinInterv.ToShortTimeString()</td>
+                        <td>@Html.ActionLink("Supprimer", "SupprimerIntervDans", new { i = i })</td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<form asp-action="ValiderInterventions" asp-controller="Maintenance" asp-area="Maintenance" method="post">
+    <div class="form-group row">
+        <div class="col-md-2">
+            @Html.ActionLink("Annuler", "AnnulerInterv", null, new { @class = "btn btn-primary" })
+        </div>
+        <div class="offset-7 col-md-1">
+            <input type="submit" class="btn btn-default navbar-inra" value="Valider interventions" name="action" />
+        </div>
+    </div>
+</form>
+
+<!--Pop up pour confirmer l'annulation intervention'-->
+<form asp-action="SupprimerIntervSans" asp-controller="Maintenance" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppModalSans" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau intervention sans zone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau d'intervention?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @Html.HiddenFor(m => m.IdPourSuppressionSansZone)
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--Pop up pour confirmer l'annulation intervention'-->
+<form asp-action="SupprimerIntervDans" asp-controller="Maintenance" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppModalDans" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Supprimer créneau intervention sans zone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">Etês-vous sûr de vouloir supprimer ce créneau d'intervention?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @Html.HiddenFor(m => m.IdPoursuppressionDansZone)
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts
+{
+    <!-- JS includes -->
+    <script type="text/javascript">
+    @{
+        if (ViewBag.modalSuppSans == null)
+        {
+            ViewBag.modalSuppSans = "hide";
+        }
+        if (ViewBag.modalSuppDans == null)
+        {
+            ViewBag.modalSuppDans = "hide";
+        }
+    }
+    $('#suppModalSans').modal('@ViewBag.modalSuppSans');
+    $('#suppModalDans').modal('@ViewBag.modalSuppDans');
+    </script>
+}

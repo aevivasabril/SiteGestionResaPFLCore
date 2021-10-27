@@ -10,6 +10,7 @@ namespace SiteGestionResaCore.Data
         public utilisateur()
         {
             essai = new HashSet<essai>();
+            maintenance = new HashSet<maintenance>();
         }
 
         public string nom { get; set; }
@@ -20,5 +21,6 @@ namespace SiteGestionResaCore.Data
 
         public virtual organisme organisme { get; set; }
         public virtual ICollection<essai> essai { get; set; }
+        public virtual ICollection<maintenance> maintenance { get; set; }
     }
 }

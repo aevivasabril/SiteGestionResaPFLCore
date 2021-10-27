@@ -38,6 +38,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         }
 
         public int IdEssaiXAjoutEquip { get; set; }
+
+        public bool ReservationXIntervention { get; set; }
     }
     #endregion
 

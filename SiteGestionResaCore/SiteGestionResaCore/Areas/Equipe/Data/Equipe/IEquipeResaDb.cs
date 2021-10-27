@@ -30,5 +30,11 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
         int NbEssaiXUser(utilisateur user);
 
+        Task<IList<utilisateur>> ObtenirUsersIntervAsync();
+
+        Task AddingAdminToInterv(int id);
+
+        Task RemoveLogisticMaintRoleAsync(int id);
+
     }
 }
