@@ -9,6 +9,7 @@ namespace SiteGestionResaCore.Data
         public equipement()
         {
             reservation_projet = new HashSet<reservation_projet>();
+            reservation_maintenance = new HashSet<reservation_maintenance>();
         }
 
         public int id { get; set; }

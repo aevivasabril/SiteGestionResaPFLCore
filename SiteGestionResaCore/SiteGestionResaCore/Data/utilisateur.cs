@@ -10,6 +10,7 @@ namespace SiteGestionResaCore.Data
         public utilisateur()
         {
             essai = new HashSet<essai>();
+            maintenance = new HashSet<maintenance>();
         }
 
         public string nom { get; set; }

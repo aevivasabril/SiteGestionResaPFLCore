@@ -7,6 +7,12 @@ namespace SiteGestionResaCore.Data
 {
     public class maintenance
     {
+        public maintenance()
+        {
+            reservation_maintenance = new HashSet<reservation_maintenance>();
+            resa_maint_equip_adjacent = new HashSet<resa_maint_equip_adjacent>();
+        }
+
         public int id { get; set; }
         public string type_maintenance { get; set; }
         public string code_operation { get; set; }
