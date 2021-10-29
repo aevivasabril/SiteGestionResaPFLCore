@@ -97,15 +97,20 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
             foreach(var enq in ListeNonRepondues)
             {
-                if(enq.date_envoi_enquete.HasValue)
+                // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
+                var essai = resaDb.essai.First(e => e.id == enq.essaiId);
+                if (essai.resa_refuse != true && essai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
                 {
-                    // Si l'enquête a été envoyé il y a plus de 7 jours alors il faut relancer
-                    TimeSpan diff = DateTime.Now - enq.date_envoi_enquete.Value;
-                    if (diff.Days >= 7)
+                    if (enq.date_envoi_enquete.HasValue)
                     {
-                        ListPourRelance.Add(enq);
+                        // Si l'enquête a été envoyé il y a plus de 7 jours alors il faut relancer
+                        TimeSpan diff = DateTime.Now - enq.date_envoi_enquete.Value;
+                        if (diff.Days >= 7)
+                        {
+                            ListPourRelance.Add(enq);
+                        }
                     }
-                }                
+                }              
             }
 
             return ListPourRelance;
