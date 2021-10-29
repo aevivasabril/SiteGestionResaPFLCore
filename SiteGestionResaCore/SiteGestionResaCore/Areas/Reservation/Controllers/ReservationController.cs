@@ -100,9 +100,37 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 //si le projet existe alors on sait qu'il s'agit d'une copie et qu'il faut créer un nouveau essai, même si l'utilisateur ne change rien sur le formulaire
                 if(projetEssaiDb.ProjetExists(model.NumProjet))
                 {
+                    List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
+
+                    var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet });
+                    var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement });
+                    // Création d'une liste Dropdownlist contenant les types d'organismes
+                    var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme });
+                    var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+                    // Création d'une liste de provenance projet (dropdownlist)
+                    var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance });
+                    // Création d'une liste utilisateurs "manipulateur" de l'essai
+                    var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
+                    // Création d'une liste dropdownlist pour le type produit entrée
+                    var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
+                    // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
+                    var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
+                    // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
+                    var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
+
+                    model.TypeProjetItem = typeProj;
+                    model.TypefinancementItem = finanItem;
+                    model.OrganItem = allOrgs;
+                    model.RespProjItem = usersList;
+                    model.ProvenanceItem = provProj;
+                    model.ManipProjItem = usersManip;
+                    model.ProductItem = prodEntree;
+                    model.ProvenanceProduitItem = provProd;
+                    model.DestProduitItem = destProd;
+
                     // Si l'utilisateur est propiètaire du projet ou "Admin" ou "MainAdmin" alors autoriser la création d'un essai 
-                    if(await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user))
-                    {
+                    if (await projetEssaiDb.VerifPropieteProjetAsync(model.NumProjet, user))
+                    {                        
                         // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
                         this.HttpContext.AddToSession("FormulaireResa", model);              
                         return RedirectToAction("PlanZonesReservation");
@@ -110,7 +138,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     else
                     {
                         // cas où le projet existe mais l'utilisateur n'a pas les droits
-                        goto ERR;
+                        return View("FormulaireProjet", model); // Si error alors on recharge la page pour montrer les messages
                     }
                 }
                 else // si le projet n'existe pas alors l'ajouter dans la session
@@ -123,40 +151,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             }
             else
             {
-                goto ERR;
+                return View("FormulaireProjet", model); // Si error alors on recharge la page pour montrer les messages
             }
-            ERR:
-                #region Recharge des listes déroulantes
 
-                List<utilisateur> listUsersAcces = formDb.ObtenirList_UtilisateurValide();
-                var typeProj = formDb.ObtenirList_TypeProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_type_projet });
-                var finanItem = formDb.ObtenirList_Financement().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_financement });
-                // Création d'une liste Dropdownlist contenant les types d'organismes
-                var allOrgs = formDb.ObtenirListOrg().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_organisme });
-                var usersList = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
-                // Création d'une liste de provenance projet (dropdownlist)
-                var provProj = formDb.ObtenirList_ProvenanceProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance });
-                // Création d'une liste utilisateurs "manipulateur" de l'essai
-                var usersManip = listUsersAcces.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
-                // Création d'une liste dropdownlist pour le type produit entrée
-                var prodEntree = formDb.ObtenirList_TypeProduitEntree().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_produit_in });
-                // Création d'une liste dropdownlit pour selectionner la provenance produit entrée
-                var provProd = formDb.ObtenirList_ProvenanceProduit().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_provenance_produit });
-                // Création d'une liste dropdownlit pour selectionner la destinaison produit sortie
-                var destProd = formDb.ObtenirList_DestinationPro().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_destination });
-                model.TypeProjetItem = typeProj;
-                model.TypefinancementItem = finanItem;
-                model.OrganItem = allOrgs;
-                model.RespProjItem = usersList;
-                model.ProvenanceItem = provProj;
-                model.ManipProjItem = usersManip;
-                model.ProductItem = prodEntree;
-                model.ProvenanceProduitItem = provProd;
-                model.DestProduitItem = destProd;
-
-                #endregion
-
-            return View("FormulaireProjet", model); // Si error alors on recharge la page pour montrer les messages
         }
 
         [HttpPost]
