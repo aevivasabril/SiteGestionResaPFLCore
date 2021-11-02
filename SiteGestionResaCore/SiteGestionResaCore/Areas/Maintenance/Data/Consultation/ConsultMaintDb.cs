@@ -29,7 +29,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
         {
             List<InfosIntervDansPFL> ListPFL = new List<InfosIntervDansPFL>();
             string NomIntervExt = "";
-            var intervs = context.reservation_maintenance.Where(r => r.date_debut.Year == DateTime.Today.Year || r.date_fin.Year == DateTime.Today.Year);
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
+            var intervs = context.reservation_maintenance.Where(r => (r.date_debut >= DateSeuil || r.date_fin >= DateSeuil));
             foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
@@ -66,8 +70,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
         {
             List<InfosIntervSansZone> ListSansZone = new List<InfosIntervSansZone>();
             string NomIntervExt = "";
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
             // Filtrer les opérations pour l'année en cours! éviter la surcharge du tableau
-            var intervs = context.resa_maint_equip_adjacent.Where(r => r.date_debut.Year == DateTime.Today.Year || r.date_fin.Year == DateTime.Today.Year);
+            var intervs = context.resa_maint_equip_adjacent.Where(r => (r.date_debut >= DateSeuil|| r.date_fin >= DateSeuil));
+
             foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
