@@ -138,7 +138,7 @@
                         @foreach (var x in Model.ListeEquipsPfl)
                         {
                             <tr>
-                                <td>@x.NomEquipement (N° GMAO: @x.NumGMAO)</td>
+                                <td>@x.NomEquipement <br />(N° GMAO: @x.NumGMAO)</td>
                                 <td>@x.DateDebut</td>
                                 <td>
                                     <form asp-action="ModifierInterPfl" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@x.Id">
