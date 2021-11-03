@@ -58,7 +58,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                         NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
                         OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
                         TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
-                        NomIntervExterne = NomIntervExt
+                        NomIntervExterne = NomIntervExt,
+                        NumGMAO = context.equipement.First(e => e.id == inter.equipementID).numGmao
                     };
                     ListPFL.Add(info);
                 }            

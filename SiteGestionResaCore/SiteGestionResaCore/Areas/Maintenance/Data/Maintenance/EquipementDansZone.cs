@@ -18,6 +18,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Maintenance
 
         public string NomEquipement { get; set; }
 
+        public string NumGMAO { get; set; }
+
         public string ZoneImpacte { get; set; }
     }
 }

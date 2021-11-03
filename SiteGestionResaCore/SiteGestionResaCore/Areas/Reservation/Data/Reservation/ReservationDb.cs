@@ -1574,6 +1574,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             return interOk;
         }
 
+        public string ObtenirNumGMAOEquip(int IdEquipement)
+        {
+            return context.equipement.First(e => e.id == IdEquipement).numGmao;
+        }
+
         #region méthodes externes
 
         public ReservationsJour ResaConfidentialiteOuverte(essai ess, ReservationInfos resaInfo, int IdEquipement, DateTime dateResa)

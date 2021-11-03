@@ -450,15 +450,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         "Titre essai: <b>" + essXres.titreEssai + "</b> Le créneaux réservé pour cet équipement vient d'être supprimé automatiquement." +
                                         "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
                                         ".<br>Code Intervention: <b>" + formulaire.CodeMaintenance + ".</b> <br> Equipement concerné :<b> " + equipementDansZone.NomEquipement +
-                                        "</b>.<br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, " +
+                                        " (Num GMAO: "+ equipementDansZone.NumGMAO +")</b>.<br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, " +
                                         "</p>" +
                                         "</body>" +
                                         "</html>";
 
                                     MsgLogist = @"<html>
                                         <body> 
-                                        <p> Bonjour, <br><br> L'équipement <b>" + equipementDansZone.NomEquipement + "</b> a été déclaré en PANNE provocant l'annulation automatique d'une réservation " +
-                                        "de l'essai N°: " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail +
+                                        <p> Bonjour, <br><br> L'équipement <b>" + equipementDansZone.NomEquipement + " (Num GMAO: " + equipementDansZone.NumGMAO + ") </b> a été déclaré " +
+                                        "en PANNE provocant l'annulation automatique d'une réservation de l'essai N°: " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail +
                                         ")</b>. <br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
                                         ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" +
                                         "<br><br> </p> <p>L'équipe PFL, " +
@@ -475,8 +475,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
                                             "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage) sera appliquée les mêmes dates, sur un " +
                                             "des équipements réservés de votre essai ou dans la même zone.<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
-                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Equipement concerné: <b>" + equipementDansZone.NomEquipement +                                          
-                                            "</b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
+                                            ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Equipement concerné: <b>" + equipementDansZone.NomEquipement +
+                                            " (Num GMAO: " + equipementDansZone.NumGMAO + "). </b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
                                             "</body>" +
                                             "</html>";
 
@@ -485,7 +485,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
                                         + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
                                         formulaire.DescriptionInter + "</b>" + ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" + 
-                                        "Suppression de la réservation sur l'équipement: <b>" + equipementDansZone.NomEquipement + "</b><br><br> </p> <p>L'équipe PFL, </p>" +
+                                        "Suppression de la réservation sur l'équipement: <b>" + equipementDansZone.NomEquipement + " (Num GMAO: " + equipementDansZone.NumGMAO + ").</b><br><br> </p> <p>L'équipe PFL, </p>" +
                                         "</body>" +
                                         "</html>";
                                     #endregion
@@ -500,7 +500,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         "les mêmes dates, sur un des équipements réservés de votre essai." +
                                         "<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
                                         ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.Equipement concerné: <b>" + equipementDansZone.NomEquipement +
-                                        "</b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
+                                        " (Num GMAO: " + equipementDansZone.NumGMAO + "). </b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
                                         "</body>" +
                                         "</html>";
 
@@ -509,7 +509,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         <p> Bonjour, <br><br> Une maintenance curative (Dépannage sans blocage de zone) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
                                         + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
                                         formulaire.DescriptionInter + "</b>" + ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" + "Equipement: <b>" +
-                                        equipementDansZone.NomEquipement + "</b><br><br> </p> <p>L'équipe PFL, </p>" +
+                                        equipementDansZone.NomEquipement + " (Num GMAO: " + equipementDansZone.NumGMAO + "). </b><br><br> </p> <p>L'équipe PFL, </p>" +
                                         "</body>" +
                                         "</html>";
                                     #endregion

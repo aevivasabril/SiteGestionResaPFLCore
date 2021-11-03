@@ -40,5 +40,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         
         bool VerifDisponibilitEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement);
 
+        string ObtenirNumGMAOEquip(int IdEquipement);
+
     }
 }

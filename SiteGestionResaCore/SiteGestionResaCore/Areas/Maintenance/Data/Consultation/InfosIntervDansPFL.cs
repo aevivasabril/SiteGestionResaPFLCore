@@ -14,6 +14,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
         public string OperateurPFL { get; set; }
         public string NomIntervExterne { get; set; }
         public string NomEquipement { get; set; }
+        public string NumGMAO { get; set; }
         public DateTime DateDebut { get; set; }
         public DateTime DateFin { get; set; }
     }

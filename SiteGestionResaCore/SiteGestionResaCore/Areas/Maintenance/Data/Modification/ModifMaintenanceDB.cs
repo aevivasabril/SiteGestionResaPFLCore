@@ -125,6 +125,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                     DateFin = maint.date_fin,
                     Id = maint.id,
                     NomEquipement = context.equipement.First(e=>e.id == maint.equipementID).nom,
+                    NumGMAO = context.equipement.First(e => e.id == maint.equipementID).numGmao,
                     IsIntervFinie = finie
                 };
 

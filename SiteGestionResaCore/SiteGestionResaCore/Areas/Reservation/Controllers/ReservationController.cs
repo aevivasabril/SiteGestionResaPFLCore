@@ -660,6 +660,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         ModelState.AddModelError("", "Zone indisponible car une intervention est déjà déclarée aux mêmes dates sur un des équipements");
                                         goto ENDT;
                                     }
+
                                     // Dans ce cas récupérer tous les essais se déroulant à ces dates pour cet équipement pour les annuler dans le controlleur maintenance
                                     EquipementDansZone equipementDansZone = new EquipementDansZone
                                     {
@@ -668,7 +669,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
                                         NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
-                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        NumGMAO = reservationDb.ObtenirNumGMAOEquip(equipementZone.CalendEquipSelectionnes[i].idEquipement)
                                     };
                                     
                                     MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
@@ -695,7 +697,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
                                         NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
-                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        NumGMAO = reservationDb.ObtenirNumGMAOEquip(equipementZone.CalendEquipSelectionnes[i].idEquipement)
                                     };
                                     MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
@@ -733,7 +736,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
                                         NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
-                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        NumGMAO = reservationDb.ObtenirNumGMAOEquip(equipementZone.CalendEquipSelectionnes[i].idEquipement)
                                     };
                                     MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
@@ -774,7 +778,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                         DateFinInterv = finToSave,
                                         IdEquipementXIntervention = equipementZone.CalendEquipSelectionnes[i].idEquipement,
                                         NomEquipement = reservationDb.ObtenirNomEquipement(equipementZone.CalendEquipSelectionnes[i].idEquipement),
-                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement)
+                                        ZoneImpacte = reservationDb.ObtenirNomZoneImpacte(equipementZone.CalendEquipSelectionnes[i].idEquipement),
+                                        NumGMAO = reservationDb.ObtenirNumGMAOEquip(equipementZone.CalendEquipSelectionnes[i].idEquipement)
                                     };
                                     MaintenanceEquipements.ListEquipsDansZones.Add(equipementDansZone);
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
