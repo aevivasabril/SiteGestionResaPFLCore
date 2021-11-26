@@ -419,8 +419,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
 
                 switch (maintenance.type_maintenance)
                 {
-                    case "Maintenance curative (Dépannage)":
-                    case "Equipement en panne":
+                    case "Maintenance curative (Dépannage avec blocage de zone)":
+                    case "Equipement en panne (blocage équipement)":
                     case "Maintenance curative (Dépannage sans blocage zone)":
                         // J'annule les essais dans la liste et je leur envoie un mail de notification d'annulation
                         // Obtenir la liste des essais à supprimer
@@ -441,7 +441,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                 }
                                 // Envoyer le mail au propiètaire de l'essai
                                 string mail = intervDb.ObtenirMailUser(essXres.compte_userID);
-                                if (maintenance.type_maintenance.Equals("Equipement en panne")) // Envoie de mail selon le type d'intervention
+                                if (maintenance.type_maintenance.Equals("Equipement en panne (blocage équipement)")) // Envoie de mail selon le type d'intervention
                                 {
                                     #region Mails à envoyer
                                     MsgUser = @"<html>
@@ -467,13 +467,13 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
                                         "</html>";
                                     #endregion
                                 }
-                                else if (maintenance.type_maintenance.Equals("Maintenance curative (Dépannage)"))
+                                else if (maintenance.type_maintenance.Equals("Maintenance curative (Dépannage avec blocage de zone)"))
                                 {
                                     #region Mails à envoyer
                                     MsgUser = @"<html>
                                         <body> 
                                         <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
-                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage) sera appliquée les mêmes dates, sur un " +
+                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage avec blocage de zone) sera appliquée les mêmes dates, sur un " +
                                             "des équipements réservés de votre essai ou dans la même zone.<br><br>Descriptif du problème: <b>" + formulaire.DescriptionInter + "</b>" +
                                             ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br> Equipement concerné: <b>" + equipementDansZone.NomEquipement +
                                             " (Num GMAO: " + equipementDansZone.NumGMAO + "). </b><br><br> <p>Nous nous excusons du dérangement.</p> </p> <p>L'équipe PFL, </p>" +
@@ -482,7 +482,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data
 
                                     MsgLogist = @"<html>
                                         <body> 
-                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage avec blocage de zone) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
                                         + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
                                         formulaire.DescriptionInter + "</b>" + ". <br>Code Intervention: <b>" + formulaire.CodeMaintenance + "</b>.<br>" + 
                                         "Suppression de la réservation sur l'équipement: <b>" + equipementDansZone.NomEquipement + " (Num GMAO: " + equipementDansZone.NumGMAO + ").</b><br><br> </p> <p>L'équipe PFL, </p>" +

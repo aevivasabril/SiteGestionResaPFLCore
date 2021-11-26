@@ -339,7 +339,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                from equip in context.equipement
                                where maint.id == resaMaint.maintenanceID
                                && (maint.maintenance_supprime != true)
-                               && ((maint.type_maintenance == "Equipement en panne")
+                               && ((maint.type_maintenance == "Equipement en panne (blocage équipement)")
                                || (maint.type_maintenance == "Maintenance curative (Dépannage sans blocage zone)")
                                || (maint.type_maintenance == "Maintenance préventive(Interne sans blocage de zone)")
                                || (maint.type_maintenance == "Maintenance préventive (Externe sans blocage de zone)")
@@ -362,10 +362,10 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage)")
-                                  || (maint.type_maintenance == "Maintenance préventive (Interne)")
-                                  || (maint.type_maintenance == "Maintenance préventive (Externe)")
-                                  || (maint.type_maintenance == "Amélioration"))
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
+                                  || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
+                                  || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
+                                  || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
                                   && (resaMaint.equipement.zoneID == zon)
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
@@ -472,7 +472,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                from equip in context.equipement
                                where maint.id == resaMaint.maintenanceID
                                && (maint.maintenance_supprime != true)
-                               && ((maint.type_maintenance == "Equipement en panne")
+                               && ((maint.type_maintenance == "Equipement en panne (blocage équipement)")
                                || (maint.type_maintenance == "Maintenance curative (Dépannage sans blocage zone)")
                                || (maint.type_maintenance == "Maintenance préventive(Interne sans blocage de zone)")
                                || (maint.type_maintenance == "Maintenance préventive (Externe sans blocage de zone)")
@@ -495,10 +495,10 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage)")
-                                  || (maint.type_maintenance == "Maintenance préventive (Interne)")
-                                  || (maint.type_maintenance == "Maintenance préventive (Externe)")
-                                  || (maint.type_maintenance == "Amélioration"))
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
+                                  || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
+                                  || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
+                                  || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
                                   && (resaMaint.equipement.zoneID == zon)
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))

@@ -203,17 +203,17 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                 switch(m.type_maintenance)
                 {
-                    case "Equipement en panne":
+                    case "Equipement en panne (blocage équipement)":
                     case "Maintenance curative (Dépannage sans blocage zone)":
                     case "Maintenance préventive (Interne sans blocage de zone)":
                     case "Maintenance préventive (Externe sans blocage de zone)":
                     case "Amélioration (sans blocage de zone)":
                         resasEquipTEMP = IntervEquipParJourEquipement(m, affichageMaint, Equipement, DateRecup);
                         break;
-                    case "Maintenance curative (Dépannage)":
-                    case "Maintenance préventive (Interne)":
-                    case "Maintenance préventive (Externe)":
-                    case "Amélioration":
+                    case "Maintenance curative (Dépannage avec blocage de zone)":
+                    case "Maintenance préventive (Interne avec blocage de zone)":
+                    case "Maintenance préventive (Externe avec blocage de zone)":
+                    case "Amélioration (avec blocage de zone)":
                         resasEquipTEMP = IntervEquipParJourZone(m, affichageMaint, Equipement, DateRecup);
                         break;
                 }

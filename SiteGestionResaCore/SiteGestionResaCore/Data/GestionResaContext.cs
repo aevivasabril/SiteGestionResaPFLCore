@@ -439,9 +439,9 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_equipes_stlo { id = 3, nom_equipe = "PSM" }, new ld_equipes_stlo { id = 4 , nom_equipe = "ISF"}, new ld_equipes_stlo { id = 5 , nom_equipe = "SMCF"}, 
                 new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}  });
 
-            modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Dépannage)" },
-                new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe)" },
-                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration" }, new ld_type_maintenance { id = 5, nom_type_maintenance = "Equipement en panne" },
+            modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Dépannage avec blocage de zone)" },
+                new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne avec blocage de zone)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe avec blocage de zone)" },
+                new ld_type_maintenance { id = 4, nom_type_maintenance = "Amélioration (avec blocage de zone)" }, new ld_type_maintenance { id = 5, nom_type_maintenance = "Equipement en panne (blocage équipement)" },
                 new ld_type_maintenance { id = 6, nom_type_maintenance = "Maintenance curative (Dépannage sans blocage zone)" }, 
                 new ld_type_maintenance { id = 7, nom_type_maintenance = "Maintenance préventive (Interne sans blocage de zone)" },
                 new ld_type_maintenance { id = 8, nom_type_maintenance = "Maintenance préventive (Externe sans blocage de zone)" },

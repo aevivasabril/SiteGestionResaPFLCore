@@ -408,7 +408,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                     NomEquipement = modifMaintDb.NomEquipement(intervention.equipementID);
                     switch (maint.type_maintenance)
                     {
-                        case "Equipement en panne":
+                        case "Equipement en panne (blocage équipement)":
                         case "Maintenance curative (Dépannage sans blocage zone)":
                             // Vérifier la disponibilité sur les interventions
                             DateOkPourModif = modifMaintDb.VerifDisponibilitEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID);
@@ -441,7 +441,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                     string mail = modifMaintDb.ObtenirMailUser(essXres.compte_userID);
 
                                     #region Mail à envoyer
-                                    if (maint.type_maintenance.Equals("Equipement en panne"))
+                                    if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)"))
                                     {
                                         MsgUser = @"<html>
                                         <body> 
@@ -470,7 +470,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                         MsgUser = @"<html>
                                         <body> 
                                         <p> Bonjour, <br><br> L'équipe PFL vous informe qu'une des réservations sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
-                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage) sera appliquée les mêmes dates," +
+                                            "</b> vient d'être supprimée automatiquement." + "<br>Une maintenance curative (Dépannage sans blocage de zone) sera appliquée les mêmes dates," +
                                             " sur un des équipements réservés. <br><br>Descriptif du problème: <b>" + maint.description_operation + "</b>" +
                                             ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.Equipement concerné: " + NomEquipement +
                                             "<br><br> <p>Nous nous excusons du dérangement. </p></p> <p>L'équipe PFL, </p>" +
@@ -479,7 +479,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
                                         MsgLogist = @"<html>
                                         <body> 
-                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage sans blocage de zone) sera appliquée les mêmes dates sur un des équipements réservés sur l'essai N°:"
                                             + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
                                             maint.description_operation + "</b>" + ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" + "Equipement: " +
                                             NomEquipement + "<br><br> </p> <p>L'équipe PFL, </p>" +
@@ -544,7 +544,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                 modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
                             }                           
                             break;
-                        case "Maintenance curative (Dépannage)": // blocage de toute la zone concernée
+                        case "Maintenance curative (Dépannage avec blocage de zone)": // blocage de toute la zone concernée
                             // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
                             // Si false alors une intervention est déjà déclarée pour les mêmes dates sur la zone
                             if (reservationDb.VerifDisponibilitZoneEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID) == false)
@@ -576,7 +576,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                                 MsgUser = @"<html>
                                         <body> 
                                         <p> Bonjour, <br><br> L'équipe PFL vous informe qu'un des équipements réservés sur votre essai N° " + essXres.id + ".Titre essai: <b>" + essXres.titreEssai +
-                                        "</b> vient d'être supprimé automatiquement." + "<br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates, sur " +
+                                        "</b> vient d'être supprimé automatiquement." + "<br> Une maintenance curative (Dépannage avec blocage de zone) sera appliquée les mêmes dates, sur " +
                                         "cet équipement ou dans la même zone.<br><br> Descriptif du problème: <b>" + maint.description_operation + "</b>" +
                                         ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br> Equipement concerné: " + NomEquipement +
                                         "<br><br> Nous nous excusons du dérangement. </p> <p>L'équipe PFL, </p>" +
@@ -585,7 +585,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
                                 MsgLogist = @"<html>
                                         <body> 
-                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
+                                        <p> Bonjour, <br><br> Une maintenance curative (Dépannage avec blocage de zone) sera appliquée les mêmes dates sur une des zones ou un des équipements réservés sur l'essai N°:"
                                         + essXres.id + ".Titre essai: <b>" + essXres.titreEssai + " (Propietaire de l'essai: " + mail + ")</b>. <br><br>Descriptif du problème: <b>" +
                                         maint.description_operation + "</b>" + ". <br>Code Intervention: <b>" + maint.code_operation + "</b>.<br>" +
                                         "Suppression de la réservation sur l'équipement: " + NomEquipement + "<br><br> </p> <p>L'équipe PFL, </p>" +
@@ -647,9 +647,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                             // modifier la datefin pour l'intervention
                             modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
                             break;
-                        case "Maintenance préventive (Interne)": // vérifier que la zone est dispo
-                        case "Maintenance préventive (Externe)":
-                        case "Amélioration":
+                        case "Maintenance préventive (Interne avec blocage de zone)": // vérifier que la zone est dispo
+                        case "Maintenance préventive (Externe avec blocage de zone)":
+                        case "Amélioration (avec blocage de zone)":
                             // Si un essai est en conflit alors indiquer à l'opérateur de choisir une autre date
                             // Vérifier que la date choisie ne se croise pas avec des autres essais ou maintenances
                             DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);

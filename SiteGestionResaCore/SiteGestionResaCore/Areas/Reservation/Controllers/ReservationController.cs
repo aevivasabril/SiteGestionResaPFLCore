@@ -650,7 +650,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         // Vérifier le type d'intervention pour décider l'action de vérification à exécuter
                         switch(nomTypeInterv)
                         {
-                            case "Maintenance curative (Dépannage)":
+                            case "Maintenance curative (Dépannage avec blocage de zone)":
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
                                     // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
@@ -678,7 +678,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                 }
                                 break;
                             case "Maintenance curative (Dépannage sans blocage zone)": 
-                            case "Equipement en panne":
+                            case "Equipement en panne (blocage équipement)":
                                 // Vérifier qu'il n'y pas des interventions sur le même équipement à ces dates                               
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
@@ -704,9 +704,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                                     this.HttpContext.AddToSession("AjoutEquipementsViewModel", MaintenanceEquipements);
                                 }
                                 break;                           
-                            case "Maintenance préventive (Interne)": 
-                            case "Maintenance préventive (Externe)":
-                            case "Amélioration":
+                            case "Maintenance préventive (Interne avec blocage de zone)": 
+                            case "Maintenance préventive (Externe avec blocage de zone)":
+                            case "Amélioration (avec blocage de zone)":
                                 bool isResaOkToAdd = false;
 
                                 #region Vérification de disponibilité pour les dates saisies avant de le stocker dans le model
