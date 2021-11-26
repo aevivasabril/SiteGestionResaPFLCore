@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20211126094119_ChangementDesMiniCuves_ajoutdesSalles")]
+    partial class ChangementDesMiniCuves_ajoutdesSalles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "590217a9-25f8-4a8e-9614-466edec3c131",
+                            ConcurrencyStamp = "a2d8bbd4-6e14-4a62-bf51-24bca45e8db9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "95d81847-92ab-4e99-9ca0-cdcab644de27",
+                            ConcurrencyStamp = "51cd082c-b5b7-4fbc-a6f0-31f12436eb78",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "fa99de9e-b3e2-492c-80e3-b6a7299af581",
+                            ConcurrencyStamp = "1b3c64e6-9b11-4980-85ca-b0da04013db5",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "87eb7afa-ab1d-4946-b080-0cf2b66840f6",
+                            ConcurrencyStamp = "67f7a013-1e47-477a-ad2b-8658246c07cd",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "7b1443b0-aa7e-4400-8176-5a4fe052c9a0",
+                            ConcurrencyStamp = "549abd07-c046-460f-a7c0-a093df3542b4",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -1064,7 +1066,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 262,
                             mobile = false,
-                            nom = "Salle Pâtes molles moulage",
+                            nom = "Pâtes molles moulage",
                             numGmao = "LAB0048",
                             zoneID = 5
                         },
@@ -1072,7 +1074,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 263,
                             mobile = false,
-                            nom = "Salle Pâtes molles tranchage",
+                            nom = "Pâtes molles tranchage",
                             numGmao = "LAB0049",
                             zoneID = 6
                         },
@@ -1080,7 +1082,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 264,
                             mobile = false,
-                            nom = "Salle Labo",
+                            nom = "Labo",
                             numGmao = "LAB0017",
                             zoneID = 11
                         },
@@ -1088,7 +1090,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 265,
                             mobile = false,
-                            nom = "Salle Pâtes préssées cuites",
+                            nom = "Pâtes préssées cuites",
                             numGmao = "LAB0047",
                             zoneID = 7
                         },
