@@ -263,14 +263,17 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             // Mettre à jour la date pour l'intervention des équipements communs
             DateTime AncienneDateFin = modifMaintDb.ChangeDateFinEquipCommun(id, NewDate);
 
-            resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
+            //resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
+            // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
+            if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)") == true)
+                goto ENDT;
 
             // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
             // si enregistrement OK alors envoyer le mail
             MsgUser = @"<html>
                             <body> 
                             <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
-                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE CLOTUREE.</b>"
+                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " est finalisée.</b>"
                            + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
                            "</p>" +
                            "</body>" +
@@ -301,6 +304,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 }
             }
 
+        ENDT:
             Model.IdIntervCom = id;
             Model.OpenModifInter = Model.Ouvert;
             Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
@@ -749,11 +753,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             // modifier la datefin pour l'intervention
             modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
+
+            // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
+            if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)") == true)
+                goto ENDT;
             // Envoyer un mail à tous les utilisateurs pour indiquer que l'intervention est finie
             MsgUser = @"<html>
                             <body> 
                             <p> Bonjour, <br><br> L'équipe PFL vous informe que l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
-                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " VIENT D'ETRE SUPPRIMEE.</b>"
+                           + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + " est finalisée.</b>"
                            + "<p> Vous pouvez désormais reprogrammer vos essais. </p> <p>L'équipe PFL, " +
                            "</p>" +
                            "</body>" +
@@ -769,7 +777,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 {
                     try
                     {
-                        await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel commun", MsgUser);
+                        await emailSender.SendEmailAsync(usr.Email, "Clôture intervention dépannage materiel PFL", MsgUser);
                         success = true;
                     }
                     catch (Exception e)
@@ -783,6 +791,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                     }
                 }
             }
+        
+        ENDT:
             Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id);
 
             // Afficher message pour indiquer que l'intervention est mise à jour
