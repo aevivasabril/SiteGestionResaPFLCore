@@ -22,14 +22,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         string ObtenirMailUser(int iduser);
         Task<IList<utilisateur>> List_utilisateurs_logistiqueAsync();
         void ChangeDateFinEquipPFL(int IdResaPfl, DateTime NewDateFin);
-        bool ModifZoneDisponibleXIntervention(DateTime datedebut, DateTime datefin, int idEquipement, int Idmaintenance);
-        bool ModifEquipementDisponibleXIntervention(DateTime datedebut, DateTime datefin, int idEquipement, int Idmaintenance);
+        bool ModifZoneDisponibleXIntervention(DateTime datefin, reservation_maintenance interv);
+        bool ModifEquipementDisponibleXIntervention(DateTime datefin, reservation_maintenance interv);
         bool SupprimerMaintenance(int IdMaintenance, string raisonSupp);
         string ObtenirCodeIntervention(int IdMaintenance);
         maintenance ObtenirMaintenanceByID(int IdMaintenance);
         string NomEquipement(int IdEquipement);
         essai ObtenirEssai(int resaID);
         bool SupprimerReservation(int IDresa);
-        bool VerifDisponibilitEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement);
+        bool VerifDisponibilitEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
+        bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
     }
 }

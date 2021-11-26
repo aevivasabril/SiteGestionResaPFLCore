@@ -378,7 +378,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         vm.DateFin.Value.Month, vm.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                 }
 
-                if (NewDate < DateTime.Now )
+                /*if (NewDate < DateTime.Now )
                 {
                     ModelState.AddModelError("DateFin", "Sélectionnez une date et un créneau supérieur à aujourd'hui");
                     Model.IdIntervPfl = id;
@@ -387,7 +387,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
                     ViewBag.modalModifPfl = "show";
                     return View("ModificationIntervention", Model);
-                }
+                }*/
                 // Vérifier que la date fin choisie n'est pas inferieure à la date debut intervention
                 reservation_maintenance resa = modifMaintDb.ObtenirIntervEquipPfl(id);
 
@@ -411,7 +411,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         case "Equipement en panne (blocage équipement)":
                         case "Maintenance curative (Dépannage sans blocage zone)":
                             // Vérifier la disponibilité sur les interventions
-                            DateOkPourModif = modifMaintDb.VerifDisponibilitEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID);
+                            DateOkPourModif = modifMaintDb.VerifDisponibilitEquipSurInterventions(NewDate, intervention);
                             if (!DateOkPourModif)
                             {
                                 ModelState.AddModelError("DateFin", "La date choisie est en conflit avec une autre intervention. Vérifier la disponibilité sur le calendrier PFL");
@@ -547,7 +547,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         case "Maintenance curative (Dépannage avec blocage de zone)": // blocage de toute la zone concernée
                             // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
                             // Si false alors une intervention est déjà déclarée pour les mêmes dates sur la zone
-                            if (reservationDb.VerifDisponibilitZoneEquipSurInterventions(intervention.date_debut, NewDate, intervention.equipementID) == false)
+                            if (modifMaintDb.VerifDisponibilitZoneEquipSurInterventions(NewDate, intervention) == false)
                             {
                                 ModelState.AddModelError("DateFin", "La date choisie est en conflit avec une autre intervention ayant lieu sur la même zone. Vérifiez la disponibilité sur le calendrier PFL");
                                 Model.IdIntervCom = id;
@@ -652,7 +652,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         case "Amélioration (avec blocage de zone)":
                             // Si un essai est en conflit alors indiquer à l'opérateur de choisir une autre date
                             // Vérifier que la date choisie ne se croise pas avec des autres essais ou maintenances
-                            DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
+                            DateOkPourModif = modifMaintDb.ModifZoneDisponibleXIntervention(NewDate, intervention);
                             if (!DateOkPourModif)
                             {
                                 ModelState.AddModelError("DateFin", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
@@ -674,7 +674,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                         case "Amélioration (sans blocage de zone)":
                             // Si un essai est en conflit alors indiquer à l'opérateur de choisir une autre date
                             // Vérifier que la date choisie ne se croise pas avec des autres essais ou maintenances
-                            DateOkPourModif = modifMaintDb.ModifEquipementDisponibleXIntervention(intervention.date_debut, NewDate, intervention.equipementID, maint.id);
+                            DateOkPourModif = modifMaintDb.ModifEquipementDisponibleXIntervention(NewDate, intervention);
                             if (!DateOkPourModif)
                             {
                                 ModelState.AddModelError("DateFin", "La date choisie est en conflit avec un autre essai ou maintenance. Vérifier la disponibilité sur le calendrier PFL");
@@ -784,6 +784,10 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                 }
             }
             Model.ListeEquipsPfl = modifMaintDb.ListIntervPFL(maint.id);
+
+            // Afficher message pour indiquer que l'intervention est mise à jour
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "La fin d'intervention a été prise en compte! ";
 
             return View("ModificationIntervention", Model);
         }

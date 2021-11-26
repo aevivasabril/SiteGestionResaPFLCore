@@ -242,14 +242,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         /// <param name="idEquipement"></param>
         /// <param name="Idmaintenance"></param>
         /// <returns></returns>
-        public bool ModifZoneDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement, int Idmaintenance)
+        public bool ModifZoneDisponibleXIntervention(DateTime dateFin, reservation_maintenance interv)
         {
             bool resaOk = false;
             bool interOk = false;
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
-                       where equip.id == idEquipement
+                       where equip.id == interv.equipementID
                        select equip.zoneID.Value).First();
 
             #region disponibilité sur les essais
@@ -263,8 +263,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                             && (resa.equipement.zoneID == zon) 
-                            && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
-                            && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                            && (((interv.date_debut >= resa.date_debut) || dateFin >= resa.date_debut)
+                            && ((interv.date_debut <= resa.date_fin) || dateFin <= resa.date_fin))
                             select essai).Distinct().ToList();
 
             if (resas.Count() == 0)
@@ -281,9 +281,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                              from equip in context.equipement
                              where maint.id == resaMaint.maintenanceID
                              && (maint.maintenance_supprime != true)
-                             && (resaMaint.equipement.zoneID == zon) && (maint.id != Idmaintenance)
-                             && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
-                             && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                             && (resaMaint.equipement.zoneID == zon) && (maint.id != interv.maintenanceID)
+                             && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                             && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                              select maint).Distinct().ToList();
 
             if (IntervZon.Count() == 0)
@@ -302,14 +302,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         /// <param name="idEquipement"></param>
         /// <param name="Idmaintenance"></param>
         /// <returns></returns>
-        public bool ModifEquipementDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement, int Idmaintenance)
+        public bool ModifEquipementDisponibleXIntervention(DateTime dateFin, reservation_maintenance interv)
         {
             bool resaOk = false;
             bool interOk = false;
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
-                       where equip.id == idEquipement
+                       where equip.id == interv.equipementID
                        select equip.zoneID.Value).First();
 
             #region disponibilité sur les essais
@@ -320,9 +320,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                          where essai.id == resa.essaiID
                          && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                              essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                         && (resa.equipementID == idEquipement)
-                         && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
-                         && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                         && (resa.equipementID == interv.equipementID)
+                         && (((interv.date_debut >= resa.date_debut) || dateFin >= resa.date_debut)
+                         && ((interv.date_debut <= resa.date_fin) || dateFin <= resa.date_fin))
                          select essai).Distinct().ToList();
 
             if (resas.Count() == 0)
@@ -338,15 +338,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                from resaMaint in context.reservation_maintenance
                                from equip in context.equipement
                                where maint.id == resaMaint.maintenanceID
-                               && (maint.maintenance_supprime != true)
+                               && (maint.maintenance_supprime != true) && (maint.id != interv.maintenanceID)
                                && ((maint.type_maintenance == "Equipement en panne (blocage équipement)")
                                || (maint.type_maintenance == "Maintenance curative (Dépannage sans blocage zone)")
                                || (maint.type_maintenance == "Maintenance préventive(Interne sans blocage de zone)")
                                || (maint.type_maintenance == "Maintenance préventive (Externe sans blocage de zone)")
                                || (maint.type_maintenance == "Amélioration (sans blocage de zone)"))
-                               && (resaMaint.equipementID == idEquipement)
-                               && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
-                               && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                               && (resaMaint.equipementID == interv.equipementID)
+                               && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                               && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                select maint).Distinct().ToList();
 
             if (IntervEquip.Count() == 0)
@@ -361,14 +361,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                   from resaMaint in context.reservation_maintenance
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
-                                  && (maint.maintenance_supprime != true)
+                                  && (maint.maintenance_supprime != true) && (maint.id != interv.maintenanceID)
                                   && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
                                   && (resaMaint.equipement.zoneID == zon)
-                                  && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
-                                  && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                  && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                  && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
                 if (IntervZone.Count() == 0)
                 {
@@ -454,32 +454,32 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             return true;
         }
 
-        public bool VerifDisponibilitEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement)
+        public bool VerifDisponibilitEquipSurInterventions(DateTime dateFin, reservation_maintenance interv)
         {
             bool interOk = false;
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
-                       where equip.id == idEquipement
+                       where equip.id == interv.equipementID
                        select equip.zoneID.Value).First();
 
             #region disponibilité sur les interventions
 
             // Vérifier qu'il y a pas autre maintenance (non supprimée) sur ces dates et sur la même zone ou sur le même équipement
-
+            // Et qu'il ne s'agit pas de la même intervention
             var IntervEquip = (from maint in context.maintenance
                                from resaMaint in context.reservation_maintenance
                                from equip in context.equipement
                                where maint.id == resaMaint.maintenanceID
-                               && (maint.maintenance_supprime != true)
+                               && (maint.maintenance_supprime != true) && (maint.id != interv.maintenanceID)
                                && ((maint.type_maintenance == "Equipement en panne (blocage équipement)")
                                || (maint.type_maintenance == "Maintenance curative (Dépannage sans blocage zone)")
                                || (maint.type_maintenance == "Maintenance préventive(Interne sans blocage de zone)")
                                || (maint.type_maintenance == "Maintenance préventive (Externe sans blocage de zone)")
                                || (maint.type_maintenance == "Amélioration (sans blocage de zone)"))
-                               && (resaMaint.equipementID == idEquipement)
-                               && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
-                               && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                               && (resaMaint.equipementID == interv.equipementID)
+                               && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                               && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                select maint).Distinct().ToList();
 
             if (IntervEquip.Count() == 0)
@@ -494,14 +494,14 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
                                   from resaMaint in context.reservation_maintenance
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
-                                  && (maint.maintenance_supprime != true)
+                                  && (maint.maintenance_supprime != true) && (maint.id != interv.maintenanceID)
                                   && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
                                   && (resaMaint.equipement.zoneID == zon)
-                                  && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
-                                  && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                  && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                  && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
                 if (IntervZone.Count() == 0)
                 {
@@ -522,6 +522,32 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
 
         #endregion
         ENDT:
+            return interOk;
+        }
+
+        public bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateFin, reservation_maintenance interv)
+        {
+            bool interOk = false;
+
+            // Récupérer l'id zone pour l'équipement enquêté
+            var zon = (from equip in context.equipement
+                       where equip.id == interv.equipementID
+                       select equip.zoneID.Value).First();
+
+            // Vérifier qu'il y a pas autre maintenance (non supprimée) sur ces dates et sur la même zone
+            var IntervZon = (from maint in context.maintenance
+                             from resaMaint in context.reservation_maintenance
+                             from equip in context.equipement
+                             where maint.id == resaMaint.maintenanceID
+                             && (maint.maintenance_supprime != true) && (maint.id != interv.maintenanceID)
+                             && (resaMaint.equipement.zoneID == zon)
+                             && (((interv.date_debut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                             && ((interv.date_debut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                             select maint).Distinct().ToList();
+
+            if (IntervZon.Count() == 0)
+                interOk = true;
+
             return interOk;
         }
 

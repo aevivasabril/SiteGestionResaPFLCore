@@ -8,6 +8,11 @@
 <h1 class="text-center">Modification Intervention Maintenance</h1>
 <br />
 
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+}
+
 <div class="form-group justify-content-center row">
     @using (Html.BeginForm("TrouverIntervention", "ModifMaint", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
@@ -359,7 +364,7 @@
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-<script>
+    <script>
         @{
             if (ViewBag.modalModif == null)
             {
@@ -388,5 +393,5 @@
         $('#ValidFinIntervPfl').modal('@ViewBag.modalValidPfl');
         $('#SupprimerMaint').modal('@ViewBag.modalSuppression');
 
-</script>
+    </script>
 }
