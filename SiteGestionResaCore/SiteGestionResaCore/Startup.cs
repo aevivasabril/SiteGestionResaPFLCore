@@ -29,6 +29,7 @@ using SiteGestionResaCore.Areas.Enquete.Data.PostEnquete;
 using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
 using SiteGestionResaCore.Areas.Maintenance.Data.Consultation;
 using SiteGestionResaCore.Areas.Maintenance.Data.Modification;
+using SiteGestionResaCore.Areas.AboutPFL.Data;
 
 namespace SiteGestionResaCore
 {
@@ -68,6 +69,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IFormulaireIntervDB, FormulaireIntervDb>();
             services.AddScoped<IConsultMaintDb, ConsultMaintDb>();
             services.AddScoped<IModifMaintenanceDB, ModifMaintenanceDB>();
+            services.AddScoped<IZonePflEquipDB, ZonePflEquipDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();

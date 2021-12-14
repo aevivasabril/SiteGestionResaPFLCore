@@ -1,0 +1,29 @@
+﻿@model EquipParZoneViewModel
+@{
+    ViewBag.Title = "PlanZonesReservation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using SiteGestionResaCore.Areas.Reservation.Data
+
+<br />
+<h5 class="text-center">Liste des équipements pour la zone @Model.NomZone </h5>
+<br />
+@for (int i = 0; i < Model.ListeEquipements.Count(); i++)
+{
+    <div class="form-row">
+        <div class="col-sm-8 col-md-8">
+            <div class="checkbox">
+                @*@Html.CheckBoxFor(m => m.ListeEquipements[i].IsEquipSelect, new { @class = "col-md-1 control-label" })*@
+                <strong> -> @Html.Label(Model.ListeEquipements[i].NomEquipement + "( Num GMAO: " + Model.ListeEquipements[i].NumGmaoEquipement + " )")</strong>
+                @Html.HiddenFor(m => m.ListeEquipements[i].IdEquipement)
+                @Html.HiddenFor(m => m.ListeEquipements[i].NomEquipement)
+                @Html.HiddenFor(m => m.ListeEquipements[i].NumGmaoEquipement)
+            </div>
+        </div>
+        <br />
+    </div>
+}
+
+<div class="row justify-content-center">
+    <a asp-action="PlanZones" asp-controller="InfosPfl" asp-area="AboutPFL">Revenir à la page précedente</a>
+</div>
