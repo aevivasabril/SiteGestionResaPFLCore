@@ -17,7 +17,9 @@ namespace SiteGestionResaCore.Data
         public int? zoneID { get; set; }
         public string numGmao { get; set; }
         public bool? mobile { get; set; }
-        public string nomTabPcVue { get; set; }
+        public string? nomTabPcVue { get; set; }
+        public string? cheminFicheMateriel { get; set; }
+        public string? cheminFicheMetrologie { get; set; }
 
         public virtual zone zone { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
