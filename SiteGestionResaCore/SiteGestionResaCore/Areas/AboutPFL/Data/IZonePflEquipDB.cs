@@ -9,7 +9,9 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
     public interface IZonePflEquipDB
     {
         List<zone> ListeZones();
-        List<equipement> ListeEquipementsXZone(int idZone);
+        List<InfosEquipement> ListeEquipementsXZone(int idZone);
         string NomZoneXEquipement(int idZone);
+        string GetCheminFicheMateriel(int idEquipement);
+        string GetNomXChemin(string cheminFichier);
     }
 }

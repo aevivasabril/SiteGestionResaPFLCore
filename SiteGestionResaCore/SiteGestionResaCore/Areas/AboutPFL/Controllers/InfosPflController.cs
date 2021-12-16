@@ -24,7 +24,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
         /// Ouverture de la vue pour affichage du plan PFL
         /// </summary>
         /// <returns></returns>
-        public ActionResult PlanZones()
+        public IActionResult PlanZones()
         {
             ZonesPflViewModel vm = new ZonesPflViewModel()
             {
@@ -34,17 +34,14 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
             return View("PlanZonesPFL",vm);
         }
 
-        public ActionResult ZoneVsEquipements(int ?id)
+        public IActionResult ZoneVsEquipements(int ?id)
         {
             List<InfosEquipement> listEquipVM = new List<InfosEquipement>();
-            List<equipement> equipements = new List<equipement>();
+            //List<equipement> equipements = new List<equipement>();
             // 1. Obtenir la liste des equipements
-            equipements = pflEquipDB.ListeEquipementsXZone(id.Value);
+            listEquipVM = pflEquipDB.ListeEquipementsXZone(id.Value);
             // 2. For pour crée la liste des InfosEquipement
-            foreach(var equip in equipements)
-            {
-                listEquipVM.Add(new InfosEquipement { IdEquipement = equip.id, NomEquipement = equip.nom, NumGmaoEquipement = equip.numGmao });
-            }
+            
             string nomZone = pflEquipDB.NomZoneXEquipement(id.Value);
             EquipParZoneViewModel vm = new EquipParZoneViewModel()
             {
@@ -53,6 +50,14 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
             };
 
             return View("EquipsVsZone", vm);
+        }
+
+        public IActionResult DownloadFichMat(int? id)
+        {
+            string cheminFichier = pflEquipDB.GetCheminFicheMateriel(id.Value);
+            string NomFichier = pflEquipDB.GetNomXChemin(cheminFichier);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(cheminFichier);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, NomFichier);
         }
     }
 }

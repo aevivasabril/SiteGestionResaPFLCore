@@ -7,23 +7,35 @@
 
 <br />
 <h5 class="text-center">Liste des équipements pour la zone @Model.NomZone </h5>
+<h6 class="text-center">Vous pouvez télécharger les documents "fiche materiel" et "fiche métrologie" en cliquant sur les liens correspondant à l'équipement</h6>
 <br />
 @for (int i = 0; i < Model.ListeEquipements.Count(); i++)
 {
     <div class="form-row">
-        <div class="col-sm-8 col-md-8">
-            <div class="checkbox">
-                @*@Html.CheckBoxFor(m => m.ListeEquipements[i].IsEquipSelect, new { @class = "col-md-1 control-label" })*@
-                <strong> -> @Html.Label(Model.ListeEquipements[i].NomEquipement + "( Num GMAO: " + Model.ListeEquipements[i].NumGmaoEquipement + " )")</strong>
-                @Html.HiddenFor(m => m.ListeEquipements[i].IdEquipement)
-                @Html.HiddenFor(m => m.ListeEquipements[i].NomEquipement)
-                @Html.HiddenFor(m => m.ListeEquipements[i].NumGmaoEquipement)
-            </div>
+        <div class="col-sm-8 col-md-8 text">           
+            <strong> -> @Html.Label(Model.ListeEquipements[i].NomEquipement + "( Num GMAO: " + Model.ListeEquipements[i].NumGmaoEquipement + " )")</strong>
+            @Html.HiddenFor(m => m.ListeEquipements[i].IdEquipement)
+            @Html.HiddenFor(m => m.ListeEquipements[i].NomEquipement)
+            @Html.HiddenFor(m => m.ListeEquipements[i].NumGmaoEquipement)
+        </div>
+        <div class="col-sm-2 col-md-2 text-center">
+            @if (Model.ListeEquipements[i].CheminFicheMateriel == true)
+            {
+                <td><a asp-action="DownloadFichMat" asp-area="AboutPFL" asp-controller="InfosPfl" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Téléchargement Fiche Materiel</a></td>
+            }
+            else
+            {
+                <td>Fiche materiel (doc indisponible)</td>
+            }
+        </div>
+        <div class="col-sm-2 col-md-2 text-center">           
+            @*@Html.CheckBoxFor(m => m.ListeEquipements[i].IsEquipSelect, new { @class = "col-md-1 control-label" })*@
+            @Html.Label("Fiche métrologie")
         </div>
         <br />
     </div>
 }
-
+<br />
 <div class="row justify-content-center">
     <a asp-action="PlanZones" asp-controller="InfosPfl" asp-area="AboutPFL">Revenir à la page précedente</a>
 </div>

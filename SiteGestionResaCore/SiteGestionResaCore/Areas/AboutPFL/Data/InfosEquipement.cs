@@ -15,5 +15,9 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
 
         // num GMAO calendrier view model
         public string NumGmaoEquipement { get; set; }
+
+        public bool CheminFicheMateriel { get; set; }
+
+        public bool CheminFicheMetrologie { get; set; }
     }
 }

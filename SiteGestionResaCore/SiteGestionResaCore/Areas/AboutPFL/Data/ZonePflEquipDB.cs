@@ -3,6 +3,7 @@ using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.AboutPFL.Data
@@ -26,19 +27,27 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
         /// </summary>
         /// <param name="idZone">id zone</param>
         /// <returns>Liste des équipements + boolean si équipement réservé ou pas</returns>
-        public List<equipement> ListeEquipementsXZone(int idZone)
+        public List<InfosEquipement> ListeEquipementsXZone(int idZone)
         {
-            List<equipement> List = new List<equipement>();
+            List<InfosEquipement> List = new List<InfosEquipement>();
+            bool cheminFicheMat = false;
+            bool cheminFicheMet = false;
+            // Liste des équipements de la zone
+            var query = context.equipement.Where(e => e.zoneID == idZone).ToList();
 
-            var query = (from equip in context.equipement
-                         where equip.zoneID == idZone
-                         select equip).ToArray();
-
-            foreach (var y in query)
+            foreach(var equip in query)
             {
-                List.Add(y);
+                cheminFicheMat = (equip.cheminFicheMateriel != null);
+                cheminFicheMet = (equip.cheminFicheMetrologie != null);
+                List.Add(new InfosEquipement
+                {
+                    IdEquipement = equip.id,
+                    NomEquipement = equip.nom,
+                    NumGmaoEquipement = equip.numGmao,
+                    CheminFicheMateriel = cheminFicheMat,
+                    CheminFicheMetrologie = cheminFicheMet
+                });
             }
-
             return List;
         }
 
@@ -47,5 +56,19 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
             return context.zone.First(z => z.id == idZone).nom_zone;
         }
 
+        public string GetCheminFicheMateriel(int idEquipement)
+        {
+            return context.equipement.First(z => z.id == idEquipement).cheminFicheMateriel;
+        }
+        public string GetNomXChemin(string cheminFichier)
+        {
+            // Appliquer une regex pour extraire uniquement le nom
+            string regexPatt = @"([^\\s]+)$";
+
+            Regex Rg = new Regex(regexPatt);
+            MatchCollection match = Rg.Matches(cheminFichier);
+
+            return match[0].Groups[1].Value;
+        }
     }
 }
