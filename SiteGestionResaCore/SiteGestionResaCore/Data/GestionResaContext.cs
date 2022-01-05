@@ -37,8 +37,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<maintenance> maintenance { get; set; }
         public virtual DbSet<reservation_maintenance> reservation_maintenance { get; set; }
         public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
-
-
+        public virtual DbSet<doc_qualite> doc_qualite { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -340,6 +339,19 @@ namespace SiteGestionResaCore.Data.Data
                     .HasConstraintName("FK_resa_maint_equip_adjacent_maintenance");
             });
 
+            modelBuilder.Entity<doc_qualite>(entity =>
+            {
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.chemin_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.description_doc).IsUnicode(false);
+            });
+
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7} });
@@ -450,6 +462,12 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_type_maintenance { id = 7, nom_type_maintenance = "Maintenance préventive (Interne sans blocage de zone)" },
                 new ld_type_maintenance { id = 8, nom_type_maintenance = "Maintenance préventive (Externe sans blocage de zone)" },
                 new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" }
+            });
+
+            modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\politique-qualité.pdf"},
+                new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
+                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\organigramme.pdf"},
+                new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}
             });
 
             base.OnModelCreating(modelBuilder);
