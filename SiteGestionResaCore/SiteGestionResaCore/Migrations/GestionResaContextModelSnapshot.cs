@@ -51,35 +51,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "17d4a605-e326-460c-92f3-b5291f8e8be8",
+                            ConcurrencyStamp = "faaeb0b4-c7a9-4a74-abf2-6cb27e97600c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "02d2a5cc-cf65-4b00-abcb-6605c1bdf0cc",
+                            ConcurrencyStamp = "a9ff883e-7c4d-4e4b-b657-2980f53e0d0e",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "64cde9eb-562d-4ac2-b2f7-c345a5403a00",
+                            ConcurrencyStamp = "b965940a-99f1-41c4-9ac0-9416e70cd87e",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "6ca15c37-7f30-4f18-b4b2-685bbfd49e67",
+                            ConcurrencyStamp = "ed11b5e1-178d-41c8-929d-79fdab7593a2",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "7ac98a74-05e8-44b2-a49c-4ff514812f01",
+                            ConcurrencyStamp = "4483793d-06e5-4fb4-9656-cdd964de7148",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -226,6 +226,14 @@ namespace SiteGestionResaCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("cheminFicheMateriel")
+                        .HasColumnType("varchar(max)")
+                        .IsUnicode(false);
+
+                    b.Property<string>("cheminFicheMetrologie")
+                        .HasColumnType("varchar(max)")
+                        .IsUnicode(false);
 
                     b.Property<bool?>("mobile")
                         .HasColumnType("bit");
@@ -771,6 +779,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 225,
+                            cheminFicheMateriel = "M:\\PFL\\Dossier matériel et métrologie\\Dossiers finalisés\\EN-MAT-123_évapo.doc",
                             mobile = false,
                             nom = "Pilote évaporateur à flot tombant FF-1",
                             nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB",
