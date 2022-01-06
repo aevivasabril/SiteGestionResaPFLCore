@@ -24,7 +24,7 @@
         <div class="card-body">
             <!--<h5 class="card-title">@x.DescriptionDoc</h5>-->
             <p class="card-text">@x.DescriptionDoc</p>
-            <a href="#" class="btn text-center navbar-inra">Télécharger</a>
+            <a class="btn text-center navbar-inra" asp-action="TelechargerDocxId" asp-controller="DocQualite" asp-route-id="@x.IdDocument">Télécharger</a>
         </div>
     </div>
     <br />

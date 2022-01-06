@@ -8,5 +8,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
     public interface IDocsQualiDB
     {
         List<DocumentQualite> ListDocs();
+        string GetCheminDocQualite(int id);
+        string GetNomDoc(string cheminDoc);
     }
 }

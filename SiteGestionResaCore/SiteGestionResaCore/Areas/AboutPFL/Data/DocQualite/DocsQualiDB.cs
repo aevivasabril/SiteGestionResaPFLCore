@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
@@ -30,6 +31,22 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
                 });
             }
             return listXVue;
+        }
+
+        public string GetCheminDocQualite(int id)
+        {
+            return context.doc_qualite.First(d => d.id == id).chemin_document;
+        }
+
+        public string GetNomDoc(string cheminDoc)
+        {
+            // Appliquer une regex pour extraire uniquement le nom
+            string regexPatt = @"([^\\s]+)$";
+
+            Regex Rg = new Regex(regexPatt);
+            MatchCollection match = Rg.Matches(cheminDoc);
+
+            return match[0].Groups[1].Value;
         }
     }
 }

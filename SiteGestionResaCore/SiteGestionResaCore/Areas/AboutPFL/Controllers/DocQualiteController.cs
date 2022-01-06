@@ -28,5 +28,13 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
 
             return View("DocQualitePfl", vm);
         }
+
+        public IActionResult TelechargerDocxId(int? id)
+        {
+            string cheminDoc = docsQualiDB.GetCheminDocQualite(id.Value);
+            string nomDoc = docsQualiDB.GetNomDoc(cheminDoc);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(cheminDoc);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, nomDoc);
+        }
     }
 }
