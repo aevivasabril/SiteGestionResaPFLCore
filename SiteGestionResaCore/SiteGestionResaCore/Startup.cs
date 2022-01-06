@@ -30,6 +30,7 @@ using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
 using SiteGestionResaCore.Areas.Maintenance.Data.Consultation;
 using SiteGestionResaCore.Areas.Maintenance.Data.Modification;
 using SiteGestionResaCore.Areas.AboutPFL.Data;
+using SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite;
 
 namespace SiteGestionResaCore
 {
@@ -70,6 +71,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IConsultMaintDb, ConsultMaintDb>();
             services.AddScoped<IModifMaintenanceDB, ModifMaintenanceDB>();
             services.AddScoped<IZonePflEquipDB, ZonePflEquipDB>();
+            services.AddScoped<IDocsQualiDB, DocsQualiDB >();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();

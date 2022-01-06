@@ -1,0 +1,31 @@
+﻿@model DocQualiteViewModel
+@{
+    ViewBag.Title = "ListeEquipements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-md-10">
+        <h5 class="text-center"><strong>Documents qualité Plate-forme LAIT </strong></h5>
+        <h6 class="text-center">Nous mettons à votre disposition les documents concernant la strategie qualité de la PFL</h6>
+    </div>
+    <div class="col-md-2">
+        <img src="~/Content/Images/LogoQualite/ISO 9001 (blanc).jpeg" width="110" height="110" dir="auto">
+    </div>
+</div>
+<hr />
+@foreach (var x in Model.ListDocsQualite)
+{
+    <div class="card">
+        <h5 class="card-header">
+            @x.NomDocument
+        </h5>
+        <div class="card-body">
+            <!--<h5 class="card-title">@x.DescriptionDoc</h5>-->
+            <p class="card-text">@x.DescriptionDoc</p>
+            <a href="#" class="btn text-center navbar-inra">Télécharger</a>
+        </div>
+    </div>
+    <br />
+}
