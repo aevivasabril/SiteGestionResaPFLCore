@@ -404,7 +404,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 218, nom = "Pilote de microfiltration MFMG", zoneID = 3, numGmao = "PILOT0006", mobile = false, nomTabPcVue = "tab_UA_MFMG" }, new equipement { id = 219, nom = "Pilote de microfiltration MFS19", zoneID = 4, numGmao = "PILOT0007", mobile = false }, 
                 new equipement { id = 220, nom = "Pilote de microfiltration GP7", zoneID = 4, numGmao = "PILOT0008", mobile = false, nomTabPcVue= "tab_UA_GP7" }, new equipement { id = 221, nom = "UF TAMI/tech-sep 8 kDa (13 m2)", zoneID = 8, numGmao = "PILOT0009", mobile = false }, 
                 new equipement { id = 222, nom = "Stérilisateur pilote tubulaire électrique ACTINI", zoneID = 3, numGmao = "PILOT0010", mobile = false, nomTabPcVue = "tab_UA_ACT" }, new equipement { id = 223, nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH", zoneID = 8, numGmao = "PILOT0011", mobile = false, nomTabPcVue = "tab_UA_MTH" }, 
-                new equipement { id = 224, nom = "Pilote UF TAMI/Tia 8Kda mobile", zoneID = 8, numGmao = "PILOT0013", mobile = true }, new equipement { id = 225, nom = "Pilote évaporateur à flot tombant FF-1", zoneID = 1, numGmao = "PILOT0014", mobile = false, nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB", cheminFicheMateriel ="M:\\PFL\\Dossier matériel et métrologie\\Dossiers finalisés\\EN-MAT-123_évapo.doc" }, 
+                new equipement { id = 224, nom = "Pilote UF TAMI/Tia 8Kda mobile", zoneID = 8, numGmao = "PILOT0013", mobile = true }, new equipement { id = 225, nom = "Pilote évaporateur à flot tombant FF-1", zoneID = 1, numGmao = "PILOT0014", mobile = false, nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB" },//, cheminFicheMateriel ="M:\\PFL\\Dossier matériel et métrologie\\Dossiers finalisés\\EN-MAT-123_évapo.doc" }, 
                 new equipement { id = 226, nom = "Pilote de microfiltration P3", zoneID = 8, numGmao = "PILOT0015", mobile = false }, new equipement { id = 227, nom = "Pilote de sèchage mono-disperse", zoneID = 1, numGmao = "PILOT0016", mobile = false }, 
                 new equipement { id = 228, nom = "Pilote tour de sèchage MINOR", zoneID = 1, numGmao = "PILOT0017", mobile = false, nomTabPcVue = "tab_UA_SEC" }, new equipement { id = 229, nom = "Pilote VALOBAB (MF et UF) SKID 12EO46", zoneID = 3, numGmao = "PILOT0018", mobile = false, nomTabPcVue= "tab_UA_VALO" }, 
                 new equipement { id = 230, nom = "Pilote UF (optimal)", zoneID = 4, numGmao = "PILOT0019", mobile = false, nomTabPcVue = "tab_UA_OPTIMAL" }, new equipement { id = 231, nom = "Pompe centrifuge 20 à 30 m3/h", zoneID = 17, numGmao = "POMPE0002", mobile = true }, 
@@ -466,8 +466,8 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\politique-qualité.pdf"},
                 new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
-                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\organigramme.pdf"},
-                new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}
+                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\organigramme.pdf"}/*,
+                new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
             });
 
             base.OnModelCreating(modelBuilder);
