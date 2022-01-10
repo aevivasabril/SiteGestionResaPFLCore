@@ -464,9 +464,9 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" }
             });
 
-            modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\politique-qualité.pdf"},
-                new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
-                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\organigramme.pdf"}/*,
+            modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\politique-qualité.pdff"},
+                new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
+                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf"}/*,
                 new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
             });
 
