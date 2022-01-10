@@ -8,5 +8,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
     public interface IConsultResasDB
     {
         IList<InfosResasValid> ObtInfEssaiValidees();
+
+        IList<InfosResaNonValid> ObtInfosEssaisRefusees();
+
+        IList<InfosResaNonValid> ObtInfosEssaisSupprimees();
     }
 }

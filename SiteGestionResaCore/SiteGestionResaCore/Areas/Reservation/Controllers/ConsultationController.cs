@@ -87,5 +87,23 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             };
             return PartialView("~/Views/Shared/_DisplayEquipsReserves.cshtml", vm);
         }
+
+        public IActionResult ResasRefusees()
+        {
+            ConsultResasNonValidViewModel model = new ConsultResasNonValidViewModel()
+            {
+                ResasNonValid = consultDB.ObtInfosEssaisRefusees()
+            };
+            return View("ResasRefusees", model);
+        }
+
+        public IActionResult ResasSupprimees()
+        {
+            ConsultResasNonValidViewModel model = new ConsultResasNonValidViewModel()
+            {
+                ResasNonValid = consultDB.ObtInfosEssaisSupprimees()
+            };
+            return View("ResasSupprimees", model);
+        }
     }
 }

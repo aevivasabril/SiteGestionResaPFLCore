@@ -1,0 +1,121 @@
+﻿@model SiteGestionResaCore.Areas.Reservation.Data.Consultation.ConsultResasNonValidViewModel
+@{
+    ViewData["Title"] = "ResasSupprimees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+<h1>Réservations supprimées</h1>
+<br />
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <h5 class="text-center">Liste des essais supprimés</h5>
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Projet</th>
+                            <th scope="col">Numéro projet</th>
+                            <th scope="col">Responsable projet</th>
+                            <th scope="col">Infos Essai</th>
+                            <th scope="col">Equipements réservées</th>
+                            <th scope="col">Date création</th>
+                            <th scope="col">Raison Suppression</th>
+                            <th scope="col">Confidentialité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ResasNonValid)
+                        {
+                            <tr>
+                                @*<td><a asp-action="VoirInfosProj" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NomProjet</a></td>*@
+                                <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NomProjet</a></td>
+                                <td>@x.NumProjet</td>
+                                <td>@x.MailRespProj</td>
+                                <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
+                                @*<td><a asp-action="VoirReservations" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>*@
+                                <td><a href="#" onclick="ModalEquipReserv(@x.idEssai)">Equipements réservés</a></td>
+                                <td>@x.DateSaisieEssai</td>
+                                <td><strong>@x.RaisonSuppression</strong></td>
+                                <td>@x.Confidentialit</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a asp-action="MenuConsultation" asp-controller="Validation" asp-area="Reservation">Revenir à la page précedente</a>
+</div>
+
+<!-- Modal pour affichage des infos "projet"-->
+<div id="InfosProjet"></div>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div id="InfosEssai"></div>
+
+<!-- Modal pour affichage des infos "Reservations"-->
+<div id="EquipReserves"></div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            /*if (ViewBag.modalEssai == null)
+            {
+                ViewBag.modalEssai = "hide";
+            }*/
+            if (ViewBag.modalResas == null)
+            {
+                ViewBag.modalResas = "hide";
+            }
+        }
+        $('#ResaModal').modal('@ViewBag.modalResas');
+
+        function ModalInfosEssai(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalInfosProjet(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosProj", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosProjet").html(html);
+                        $("#ProjModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalEquipReserv(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirReservations", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#EquipReserves").html(html);
+                        $("#ResaModal").modal('show');
+                    }
+                });
+            }
+    }
+
+    </script>
+}
