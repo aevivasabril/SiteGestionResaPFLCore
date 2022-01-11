@@ -5,6 +5,7 @@
 }
 <br />
 <h1>Réservations validées </h1>
+<h6>En tant qu'administrateur vous pouvez supprimer un essai à la demande d'un utilisateur</h6>
 <br />
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
@@ -15,13 +16,13 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">Projet</th>
-                            <th scope="col">Numéro projet</th>
                             <th scope="col">Responsable projet</th>
                             <th scope="col">Infos Essai</th>
                             <th scope="col">Equipements réservées</th>
                             <th scope="col">Date création</th>
                             <th scope="col">Date de validation</th>
                             <th scope="col">Confidentialité</th>
+                            <th scope="col">Suppression tardive?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,7 +31,6 @@
                             <tr>
                                 @*<td><a asp-action="VoirInfosProj" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idProj">@x.NomProjet</a></td>*@
                                 <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NomProjet</a></td>
-                                <td>@x.NumProjet</td>
                                 <td>@x.MailRespProj</td>
                                 <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
                                 @*<td><a asp-action="VoirReservations" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@x.idEssai">Equipements réservés</a></td>*@
@@ -38,6 +38,10 @@
                                 <td>@x.DateSaisieEssai</td>
                                 <td>@x.DateValidation</td>
                                 <td>@x.Confidentialit</td>
+                                <td>
+                                    <a class="btn navbar-inra" asp-action="SupprimerEssaiAdm" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Supprimer</a>
+                                </td>
+                                
                             </tr>
                         }
                     </tbody>
