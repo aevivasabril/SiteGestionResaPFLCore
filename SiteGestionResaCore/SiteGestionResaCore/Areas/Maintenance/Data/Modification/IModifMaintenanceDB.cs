@@ -32,5 +32,6 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         bool SupprimerReservation(int IDresa);
         bool VerifDisponibilitEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
         bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
+        void UpdateStatusMaintenanceFinie(int idMaint);
     }
 }

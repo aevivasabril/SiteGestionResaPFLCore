@@ -550,8 +550,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                     ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
                 }
                 // initialiser la date des datepicker au MOIS Selectionné
-                equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerDu.Value.Day);
-                equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DatePickerAu.Value.Day);
+                equipementZone.CalendVM.DatePickerDu = new DateTime(model.DatePickerDu.Value.Year, model.DatePickerDu.Value.Month, model.DatePickerDu.Value.Day);
+                equipementZone.CalendVM.DatePickerAu = new DateTime(model.DatePickerAu.Value.Year, model.DatePickerAu.Value.Month, model.DatePickerAu.Value.Day);
                 equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
                 equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
 

@@ -238,7 +238,6 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public async Task<IActionResult> ConfirmIntervComAsync(int id)
         {
-            DateTime NewDate = new DateTime();
             bool success = false;
             var retryCount = 5;
             string MsgUser = "";
@@ -248,20 +247,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXInterv(id);
 
-            // Déterminer si on est le matin ou l'aprèm
-            if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 12) // heure fin à mettre au format du matin
-            {
-                NewDate = new DateTime(DateTime.Today.Year,
-                    DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0, DateTimeKind.Local);
-            }
-            else // Heure fin aprèm
-            {
-                NewDate = new DateTime(DateTime.Today.Year,
-                    DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0, DateTimeKind.Local);
-            }
-
-            // Mettre à jour la date pour l'intervention des équipements communs
-            DateTime AncienneDateFin = modifMaintDb.ChangeDateFinEquipCommun(id, NewDate);
+            // Indiquer sur la base de données que l'intervention est fini
+            modifMaintDb.UpdateStatusMaintenanceFinie(maint.id);
 
             //resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
@@ -310,6 +297,10 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
             // Sauvegarder la session data du view model car il a les infos sur l'intervention complète
             this.HttpContext.AddToSession("ModifMaintVM", Model);
+
+            // Afficher message pour indiquer que l'intervention est mise à jour
+            ViewBag.AfficherMessage = true;
+            ViewBag.Message = "La fin d'intervention a été prise en compte! ";
 
             ViewBag.modalModif = "";
             return View("ModificationIntervention", Model);
@@ -738,21 +729,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
 
-            DateTime NewDate = new DateTime();
-            // Déterminer si on est le matin ou l'aprèm
-            if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 12) // heure fin à mettre au format du matin
-            {
-                NewDate = new DateTime(DateTime.Today.Year,
-                    DateTime.Today.Month, DateTime.Today.Day, 12, 0, 0, DateTimeKind.Local);
-            }
-            else // Heure fin aprèm
-            {
-                NewDate = new DateTime(DateTime.Today.Year,
-                    DateTime.Today.Month, DateTime.Today.Day, 18, 0, 0, DateTimeKind.Local);
-            }
-
-            // modifier la datefin pour l'intervention
-            modifMaintDb.ChangeDateFinEquipPFL(id, NewDate);
+            // Indiquer sur la base de données que l'intervention est fini
+            modifMaintDb.UpdateStatusMaintenanceFinie(maint.id);
 
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
             if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)") == true)

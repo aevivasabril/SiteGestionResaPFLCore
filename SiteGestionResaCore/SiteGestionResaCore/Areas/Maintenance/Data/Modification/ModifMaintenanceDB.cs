@@ -80,13 +80,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             bool finie = false;
             var listIntervCommun = context.resa_maint_equip_adjacent.Where(r => r.maintenanceID == IdMaint).ToList();
 
+            // Voir si l'opération de maintenance est déjà fini
+            var OpMaint = context.maintenance.First(m => m.id == IdMaint);
+            if (OpMaint.maintenance_finie == false || OpMaint.maintenance_finie == null)
+                finie = false;
+            else
+                finie = true;
+
             foreach (var maint in listIntervCommun)
             {
-                if(maint.date_fin < DateTime.Today)
-                    finie = true;
-                else
-                    finie = false;
-
                 EquipCommunXInterv equipCommunXInterv = new EquipCommunXInterv
                 {
                     DateDebut = maint.date_debut,
@@ -113,12 +115,15 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             bool finie = false;
             var listMaintPfl = context.reservation_maintenance.Where(r => r.maintenanceID == IdMaint).ToList();
 
-            foreach(var maint in listMaintPfl)
-            {
-                if (maint.date_fin < DateTime.Today)
-                    finie = true;
-                else
-                    finie = false;
+            // Voir si l'opération de maintenance est déjà fini
+            var OpMaint = context.maintenance.First(m => m.id == IdMaint);
+            if (OpMaint.maintenance_finie == false || OpMaint.maintenance_finie == null)
+                finie = false;
+            else
+                finie = true;
+
+            foreach (var maint in listMaintPfl)
+            {                   
                 EquipPflXIntervention equipPflXIntervention = new EquipPflXIntervention 
                 {
                     DateDebut = maint.date_debut,
@@ -551,6 +556,12 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             return interOk;
         }
 
+        public void UpdateStatusMaintenanceFinie(int idMaint)
+        {
+            var resa = context.maintenance.First(r => r.id == idMaint);
+            resa.maintenance_finie = true;
+            context.SaveChanges();
+        }
 
     }
 }
