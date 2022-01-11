@@ -1007,10 +1007,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             }
             ENDT:
             #region initialiser la date des datepicker au MOIS Selectionné
-            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateDebut.Value.Day);
-            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateFin.Value.Day);
-            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateDebut.Value.Day);
-            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, model.DateFin.Value.Day);
+            equipementZone.CalendVM.DatePickerDu = new DateTime(model.DateDebut.Value.Year, model.DateDebut.Value.Month, model.DateDebut.Value.Day);
+            equipementZone.CalendVM.DatePickerAu = new DateTime(model.DateFin.Value.Year, model.DateFin.Value.Month, model.DateFin.Value.Day);
+            equipementZone.CalendVM.DateDebut = new DateTime(model.DateDebut.Value.Year, model.DateDebut.Value.Month, model.DateDebut.Value.Day);
+            equipementZone.CalendVM.DateFin = new DateTime(model.DateFin.Value.Year, model.DateFin.Value.Month, model.DateFin.Value.Day);
             #endregion
 
             return View("EquipementVsZone", equipementZone); // Si error alors on recharge la page pour montrer les messages
