@@ -24,10 +24,30 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         {
             ConsultInterventionVM vm = new ConsultInterventionVM()
             {
-                ListIntervDansPFL = consultDb.ListIntervPFL(),
-                ListIntervSansZone = consultDb.ListIntervSansZones()
+                ListIntervDansPFL = consultDb.ListIntervPFLEnCours(),
+                ListIntervSansZone = consultDb.ListIntervSansZonesEnCours()
             };
             return View("ConsultationInterventions", vm);
+        }
+
+        public IActionResult ConsultIntervFinies()
+        {
+            ConsultInterventionVM vm = new ConsultInterventionVM()
+            {
+                ListIntervDansPFL = consultDb.ListIntervPFLFinies(),
+                ListIntervSansZone = consultDb.ListIntervSansZoneFinies()
+            };
+            return View("ConsultInterventionsFinies", vm);
+        }
+
+        public IActionResult ConsultIntervSupprimees()
+        {
+            ConsultInterventionVM vm = new ConsultInterventionVM()
+            {
+                ListIntervDansPFL = consultDb.ListIntervPFLSupp(),
+                ListIntervSansZone = consultDb.ListIntervSansZoneSupp()
+            };
+            return View("ConsultInterventionsSupprimees", vm);
         }
     }
 }

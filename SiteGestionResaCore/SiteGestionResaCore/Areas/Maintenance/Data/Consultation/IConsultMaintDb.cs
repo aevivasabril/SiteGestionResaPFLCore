@@ -7,7 +7,11 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
 {
     public interface IConsultMaintDb
     {
-        List<InfosIntervDansPFL> ListIntervPFL();
-        List<InfosIntervSansZone> ListIntervSansZones();
+        List<InfosInterventions> ListIntervPFLEnCours();
+        List<InfosInterventions> ListIntervSansZonesEnCours();
+        List<InfosInterventions> ListIntervPFLFinies();
+        List<InfosInterventions> ListIntervSansZoneFinies();
+        List<InfosInterventions> ListIntervPFLSupp();
+        List<InfosInterventions> ListIntervSansZoneSupp();
     }
 }

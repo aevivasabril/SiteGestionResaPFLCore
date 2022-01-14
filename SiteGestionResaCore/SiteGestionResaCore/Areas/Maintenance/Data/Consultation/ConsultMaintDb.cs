@@ -25,9 +25,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             this.userManager = userManager;
         }
 
-        public List<InfosIntervDansPFL> ListIntervPFL()
+        public List<InfosInterventions> ListIntervPFLEnCours()
         {
-            List<InfosIntervDansPFL> ListPFL = new List<InfosIntervDansPFL>();
+            List<InfosInterventions> ListPFL = new List<InfosInterventions>();
             string NomIntervExt = "";
 
             // récupérer uniquement les interventions des 12 derniers mois
@@ -38,7 +38,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if(maint.maintenance_supprime != true)
+                if(maint.maintenance_supprime != true && maint.maintenance_finie != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -48,7 +48,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                     {
                         NomIntervExt = "";
                     }
-                    InfosIntervDansPFL info = new InfosIntervDansPFL
+                    InfosInterventions info = new InfosInterventions
                     {
                         DateDebut = inter.date_debut,
                         DateFin = inter.date_fin,
@@ -67,9 +67,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             return ListPFL;
         }
 
-        public List<InfosIntervSansZone> ListIntervSansZones()
+        public List<InfosInterventions> ListIntervSansZonesEnCours()
         {
-            List<InfosIntervSansZone> ListSansZone = new List<InfosIntervSansZone>();
+            List<InfosInterventions> ListSansZone = new List<InfosInterventions>();
             string NomIntervExt = "";
 
             // récupérer uniquement les interventions des 12 derniers mois
@@ -82,7 +82,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if(maint.maintenance_supprime != true)
+                if(maint.maintenance_supprime != true && maint.maintenance_finie != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -92,7 +92,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                     {
                         NomIntervExt = "";
                     }
-                    InfosIntervSansZone info = new InfosIntervSansZone
+                    InfosInterventions info = new InfosInterventions
                     {
                         DateDebut = inter.date_debut,
                         DateFin = inter.date_fin,
@@ -110,6 +110,181 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                 }                
             }
             return ListSansZone;
+        }
+        public List<InfosInterventions> ListIntervPFLFinies()
+        {
+            List<InfosInterventions> ListPFLFinies = new List<InfosInterventions>();
+            string NomIntervExt = "";
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
+            var intervs = context.reservation_maintenance.Where(r => (r.date_debut >= DateSeuil || r.date_fin >= DateSeuil));
+            foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
+            {
+                maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
+
+                if (maint.maintenance_supprime != true && maint.maintenance_finie == true)
+                {
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosInterventions info = new InfosInterventions
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        CodeMaint = maint.code_operation,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        NomIntervExterne = NomIntervExt,
+                        NumGMAO = context.equipement.First(e => e.id == inter.equipementID).numGmao
+                    };
+                    ListPFLFinies.Add(info);
+                }
+            }
+            return ListPFLFinies;
+        }
+        public List<InfosInterventions> ListIntervSansZoneFinies()
+        {
+            List<InfosInterventions> ListSansZoneFinies = new List<InfosInterventions>();
+            string NomIntervExt = "";
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
+            // Filtrer les opérations pour l'année en cours! éviter la surcharge du tableau
+            var intervs = context.resa_maint_equip_adjacent.Where(r => (r.date_debut >= DateSeuil || r.date_fin >= DateSeuil));
+
+            foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
+            {
+                maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
+
+                if (maint.maintenance_supprime != true && maint.maintenance_finie == true)
+                {
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosInterventions info = new InfosInterventions
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        CodeMaint = maint.code_operation,
+                        NomEquipement = inter.nom_equipement,
+                        ZoneAffecte = inter.zone_affectee,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        NomIntervExterne = NomIntervExt
+                    };
+
+                    ListSansZoneFinies.Add(info);
+                }
+            }
+            return ListSansZoneFinies;
+        }
+
+        public List<InfosInterventions> ListIntervPFLSupp()
+        {
+            List<InfosInterventions> ListPFLSupp = new List<InfosInterventions>();
+            string NomIntervExt = "";
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
+            var intervs = context.reservation_maintenance.Where(r => (r.date_debut >= DateSeuil || r.date_fin >= DateSeuil));
+            foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
+            {
+                maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
+
+                if (maint.maintenance_supprime == true && maint.maintenance_finie != true)
+                {
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosInterventions info = new InfosInterventions
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        CodeMaint = maint.code_operation,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        NomEquipement = context.equipement.First(e => e.id == inter.equipementID).nom,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        NomIntervExterne = NomIntervExt,
+                        NumGMAO = context.equipement.First(e => e.id == inter.equipementID).numGmao,
+                        RaisonSupp = maint.raison_suppression,
+                        DateSuppression = maint.date_suppression.Value
+                    };
+                    ListPFLSupp.Add(info);
+                }
+            }
+            return ListPFLSupp;
+        }
+
+        public List<InfosInterventions> ListIntervSansZoneSupp()
+        {
+            List<InfosInterventions> ListSansZoneSupp = new List<InfosInterventions>();
+            string NomIntervExt = "";
+
+            // récupérer uniquement les interventions des 12 derniers mois
+            DateTime DateSeuil = DateTime.Now.AddYears(-1);
+
+            // Filtrer les opérations pour l'année en cours! éviter la surcharge du tableau
+            var intervs = context.resa_maint_equip_adjacent.Where(r => (r.date_debut >= DateSeuil || r.date_fin >= DateSeuil));
+
+            foreach (var inter in intervs.OrderByDescending(e => e.date_debut))
+            {
+                maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
+
+                if (maint.maintenance_supprime == true && maint.maintenance_finie != true)
+                {
+                    if (maint.intervenant_externe != false)
+                    {
+                        NomIntervExt = maint.nom_intervenant_ext;
+                    }
+                    else
+                    {
+                        NomIntervExt = "";
+                    }
+                    InfosInterventions info = new InfosInterventions
+                    {
+                        DateDebut = inter.date_debut,
+                        DateFin = inter.date_fin,
+                        DescriptifMaint = context.maintenance.First(m => m.id == inter.maintenanceID).description_operation,
+                        IdResMaint = inter.id,
+                        CodeMaint = maint.code_operation,
+                        NomEquipement = inter.nom_equipement,
+                        ZoneAffecte = inter.zone_affectee,
+                        OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
+                        TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
+                        RaisonSupp = maint.raison_suppression,
+                        DateSuppression = maint.date_suppression.Value
+                    };
+
+                    ListSansZoneSupp.Add(info);
+                }
+            }
+            return ListSansZoneSupp;
         }
     }
 }

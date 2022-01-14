@@ -5,17 +5,22 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
 {
-    public class InfosIntervSansZone
+    public class InfosInterventions
     {
         public int IdResMaint { get; set; } // Id reservation_maintenance
-        public string TypeMaintenance { get; set; }
         public string CodeMaint { get; set; }
+        public string TypeMaintenance { get; set; }
         public string DescriptifMaint { get; set; }
         public string OperateurPFL { get; set; }
         public string NomIntervExterne { get; set; }
         public string NomEquipement { get; set; }
+        public string NumGMAO { get; set; }
         public string ZoneAffecte { get; set; }
         public DateTime DateDebut { get; set; }
         public DateTime DateFin { get; set; }
+        public bool MaintenanceSupp { get; set; }
+        public DateTime DateSuppression { get; set; }
+        public string RaisonSupp { get; set; }
+        public bool MaintenanceFinie { get; set; }
     }
 }

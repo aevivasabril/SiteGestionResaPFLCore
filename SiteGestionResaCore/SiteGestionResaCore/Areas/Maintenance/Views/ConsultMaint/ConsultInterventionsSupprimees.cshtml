@@ -1,17 +1,13 @@
 ﻿@model SiteGestionResaCore.Areas.Maintenance.Data.Consultation.ConsultInterventionVM
 
 @{
-    ViewBag.Title = "ConsultInterventionsEnCours";
+    ViewBag.Title = "ConsultInterventionsSupprimes";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <br />
-@*<h1 class="text-center">Interventions de maintenance équipements PFL et materiel commun</h1>*@
-<br />
-
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <h5 class="text-center">Liste des interventions en cours équipements PFL (visibles sur le calendrier)</h5>
+        <h5 class="text-center">Liste des interventions supprimées équipements PFL (visibles sur le calendrier)</h5>
         <div class="fixed_head_resas">
             <div class="row justify-content-center">
                 <table class="table table-striped justify-content-center table-sm">
@@ -21,7 +17,8 @@
                             <th scope="col">Code maintenance</th>
                             <th scope="col">Type de maintenance</th>
                             <th scope="col">Opérateur PFL</th>
-                            <th scope="col">Intervenant externe?</th>
+                            <th scope="col">Raison suppression</th>
+                            <th scope="col">Date suppression</th>
                             <th scope="col">Nom Equipement</th>
                             <th scope="col">Date début</th>
                             <th scope="col">Date fin</th>
@@ -35,7 +32,8 @@
                                 <td>@x.CodeMaint</td>
                                 <td>@x.TypeMaintenance</td>
                                 <td>@x.OperateurPFL</td>
-                                <td>@x.NomIntervExterne</td>
+                                <td>@x.RaisonSupp</td>
+                                <td>@x.DateSuppression</td>
                                 <td>@x.NomEquipement <br />(N° GMAO: @x.NumGMAO)</td>
                                 <td>@x.DateDebut</td>
                                 <td>@x.DateFin</td>
@@ -51,7 +49,7 @@
 <br />
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <h5 class="text-center">Liste des interventions en cours équipements communs</h5>
+        <h5 class="text-center">Liste des interventions supprimées équipements communs</h5>
         <div class="fixed_head_resas">
             <div class="row justify-content-center">
                 <table class="table table-striped justify-content-center table-sm">
@@ -61,7 +59,8 @@
                             <th scope="col">Code maintenance</th>
                             <th scope="col">Type de maintenance</th>
                             <th scope="col">Opérateur PFL</th>
-                            <th scope="col">Intervenant externe?</th>
+                            <th scope="col">Raison suppression</th>
+                            <th scope="col">Date suppression</th>
                             <th scope="col">Nom Equipement</th>
                             <th scope="col">Zone affectée</th>
                             <th scope="col">Date début</th>
@@ -74,9 +73,10 @@
                             <tr>
                                 <td>@y.DescriptifMaint</td>
                                 <td>@y.CodeMaint</td>
-                                <td>@y.TypeMaintenance</td>    
+                                <td>@y.TypeMaintenance</td>
                                 <td>@y.OperateurPFL</td>
-                                <td>@y.NomIntervExterne</td>
+                                <td>@y.RaisonSupp</td>
+                                <td>@y.DateSuppression</td>
                                 <td>@y.NomEquipement</td>
                                 <td>@y.ZoneAffecte</td>
                                 <td>@y.DateDebut</td>

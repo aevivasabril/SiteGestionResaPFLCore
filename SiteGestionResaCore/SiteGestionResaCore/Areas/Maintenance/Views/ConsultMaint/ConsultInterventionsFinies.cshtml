@@ -1,17 +1,13 @@
 ﻿@model SiteGestionResaCore.Areas.Maintenance.Data.Consultation.ConsultInterventionVM
 
 @{
-    ViewBag.Title = "ConsultInterventionsEnCours";
+    ViewBag.Title = "ConsultInterventionsFinalisees";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <br />
-@*<h1 class="text-center">Interventions de maintenance équipements PFL et materiel commun</h1>*@
-<br />
-
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <h5 class="text-center">Liste des interventions en cours équipements PFL (visibles sur le calendrier)</h5>
+        <h5 class="text-center">Liste des interventions finalisées équipements PFL (visibles sur le calendrier)</h5>
         <div class="fixed_head_resas">
             <div class="row justify-content-center">
                 <table class="table table-striped justify-content-center table-sm">
@@ -51,7 +47,7 @@
 <br />
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
-        <h5 class="text-center">Liste des interventions en cours équipements communs</h5>
+        <h5 class="text-center">Liste des interventions finalisées équipements communs</h5>
         <div class="fixed_head_resas">
             <div class="row justify-content-center">
                 <table class="table table-striped justify-content-center table-sm">
@@ -74,7 +70,7 @@
                             <tr>
                                 <td>@y.DescriptifMaint</td>
                                 <td>@y.CodeMaint</td>
-                                <td>@y.TypeMaintenance</td>    
+                                <td>@y.TypeMaintenance</td>
                                 <td>@y.OperateurPFL</td>
                                 <td>@y.NomIntervExterne</td>
                                 <td>@y.NomEquipement</td>

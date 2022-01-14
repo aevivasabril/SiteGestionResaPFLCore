@@ -7,8 +7,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
 {
     public class ConsultInterventionVM
     {
-        public List<InfosIntervDansPFL> ListIntervDansPFL { get; set; }
+        public List<InfosInterventions> ListIntervDansPFL { get; set; }
 
-        public List<InfosIntervSansZone> ListIntervSansZone { get; set; }
+        public List<InfosInterventions> ListIntervSansZone { get; set; }
     }
 }
