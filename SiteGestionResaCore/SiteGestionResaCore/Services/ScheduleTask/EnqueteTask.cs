@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
     {
         private readonly IEnqueteTaskDB enqueteTaskDB;
         private readonly IEmailSender emailSender;
+        private readonly ILogger<EnqueteTask> logger;
 
-        public EnqueteTask(IServiceScopeFactory serviceScopeFactory): base(serviceScopeFactory)
+        public EnqueteTask(IServiceScopeFactory serviceScopeFactory,
+            ILogger<EnqueteTask> logger): base(serviceScopeFactory)
         {
             // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
             emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
+            this.logger = logger;
         }
         //protected override string Schedule => "*/2 * * * *";
         protected override string Schedule => "50 22 * * *"; // tous les jours à 22:50
@@ -27,18 +31,32 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         {
             List<enquete> ListEnquetesFirstTime = new List<enquete>();
             List<enquete> ListEnquetesXRelance = new List<enquete>();
+            bool success = false;
+            int retryCount = 5;
 
             string message;
 
             #region Rajouter les enquetes pour les essais dont elle a pas été crée automatiquement (Environnement Prod) TODO: A effacer une fois la MAJ est faite en Prod
-
-            bool isOK = enqueteTaskDB.AreEnquetesCreated();
+            try
+            {
+                enqueteTaskDB.AreEnquetesCreated();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Error lors de la création des enquetes");
+            }
 
             #endregion
 
             #region Reperer les enquetes dont l'envoi se fait pour la première fois
-
-            ListEnquetesFirstTime = enqueteTaskDB.GetEnquetesXFirstTime();
+            try
+            {
+                ListEnquetesFirstTime = enqueteTaskDB.GetEnquetesXFirstTime();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Error lors de l'obtention de la liste des enquetes pour un premier envoi");
+            }
 
             #region Envoi mail pour remplissage enquete
 
@@ -58,8 +76,26 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                             ": "+ proj.titre_projet+ "). Pour répondre à cette enquete: "+ "<a href='[CALLBACK_URL]'>Veuillez cliquer ici</a>.<br/> " +
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
-                    
-                await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                
+                success = false;
+                retryCount = 5;
+                while (!success && retryCount > 0)
+                {
+                    try
+                    {
+                        await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retryCount--;
+                        if (retryCount == 0)
+                        {
+                            logger.LogError(e, "Error d'envoi de mail lors de l'envoi des enquetes");
+                        }
+                    }
+                }
+
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
 
                 // Mettre à jour la date-envoi_enquete
@@ -67,11 +103,28 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             }
 
             #endregion
+
             // TODO: effacer!! c'est juste pour tester l'envoi des mails tous les 2 minutes
-            await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
+            success = false;
+            retryCount = 5;
+            while (!success && retryCount > 0)
+            {
+                try
+                {
+                    await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
+                    success = true;
+                }
+                catch (Exception e)
+                {
+                    retryCount--;
+                    if (retryCount == 0)
+                    {
+                        logger.LogError(e, "Error d'envoi de mail Test super Admin");
+                    }
+                }
+            }
 
             #endregion
-
 
             #region Relancer l'enquête de satisfaction si non répondu après 7 jours 
 
@@ -96,7 +149,25 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
-                await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                success = false;
+                retryCount = 5;
+                while (!success && retryCount > 0)
+                {
+                    try
+                    {
+                        await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        retryCount--;
+                        if (retryCount == 0)
+                        {
+                            logger.LogError(e, "Error d'envoi de mail Test super Admin");
+                        }
+                    }
+                }
+
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 // Mettre à jour la date-envoi_enquete
                 enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
