@@ -5,6 +5,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <hr />
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+}
+
 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 <form asp-action="RecupNotesEnquete" asp-controller="PostEnquete" asp-area="Enquete" method="post">
     <h4 class="text-center">La récupération des notes des enquêtes de satisfaction se fera pour les essais finis à une date déterminée et comprise entre la date début et la date fin que vous aurez sélectionné<strong></strong></h4>
@@ -34,3 +40,9 @@
         <input type="submit" class="btn btn-outline-success" value="Télécharger .csv enquêtes" />
     </div>
 </form>
+<br />
+<hr />
+<h6 class="text-center">Si problème sur l'envoi d'enquetes, cliquez sur ce bouton pour executer la tâche d'envoi.</h6>
+<div class="text-center">
+    <a class="btn navbar-inra" asp-action="ExecuterEnvoiEnq" asp-area="Enquete" asp-controller="PostEnquete">Executer l'envoi des enquetes</a>
+</div>

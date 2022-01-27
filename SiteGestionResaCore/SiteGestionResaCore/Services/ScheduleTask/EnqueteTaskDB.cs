@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -12,13 +13,16 @@ namespace SiteGestionResaCore.Services.ScheduleTask
     {
         private readonly UserManager<utilisateur> userManager;
         private readonly GestionResaContext resaDb;
+        private readonly ILogger<EnqueteTaskDB> logger;
 
         public EnqueteTaskDB(
             UserManager<utilisateur> userManager,
-            GestionResaContext resaDb)
+            GestionResaContext resaDb,
+            ILogger<EnqueteTaskDB> logger)
         {
             this.userManager = userManager;
             this.resaDb = resaDb;
+            this.logger = logger;
         }
 
         public async Task<IList<utilisateur>> GetUtilisateurSuperAdminAsync()
@@ -32,24 +36,35 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             List<enquete> enquetesToReturn = new List<enquete>();
 
             enquetesNonEnvoyées = resaDb.enquete.Where(e => e.date_envoi_enquete == null).ToList(); // enquetes dont l'essai n'était pas fini lors de la dernière exécution de la tâche
-            foreach (var enq in enquetesNonEnvoyées)
+            
+            try
             {
-                // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
-                var esssai = resaDb.essai.First(e => e.id == enq.essaiId );
-                if(esssai.resa_refuse != true && esssai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
+                foreach (var enq in enquetesNonEnvoyées)
                 {
-                    // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
-                    List<reservation_projet> reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
-                    // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
-                    if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
+                    // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
+                    var esssai = resaDb.essai.First(e => e.id == enq.essaiId);
+                    if (esssai.resa_refuse != true && esssai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
                     {
-                        // TODO: tester!! Mettre à jour la date du premier envoi pour cet enquete = date fin de l'essai
-                        enq.date_premier_envoi = reservations[0].date_fin;
-                        resaDb.SaveChanges();
-                        enquetesToReturn.Add(enq);
+                        // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
+                        List<reservation_projet> reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
+                        // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
+                        if(reservations.Count != 0)
+                        {
+                            if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
+                            {
+                                // TODO: tester!! Mettre à jour la date du premier envoi pour cet enquete = date fin de l'essai
+                                enq.date_premier_envoi = reservations[0].date_fin;
+                                resaDb.SaveChanges();
+                                enquetesToReturn.Add(enq);
+                            }
+                        }                        
                     }
-                }                
+                }
             }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Problème pour obtenir les enquetes à envoyer pour la 1ere fois");
+            }          
 
             return enquetesToReturn;
         }
@@ -94,25 +109,31 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             List<enquete> ListPourRelance = new List<enquete>();
 
             List<enquete> ListeNonRepondues = resaDb.enquete.Where(e => e.reponduEnquete == null).ToList();
-
-            foreach(var enq in ListeNonRepondues)
+            try
             {
-                // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
-                var essai = resaDb.essai.First(e => e.id == enq.essaiId);
-                if (essai.resa_refuse != true && essai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
+                foreach (var enq in ListeNonRepondues)
                 {
-                    if (enq.date_envoi_enquete.HasValue)
+                    // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
+                    var essai = resaDb.essai.First(e => e.id == enq.essaiId);
+                    if (essai.resa_refuse != true && essai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
                     {
-                        // Si l'enquête a été envoyé il y a plus de 7 jours alors il faut relancer
-                        TimeSpan diff = DateTime.Now - enq.date_envoi_enquete.Value;
-                        if (diff.Days >= 7)
+                        if (enq.date_envoi_enquete.HasValue)
                         {
-                            ListPourRelance.Add(enq);
+                            // Si l'enquête a été envoyé il y a plus de 7 jours alors il faut relancer
+                            TimeSpan diff = DateTime.Now - enq.date_envoi_enquete.Value;
+                            if (diff.Days >= 7)
+                            {
+                                ListPourRelance.Add(enq);
+                            }
                         }
                     }
-                }              
+                }
             }
-
+            catch(Exception e)
+            {
+                logger.LogError(e, "Problème pour obtenir les enquetes pour relance");
+            }
+          
             return ListPourRelance;
         }
 
