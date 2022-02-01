@@ -381,10 +381,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             // Récupérer la session "EquipementZone" où se trouvent toutes les informations des réservations
             // Récupérer le mois et année sélectionné lors de la première recherche
             EquipementsParZoneViewModel equipementZone = HttpContext.GetFromSession<EquipementsParZoneViewModel>("EquipementZone");
-            if (equipementZone != null && equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0)
+            if (equipementZone != null && equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0 && equipementZone.DayDatePick != 0)
             {
                 vm.MoisDatePick = equipementZone.MoisDatePick;
                 vm.AnneeDatePick = equipementZone.AnneeDatePick;
+                vm.DayDatePick = equipementZone.DayDatePick;
             }
 
             // Etablir une session avec les données à mettre à jour pour la vue EquipementsVsZones
@@ -409,7 +410,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             equipementZone.SousListeEquipements = model.SousListeEquipements;
             
-            if(equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0)
+            if(equipementZone.MoisDatePick != 0 && equipementZone.AnneeDatePick != 0 && equipementZone.DayDatePick != 0)
             {
                 #region Vérifier si l'utilisateur a déjà demandé un affichage planning et mettre tout au même mois
 
@@ -420,8 +421,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         SousCalend = new CalendrierEquipChildViewModel();
                         // Mettre l'affichage du calendrier semaine au mois et année souhaitée (01/MM/YY)
                         // Recuperer les réservations pour la date souhaitée 
+                        DateTime dateToSet = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
                         reservationsEquipement = DonneesCalendrierEquipement(false, model.SousListeEquipements[i].IdEquipement,
-                            new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, timeToday.Day), new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, timeToday.AddDays(7).Day));
+                            dateToSet, dateToSet.AddDays(7) );
                         SousCalend.ListResas = reservationsEquipement;
                         SousCalend.idEquipement = model.SousListeEquipements[i].IdEquipement;
                         SousCalend.nomEquipement = model.SousListeEquipements[i].NomEquipement;
@@ -435,10 +437,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 }               
 
                 // initialiser la date des datepicker au MOIS Selectionné
-                equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+                equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+                equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+                equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+                equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
 
                 #endregion
             }
@@ -523,6 +525,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                 equipementZone.MoisDatePick = model.DatePickerDu.Value.Month;
                 equipementZone.AnneeDatePick = model.DatePickerDu.Value.Year;
+                equipementZone.DayDatePick = model.DatePickerDu.Value.Day;
 
                 #endregion
 
@@ -552,8 +555,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 // initialiser la date des datepicker au MOIS Selectionné
                 equipementZone.CalendVM.DatePickerDu = new DateTime(model.DatePickerDu.Value.Year, model.DatePickerDu.Value.Month, model.DatePickerDu.Value.Day);
                 equipementZone.CalendVM.DatePickerAu = new DateTime(model.DatePickerAu.Value.Year, model.DatePickerAu.Value.Month, model.DatePickerAu.Value.Day);
-                equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-                equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+                equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+                equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
 
                 equipementZone.OpenCalendEtCreneau = null;
 
@@ -592,6 +595,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
                 equipementZone.MoisDatePick = model.DateDebut.Value.Month;
                 equipementZone.AnneeDatePick = model.DateDebut.Value.Year;
+                equipementZone.DayDatePick = model.DateDebut.Value.Day;
 
                 #endregion
 
@@ -1054,10 +1058,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             equipementZone.PreCalendrierChildVM[model.IndiceChildModel].ResaEquipement.RemoveAt(model.IndiceResaEquipXChild);
 
             #region initialiser la date des datepicker au MOIS Selectionné
-            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
-            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, 1);
+            equipementZone.CalendVM.DatePickerDu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+            equipementZone.CalendVM.DatePickerAu = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+            equipementZone.CalendVM.DateDebut = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
+            equipementZone.CalendVM.DateFin = new DateTime(equipementZone.AnneeDatePick, equipementZone.MoisDatePick, equipementZone.DayDatePick);
             #endregion
 
             // Sauvegarder la maj de la session

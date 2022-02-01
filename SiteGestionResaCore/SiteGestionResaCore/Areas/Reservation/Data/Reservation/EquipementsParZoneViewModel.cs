@@ -53,6 +53,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         public int AnneeDatePick { get; set; }
 
+        /// <summary>
+        /// Jour à sauvegarder pour synchroniser tous les datepicker de la page
+        /// </summary>
+        public int DayDatePick { get; set; }
+
         public List<SousListeEquipements> SousListeEquipements { get; set; }
     }
     #endregion
