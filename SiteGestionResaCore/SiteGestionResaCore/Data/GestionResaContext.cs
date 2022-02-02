@@ -354,7 +354,8 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
-                new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7} });
+                new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7}, 
+                new organisme{ nom_organisme = "CF&R", id = 8} });
 
             modelBuilder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>[] { new IdentityRole<int> { Name="Admin", Id = 1, NormalizedName = "ADMIN", ConcurrencyStamp = Guid.NewGuid().ToString()},
                 new IdentityRole<int> { Name = "Utilisateur", Id = 2 , NormalizedName="UTILISATEUR", ConcurrencyStamp = Guid.NewGuid().ToString()}, 
