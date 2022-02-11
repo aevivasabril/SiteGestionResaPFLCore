@@ -38,6 +38,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<reservation_maintenance> reservation_maintenance { get; set; }
         public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
         public virtual DbSet<doc_qualite> doc_qualite { get; set; }
+        public virtual DbSet<type_document> type_document { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -352,6 +353,16 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.description_doc).IsUnicode(false);
             });
 
+            modelBuilder.Entity<type_document>(entity =>
+            {
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+                entity.Property(e => e.identificateur)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7}, 
@@ -469,6 +480,14 @@ namespace SiteGestionResaCore.Data.Data
                 new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
                 new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf"}/*,
                 new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
+            });
+
+            modelBuilder.Entity<type_document>().HasData(new type_document[] { new type_document { id = 1, nom_document = "Données Physico-chimiques", identificateur = "PC"},
+                new type_document { id = 2, nom_document = "Données Microbiologiques", identificateur = "M"},
+                new type_document { id = 3, nom_document = "Données Rhéologiques", identificateur = "R"},
+                new type_document { id = 4, nom_document = "Tableau excel recapitulatif", identificateur = "E"},
+                new type_document { id = 5, nom_document = "Compte rendu Word", identificateur = "W"},
+                new type_document { id = 6, nom_document = "Autre format", identificateur = "A"}
             });
 
             base.OnModelCreating(modelBuilder);
