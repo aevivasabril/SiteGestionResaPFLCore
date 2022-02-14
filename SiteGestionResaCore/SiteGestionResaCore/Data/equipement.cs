@@ -20,8 +20,10 @@ namespace SiteGestionResaCore.Data
         public string? nomTabPcVue { get; set; }
         public string? cheminFicheMateriel { get; set; }
         public string? cheminFicheMetrologie { get; set; }
+        public int? activiteID { get; set; }
 
         public virtual zone zone { get; set; }
+        public virtual activite_pfl activite_pfl { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
         public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
     }
