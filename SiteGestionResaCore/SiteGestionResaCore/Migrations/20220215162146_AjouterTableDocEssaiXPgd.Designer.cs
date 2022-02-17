@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220215162146_AjouterTableDocEssaiXPgd")]
+    partial class AjouterTableDocEssaiXPgd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "fbfb03d6-107c-4434-8304-a9b1dfeb0feb",
+                            ConcurrencyStamp = "c1e92d53-c07b-42e7-aa0c-c0e48b046b52",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "c99ce5b2-b6d4-403b-ac31-aedf423f18bd",
+                            ConcurrencyStamp = "85f61371-d4f9-4bfd-a9e5-a29b5a089809",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "f502bb6c-7561-483e-91c9-e797d2f2a2da",
+                            ConcurrencyStamp = "d6066292-91ee-4e0d-8272-6cfb1289b2c0",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "6c7c57d3-20bc-448b-b483-890b450962e4",
+                            ConcurrencyStamp = "ef550ef7-7bb0-41e3-a6ab-2de194aa4101",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "29ba012a-69b6-4625-87ef-fe12a0dca269",
+                            ConcurrencyStamp = "be1e56da-6c1b-4357-9734-bddd9660bd47",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -363,7 +365,7 @@ namespace SiteGestionResaCore.Migrations
                     b.Property<DateTime>("date_creation")
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("equipementID")
+                    b.Property<int>("equipementID")
                         .HasColumnType("int");
 
                     b.Property<int>("essaiID")
@@ -374,9 +376,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
-                    b.Property<int>("type_activiteID")
-                        .HasColumnType("int");
-
                     b.Property<int>("type_documentID")
                         .HasColumnType("int");
 
@@ -385,8 +384,6 @@ namespace SiteGestionResaCore.Migrations
                     b.HasIndex("equipementID");
 
                     b.HasIndex("essaiID");
-
-                    b.HasIndex("type_activiteID");
 
                     b.HasIndex("type_documentID");
 
@@ -2504,19 +2501,14 @@ namespace SiteGestionResaCore.Migrations
                     b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
                         .WithMany("doc_essai_pgd")
                         .HasForeignKey("equipementID")
-                        .HasConstraintName("FK_doc_essai_pgd_equipement");
+                        .HasConstraintName("FK_doc_essai_pgd_equipement")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SiteGestionResaCore.Data.essai", "essai")
                         .WithMany("doc_essai_pgd")
                         .HasForeignKey("essaiID")
                         .HasConstraintName("FK_doc_essai_pgd_essai")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SiteGestionResaCore.Data.activite_pfl", "activite_pfl")
-                        .WithMany("doc_essai_pgd")
-                        .HasForeignKey("type_activiteID")
-                        .HasConstraintName("FK_doc_essai_pgd_activite_pfl")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

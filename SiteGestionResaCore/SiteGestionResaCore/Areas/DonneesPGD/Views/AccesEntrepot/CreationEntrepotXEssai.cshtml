@@ -1,0 +1,185 @@
+﻿@model CreationEntrepotVM
+@{
+    ViewData["Title"] = "CreationEntrepotEssai";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h3 class="text-center">Creation d'entrepôt selon PGD PFL pour l'essai N° @Model.idEssai</h3>
+<br />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<form asp-action="ValiderCreationEntrepot" asp-controller="AccesEntrepot" asp-area="DonneesPGD" method="post">
+
+    <div class="form-row">
+        <div class="col-sm-6">
+            Le document contenant les informations essai sera généré automatiquement
+        </div>
+        <div class="col-sm-4 offset-2">
+            <a class="btn btn-secondary" href="#" onclick="ModalInfosEssai(@Model.idEssai)">Voir informations essai N° @Model.idEssai</a>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Matière première et ingredients</strong></h4>
+        </div>
+        <br />
+    </div>
+    <div class="form-row text-center">
+        <div class="col-sm-2 offset-1">
+            <a class="btn btn-secondary" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.idEssai">Matière première</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.idEssai">Matière première 1</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.idEssai">Matière première 2</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.idEssai">Matière première 3</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.idEssai">Ingredients</a>
+        </div>
+    </div>
+    <br />
+    <div class="form-row text-center">
+        <div class="col-sm-7 col-md-7 offset-2">
+            <h6><strong>Récapitulatif Documents ajoutés</strong></h6>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom document</th>
+                        <th scope="col">Type données</th>
+                        <th scope="col">Supprimer?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Equipements réservés pour ajout des documents</strong></h4>
+        </div>
+        <br />
+    </div>
+    <div class="form-row">
+        <div class="col-md-8 text-center">
+            <br />
+            <h6>Cliquez sur les options des documents pour charger des fichiers (pdf, word, etc).</h6>
+            <br />
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Equipement</th>
+                        <th scope="col">Fichier PcVue?</th>
+                        <th scope="col">Ajouter des fichiers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var resa in Model.ListReservationsXEssai)
+                    {
+                        <tr>
+                            <th>@resa.NomEquipement</th>
+                            <td>@resa.FichierPcVue</td>
+                            <td>
+                                @foreach (var doc in resa.ListeTypeDocs)
+                                {
+                                    <a class="btn-link" asp-action="Index" asp-controller="Home" asp-area=""> Ajouter un fichier @doc</a>
+                                    <br>
+                                }
+                            </td>                           
+                        </tr>
+                    }
+                    </tbody>
+            </table>
+        </div>
+        <div class="col-md-3 offset-1">
+            <div class="card text-dark bg-light mb-3">
+                <div class="card-header">
+                    Types des documents
+                </div>
+                <div class="card-body">
+                    @foreach (var typ in Model.ListeTypeDoc)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><strong>@typ.identificateur :</strong> @typ.nom_document</label>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row text-center">
+        <div class="col-sm-7 col-md-7 offset-2">
+            <h6><strong>Récapitulatif documents ajoutés</strong></h6>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Equipement</th>
+                        <th scope="col">Nom du document</th>
+                        <th scope="col">Type des données</th>
+                        <th scope="col">Supprimer?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th></th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <br />
+            <input type="submit" class="btn navbar-inra" value="Valider création entrepôt" />
+        </div>
+    </div>
+</form>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div id="InfosEssai"></div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.modalResas == null)
+            {
+                ViewBag.modalResas = "hide";
+            }
+        }
+        $('#ResaModal').modal('@ViewBag.modalResas');
+
+        function ModalInfosEssai(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+    </script>
+}

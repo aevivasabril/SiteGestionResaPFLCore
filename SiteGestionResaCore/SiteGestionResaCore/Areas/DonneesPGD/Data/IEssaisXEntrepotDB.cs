@@ -13,5 +13,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public InfosProjet ObtenirInfosProjet(int id);
         public ConsultInfosEssaiChildVM ObtenirInfosEssai(int idEssai);
         public List<InfosReservation> InfosReservations(int idEssai);
+        public List<ReservationsXEssai> ListeReservationsXEssai(int idEssai);
+        public List<type_document> ListeTypeDocuments();
     }
 }

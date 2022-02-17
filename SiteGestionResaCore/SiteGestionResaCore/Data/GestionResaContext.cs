@@ -40,6 +40,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<doc_qualite> doc_qualite { get; set; }
         public virtual DbSet<type_document> type_document { get; set; }
         public virtual DbSet<activite_pfl> activite_pfl { get; set; }
+        public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -379,6 +380,39 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.type_documents)
                     .IsRequired()
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<doc_essai_pgd>(entity =>
+            {
+                entity.Property(e => e.contenu_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_creation).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.equipementID)
+                    .HasConstraintName("FK_doc_essai_pgd_equipement");
+
+                entity.HasOne(d => d.essai)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.essaiID)
+                    .HasConstraintName("FK_doc_essai_pgd_essai");
+
+                entity.HasOne(d => d.type_document)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.type_documentID)
+                    .HasConstraintName("FK_doc_essai_pgd_type_document");
+
+                entity.HasOne(d => d.activite_pfl)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.type_activiteID)
+                    .HasConstraintName("FK_doc_essai_pgd_activite_pfl");
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },

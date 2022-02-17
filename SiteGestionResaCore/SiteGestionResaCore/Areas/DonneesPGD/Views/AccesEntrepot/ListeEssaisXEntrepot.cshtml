@@ -9,12 +9,12 @@
 <br />
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Si vous souhaitez créer un entrepôt des données pour stocker vos documents par essai. Cliquez sur le lien.</h5>
+        <h5 class="text-center">NOTE: Les données génerées à partir des pilotes seront récupéres automatiquement.</h5>
+        <br />
         <div class="fixed_head_resas">
             <div class="row justify-content-center">
                 <table class="table table-striped justify-content-center table-sm">
-                    <h5 class="text-center">Si vous souhaitez créer un entrepôt des données pour stocker vos documents par essai. Cliquez sur le lien.</h5>
-                    <h5 class="text-center">NOTE: Les données génerées à partir des pilotes seront récupéres automatiquement.</h5>
-                    <br />
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">Projet</th>
@@ -36,7 +36,7 @@
                                 <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
                                 <td><a href="#" onclick="ModalEquipReserv(@x.idEssai)">Equipements réservés</a></td>
                                 <td>@x.DateSaisieEssai</td>
-                                <td><a class="btn navbar-inra" asp-action="ValiderEssai" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Créer entrepôt</a></td>
+                                <td><a class="btn navbar-inra" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@x.idEssai">Créer entrepôt</a></td>
                             </tr>
                         }
                     </tbody>
@@ -59,10 +59,6 @@
     @*script pour afficher le popoup de confirmation de demande *@
     <script>
         @{
-            /*if (ViewBag.modalEssai == null)
-            {
-                ViewBag.modalEssai = "hide";
-            }*/
             if (ViewBag.modalResas == null)
             {
                 ViewBag.modalResas = "hide";

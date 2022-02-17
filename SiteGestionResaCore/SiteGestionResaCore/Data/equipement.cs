@@ -10,6 +10,7 @@ namespace SiteGestionResaCore.Data
         {
             reservation_projet = new HashSet<reservation_projet>();
             reservation_maintenance = new HashSet<reservation_maintenance>();
+            doc_essai_pgd = new HashSet<doc_essai_pgd>();
         }
 
         public int id { get; set; }
@@ -26,5 +27,6 @@ namespace SiteGestionResaCore.Data
         public virtual activite_pfl activite_pfl { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
         public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
+        public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }
     }
 }

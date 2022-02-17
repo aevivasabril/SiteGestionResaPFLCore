@@ -72,9 +72,13 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             return PartialView("~/Views/Shared/_DisplayEquipsReserves.cshtml", vm);
         }
 
-        public IActionResult CreerEntrepotXEssai(int? id)
+        public IActionResult CreationEntrepotEssai(int? id)
         {
-            return View();
+            CreationEntrepotVM vm = new CreationEntrepotVM();
+            vm.ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value);
+            vm.idEssai = id.Value;
+            vm.ListeTypeDoc = entrepotDB.ListeTypeDocuments();
+            return View("CreationEntrepotXEssai",vm );
         }
     }
 }
