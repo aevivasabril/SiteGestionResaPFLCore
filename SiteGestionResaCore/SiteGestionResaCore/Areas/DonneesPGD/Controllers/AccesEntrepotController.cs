@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.DonneesPGD.Data;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
@@ -74,11 +76,36 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
         public IActionResult CreationEntrepotEssai(int? id)
         {
-            CreationEntrepotVM vm = new CreationEntrepotVM();
-            vm.ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value);
-            vm.idEssai = id.Value;
-            vm.ListeTypeDoc = entrepotDB.ListeTypeDocuments();
+            // initialisation de session pour l'essai X
+            CreationEntrepotVM vm = new CreationEntrepotVM()
+            {
+                ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value),
+                idEssai = id.Value,
+                ListeTypeDoc = entrepotDB.ListeTypeDocuments()
+            };
+
+            this.HttpContext.AddToSession("CreationEntrepotVM", vm);
+
             return View("CreationEntrepotXEssai",vm );
+        }
+
+        public IActionResult OuvrirUploadDoc(int? id)
+        {
+            // Récupérer la session "EquipementZone"
+            CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+            //vm.OpenUploadPartUn = "";
+            // Création d'une liste dropdownlist pour le type produit entrée
+            vm.TypeDocumentItem = entrepotDB.ListeTypeDocuments().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document+": " + f.identificateur });
+            vm.NomActivite = entrepotDB.ObtenirNomActivite(id.Value);
+
+            ViewBag.ModalDocOne = "show";
+            return View("CreationEntrepotXEssai", vm);
+        }
+
+        [HttpPost]
+        public IActionResult AjouterDocument(IFormFile file, string description, CreationEntrepotVM vm)
+        {
+            return View();
         }
     }
 }

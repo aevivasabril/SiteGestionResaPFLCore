@@ -326,6 +326,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return (IsEquipPcVue, IsDataReady);
         }
 
+        public string ObtenirNomActivite(int id)
+        {
+            return contextDB.activite_pfl.First(a => a.id == id).nom_activite;
+        }
+
         #endregion
     }
 }

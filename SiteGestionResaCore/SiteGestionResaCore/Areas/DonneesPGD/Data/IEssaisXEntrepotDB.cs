@@ -15,5 +15,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public List<InfosReservation> InfosReservations(int idEssai);
         public List<ReservationsXEssai> ListeReservationsXEssai(int idEssai);
         public List<type_document> ListeTypeDocuments();
+        public string ObtenirNomActivite(int id);
     }
 }
