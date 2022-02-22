@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -81,7 +82,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             {
                 ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value),
                 idEssai = id.Value,
-                ListeTypeDoc = entrepotDB.ListeTypeDocuments()
+                ListeTypeDoc = entrepotDB.ListeTypeDocuments(),
+                ListDocsPartieUn = new List<DocAjoutePartieUn>(),
+                ListDocsPartieDeux = new List<DocAjoutePartieDeux>()
             };
 
             this.HttpContext.AddToSession("CreationEntrepotVM", vm);
@@ -91,21 +94,79 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
         public IActionResult OuvrirUploadDoc(int? id)
         {
-            // Récupérer la session "EquipementZone"
+            // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
             //vm.OpenUploadPartUn = "";
             // Création d'une liste dropdownlist pour le type produit entrée
-            vm.TypeDocumentItem = entrepotDB.ListeTypeDocuments().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document+": " + f.identificateur });
+            vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXActivite(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document+": " + f.identificateur });
             vm.NomActivite = entrepotDB.ObtenirNomActivite(id.Value);
+            vm.IDActivite = entrepotDB.ObtenirIDActivite(id.Value);
 
+            this.HttpContext.AddToSession("CreationEntrepotVM", vm);
             ViewBag.ModalDocOne = "show";
             return View("CreationEntrepotXEssai", vm);
         }
 
         [HttpPost]
-        public IActionResult AjouterDocument(IFormFile file, string description, CreationEntrepotVM vm)
+        public async Task<IActionResult> AjouterDocumentAsync(IFormFile file, string description, CreationEntrepotVM vm)
         {
-            return View();
+            DocAjoutePartieUn docAjoutePartieUn = new DocAjoutePartieUn();
+
+            if (ModelState.IsValid)
+            {
+                docAjoutePartieUn.NomDocument = file.FileName.ToString();
+                docAjoutePartieUn.TypeActiviteID = vm.IDActivite;
+                docAjoutePartieUn.TypeDonneesID = vm.TypeDocumentID;
+                docAjoutePartieUn.TypeActivite = entrepotDB.ObtenirNomActivite(vm.IDActivite);
+                docAjoutePartieUn.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
+                // Creates a new MemoryStream object , convert file to memory object and appends into our model’s object.
+                using (var datastream = new MemoryStream())
+                {
+                    await file.CopyToAsync(datastream);
+                    docAjoutePartieUn.data = datastream.ToArray();
+                }
+                // Récupérer la session "CreationEntrepotVM"
+                CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+                model.ListDocsPartieUn.Add(docAjoutePartieUn);
+
+                this.HttpContext.AddToSession("CreationEntrepotVM", model); // Sauvegarder le model!
+
+                return View("CreationEntrepotXEssai", model);
+            }
+            else
+            {
+                // Récupérer la session "CreationEntrepotVM"
+                CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+                ViewBag.ModalDocOne = "show";
+                return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+            }
+
+        }
+
+        public IActionResult SupprimerDocPartieUn(int id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+            // Retirer le document de la liste
+            model.ListDocsPartieUn.RemoveAt(id);
+
+            this.HttpContext.AddToSession("CreationEntrepotVM", model); // Sauvegarder le model!
+
+            return View("CreationEntrepotXEssai", model);
+
+        }
+
+        public IActionResult SupprimerDocPartieDeux(int id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+            // Retirer le document de la liste
+            model.ListDocsPartieUn.RemoveAt(id);
+
+            this.HttpContext.AddToSession("CreationEntrepotVM", model); // Sauvegarder le model!
+
+            return View("CreationEntrepotXEssai", model);
+
         }
     }
 }

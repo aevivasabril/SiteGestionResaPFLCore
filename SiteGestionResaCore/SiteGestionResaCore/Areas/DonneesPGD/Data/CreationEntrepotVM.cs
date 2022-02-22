@@ -16,15 +16,18 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public List<type_document> ListeTypeDoc { get; set; }
         
         public string NomActivite { get; set; }
+        public int IDActivite { get; set; }
 
-        public List<DocumentPgd> ListeDocumentsAjoutes { get; set; }
+        public List<DocAjoutePartieUn> ListDocsPartieUn { get; set; }
+
+        public List<DocAjoutePartieDeux> ListDocsPartieDeux { get; set; }
 
         public IEnumerable<SelectListItem> TypeDocumentItem { get; set; } // Liste pour sélectionner le type de document
         /// <summary>
         /// Id d'un item de la liste des responsables projet
         /// </summary>
         [Required]
-        [Display(Name = "Type document")]
+        [Display(Name = "Type document*")]
         [Range(1, 20, ErrorMessage = "Sélectionnez un type de document")]
         public int TypeDocumentID { get; set; }
     }

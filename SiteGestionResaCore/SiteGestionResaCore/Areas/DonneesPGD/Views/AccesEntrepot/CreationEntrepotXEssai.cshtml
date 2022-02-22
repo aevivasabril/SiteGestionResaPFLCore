@@ -47,22 +47,31 @@
     
     <br />
     <div class="form-row text-center">
-        <div class="col-sm-7 col-md-7 offset-2">
+        <div class="col-sm-12 col-md-12">
             <h6><strong>Récapitulatif Documents ajoutés</strong></h6>
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">Nom document</th>
                         <th scope="col">Type données</th>
+                        <th scope="col">Type d'activité</th>
                         <th scope="col">Supprimer?</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th></th>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    @for (int i = 0; i<Model.ListDocsPartieUn.Count; i++)
+                    {
+                        <tr>
+                            <th style="color:green">@Model.ListDocsPartieUn[i].NomDocument</th>
+                            <td>@Model.ListDocsPartieUn[i].TypeDonnees</td>
+                            <td>@Model.ListDocsPartieUn[i].TypeActivite</td>
+                            <td>
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@i">
+                                    <span class="fas fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -78,7 +87,7 @@
     <div class="form-row">
         <div class="col-md-8 text-center">
             <br />
-            <h6>Cliquez sur les options des documents pour charger des fichiers (pdf, word, etc).</h6>
+            <h6>Cliquez sur les options des documents pour charger des fichiers (pdf, word, etc). Les données PcVue seront enregistrés automatiquement (si disponibles)</h6>
             <br />
             <table class="table table-sm table-bordered">
                 <thead>
@@ -126,24 +135,31 @@
         </div>
     </div>
     <div class="form-row text-center">
-        <div class="col-sm-7 col-md-7 offset-2">
+        <div class="col-sm-12 col-md-12">
             <h6><strong>Récapitulatif documents ajoutés</strong></h6>
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">Equipement</th>
                         <th scope="col">Nom du document</th>
+                        <th scope="col">Equipement</th>
                         <th scope="col">Type des données</th>
                         <th scope="col">Supprimer?</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th></th>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                    @for (int j = 0; j < Model.ListDocsPartieDeux.Count(); j++)
+                    {
+                        <tr>
+                            <th style="color:green">@Model.ListDocsPartieDeux[j].NomDocument</th>
+                            <td>@Model.ListDocsPartieDeux[j].NomDocument</td>
+                            <td>@Model.ListDocsPartieDeux[j].TypeDonnees</td>
+                            <td>
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieDeux" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@j">
+                                    <span class="fas fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -181,6 +197,7 @@
                             <option value="-1">- Type de document -</option>
                         </select>
                         @Html.ValidationMessageFor(m => m.TypeDocumentID, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(m => m.IDActivite)
                     </div>                    
                 </div>
                 <div class="modal-footer">

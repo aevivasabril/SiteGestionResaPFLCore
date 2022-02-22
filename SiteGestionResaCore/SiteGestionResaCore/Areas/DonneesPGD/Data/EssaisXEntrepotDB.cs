@@ -172,6 +172,35 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.type_document.ToList();
         }
 
+        public string ObtenirNomActivite(int id)
+        {
+            return contextDB.activite_pfl.First(a => a.id == id).nom_activite;
+        }
+
+        public int ObtenirIDActivite(int id)
+        {
+            return contextDB.activite_pfl.First(a => a.id == id).id;
+        }
+
+        public List<type_document> ListeTypeDocumentsXActivite(int IdActivite)
+        {
+            List<type_document> listDocs = new List<type_document>();
+
+            var list = ListeTypeDoc(IdActivite);
+
+            foreach(var l in list)
+            {
+                var activite = contextDB.type_document.First(d => d.identificateur == l);
+                listDocs.Add(activite);
+            }
+            return listDocs;
+        }
+
+        public string ObtenirNomTypeDonnees(int IdTypeDonnees)
+        {
+            return contextDB.type_document.First(d => d.id == IdTypeDonnees).nom_document;
+        }
+
         #region Méthodes complémentaires
 
         List<string> ListeTypeDoc(int ActiviteID)
@@ -324,11 +353,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                 IsDataReady = false;
             }
             return (IsEquipPcVue, IsDataReady);
-        }
-
-        public string ObtenirNomActivite(int id)
-        {
-            return contextDB.activite_pfl.First(a => a.id == id).nom_activite;
         }
 
         #endregion
