@@ -19,5 +19,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public int ObtenirIDActivite(int id);
         public List<type_document> ListeTypeDocumentsXActivite(int IdActivite);
         public string ObtenirNomTypeDonnees(int IdTypeDonnees);
+        public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement);
+        public string ObtenirNomEquipement(int id);
+        public int ObtenirIdActiviteXequip(int id);
     }
 }

@@ -201,6 +201,22 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.type_document.First(d => d.id == IdTypeDonnees).nom_document;
         }
 
+        public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement)
+        {
+            int IdActivite = contextDB.equipement.First(d => d.id == IdEquipement).activiteID.Value;
+            return ListeTypeDocumentsXActivite(IdActivite);
+        }
+
+        public string ObtenirNomEquipement(int id)
+        {
+            return contextDB.equipement.First(a => a.id == id).nom;
+        }
+
+        public int ObtenirIdActiviteXequip(int id)
+        {
+            return contextDB.equipement.First(a => a.id == id).activiteID.Value;
+        }
+
         #region Méthodes complémentaires
 
         List<string> ListeTypeDoc(int ActiviteID)

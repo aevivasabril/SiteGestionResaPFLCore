@@ -97,7 +97,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
             //vm.OpenUploadPartUn = "";
-            // Création d'une liste dropdownlist pour le type produit entrée
+            // Création d'une liste dropdownlist pour sélectionner le type de document d'une activité
             vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXActivite(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document+": " + f.identificateur });
             vm.NomActivite = entrepotDB.ObtenirNomActivite(id.Value);
             vm.IDActivite = entrepotDB.ObtenirIDActivite(id.Value);
@@ -161,12 +161,67 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
             // Retirer le document de la liste
-            model.ListDocsPartieUn.RemoveAt(id);
+            model.ListDocsPartieDeux.RemoveAt(id);
 
             this.HttpContext.AddToSession("CreationEntrepotVM", model); // Sauvegarder le model!
 
             return View("CreationEntrepotXEssai", model);
 
+        }
+
+        public IActionResult OuvrirUploadDocTwo(int? id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+
+            // Création d'une liste dropdownlist pour sélectionner le type de document pour un équipement
+            vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXEquip(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document + ": " + f.identificateur });
+            vm.NomEquipement = entrepotDB.ObtenirNomEquipement(id.Value);
+            vm.IDEquipement = id.Value;
+            vm.IDActivite = entrepotDB.ObtenirIdActiviteXequip(id.Value);
+
+            this.HttpContext.AddToSession("CreationEntrepotVM", vm);
+            ViewBag.ModalDocTwo = "show";
+            return View("CreationEntrepotXEssai", vm);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AjouterDocumentXEquipAsync(IFormFile file, string description, CreationEntrepotVM vm)
+        {
+            DocAjoutePartieDeux docAjoutePartieDeux = new DocAjoutePartieDeux();
+
+            if (ModelState.IsValid)
+            {
+                docAjoutePartieDeux.NomDocument = file.FileName.ToString();
+                docAjoutePartieDeux.IdActivite = vm.IDActivite;
+                docAjoutePartieDeux.IdTypeDonnees = vm.TypeDocumentID;
+                docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
+                docAjoutePartieDeux.NomActivite = entrepotDB.ObtenirNomActivite(vm.IDActivite);
+                docAjoutePartieDeux.IdEquipement = vm.IDEquipement;
+                docAjoutePartieDeux.NomEquipement = entrepotDB.ObtenirNomEquipement(vm.IDEquipement);
+                docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
+                // Creates a new MemoryStream object , convert file to memory object and appends into our model’s object.
+                using (var datastream = new MemoryStream())
+                {
+                    await file.CopyToAsync(datastream);
+                    docAjoutePartieDeux.ContenuDoc = datastream.ToArray();
+                }
+                // Récupérer la session "CreationEntrepotVM"
+                CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+                model.ListDocsPartieDeux.Add(docAjoutePartieDeux);
+
+                this.HttpContext.AddToSession("CreationEntrepotVM", model); // Sauvegarder le model!
+
+                return View("CreationEntrepotXEssai", model);
+            }
+            else
+            {
+                // Récupérer la session "CreationEntrepotVM"
+                CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+                ViewBag.ModalDocTwo = "show";
+                return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+            }
         }
     }
 }
