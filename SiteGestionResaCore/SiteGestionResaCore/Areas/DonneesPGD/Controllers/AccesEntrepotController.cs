@@ -223,5 +223,39 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
             }
         }
+
+        [HttpPost]
+        public IActionResult ValiderCreationEntrepot()
+        {
+            bool IsDocStock = false;
+            // Récupérer la session "CreationEntrepotVM"
+            CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+
+            // Ecrire les documents du type UN dans la base de données
+            IsDocStock = entrepotDB.EcrireDocTypeUn(model);
+            if (IsDocStock)
+            {
+                IsDocStock = entrepotDB.EcrireDocTypeDeux(model);
+                if (IsDocStock)
+                {
+                    // TODO: déclarer que l'essai a un entrepot des documents 
+                    // TODO: generer les fichiers excel des données PcVue
+                    // TODO: générer le pdf avec les infos essai
+                    return View("ConfirmationEntrepot");
+                }
+                else
+                {
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Problème d'écriture des documents dans la base de données";
+                    return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+                }
+            }
+            else
+            {
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Problème d'écriture des documents dans la base de données";
+                return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+            }
+        }
     }
 }

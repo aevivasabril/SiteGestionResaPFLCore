@@ -217,6 +217,75 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.equipement.First(a => a.id == id).activiteID.Value;
         }
 
+        public bool EcrireDocTypeUn(CreationEntrepotVM model)
+        {
+            bool isOk = false;
+            var list = model.ListDocsPartieUn;
+
+            foreach(var docu in list)
+            {
+                try
+                {
+                    doc_essai_pgd doc = new doc_essai_pgd
+                    {
+                        contenu_document = docu.data,
+                        nom_document = docu.NomDocument,
+                        type_activiteID = docu.TypeActiviteID,
+                        type_documentID = docu.TypeDonneesID,
+                        date_creation = DateTime.Now,
+                        essaiID = model.idEssai
+                    };
+                    contextDB.doc_essai_pgd.Add(doc);
+                    contextDB.SaveChanges();
+                    isOk = true;
+                }
+                catch(Exception e)
+                {
+                    logger.LogError(e, "Erreur d'écriture du document dans la table doc_essai_pgd");
+                    isOk = false;
+                }
+            }
+
+            return isOk;
+        }
+        public bool EcrireDocTypeDeux(CreationEntrepotVM model)
+        {
+            bool isOk = false;
+            var list = model.ListDocsPartieDeux;
+
+            foreach (var docu in list)
+            {
+                try
+                {
+                    doc_essai_pgd doc = new doc_essai_pgd
+                    {
+                        contenu_document = docu.ContenuDoc,
+                        nom_document = docu.NomDocument,
+                        type_activiteID = docu.IdActivite,
+                        type_documentID = docu.IdTypeDonnees,
+                        date_creation = DateTime.Now,
+                        essaiID = model.idEssai
+                    };
+                    contextDB.doc_essai_pgd.Add(doc);
+                    contextDB.SaveChanges();
+                    isOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Erreur d'écriture du document dans la table doc_essai_pgd");
+                    isOk = false;
+                }
+            }
+
+            return isOk;
+        }
+
+        public void UpdateEssaiXEntrepot(int idEssai)
+        {
+            contextDB.essai.First(e => e.id == idEssai).entrepot_cree = true;
+            contextDB.SaveChanges();
+        }
+
         #region Méthodes complémentaires
 
         List<string> ListeTypeDoc(int ActiviteID)

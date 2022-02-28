@@ -22,5 +22,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement);
         public string ObtenirNomEquipement(int id);
         public int ObtenirIdActiviteXequip(int id);
+        public bool EcrireDocTypeUn(CreationEntrepotVM model);
+        public bool EcrireDocTypeDeux(CreationEntrepotVM model);
+        public void UpdateEssaiXEntrepot(int idEssai);
     }
 }
