@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.DonneesPGD.Data;
+using SiteGestionResaCore.Areas.User.Data.DataPcVue;
+using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Models;
@@ -18,13 +21,16 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
     public class AccesEntrepotController : Controller
     {
         private readonly IEssaisXEntrepotDB entrepotDB;
+        private readonly IDonneesUsrDB donneesUserDB;
         private readonly UserManager<utilisateur> userManager;
 
         public AccesEntrepotController(
             IEssaisXEntrepotDB entrepotDB,
+            IDonneesUsrDB donneesUserDB,
             UserManager<utilisateur> userManager)
         {
             this.entrepotDB = entrepotDB;
+            this.donneesUserDB = donneesUserDB;
             this.userManager = userManager;
         }
 
@@ -77,7 +83,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
         public IActionResult CreationEntrepotEssai(int? id)
         {
-            // initialisation de session pour l'essai X
+            // Initialisation de session pour l'essai X
             CreationEntrepotVM vm = new CreationEntrepotVM()
             {
                 ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value),
@@ -169,16 +175,25 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id reservation</param>
+        /// <returns></returns>
         public IActionResult OuvrirUploadDocTwo(int? id)
         {
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
 
+            var resa = entrepotDB.ObtenirResa(id.Value);
             // Création d'une liste dropdownlist pour sélectionner le type de document pour un équipement
-            vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXEquip(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document + ": " + f.identificateur });
-            vm.NomEquipement = entrepotDB.ObtenirNomEquipement(id.Value);
-            vm.IDEquipement = id.Value;
-            vm.IDActivite = entrepotDB.ObtenirIdActiviteXequip(id.Value);
+            vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXEquip(resa.equipementID).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document + ": " + f.identificateur });
+            
+            vm.IDEquipement = resa.equipementID;
+            vm.NomEquipement = entrepotDB.ObtenirEquipement(resa.equipementID).nom;
+
+            vm.idResa = id.Value;
+            vm.IDActivite = entrepotDB.ObtenirIdActiviteXequip(resa.equipementID);
 
             this.HttpContext.AddToSession("CreationEntrepotVM", vm);
             ViewBag.ModalDocTwo = "show";
@@ -199,8 +214,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
                 docAjoutePartieDeux.NomActivite = entrepotDB.ObtenirNomActivite(vm.IDActivite);
                 docAjoutePartieDeux.IdEquipement = vm.IDEquipement;
-                docAjoutePartieDeux.NomEquipement = entrepotDB.ObtenirNomEquipement(vm.IDEquipement);
+                docAjoutePartieDeux.NomEquipement = entrepotDB.ObtenirEquipement(vm.IDEquipement).nom;
                 docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
+                docAjoutePartieDeux.idReservation = vm.idResa;
                 // Creates a new MemoryStream object , convert file to memory object and appends into our model’s object.
                 using (var datastream = new MemoryStream())
                 {
@@ -230,7 +246,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             bool IsDocStock = false;
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
-
+            var essai = entrepotDB.ObtenirEssai(model.idEssai);
             // Ecrire les documents du type UN dans la base de données
             IsDocStock = entrepotDB.EcrireDocTypeUn(model);
             if (IsDocStock)
@@ -238,9 +254,82 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 IsDocStock = entrepotDB.EcrireDocTypeDeux(model);
                 if (IsDocStock)
                 {
-                    // TODO: déclarer que l'essai a un entrepot des documents 
                     // TODO: generer les fichiers excel des données PcVue
+                    #region récupérer les fichiers excel des équipements sous supervision
+                    // vérifier si l'équipement est sous supervision des données (déjà fait pour la liste des réservations)
+                    foreach(var resa in model.ListReservationsXEssai)
+                    {
+                        if(resa.FichierPcVue == "Données disponibles") // Si des données dispos alors créer l'excel
+                        {
+                            AllDataPcVue Donnees = donneesUserDB.ObtenirDonneesPcVue(resa.idResa);
+                            StringBuilder csv = new StringBuilder();
+                            string titreCsv = null;
+
+                            #region  Créer un excel avec les données
+
+                            // Déterminer les headers tableau
+                            var headers = Donnees.DataEquipement.Select(d => d.NomCapteur).Distinct().ToList();
+                            // Ajouter la colonne de date 
+                            csv.Append("Date");
+                            csv.Append(";");
+                            csv.Append("Heure");
+
+                            foreach (var dc in headers)
+                            {
+                                csv.Append(";");
+                                csv.Append(dc);
+                            }
+                            csv.AppendLine();
+
+                            // Reagrouper les données par date pour identifier chaque future ligne tableau
+                            var reg = Donnees.DataEquipement.GroupBy(d => d.Chrono);
+                            if (reg.Count()!=0)
+                            {
+                                foreach (var group in reg)
+                                {
+                                    csv.Append(group.Key.ToShortDateString());
+                                    csv.Append(";");
+                                    csv.Append(group.Key.ToShortTimeString());
+                                    foreach (var r in group)
+                                    {
+                                        csv.Append(";");
+                                        csv.Append(r.Value);
+                                    }
+                                    csv.AppendLine();
+                                }
+
+                                titreCsv = "DonneesPcVue_EssaiId" + model.idEssai + "_" + essai.titreEssai + "_" + Donnees.NomEquipement + ".csv";
+
+                                var donneesPcVue = File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
+                                // Obtenir l'équipement
+                                equipement equipem = entrepotDB.ObtenirEquipement(resa.IdEquipement);
+                                doc_essai_pgd doc = new doc_essai_pgd
+                                {
+                                    contenu_document = donneesPcVue.FileContents,
+                                    nom_document = donneesPcVue.FileDownloadName,
+                                    date_creation = DateTime.Now,
+                                    equipementID = resa.IdEquipement,
+                                    essaiID = model.idEssai,
+                                    type_activiteID = equipem.activiteID.Value,
+                                    type_documentID = 4 // car c'est un tableau excel PcVue
+                                };
+
+                                IsDocStock = entrepotDB.SavePcVueExcel(doc);
+                                if (!IsDocStock)
+                                {
+                                    ViewBag.AfficherMessage = true;
+                                    ViewBag.Message = "Problème d'écriture dans la base de données d'un des fichiers excel PcVue";
+                                    return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+                                }
+                            }                         
+                            #endregion
+                        }
+                    }
+                    #endregion 
                     // TODO: générer le pdf avec les infos essai
+
+                    // déclarer que l'essai a un entrepot des documents 
+                    entrepotDB.UpdateEssaiXEntrepot(model.idEssai);
                     return View("ConfirmationEntrepot");
                 }
                 else

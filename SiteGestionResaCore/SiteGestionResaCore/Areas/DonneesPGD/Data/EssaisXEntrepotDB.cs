@@ -33,7 +33,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         {
             List<InfosResasSansEntrepot> infos = new List<InfosResasSansEntrepot>();
             //var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
-            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id && e.resa_refuse!=true && e.resa_supprime != true).ToList();
+            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id && e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList();
+            //list.OrderByDescending(l => l.date_creation);
             foreach(var ess in list)
             {
                 // Obtenir le projet pour l'essai X
@@ -132,6 +133,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             bool IsEquipPcVue = false;
             bool IsDataReady = false;
             string donneesDispo = "";
+            string color = "";
 
             List<ReservationsXEssai> list = new List<ReservationsXEssai>();
             var listeRe = contextDB.reservation_projet.Where(r => r.essaiID == idEssai).ToList();
@@ -144,14 +146,17 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                 if(IsEquipPcVue == true && IsDataReady == true)
                 {
                     donneesDispo = "Données disponibles";
+                    color = "green";
                 } 
                 else if (IsEquipPcVue == true && IsDataReady == false)
                 {
                     donneesDispo = "Données indisponibles";
+                    color = "red";
                 }
                 else if (IsEquipPcVue != true )
                 {
-                    donneesDispo = "";
+                    donneesDispo = "Non";
+                    color = "black";
                 }
                 ReservationsXEssai r = new ReservationsXEssai
                 {
@@ -159,7 +164,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                     idResa = resa.id,
                     NomEquipement = contextDB.equipement.First(e => e.id == resa.equipementID).nom, 
                     ListeTypeDocs = typesDoc,
-                    FichierPcVue = donneesDispo
+                    FichierPcVue = donneesDispo,
+                    color = color
                 };
 
                 list.Add(r);
@@ -207,11 +213,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return ListeTypeDocumentsXActivite(IdActivite);
         }
 
-        public string ObtenirNomEquipement(int id)
-        {
-            return contextDB.equipement.First(a => a.id == id).nom;
-        }
-
         public int ObtenirIdActiviteXequip(int id)
         {
             return contextDB.equipement.First(a => a.id == id).activiteID.Value;
@@ -222,7 +223,10 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             bool isOk = false;
             var list = model.ListDocsPartieUn;
 
-            foreach(var docu in list)
+            if (list.Count() == 0)
+                isOk = true;
+
+            foreach (var docu in list)
             {
                 try
                 {
@@ -253,6 +257,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             bool isOk = false;
             var list = model.ListDocsPartieDeux;
 
+            if (list.Count() == 0)
+                isOk = true;
+
             foreach (var docu in list)
             {
                 try
@@ -264,6 +271,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                         type_activiteID = docu.IdActivite,
                         type_documentID = docu.IdTypeDonnees,
                         date_creation = DateTime.Now,
+                        equipementID = docu.IdEquipement,
                         essaiID = model.idEssai
                     };
                     contextDB.doc_essai_pgd.Add(doc);
@@ -276,7 +284,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                     isOk = false;
                 }
             }
-
             return isOk;
         }
 
@@ -284,6 +291,40 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         {
             contextDB.essai.First(e => e.id == idEssai).entrepot_cree = true;
             contextDB.SaveChanges();
+        }
+
+        public reservation_projet ObtenirResa(int IdResa)
+        {
+            return contextDB.reservation_projet.First(r => r.id == IdResa);
+        }
+
+        public essai ObtenirEssai(int idEssai)
+        {
+            return contextDB.essai.First(e => e.id == idEssai);
+        }
+
+        public bool SavePcVueExcel(doc_essai_pgd doc)
+        {
+            bool isOk = false;
+
+            try
+            {                
+                contextDB.doc_essai_pgd.Add(doc);
+                contextDB.SaveChanges();
+                isOk = true;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Erreur d'écriture de l'excel dans la table doc_essai_pgd");
+                isOk = false;
+            }
+            
+            return isOk;
+        }
+
+        public equipement ObtenirEquipement(int IdEquip)
+        {
+            return contextDB.equipement.First(e => e.id == IdEquip);
         }
 
         #region Méthodes complémentaires
@@ -310,6 +351,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         {
             bool IsEquipPcVue = false;
             DateTime dateDebut = new DateTime();
+            DateTime dateFin = new DateTime();
             bool IsDataReady = false; 
 
             string tableName = contextDB.equipement.First(e => e.id == resa.equipementID).nomTabPcVue;
@@ -321,6 +363,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                 // FILE TIME. Le FILE TIME est le temps écoulé en nanosecondes écoulés depuis le 1er Janvier 1601.
                 dateDebut = resa.date_debut.AddHours(-3);
                 dateDebut = dateDebut.AddYears(-1600);
+                dateFin = resa.date_fin.AddHours(-3);
+                dateFin = resa.date_fin.AddYears(-1600);
 
                 // Méthode qui permet de définir la table sur laquelle on execute la requete
                 bool query = false;
@@ -328,67 +372,67 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                 {
                     case "tab_UA_ACT":
                         query = (from donnees in pcVueDb.tab_UA_ACT
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_CUV":
                         query = (from donnees in pcVueDb.tab_UA_CUV
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_GP7":
                         query = (from donnees in pcVueDb.tab_UA_GP7
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_MAT":
                         query = (from donnees in pcVueDb.tab_UA_MAT
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_MFMG":
                         query = (from donnees in pcVueDb.tab_UA_MFMG
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_MTH":
                         query = (from donnees in pcVueDb.tab_UA_MTH
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_NEP":
                         query = (from donnees in pcVueDb.tab_UA_NEP
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_OPTIMAL":
                         query = (from donnees in pcVueDb.tab_UA_OPTIMAL
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_SEC":
                         query = (from donnees in pcVueDb.tab_UA_SEC
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_SPI":
                         query = (from donnees in pcVueDb.tab_UA_SPI
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_VALO":
                         query = (from donnees in pcVueDb.tab_UA_VALO
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_UFMF":
                         query = (from donnees in pcVueDb.tab_UA_UFMF
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     case "tab_UA_ECREM":
                         query = (from donnees in pcVueDb.tab_UA_ECREM
-                                 where donnees.Chrono >= dateDebut.Ticks
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
                     default: // vérifier le cas des 2 tables pour l'évaporateur

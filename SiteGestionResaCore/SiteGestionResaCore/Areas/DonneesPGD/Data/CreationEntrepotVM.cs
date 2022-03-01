@@ -33,6 +33,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
 
         public string NomEquipement { get; set; }
         public int IDEquipement { get; set; }
+        public int idResa { get; set; }
 
     }
 }

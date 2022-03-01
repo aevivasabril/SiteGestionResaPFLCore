@@ -20,10 +20,13 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public List<type_document> ListeTypeDocumentsXActivite(int IdActivite);
         public string ObtenirNomTypeDonnees(int IdTypeDonnees);
         public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement);
-        public string ObtenirNomEquipement(int id);
         public int ObtenirIdActiviteXequip(int id);
         public bool EcrireDocTypeUn(CreationEntrepotVM model);
         public bool EcrireDocTypeDeux(CreationEntrepotVM model);
         public void UpdateEssaiXEntrepot(int idEssai);
+        public reservation_projet ObtenirResa(int IdResa);
+        public essai ObtenirEssai(int idEssai);
+        public bool SavePcVueExcel(doc_essai_pgd doc);
+        public equipement ObtenirEquipement(int IdEquip);
     }
 }

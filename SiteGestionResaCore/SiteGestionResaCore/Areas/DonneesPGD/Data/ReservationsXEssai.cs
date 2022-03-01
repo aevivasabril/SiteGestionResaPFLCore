@@ -12,5 +12,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public string NomEquipement { get; set; }
         public string FichierPcVue { get; set; }
         public List<string> ListeTypeDocs { get; set; }
+        public string color { get; set; }
     }
 }

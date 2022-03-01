@@ -15,6 +15,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public string NomDocument { get; set; }
         public int IdActivite { get; set; }
         public string NomActivite { get; set; }
-
+        public int idReservation { get; set; }
     }
 }

@@ -6,6 +6,7 @@
 
 <br />
 <h3 class="text-center"><strong>Creation d'entrepôt selon PGD PFL pour l'essai N° @Model.idEssai</strong></h3>
+<h6 class="text-center">Avant de créer un entrepôt, assurez-vous que l'essai est fini</h6>
 <br />
 
 @if (ViewBag.AfficherMessage == true)
@@ -13,6 +14,7 @@
     <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
 }
 
+<hr />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <form asp-action="ValiderCreationEntrepot" asp-controller="AccesEntrepot" asp-area="DonneesPGD" method="post">
     <!--Informations Essai-->
@@ -107,9 +109,9 @@
                     {
                         <tr>
                             <th>@resa.NomEquipement</th>
-                            <td>@resa.FichierPcVue</td>
+                            <td style="color:@resa.color">@resa.FichierPcVue</td>
                             <td style="width: 15rem;">
-                                <a class="btn-link" asp-action="OuvrirUploadDocTwo" asp-controller="AccesEntrepot" asp-area="DonneesPGD" asp-route-id="@resa.IdEquipement">Ajouter des fichiers</a>
+                                <a class="btn-link" asp-action="OuvrirUploadDocTwo" asp-controller="AccesEntrepot" asp-area="DonneesPGD" asp-route-id="@resa.idResa">Ajouter des fichiers</a>
                                 <br>
                             </td>
                         </tr>
@@ -237,6 +239,7 @@
                         @Html.ValidationMessageFor(m => m.TypeDocumentID, "", new { @class = "text-danger" })
                         @Html.HiddenFor(m => m.IDActivite)
                         @Html.HiddenFor(m => m.IDEquipement)
+                        @Html.HiddenFor(m => m.idResa)
                     </div>
                 </div>
                 <div class="modal-footer">
