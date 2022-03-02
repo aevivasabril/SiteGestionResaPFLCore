@@ -26,7 +26,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public void UpdateEssaiXEntrepot(int idEssai);
         public reservation_projet ObtenirResa(int IdResa);
         public essai ObtenirEssai(int idEssai);
-        public bool SavePcVueExcel(doc_essai_pgd doc);
+        public bool SaveDocEssaiPgd(doc_essai_pgd doc, string typedoc);
         public equipement ObtenirEquipement(int IdEquip);
+        public projet ObtenirProjetXEssai(int IdProjet);
+        public organisme ObtenirOrgXProj(int IdOrg);
     }
 }

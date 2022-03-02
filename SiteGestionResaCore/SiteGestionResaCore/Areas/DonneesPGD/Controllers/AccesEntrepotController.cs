@@ -314,7 +314,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                     type_documentID = 4 // car c'est un tableau excel PcVue
                                 };
 
-                                IsDocStock = entrepotDB.SavePcVueExcel(doc);
+                                IsDocStock = entrepotDB.SaveDocEssaiPgd(doc, "Excel PcVue");
                                 if (!IsDocStock)
                                 {
                                     ViewBag.AfficherMessage = true;
@@ -325,8 +325,103 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                             #endregion
                         }
                     }
-                    #endregion 
-                    // TODO: générer le pdf avec les infos essai
+                    #endregion
+                    // TODO: générer le .txt avec les infos essai
+                    #region générer un fichier .txt avec les informations "essai"
+                    // récupérer projet auquel appartient l'essai
+                    projet proj = entrepotDB.ObtenirProjetXEssai(essai.projetID);
+                    organisme orgProj = entrepotDB.ObtenirOrgXProj(proj.organismeID.Value);
+
+                    StringBuilder txt = new StringBuilder();
+                    string titreTxt = "Informations_Essai" + "_" + essai.id + ".txt";
+
+                    #region ecriture dans le fichier
+                    txt.Append("-------INFOS PROJET-------");
+                    txt.AppendLine();
+                    txt.Append("Titre Projet  : ");
+                    txt.Append(proj.titre_projet);
+                    txt.AppendLine();
+                    txt.Append("Numéro Projet  : ");
+                    txt.Append(proj.num_projet);
+                    txt.AppendLine();
+                    txt.Append("Type de projet  : ");
+                    txt.Append(proj.type_projet);
+                    txt.AppendLine();
+                    txt.Append("Financement : ");
+                    txt.Append(proj.financement);
+                    txt.AppendLine();
+                    txt.Append("Organisme : ");
+                    txt.Append(orgProj.nom_organisme);
+                    txt.AppendLine();
+                    txt.Append("Mail responsable projet  : ");
+                    txt.Append(proj.mailRespProjet);
+                    txt.AppendLine();
+                    txt.Append("Provenance Projet  : ");
+                    txt.Append(proj.provenance);
+                    txt.AppendLine();
+                    txt.Append("Description Projet  : ");
+                    txt.Append(proj.description_projet);
+                    txt.AppendLine();
+                    txt.Append("Date création projet  : ");
+                    txt.Append(proj.date_creation);
+                    txt.AppendLine();
+                    txt.Append('\t');
+                    txt.AppendLine();
+
+                    txt.Append("-------INFOS ESSAI-------");
+                    txt.AppendLine();
+                    txt.Append("Titre essai  : ");
+                    txt.Append(essai.titreEssai);
+                    txt.AppendLine();
+                    txt.Append("ID essai  : ");
+                    txt.Append(essai.id);
+                    txt.AppendLine();
+                    txt.Append("Date Création  : ");
+                    txt.Append(essai.date_creation);
+                    txt.AppendLine();
+                    txt.Append("Type de produit entrant  : ");
+                    txt.Append(essai.type_produit_entrant);
+                    txt.AppendLine();
+                    txt.Append("Précision produit : ");
+                    txt.Append(essai.precision_produit);
+                    txt.AppendLine();
+                    txt.Append("Quantité produit  : ");
+                    txt.Append(essai.quantite_produit);
+                    txt.AppendLine();
+                    txt.Append("Provenance produit  : ");
+                    txt.Append(essai.provenance_produit);
+                    txt.AppendLine();
+                    txt.Append("Destination produit  : ");
+                    txt.Append(essai.destination_produit);
+                    txt.AppendLine();
+                    txt.Append("Date validation essai : ");
+                    txt.Append(essai.date_validation);
+                    txt.AppendLine();
+                    txt.Append("Confidentialité : ");
+                    txt.Append(essai.confidentialite);
+                    txt.AppendLine();
+                    #endregion
+
+                    var txtEssai = File(new System.Text.UTF8Encoding().GetBytes(txt.ToString()), "text/plain", titreTxt);
+                    // Sauvegarde dans la base des données
+                    doc_essai_pgd docTXT = new doc_essai_pgd
+                    {
+                        contenu_document = txtEssai.FileContents,
+                        nom_document = txtEssai.FileDownloadName,
+                        date_creation = DateTime.Now,                       
+                        essaiID = model.idEssai,
+                        type_activiteID = 23, // Autres
+                        type_documentID = 6 // Autre format
+                    };
+
+                    IsDocStock = entrepotDB.SaveDocEssaiPgd(docTXT, ".txt infos essai");
+                    if (!IsDocStock)
+                    {
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème d'écriture dans la base de données du fichier .txt infos essai";
+                        return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+                    }
+                    #endregion
 
                     // déclarer que l'essai a un entrepot des documents 
                     entrepotDB.UpdateEssaiXEntrepot(model.idEssai);
@@ -335,14 +430,14 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 else
                 {
                     ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Problème d'écriture des documents dans la base de données";
+                    ViewBag.Message = "Problème d'écriture des documents ajoutés pour sauvegarde dans la base de données";
                     return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
                 }
             }
             else
             {
                 ViewBag.AfficherMessage = true;
-                ViewBag.Message = "Problème d'écriture des documents dans la base de données";
+                ViewBag.Message = "Problème d'écriture des documents ajoutés pour sauvegarde dans la base de données";
                 return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
             }
         }

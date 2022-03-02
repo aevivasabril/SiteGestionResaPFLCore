@@ -303,7 +303,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.essai.First(e => e.id == idEssai);
         }
 
-        public bool SavePcVueExcel(doc_essai_pgd doc)
+        public bool SaveDocEssaiPgd(doc_essai_pgd doc, string typedoc)
         {
             bool isOk = false;
 
@@ -315,7 +315,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Erreur d'écriture de l'excel dans la table doc_essai_pgd");
+                logger.LogError(e, "Erreur d'écriture du " + typedoc + " dans la table doc_essai_pgd");
                 isOk = false;
             }
             
@@ -325,6 +325,16 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public equipement ObtenirEquipement(int IdEquip)
         {
             return contextDB.equipement.First(e => e.id == IdEquip);
+        }
+
+        public projet ObtenirProjetXEssai(int IdProjet)
+        {
+            return contextDB.projet.First(p => p.id == IdProjet);
+        }
+
+        public organisme ObtenirOrgXProj(int IdOrg)
+        {
+            return contextDB.organisme.First(o => o.id == IdOrg);
         }
 
         #region Méthodes complémentaires
