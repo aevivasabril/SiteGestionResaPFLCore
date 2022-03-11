@@ -36,7 +36,7 @@
                                 <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
                                 <td><a href="#" onclick="ModalEquipReserv(@x.idEssai)">Equipements réservés</a></td>
                                 <td>@x.DateSaisieEssai</td>
-                                <td><a class="btn navbar-inra" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@x.idEssai">Créer entrepôt</a></td>
+                                <td><a class="btn navbar-inra" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@x.idEssai">Créer entrepôt</a></td>
                             </tr>
                         }
                     </tbody>

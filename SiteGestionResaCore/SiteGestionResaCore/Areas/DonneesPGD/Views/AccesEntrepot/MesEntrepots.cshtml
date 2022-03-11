@@ -1,0 +1,132 @@
+﻿@model MesEntrepotsVM
+@{
+    ViewData["Title"] = "MesEntrepots";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h3 class="text-center"><strong>Vos entrepôts des données par projet</strong></h3>
+<br />
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+}
+
+<div class="form-row text-center">
+    <div class="col-sm-12 col-md-12">
+        <h6><strong>Liste des projets où au moins un entrepôt à été crée sur un essai</strong></h6>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Projet</th>
+                    <th scope="col">Liste documents par essai</th>
+                    <th scope="col">Téléchargement</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListEntrepotXProjet.Count; i++)
+                {
+                    <tr>
+                        <td><a href="#" onclick="ModalInfosProjet(@Model.ListEntrepotXProjet[i].IdProjet)">@Model.ListEntrepotXProjet[i].NomProjet (N°@Model.ListEntrepotXProjet[i].NumProjet)</a></td>
+                        <td><a asp-action="EssaisXProjet" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Accès liste essais</a></td>
+                        <td><a href="#">Télécharger .Zip</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="form-row text-center" style="display:@Model.HideListeDocsXEssai">
+    <div class="col-sm-8 col-md-8 offset-2">
+        <h6><strong>Liste des essais avec un entrepôt des données crée (projet N° @Model.NumProjetSelect)</strong></h6>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Essai</th>
+                    <th scope="col">Documents</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListEssaiAvecEntrepot.Count; i++)
+                {
+                    <tr>
+                        <td><a href="#" onclick="ModalInfosEssai(@Model.ListEssaiAvecEntrepot[i].IdEssai)">@Model.ListEssaiAvecEntrepot[i].TitreEssai (N° @Model.ListEssaiAvecEntrepot[i].IdEssai)</a></td>
+                        <td><a asp-action="DocsXEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEssaiAvecEntrepot[i].IdEssai">liste des documents</a></td>
+                        <td><a href="#">Ajouter des documents</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<br />
+<div class="form-row text-center" style="display:@Model.HideListeDocs">
+    <div class="col-sm-12 col-md-12">
+        <h6><strong>Liste des documents ajoutés pour l'essai: titre + id</strong></h6>
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Equipement</th>
+                    <th scope="col">Nom document</th>
+                    <th scope="col">Type d'activité</th>
+                    <th scope="col">Type des données</th>
+                    <th scope="col">Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListDocsXEssai.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.ListDocsXEssai[i].NomEquipement</td>
+                        <td><strong>@Model.ListDocsXEssai[i].NomDocument</strong></td>
+                        <td>@Model.ListDocsXEssai[i].TypeActivite</td>
+                        <td>@Model.ListDocsXEssai[i].TypeDonnees</td>
+                        <td><a href="#">Supprimer document</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal pour affichage des infos "projet"-->
+<div id="InfosProjet"></div>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div id="InfosEssai"></div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+
+    function ModalInfosProjet(id) {
+        if (id)
+        {
+            $.ajax({
+                url: "@Url.Action("VoirInfosProjet", "Validation", new { Area = "Reservation" })?id=" + id,
+                type: 'POST',
+                success: function (html) {
+                    $("#InfosProjet").html(html);
+                    $("#ProjModal").modal('show');
+                }
+            });
+        }
+    }
+
+    function ModalInfosEssai(id) {
+        if (id)
+        {
+            $.ajax({
+                url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                type: 'POST',
+                success: function (html) {
+                    $("#InfosEssai").html(html);
+                    $("#EssaiModal").modal('show');
+                }
+            });
+        }
+    }
+
+    </script>
+}

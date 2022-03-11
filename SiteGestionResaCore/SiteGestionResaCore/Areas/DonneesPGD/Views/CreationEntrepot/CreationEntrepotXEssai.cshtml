@@ -16,7 +16,7 @@
 
 <hr />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-<form asp-action="ValiderCreationEntrepot" asp-controller="AccesEntrepot" asp-area="DonneesPGD" method="post">
+<form asp-action="ValiderCreationEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD" method="post">
     <!--Informations Essai-->
     <div class="form-row">
         <div class="col-sm-6">
@@ -36,19 +36,19 @@
     </div>
     <div class="form-row text-center">
         <div class="col-sm-2 offset-1">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="1">Matières premières</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="1">Matières premières</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="3">Matière première 1</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="3">Matière première 1</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="4">Matière première 2</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="4">Matière première 2</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="5">Matière première 3</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="5">Matière première 3</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="2">Ingredients</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="2">Ingredients</a>
         </div>
     </div>
 
@@ -73,7 +73,7 @@
                             <td>@Model.ListDocsPartieUn[i].TypeDonnees</td>
                             <td>@Model.ListDocsPartieUn[i].TypeActivite</td>
                             <td>
-                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@i">
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@i">
                                     <span class="fas fa-trash"></span>
                                 </a>
                             </td>
@@ -111,7 +111,7 @@
                             <th>@resa.NomEquipement</th>
                             <td style="color:@resa.color">@resa.FichierPcVue</td>
                             <td style="width: 15rem;">
-                                <a class="btn-link" asp-action="OuvrirUploadDocTwo" asp-controller="AccesEntrepot" asp-area="DonneesPGD" asp-route-id="@resa.idResa">Ajouter des fichiers</a>
+                                <a class="btn-link" asp-action="OuvrirUploadDocTwo" asp-controller="CreationEntrepot" asp-area="DonneesPGD" asp-route-id="@resa.idResa">Ajouter des fichiers</a>
                                 <br>
                             </td>
                         </tr>
@@ -158,7 +158,7 @@
                             <td>@Model.ListDocsPartieDeux[j].NomEquipement</td>
                             <td>@Model.ListDocsPartieDeux[j].TypeDonnees</td>
                             <td>
-                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieDeux" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@j">
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieDeux" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@j">
                                     <span class="fas fa-trash"></span>
                                 </a>
                             </td>
@@ -174,10 +174,13 @@
             <br />
             <input type="submit" class="btn navbar-inra" value="Valider création entrepôt" />
         </div>
+        <div class="row justify-content-center">
+            <a asp-action="CreerEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD">Revenir à la page précedente</a>
+        </div>
     </div>
 </form>
 
-<form asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-action="AjouterDocument" method="post" enctype="multipart/form-data">
+<form asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-action="AjouterDocument" method="post" enctype="multipart/form-data">
     <!-- Modal pop-up pour ajout de document Matière première et ingredients-->
     <div class="modal fade" id="AddingDoc" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
@@ -213,7 +216,7 @@
     </div>
 </form>
 
-<form asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-action="AjouterDocumentXEquip" method="post" enctype="multipart/form-data">
+<form asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-action="AjouterDocumentXEquip" method="post" enctype="multipart/form-data">
     <!-- Modal pop-up pour ajout de document Matière première et ingredients-->
     <div class="modal fade" id="AddingDocXEquip" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
