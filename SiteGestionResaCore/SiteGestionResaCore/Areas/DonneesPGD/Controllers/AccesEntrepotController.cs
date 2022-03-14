@@ -62,7 +62,29 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             vm.HideListeDocs = "";
             vm.IdEssai = id.Value;
             vm.TitreEssai = accesEntrepotDB.ObtTitreEssai(id.Value);
+            this.HttpContext.AddToSession("MesEntrepotsVM", vm);
             return View("MesEntrepots", vm);
         }
+
+        public IActionResult SupprimerDoc(int? id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
+            int idEssai = accesEntrepotDB.RecupIdEssaiXDoc(id.Value);
+            bool IsDeletedOk = accesEntrepotDB.SupprimerDocument(id.Value);
+            if(IsDeletedOk == false)
+            {
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Problème de suppression du document, essayez à nouveau";
+            }
+            else
+            {
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Document supprimé!";
+                vm.ListDocsXEssai = accesEntrepotDB.ObtListDocsXEssai(idEssai);
+                this.HttpContext.AddToSession("MesEntrepotsVM", vm);
+            }
+            return View("MesEntrepots", vm);
+;        }
     }
 }

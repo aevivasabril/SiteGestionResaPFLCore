@@ -10,6 +10,7 @@
 @if (ViewBag.AfficherMessage == true)
 {
     <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+    <br />
 }
 
 <div class="form-row text-center">
@@ -64,7 +65,7 @@
 <br />
 <div class="form-row text-center" style="display:@Model.HideListeDocs">
     <div class="col-sm-12 col-md-12">
-        <h6><strong>Liste des documents ajoutés pour l'essai: titre + id</strong></h6>
+        <h6><strong>Liste des documents ajoutés pour l'essai: @Model.TitreEssai (N° @Model.IdEssai) </strong></h6>
         <table class="table table-sm table-bordered">
             <thead>
                 <tr>
@@ -83,7 +84,7 @@
                         <td><strong>@Model.ListDocsXEssai[i].NomDocument</strong></td>
                         <td>@Model.ListDocsXEssai[i].TypeActivite</td>
                         <td>@Model.ListDocsXEssai[i].TypeDonnees</td>
-                        <td><a href="#">Supprimer document</a></td>
+                        <td><a asp-action="SupprimerDoc" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListDocsXEssai[i].IdDoc">Supprimer document</a></td>
                     </tr>
                 }
             </tbody>

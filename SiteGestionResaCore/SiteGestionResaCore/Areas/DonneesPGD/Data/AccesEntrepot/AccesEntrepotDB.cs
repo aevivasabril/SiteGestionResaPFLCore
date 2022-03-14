@@ -93,5 +93,27 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         {
             return contextDB.essai.First(e => e.id == IdEssai).titreEssai;
         }
+
+        public int RecupIdEssaiXDoc(int IdDoc)
+        {
+            return contextDB.doc_essai_pgd.First(d => d.id == IdDoc).essaiID;
+        }
+
+        public bool SupprimerDocument(int IdDoc)
+        {
+            doc_essai_pgd doc = new doc_essai_pgd();
+            try
+            {
+                doc = contextDB.doc_essai_pgd.First(r => r.id == IdDoc);
+                contextDB.doc_essai_pgd.Remove(doc);
+                contextDB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la suppression du document: " + doc.nom_document);
+                return false;
+            }
+            return true;
+        }
     }
 }

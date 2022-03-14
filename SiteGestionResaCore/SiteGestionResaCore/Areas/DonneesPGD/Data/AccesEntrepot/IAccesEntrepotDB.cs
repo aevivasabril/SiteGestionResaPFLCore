@@ -13,5 +13,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public string ObtNumProjet(int IdProjet);
         public List<DocXEssai> ObtListDocsXEssai(int IdEssai);
         public string ObtTitreEssai(int IdEssai);
+        public int RecupIdEssaiXDoc(int IdDoc);
+        public bool SupprimerDocument(int IdDoc);
     }
 }
