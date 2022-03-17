@@ -30,5 +30,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public equipement ObtenirEquipement(int IdEquip);
         public projet ObtenirProjetXEssai(int IdProjet);
         public organisme ObtenirOrgXProj(int IdOrg);
+        public string ObtenirTitreEssai(int idEssai);
     }
 }

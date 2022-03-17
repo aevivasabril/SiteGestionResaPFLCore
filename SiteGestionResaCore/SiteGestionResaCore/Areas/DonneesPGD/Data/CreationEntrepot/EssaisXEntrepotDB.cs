@@ -337,6 +337,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.organisme.First(o => o.id == IdOrg);
         }
 
+        public string ObtenirTitreEssai(int idEssai)
+        {
+            return contextDB.essai.First(e => e.id == idEssai).titreEssai;
+        }
+
         #region Méthodes complémentaires
 
         List<string> ListeTypeDoc(int ActiviteID)

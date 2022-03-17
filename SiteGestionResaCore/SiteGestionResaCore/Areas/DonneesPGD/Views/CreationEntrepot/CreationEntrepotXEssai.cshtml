@@ -5,13 +5,21 @@
 }
 
 <br />
-<h3 class="text-center"><strong>Creation d'entrepôt selon PGD PFL pour l'essai N° @Model.idEssai</strong></h3>
-<h6 class="text-center">Avant de créer un entrepôt, assurez-vous que l'essai est fini</h6>
+@if (Model.AjoutDocs == true)
+{
+    <h3 class="text-center"><strong>Ajouter des documents dans l'entrepôt pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>   
+}
+else
+{
+    <h3 class="text-center"><strong>Creation d'entrepôt selon PGD PFL pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>
+    <h6 class="text-center">Avant de créer un entrepôt, assurez-vous que l'essai est fini</h6>
+}
+
 <br />
 
 @if (ViewBag.AfficherMessage == true)
 {
-    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+    <h5 class="text-center" style="color:red"><strong> @ViewBag.Message</strong> </h5>
 }
 
 <hr />
@@ -172,10 +180,24 @@
     <div class="row">
         <div class="col-md-12 text-center">
             <br />
-            <input type="submit" class="btn navbar-inra" value="Valider création entrepôt" />
+            @if (Model.AjoutDocs == true)
+            {
+                <input type="submit" class="btn navbar-inra" value="Ajouter documents" />
+            }
+            else
+            {
+                <input type="submit" class="btn navbar-inra" value="Valider création entrepôt" />
+            }
         </div>
         <div class="row justify-content-center">
-            <a asp-action="CreerEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD">Revenir à la page précedente</a>
+            @if (Model.AjoutDocs == true)
+            {
+                <a asp-action="MesEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD">Revenir à "Mes entrepôts"</a>
+            }
+            else
+            {
+                <a asp-action="CreerEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD">Revenir à la page précedente</a>
+            }
         </div>
     </div>
 </form>

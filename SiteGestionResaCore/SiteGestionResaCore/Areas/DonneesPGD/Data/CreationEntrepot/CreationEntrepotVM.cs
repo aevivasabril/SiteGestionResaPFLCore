@@ -12,6 +12,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
     public class CreationEntrepotVM
     {
         public int idEssai { get; set; }
+        public string TitreEssai { get; set; }
         public List<ReservationsXEssai> ListReservationsXEssai { get; set; }
         public List<type_document> ListeTypeDoc { get; set; }
         
@@ -34,6 +35,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public string NomEquipement { get; set; }
         public int IDEquipement { get; set; }
         public int idResa { get; set; }
+        public string NomBoutonPage { get; set; }
+        public bool AjoutDocs { get; set; }
 
     }
 }

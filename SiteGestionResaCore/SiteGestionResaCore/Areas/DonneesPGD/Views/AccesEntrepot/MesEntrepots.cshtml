@@ -55,7 +55,7 @@
                     <tr>
                         <td><a href="#" onclick="ModalInfosEssai(@Model.ListEssaiAvecEntrepot[i].IdEssai)">@Model.ListEssaiAvecEntrepot[i].TitreEssai (N° @Model.ListEssaiAvecEntrepot[i].IdEssai)</a></td>
                         <td><a asp-action="DocsXEssai" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEssaiAvecEntrepot[i].IdEssai">liste des documents</a></td>
-                        <td><a href="#">Ajouter des documents</a></td>
+                        <td><a asp-action="AjoutDocsDansEntrepot" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@Model.ListEssaiAvecEntrepot[i].IdEssai">Ajouter des documents</a></td>
                     </tr>
                 }
             </tbody>
@@ -65,7 +65,7 @@
 <br />
 <div class="form-row text-center" style="display:@Model.HideListeDocs">
     <div class="col-sm-12 col-md-12">
-        <h6><strong>Liste des documents ajoutés pour l'essai: @Model.TitreEssai (N° @Model.IdEssai) </strong></h6>
+        <h6><strong>Liste des documents ajoutés pour l'entrepôt essai: @Model.TitreEssai (N° @Model.IdEssai) </strong></h6>
         <table class="table table-sm table-bordered">
             <thead>
                 <tr>
