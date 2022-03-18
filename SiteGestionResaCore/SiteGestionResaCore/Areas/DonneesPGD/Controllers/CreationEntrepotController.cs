@@ -327,7 +327,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                         csv.AppendLine();
                                     }
 
-                                    titreCsv = "DonneesPcVue_EssaiId" + model.idEssai + "_" + essai.titreEssai + "_" + Donnees.NomEquipement + ".csv";
+                                    titreCsv = "DonneesProjet_EssaiId" + model.idEssai + "_" + essai.titreEssai + "_" + Donnees.NomEquipement + ".csv";
 
                                     var donneesPcVue = File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
                                     // Obtenir l'équipement

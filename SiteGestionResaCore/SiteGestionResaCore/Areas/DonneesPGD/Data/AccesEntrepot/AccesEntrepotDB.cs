@@ -4,6 +4,7 @@ using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
@@ -114,6 +115,29 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Methode pour vérifier qu'il ne s'agit pas d'un fichier géneré automatiquement
+        /// </summary>
+        /// <param name="IdDoc">id document</param>
+        /// <returns></returns>
+        public bool DocSupprimable(int IdDoc)
+        {
+            string docPcVue = @"^DonneesProjet_";
+            string docTxt = @"^Informations_Essai_[0-9]*";
+            // vérifier s'il s'agit de la doc informations essai
+            var doc = contextDB.doc_essai_pgd.First(d => d.id == IdDoc);
+            Regex RgTxt = new Regex(docTxt);
+            bool IsTrueTxt = RgTxt.IsMatch(doc.nom_document);
+            // Vérifier s'il s'agit de l'excel PcVue
+            Regex RgPcVue = new Regex(docPcVue);
+            bool IsTruePcvue = RgPcVue.IsMatch(doc.nom_document);
+
+            if (IsTrueTxt == true || IsTruePcvue == true)
+                return false;
+            else
+                return true;
         }
     }
 }

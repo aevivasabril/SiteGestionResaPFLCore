@@ -15,5 +15,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public string ObtTitreEssai(int IdEssai);
         public int RecupIdEssaiXDoc(int IdDoc);
         public bool SupprimerDocument(int IdDoc);
+        public bool DocSupprimable(int IdDoc);
     }
 }
