@@ -3,6 +3,7 @@ using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -138,6 +139,44 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                 return false;
             else
                 return true;
+        }
+
+        public List<essai> ListEssaiEntrepotxProjet(int IdProjet)
+        {
+            return contextDB.essai.Where(e => e.entrepot_cree == true && e.projetID == IdProjet).ToList();
+        }
+        public List<doc_essai_pgd> ListDocsEssai(int IdEssai)
+        {
+            return contextDB.doc_essai_pgd.Where(d => d.essaiID == IdEssai).ToList();
+        }
+
+        public string CorrigerStringNomDossier(string NomDossier)
+        {
+            string pattern = @"[\\~#%&*{}\/:;,<>?|\"" ]";
+            string remplacement = "_";
+            Regex rg = new Regex(pattern);
+            string str = rg.Replace(NomDossier, remplacement);
+            return str;
+        }
+
+        public projet GetProjet(int IdProjet)
+        {
+            return contextDB.projet.First(p => p.id == IdProjet);
+        }
+
+        public bool CreateDirectoryTemp(string path)
+        {
+            try
+            {
+                // Try to create the directory.
+                DirectoryInfo di = Directory.CreateDirectory(path);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la création du dossier : " + path + ".Problème: "+ e.ToString());
+                return false;
+            }
+            return true;
         }
     }
 }

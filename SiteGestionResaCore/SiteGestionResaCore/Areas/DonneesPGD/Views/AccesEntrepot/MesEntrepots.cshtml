@@ -30,7 +30,7 @@
                     <tr>
                         <td><a href="#" onclick="ModalInfosProjet(@Model.ListEntrepotXProjet[i].IdProjet)">@Model.ListEntrepotXProjet[i].NomProjet (N°@Model.ListEntrepotXProjet[i].NumProjet)</a></td>
                         <td><a asp-action="EssaisXProjet" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Accès liste essais</a></td>
-                        <td><a href="#">Télécharger .Zip</a></td>
+                        <td><a asp-action="TelechargerZip" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Télécharger .Zip</a></td>
                     </tr>
                 }
             </tbody>
