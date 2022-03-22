@@ -187,22 +187,21 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 {
                     // Recréer le fichier et l'ajouter dans le dossier "essai"
                     System.IO.File.WriteAllBytes(pathE + @"\" + doc.nom_document, doc.contenu_document);
-                }
+                }                     
+            }
+            using (ZipFile zip = new ZipFile())
+            {
+                zip.AddDirectory(pathP);
 
-                using (ZipFile zip = new ZipFile())
+                string zipName = String.Format(NameDossierProj + ".zip");
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    zip.AddDirectory(pathP);
-                    
-                    string zipName = String.Format(NameDossierProj+".zip");
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {                       
-                        zip.Save(memoryStream);
-                        Directory.Delete(path, true); // Supprimer le dossier créé en local! 
-                        return File(memoryStream.ToArray(), "application/zip", zipName);
-                    }
-                }         
-            } 
-            ENDT:
+                    zip.Save(memoryStream);
+                    Directory.Delete(path, true); // Supprimer le dossier créé en local! 
+                    return File(memoryStream.ToArray(), "application/zip", zipName);
+                }
+            }
+        ENDT:
             return View("MesEntrepots", vm);
         }
     }
