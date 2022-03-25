@@ -152,7 +152,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
 
         public string CorrigerStringNomDossier(string NomDossier)
         {
-            string pattern = @"[\\~#%&*{}\/:;,<>?|\"" ]";
+            string pattern = @"[\\~#%&*{()}\/:;,<>?|\"" ]";
             string remplacement = "_";
             Regex rg = new Regex(pattern);
             string str = rg.Replace(NomDossier, remplacement);
@@ -177,6 +177,39 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                 return false;
             }
             return true;
+        }
+
+        public activite_pfl ObtActivite(int IdActivite)
+        {
+            return contextDB.activite_pfl.First(a => a.id == IdActivite);
+        }
+
+        public equipement GetEquipement(int IdEquip)
+        {
+            return contextDB.equipement.First(e => e.id == IdEquip);
+        }
+        public string TraiterChaineCaract(string titre, int taille)
+        {
+            string stringModifie = "";
+
+            #region Vérification de la taille pour le limiter
+
+            if (titre.Length > taille)
+                stringModifie = titre.Substring(0, 31);
+            else
+                stringModifie = titre;
+            #endregion
+
+            #region Supprimer les accents d'un string
+
+            byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(stringModifie);
+            stringModifie = System.Text.Encoding.ASCII.GetString(bytesP);
+            #endregion
+
+            // limiter les noms des dossiers car sinon trop longs
+            stringModifie =CorrigerStringNomDossier(stringModifie);
+
+            return stringModifie;
         }
     }
 }

@@ -114,10 +114,16 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
             // Créer un dossier temporaire dans mon disque C uniquement pour créer l'arborescence et génerer le .zip
             string path = @"C:\DonneesProjetPGD";
+            // Obtenir le projet et les essais avec un entrepot crée
+            projet projet = accesEntrepotDB.GetProjet(id.Value);
+            List<essai> essais = accesEntrepotDB.ListEssaiEntrepotxProjet(id.Value);
+            string titreProj = "";
+            string titreEssai = "";
+            string nomEquip = "";
 
             #region Créer le directoire pour stocker l'arborescence
 
-            if(accesEntrepotDB.CreateDirectoryTemp(path) != true)
+            if (accesEntrepotDB.CreateDirectoryTemp(path) != true)
             { 
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Problème pour créer le dossier: " + path;
@@ -126,20 +132,12 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             }
             #endregion
 
-            // Obtenir le projet et les essais avec un entrepot crée
-            var projet = accesEntrepotDB.GetProjet(id.Value);
-            var essais = accesEntrepotDB.ListEssaiEntrepotxProjet(id.Value);
+            // Limiter la quantité des caracteres 
+            titreProj = accesEntrepotDB.TraiterChaineCaract(projet.titre_projet, 30);
+            string dossNameProj = "projet-" + titreProj + "-Num-" + projet.num_projet; // Supprimer les espaces et supprimer les accents!
 
-            string dossNameProj = "projet-" + projet.titre_projet + "-Num-" + projet.num_projet; // Supprimer les espaces et supprimer les accents!
-
-            // supprimer les accents d'un string
-            byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(dossNameProj);
-            dossNameProj = System.Text.Encoding.ASCII.GetString(bytesP);
-
-            //remplacer les espaces ou caracteres especiaux par des -
-            string NameDossierProj = accesEntrepotDB.CorrigerStringNomDossier(dossNameProj); // limiter les noms des dossiers car sinon trop longs
             // Créer un sous dossier avec le nom du projet 
-            string pathP = path + @"\" + NameDossierProj;
+            string pathP = path + @"\" + dossNameProj;
 
             #region Créer le directoire "projet"
 
@@ -155,21 +153,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             // Pour chaque essai créer un dossier et ajouter tous les documents associés à cet essai dans le dossier
             foreach (var essai in essais)
             {
-                string dossNameEssai = essai.titreEssai + "-Num-" + essai.id; // Supprimer les espaces et supprimer les accents!
+                titreEssai = accesEntrepotDB.TraiterChaineCaract(essai.titreEssai, 30);
+               
+                string dossNameEssai = titreEssai + "-Num-" + essai.id; 
 
-                #region supprimer les accents d'un string
-
-                byte[] bytesE = System.Text.Encoding.GetEncoding(1251).GetBytes(dossNameEssai);
-                dossNameEssai = System.Text.Encoding.ASCII.GetString(bytesE);
-
-                #endregion
-
-                #region remplacer les espaces ou caracteres especiaux par des -
-
-                string NameDossier = accesEntrepotDB.CorrigerStringNomDossier(dossNameEssai);
-
-                #endregion
-                string pathE = pathP + @"\" + NameDossier;
+                string pathE = pathP + @"\" + dossNameEssai;
 
                 #region Créer le directoire "essai"
 
@@ -182,18 +170,53 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 }
                 #endregion
 
-                var ListDocs = accesEntrepotDB.ListDocsEssai(essai.id);
+                var ListDocs = accesEntrepotDB.ListDocsEssai(essai.id).GroupBy(d=>d.type_activiteID);
                 foreach(var doc in ListDocs)
                 {
-                    // Recréer le fichier et l'ajouter dans le dossier "essai"
-                    System.IO.File.WriteAllBytes(pathE + @"\" + doc.nom_document, doc.contenu_document);
+                    // Récupérer le nom de l'id Activité
+                    var docu = accesEntrepotDB.ObtActivite(doc.Key);
+                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.nom_activite, 25);     
+
+                    string PathAct = pathE + @"\" + nameAct;
+
+                    if (accesEntrepotDB.CreateDirectoryTemp(PathAct) != true)
+                    {
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème pour créer le dossier: " + PathAct;
+                        this.HttpContext.AddToSession("MesEntrepotsVM", vm);
+                        goto ENDT;
+                    }
+
+                    foreach (var d in doc)
+                    {
+                        string PathDoc = PathAct;
+                        // Voir si il y a des documents liés à un équipement
+                        if(d.equipementID != null)
+                        {
+                            var equip = accesEntrepotDB.GetEquipement(d.equipementID.Value);
+                            nomEquip = accesEntrepotDB.TraiterChaineCaract(equip.nom, 31);
+                            
+                            PathDoc = PathDoc + @"\" + nomEquip;
+                            if (accesEntrepotDB.CreateDirectoryTemp(PathDoc) != true)
+                            {
+                                ViewBag.AfficherMessage = true;
+                                ViewBag.Message = "Problème pour créer le dossier: " + PathDoc;
+                                this.HttpContext.AddToSession("MesEntrepotsVM", vm);
+                                goto ENDT;
+                            }
+                        }
+                        // Recréer le fichier et l'ajouter dans le dossier "activite"
+                        System.IO.File.WriteAllBytes(PathDoc + @"\" + d.nom_document, d.contenu_document);
+                    }
                 }                     
             }
+
+            #region Création du dossier .zip à retourner pour téléchargement
             using (ZipFile zip = new ZipFile())
             {
                 zip.AddDirectory(pathP);
 
-                string zipName = String.Format(NameDossierProj + ".zip");
+                string zipName = String.Format(dossNameProj + ".zip");
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     zip.Save(memoryStream);
@@ -201,6 +224,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                     return File(memoryStream.ToArray(), "application/zip", zipName);
                 }
             }
+            #endregion
         ENDT:
             return View("MesEntrepots", vm);
         }

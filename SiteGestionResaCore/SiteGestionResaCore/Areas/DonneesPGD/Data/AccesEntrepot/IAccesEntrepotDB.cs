@@ -21,5 +21,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public string CorrigerStringNomDossier(string NomDossier);
         public projet GetProjet(int IdProjet);
         public bool CreateDirectoryTemp(string path);
+        public activite_pfl ObtActivite(int IdActivite);
+        public equipement GetEquipement(int IdEquip);
+        public string TraiterChaineCaract(string titre, int taille);
     }
 }
