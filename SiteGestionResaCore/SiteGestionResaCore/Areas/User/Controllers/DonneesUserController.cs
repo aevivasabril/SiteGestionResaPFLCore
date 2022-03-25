@@ -92,7 +92,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             {
                 csv.Append(group.Key.ToShortDateString());
                 csv.Append(";");
-                csv.Append(group.Key.ToShortTimeString());
+                csv.Append(group.Key.ToLongTimeString());
                 foreach (var r in group)
                 {
                     csv.Append(";");
