@@ -120,6 +120,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             string titreProj = "";
             string titreEssai = "";
             string nomEquip = "";
+            string typeDoc = "";
 
             #region Créer le directoire pour stocker l'arborescence
 
@@ -190,6 +191,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                     foreach (var d in doc)
                     {
                         string PathDoc = PathAct;
+                        string PathTypeDoc = "";
                         // Voir si il y a des documents liés à un équipement
                         if(d.equipementID != null)
                         {
@@ -205,8 +207,27 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                 goto ENDT;
                             }
                         }
+                        // Determiner le type de document pour créer le dossier
+                        type_document type = accesEntrepotDB.ObtenirTypeDocument(d.type_documentID);
+
+                        typeDoc = accesEntrepotDB.TraiterChaineCaract(type.nom_document, 25);
+                        PathTypeDoc = PathDoc + @"\" + typeDoc;
+                        if (accesEntrepotDB.CreateDirectoryTemp(PathTypeDoc) != true)
+                        {
+                            ViewBag.AfficherMessage = true;
+                            ViewBag.Message = "Problème pour créer le dossier: " + PathDoc;
+                            this.HttpContext.AddToSession("MesEntrepotsVM", vm);
+                            goto ENDT;
+                        }
+
+                        #region Supprimer les accents d'un string
+
+                        byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(d.nom_document);
+                        var nomDoc = System.Text.Encoding.ASCII.GetString(bytesP);
+                        #endregion
+
                         // Recréer le fichier et l'ajouter dans le dossier "activite"
-                        System.IO.File.WriteAllBytes(PathDoc + @"\" + d.nom_document, d.contenu_document);
+                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDoc, d.contenu_document);
                     }
                 }                     
             }

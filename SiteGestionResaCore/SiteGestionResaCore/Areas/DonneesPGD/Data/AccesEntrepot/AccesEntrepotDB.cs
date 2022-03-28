@@ -195,7 +195,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             #region Vérification de la taille pour le limiter
 
             if (titre.Length > taille)
-                stringModifie = titre.Substring(0, 31);
+                stringModifie = titre.Substring(0, taille);
             else
                 stringModifie = titre;
             #endregion
@@ -210,6 +210,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             stringModifie =CorrigerStringNomDossier(stringModifie);
 
             return stringModifie;
+        }
+
+        public type_document ObtenirTypeDocument(int idTypeDoc)
+        {
+            return contextDB.type_document.First(d => d.id == idTypeDoc);
         }
     }
 }
