@@ -37,7 +37,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             InfosResa infos = new InfosResa();
             bool IsEquipUnderPcVue = false;
 
-            var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
+            var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr && e.resa_refuse == null && e.resa_supprime == null).ToList().Distinct();
 
             foreach (var i in essaiUsr)
             {

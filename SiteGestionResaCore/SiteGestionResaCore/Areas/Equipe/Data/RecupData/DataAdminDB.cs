@@ -36,7 +36,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.RecupData
             try
             {
                 // Récuperer tous les essais dont la date de création est égal ou inferieure à un an pour éviter au futur de surcharger la table
-                var essais = resaDB.essai.Where(e => e.date_creation >= date).ToList().Distinct(); // list de tous les essais 
+                var essais = resaDB.essai.Where(e => e.date_creation >= date && e.resa_refuse == null && e.resa_supprime == null).ToList().Distinct(); // list de tous les essais 
                 foreach (var ess in essais)
                 {
                     // Récupérer toutes les réservations pour cet essai
