@@ -33,7 +33,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         {
             List<InfosResasSansEntrepot> infos = new List<InfosResasSansEntrepot>();
             //var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
-            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id && e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList();
+            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.entrepot_supprime == null && e.compte_userID == usr.Id &&
+                                                e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList();
             //list.OrderByDescending(l => l.date_creation);
             foreach(var ess in list)
             {

@@ -101,7 +101,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             }
             
             return View("MesEntrepots", vm);
-;       }
+        }
 
         /// <summary>
         /// Télécharger tous les documents pour un projet
