@@ -93,26 +93,51 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             List<InfosResasEquipement> List = new List<InfosResasEquipement>();
             bool IsEquipPcVue = false;
             bool IsDataReady = false;
-            DateTime dateDebut;
-            //DateTime dateFin;
             string tableName;
+            DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
+            DateTime dateDebutPcVue = new DateTime();
+            DateTime dateFinPcVue = new DateTime();
 
             /* Test pour déterminer que la deduction des dates est OK, juste une heure de décalage en moins sur la table pcVue donc 
              * soustraire une HEURE aux datetime pour obtenir la vrai valeur de chrono sur la table pcvue
              * Copie de db_archive faite à 19h56 le 08/02/2021
-             * DateTime debutToSave = new DateTime(2021-1600, 02 , 08, 18, 55, 00, DateTimeKind.Local);
-            //debutToSave.AddYears(-1600);
-
-            var queryy =  (from donnees in pcVueDb.tab_UA_MAT
-                            where donnees.Chrono >= debutToSave.Ticks
-                            select donnees).ToList();*/
+             * DateTime debutToSave = new DateTime(2021-1600, 02 , 08, 18, 55, 00, DateTimeKind.Local);*/
 
             // Récupérer toutes les réservations pour cet essai
             var lisEquip = resaDB.reservation_projet.Where(r => r.essaiID == IdEssai).ToList();
 
-            // Determiner si au moins un des équipements est sous supervision de données et si les données sont disponibles
+            // Determiner si au moins un des équipements est sous supervision des données et si les données sont disponibles
             foreach (var ResaEquip in lisEquip)
             {
+                // Déterminer la date debut et fin pour vérifier s'il y a des données
+                if (ResaEquip.date_debut <= DateToday && ResaEquip.date_fin <= DateToday) // Manip finie! 
+                {
+                    // convertir les dates fin et date debut réservation 
+                    dateDebutPcVue = ResaEquip.date_debut.AddHours(-3);
+                    dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                    // Vérifier le créneau pour ajouter ou enlever des heures
+                    if (ResaEquip.date_fin.Hour == 12) // Finie la matinée vers midi alors rajouter une heure
+                    {
+                        dateFinPcVue = ResaEquip.date_fin.AddHours(-1); // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
+                        dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                    }
+                    else // heure fin 18h, rajouter 6h c'est à dire 5h à cause de la conversion (-1h)
+                    {
+                        dateFinPcVue = ResaEquip.date_fin.AddHours(3);
+                        dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                    }
+                }
+                else if (ResaEquip.date_debut <= DateToday && ResaEquip.date_fin >= DateToday) // Manip encore en cours!
+                { // si la date est supérieur ou égal à la date d'aujourd'hui
+                  // convertir les dates fin et date debut réservation 
+                    dateDebutPcVue = ResaEquip.date_debut.AddHours(-3);
+                    dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                    dateFinPcVue = DateToday;
+                    dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                }
+
                 // 1. Vérifier si l'équipement est sous pcvue et ensuite si les données sont disponibles
                 tableName = resaDB.equipement.First(e => e.id == ResaEquip.equipementID).nomTabPcVue;
                 if (tableName != null)
@@ -121,13 +146,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     // 2. Vérifier s'il y a des données à récupérer entre les dates de réservation de l'équipement
                     // http://kosted.free.fr/pdf/rapport.pdf: Chrono qui représente un temps (Mois-Jour-AnnéeMinutes-Secondes) bien précis. La norme utilisée pour enregistrer ces informations est celle du
                     // FILE TIME. Le FILE TIME est le temps écoulé en nanosecondes écoulés depuis le 1er Janvier 1601.
-                    dateDebut = ResaEquip.date_debut.AddHours(-3);
-                    dateDebut = dateDebut.AddYears(-1600);
-                    //dateDebut = dateDebut.AddHours(-2);
-                    // convertir à ticks pour obtenir un format bigint? dateDebut.Ticks;
-
-                    /*dateFin = ResaEquip.date_fin.AddHours(-1);
-                    dateFin = dateFin.AddYears(-1600);*/
 
                     // Méthode qui permet de définir la table sur laquelle on execute la requete
                     bool query = false;
@@ -135,67 +153,67 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     {
                         case "tab_UA_ACT":
                             query = (from donnees in pcVueDb.tab_UA_ACT
-                                         where donnees.Chrono >= dateDebut.Ticks
+                                         where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                          select donnees).Any();
                             break;
                         case "tab_UA_CUV":
                             query = (from donnees in pcVueDb.tab_UA_CUV
-                                         where donnees.Chrono >= dateDebut.Ticks
+                                         where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                          select donnees).Any();
                             break;
                         case "tab_UA_GP7":
                             query = (from donnees in pcVueDb.tab_UA_GP7
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_MAT":
                             query = (from donnees in pcVueDb.tab_UA_MAT
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_MFMG":
                             query = (from donnees in pcVueDb.tab_UA_MFMG
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_MTH":
                             query = (from donnees in pcVueDb.tab_UA_MTH
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_NEP":
                             query = (from donnees in pcVueDb.tab_UA_NEP
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_OPTIMAL":
                             query = (from donnees in pcVueDb.tab_UA_OPTIMAL
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_SEC":
                             query = (from donnees in pcVueDb.tab_UA_SEC
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_SPI":
                             query = (from donnees in pcVueDb.tab_UA_SPI
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_VALO":
                             query = (from donnees in pcVueDb.tab_UA_VALO
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_UFMF":
                             query = (from donnees in pcVueDb.tab_UA_UFMF
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         case "tab_UA_ECREM":
                             query = (from donnees in pcVueDb.tab_UA_ECREM
-                                     where donnees.Chrono >= dateDebut.Ticks
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
                         default: // vérifier le cas des 2 tables pour l'évaporateur
@@ -216,7 +234,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                     if (table == "tab_UA_EVAA")
                                     {
                                         query = (from donnees in pcVueDb.tab_UA_EVAA
-                                                 where donnees.Chrono >= dateDebut.Ticks
+                                                 where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                                  select donnees).Any();
                                         if (query)
                                             break;
@@ -224,7 +242,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                     else
                                     {
                                         query = (from donnees in pcVueDb.tab_UA_EVAB
-                                                 where donnees.Chrono >= dateDebut.Ticks
+                                                 where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                                  select donnees).Any();
                                         if (query)
                                             break;
@@ -238,7 +256,6 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                         IsDataReady = true;
                     else
                         IsDataReady = false;
-
                 }
                 else
                 {
