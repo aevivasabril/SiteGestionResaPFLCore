@@ -36,7 +36,6 @@ namespace SiteGestionResaCore.Data
         public DateTime? date_sup_confidentiel { get; set; }
         public int? enqueteId { get; set; }
         public bool? entrepot_cree { get; set; }
-        public bool? entrepot_supprime { get; set; }
 
         public virtual utilisateur manipulateur { get; set; }
         public virtual projet projet { get; set; }

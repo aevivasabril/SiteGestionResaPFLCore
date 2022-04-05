@@ -216,5 +216,38 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         {
             return contextDB.type_document.First(d => d.id == idTypeDoc);
         }
+
+        /*public bool SupprimerEntrepotxProjet(int IdProjet)
+        {
+            bool IsOk = false;
+            // Obtenir essais du projet où un entrepôt des données a été créé
+            var essais = contextDB.essai.Where(e => e.projetID == IdProjet && e.entrepot_cree == true).ToList();
+            // pour chaque essai, supprimer les documents associés
+            foreach(var ess in essais)
+            {
+                var docList = contextDB.doc_essai_pgd.Where(d => d.essaiID == ess.id).ToList();
+                
+                foreach(var dc in docList)
+                {
+                    try
+                    {
+                        contextDB.doc_essai_pgd.Remove(dc);
+                        contextDB.SaveChanges();
+                    }
+                    catch(Exception e)
+                    {
+                        logger.LogError(e.ToString(), "Problème lors de la suppression du document");
+                        return false;
+                    }
+                }
+                // Signaler que l'essai possède un entrepot des données supprimé
+                ess.entrepot_supprime = true;
+                contextDB.SaveChanges();
+            }
+            IsOk = true;
+
+
+            return true;
+        }*/
     }
 }

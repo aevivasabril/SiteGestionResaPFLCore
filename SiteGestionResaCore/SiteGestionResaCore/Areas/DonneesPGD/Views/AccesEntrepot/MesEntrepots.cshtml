@@ -22,6 +22,7 @@
                     <th scope="col">Projet</th>
                     <th scope="col">Liste documents par essai</th>
                     <th scope="col">Téléchargement</th>
+                    <th scope="col">Supprimer entrepôt?</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,6 +32,7 @@
                         <td><a href="#" onclick="ModalInfosProjet(@Model.ListEntrepotXProjet[i].IdProjet)">@Model.ListEntrepotXProjet[i].NomProjet (N°@Model.ListEntrepotXProjet[i].NumProjet)</a></td>
                         <td><a asp-action="EssaisXProjet" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Accès liste essais</a></td>
                         <td><a asp-action="TelechargerZip" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Télécharger .Zip</a></td>
+                        <td><a asp-action="SupprimerEntrepot" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Supprimer</a></td>
                     </tr>
                 }
             </tbody>
@@ -97,9 +99,44 @@
 <!-- Modal pour affichage des infos "essai"-->
 <div id="InfosEssai"></div>
 
+<form asp-action="ConfirmSuppEntrepot" asp-controller="AccesEntrepot" asp-route-id="@Model.IdProjSelect" asp-area="DonneesPGD" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppEntrepot" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Suppression d'entrepôt des données</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center"> Après confirmation, l'entrepôt des données pour le projet N°: "@Model.NumProjetSelect" sera supprimé <strong>DEFINITIVEMENT</strong>.
+                    Cette opération est irreversible. Récupérez votre fichier compressé avant de supprimer cet entrepôt. </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    @*<button type="button" class="btn btn-primary">Valider</button>*@
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @*@Html.HiddenFor(m => m.UserToChange.Id)*@
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-    <script>
+<script>
+        @{
+            
+            if (ViewBag.modalSuppEnt == null)
+            {
+                ViewBag.modalSuppEnt = "hide";
+            }
+        }
+
+        $('#suppEntrepot').modal('@ViewBag.modalSuppEnt');
 
     function ModalInfosProjet(id) {
         if (id)
@@ -129,5 +166,5 @@
         }
     }
 
-    </script>
+</script>
 }

@@ -25,5 +25,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public equipement GetEquipement(int IdEquip);
         public string TraiterChaineCaract(string titre, int taille);
         public type_document ObtenirTypeDocument(int idTypeDoc);
+        //public bool SupprimerEntrepotxProjet(int IdProjet);
     }
 }

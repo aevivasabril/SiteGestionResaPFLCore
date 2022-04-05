@@ -249,5 +249,31 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         ENDT:
             return View("MesEntrepots", vm);
         }
+
+        public IActionResult SupprimerEntrepot(int? id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
+
+            vm.NumProjetSelect = accesEntrepotDB.ObtNumProjet(id.Value);
+            vm.IdProjSelect = id.Value;
+
+            ViewBag.modalSuppEnt = "show";
+            return View("MesEntrepots", vm);
+        }
+
+        /// <summary>
+        /// Action pour supprimer tous les documents stockés pour un projet (N essais = N entrepôts)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult ConfirmSuppEntrepot(int id)
+        {
+            // Récupérer la session "CreationEntrepotVM"
+            MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
+
+            return View("MesEntrepots", vm);
+        }
     }
 }
