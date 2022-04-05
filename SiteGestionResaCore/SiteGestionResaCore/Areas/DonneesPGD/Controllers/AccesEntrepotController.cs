@@ -82,7 +82,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 if (IsDeletedOk == false)
                 {
                     ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Problème de suppression du document, essayez à nouveau";
+                    ViewBag.Message = "Problème de suppression des documents entrepôt, essayez ultérieurement";
                 }
                 else
                 {
