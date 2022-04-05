@@ -25,10 +25,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public List<EntrepotsXProjet> ObtenirListProjetsAvecEntrepotCree(utilisateur user)
         {
             List<EntrepotsXProjet> list = new List<EntrepotsXProjet>();
-            var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id);
+            var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id && p.entrepot_supprime == null);
             foreach(var x in projetXUser)
             {
-
                 if(contextDB.essai.Where(e => e.projetID == x.id).ToList().Any(e=>e.entrepot_cree == true))
                 {
                     EntrepotsXProjet entre = new EntrepotsXProjet { NomProjet = x.titre_projet, NumProjet = x.num_projet, IdProjet = x.id };
@@ -217,7 +216,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             return contextDB.type_document.First(d => d.id == idTypeDoc);
         }
 
-        /*public bool SupprimerEntrepotxProjet(int IdProjet)
+        public bool SupprimerEntrepotXProjet(int IdProjet)
         {
             bool IsOk = false;
             // Obtenir essais du projet où un entrepôt des données a été créé
@@ -240,14 +239,15 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                         return false;
                     }
                 }
-                // Signaler que l'essai possède un entrepot des données supprimé
-                ess.entrepot_supprime = true;
-                contextDB.SaveChanges();
             }
+            // Signaler que l'entrepot des données a été supprimé pour cet essai
+            var proj = contextDB.projet.First(p=>p.id == IdProjet);
+            proj.entrepot_supprime = true;
+            contextDB.SaveChanges();
+
             IsOk = true;
 
-
-            return true;
-        }*/
+            return IsOk;
+        }
     }
 }

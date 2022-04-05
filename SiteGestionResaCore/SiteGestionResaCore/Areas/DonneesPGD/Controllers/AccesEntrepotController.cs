@@ -268,12 +268,29 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult ConfirmSuppEntrepot(int id)
+        public async Task<IActionResult> ConfirmSuppEntrepotAsync(int id)
         {
+            bool isOk = false;
+
+            // Obtenir les infos de l'utilisateur authentifié
+            var user = await userManager.FindByIdAsync(User.GetUserId());
             // Récupérer la session "CreationEntrepotVM"
             MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
 
-            return View("MesEntrepots", vm);
+            isOk = accesEntrepotDB.SupprimerEntrepotXProjet(id);
+            if (isOk)
+            {
+                vm.ListEntrepotXProjet = accesEntrepotDB.ObtenirListProjetsAvecEntrepotCree(user);
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Entrepôt supprimé avec succès";
+                return View("MesEntrepots", vm);
+            }
+            else
+            {
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Un problème est survenu lors de la suppression de l'entrepôt, réessayez ultérieurement";
+                return View("MesEntrepots", vm);
+            }
         }
     }
 }

@@ -29,23 +29,41 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             this.logger = logger;
             this.pcVueDb = pcVueDb;
         }
+
+        /// <summary>
+        /// Methode pour afficher les essais dont le projet n'a pas un entrepot déjà crée et supprimé par l'utilisateur
+        /// </summary>
+        /// <param name="usr">utilisateur connecté</param>
+        /// <returns>Liste des essais sans entrepot</returns>
         public List<InfosResasSansEntrepot> ObtenirResasSansEntrepotUsr(utilisateur usr)
         {
             List<InfosResasSansEntrepot> infos = new List<InfosResasSansEntrepot>();
-            //var essaiUsr = resaDB.essai.Where(e => e.compte_userID == IdUsr).ToList();
-            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id &&
-                                                e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList();
-            //list.OrderByDescending(l => l.date_creation);
-            foreach(var ess in list)
-            {
-                // Obtenir le projet pour l'essai X
-                var proj = contextDB.projet.First(p => p.id == ess.projetID);
-                InfosResasSansEntrepot info = new InfosResasSansEntrepot { idEssai = ess.id, DateSaisieEssai = ess.date_creation,
-                                                                            idProj = proj.id, MailRespProj = proj.mailRespProjet, 
-                                                                            NomProjet = proj.titre_projet, NumProjet = proj.num_projet, TitreEssai = ess.titreEssai};
-                infos.Add(info);
-            }
 
+            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id &&
+                       e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList().GroupBy(i => i.projetID);
+
+            foreach (var gr in list)
+            {
+                // Obtenir le projet pour les essais X
+                var proj = contextDB.projet.First(p => p.id == gr.Key);
+                if(proj.entrepot_supprime == null)
+                {
+                    foreach(var ess in gr)
+                    {
+                        InfosResasSansEntrepot info = new InfosResasSansEntrepot
+                        {
+                            idEssai = ess.id,
+                            DateSaisieEssai = ess.date_creation,
+                            idProj = proj.id,
+                            MailRespProj = proj.mailRespProjet,
+                            NomProjet = proj.titre_projet,
+                            NumProjet = proj.num_projet,
+                            TitreEssai = ess.titreEssai
+                        };
+                        infos.Add(info);
+                    }                   
+                }
+            }
             return infos;
         }
 
