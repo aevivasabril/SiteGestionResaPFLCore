@@ -218,7 +218,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
 
         public bool SupprimerEntrepotXProjet(int IdProjet)
         {
-            bool IsOk = false;
             // Obtenir essais du projet où un entrepôt des données a été créé
             var essais = contextDB.essai.Where(e => e.projetID == IdProjet && e.entrepot_cree == true).ToList();
             // pour chaque essai, supprimer les documents associés
@@ -240,14 +239,21 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                     }
                 }
             }
-            // Signaler que l'entrepot des données a été supprimé pour cet essai
-            var proj = contextDB.projet.First(p=>p.id == IdProjet);
-            proj.entrepot_supprime = true;
-            contextDB.SaveChanges();
 
-            IsOk = true;
+            try
+            {
+                // Signaler que l'entrepot des données a été supprimé pour cet essai
+                var proj = contextDB.projet.First(p => p.id == IdProjet);
+                proj.entrepot_supprime = true;
+                contextDB.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la mise à jour pour indiquer qu'un entrepôt a été supprimé pour ce projet ");
+                return false;
+            }
 
-            return IsOk;
+            return true;
         }
     }
 }
