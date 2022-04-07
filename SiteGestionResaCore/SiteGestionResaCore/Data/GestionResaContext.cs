@@ -224,6 +224,8 @@ namespace SiteGestionResaCore.Data.Data
                     .WithMany(p => p.projet)
                     .HasForeignKey(d => d.organismeID)
                     .HasConstraintName("FK_projet_organisme");
+
+                entity.Property(e => e.date_creation_entrepot).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<reservation_projet>(entity =>
