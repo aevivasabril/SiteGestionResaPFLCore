@@ -247,8 +247,13 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             bool IsDocStock = false;
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
+                   
             var essai = entrepotDB.ObtenirEssai(model.idEssai);
-            if(essai.entrepot_cree == true) // Ajout des documents dans un entrepot déjà crée
+
+            // Enregistrer la date de creation d'un entrepot pour un essai
+            projet proj = entrepotDB.ObtenirProjetXEssai(essai.projetID);
+                        
+            if (essai.entrepot_cree == true) // Ajout des documents dans un entrepot déjà crée
             {
                 // Ecrire les documents du type UN dans la base de données
                 IsDocStock = entrepotDB.EcrireDocTypeUn(model);
@@ -358,7 +363,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                         // TODO: générer le .txt avec les infos essai
                         #region générer un fichier .txt avec les informations "essai"
                         // récupérer projet auquel appartient l'essai
-                        projet proj = entrepotDB.ObtenirProjetXEssai(essai.projetID);
+                        //projet proj = entrepotDB.ObtenirProjetXEssai(essai.projetID);
                         organisme orgProj = entrepotDB.ObtenirOrgXProj(proj.organismeID.Value);
 
                         StringBuilder txt = new StringBuilder();
@@ -454,18 +459,19 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
                         // déclarer que l'essai a un entrepot des documents 
                         entrepotDB.UpdateEssaiXEntrepot(model.idEssai);
-                        // Rajouter la date de création de l'entrepot pour le projet
-                        bool isOk = entrepotDB.SaveDateCreationEntrepot(proj.id);
-                        if (isOk)
+                        if (proj.date_creation_entrepot == null) // si entrepôt jamais crée alors on rajoute la date de création
                         {
-                            return View("ConfirmationEntrepot");
+                            // Rajouter la date de création de l'entrepot pour le projet
+                            bool isOk = entrepotDB.SaveDateCreationEntrepot(proj.id);
+                            if (!isOk)
+                            {
+                                ViewBag.AfficherMessage = true;
+                                ViewBag.Message = "Problème d'écriture de la date création entrepot pour ce projet";
+                                return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+                            }
                         }
-                        else
-                        {
-                            ViewBag.AfficherMessage = true;
-                            ViewBag.Message = "Problème d'écriture de la date création entrepot pour ce projet";
-                            return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
-                        }
+                        return View("ConfirmationEntrepot");
+                       
                     }
                     else
                     {

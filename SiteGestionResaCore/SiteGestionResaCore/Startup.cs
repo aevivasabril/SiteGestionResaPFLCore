@@ -76,10 +76,12 @@ namespace SiteGestionResaCore
             services.AddScoped<IDocsQualiDB, DocsQualiDB >();
             services.AddScoped<IEssaisXEntrepotDB, EssaisXEntrepotDB>();
             services.AddScoped<IAccesEntrepotDB, AccesEntrepotDB>();
+            services.AddScoped<IEntrepotTaskDB, EntrepotTaskDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();
             services.AddSingleton<IHostedService, EnqueteTask>();
+            services.AddSingleton<IHostedService, EntrepotTask>();
 
 
             services.AddSession();
