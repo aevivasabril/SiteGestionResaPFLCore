@@ -21,6 +21,7 @@
                 <tr>
                     <th scope="col">Projet</th>
                     <th scope="col">Liste documents par essai</th>
+                    <th scope="col">Date creation entrepôt</th>
                     <th scope="col">Téléchargement</th>
                     <th scope="col">Supprimer entrepôt?</th>
                 </tr>
@@ -31,6 +32,7 @@
                     <tr>
                         <td><a href="#" onclick="ModalInfosProjet(@Model.ListEntrepotXProjet[i].IdProjet)">@Model.ListEntrepotXProjet[i].NomProjet (N°@Model.ListEntrepotXProjet[i].NumProjet)</a></td>
                         <td><a asp-action="EssaisXProjet" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Accès liste essais</a></td>
+                        <td>@Model.ListEntrepotXProjet[i].DateCreationEntrepot.ToString()</td>
                         <td><a asp-action="TelechargerZip" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Télécharger .Zip</a></td>
                         <td><a asp-action="SupprimerEntrepot" asp-area="DonneesPGD" asp-controller="AccesEntrepot" asp-route-id="@Model.ListEntrepotXProjet[i].IdProjet">Supprimer</a></td>
                     </tr>

@@ -30,7 +30,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             {
                 if(contextDB.essai.Where(e => e.projetID == x.id).ToList().Any(e=>e.entrepot_cree == true))
                 {
-                    EntrepotsXProjet entre = new EntrepotsXProjet { NomProjet = x.titre_projet, NumProjet = x.num_projet, IdProjet = x.id };
+                    EntrepotsXProjet entre = new EntrepotsXProjet { NomProjet = x.titre_projet, NumProjet = x.num_projet, IdProjet = x.id, DateCreationEntrepot = x.date_creation_entrepot.Value};
                     list.Add(entre);
                 }
             }

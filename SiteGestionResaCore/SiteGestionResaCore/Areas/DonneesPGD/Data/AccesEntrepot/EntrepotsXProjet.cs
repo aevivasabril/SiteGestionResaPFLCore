@@ -10,5 +10,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public string NomProjet { get; set; }
         public string NumProjet { get; set; }
         public int IdProjet { get; set; }
+        public DateTime DateCreationEntrepot { get; set; }
     }
 }
