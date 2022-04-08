@@ -361,6 +361,24 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.essai.First(e => e.id == idEssai).titreEssai;
         }
 
+        public bool SaveDateCreationEntrepot(int idProjet)
+        {
+            bool isOk = false;
+            try
+            {
+                var proj = contextDB.projet.First(p => p.id == idProjet);
+                proj.date_creation_entrepot = DateTime.Now;
+                contextDB.SaveChanges();
+                isOk = true;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Erreur d'écriture de mise à jour de la date creation entrepôt pour le projet id:" + idProjet);
+                isOk = false;
+            }
+            return isOk;
+        }
+
         #region Méthodes complémentaires
 
         List<string> ListeTypeDoc(int ActiviteID)

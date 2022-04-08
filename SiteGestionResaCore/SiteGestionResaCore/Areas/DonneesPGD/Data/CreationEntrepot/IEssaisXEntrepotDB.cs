@@ -31,5 +31,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public projet ObtenirProjetXEssai(int IdProjet);
         public organisme ObtenirOrgXProj(int IdOrg);
         public string ObtenirTitreEssai(int idEssai);
+        public bool SaveDateCreationEntrepot(int idProjet);
     }
 }

@@ -454,7 +454,18 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
                         // déclarer que l'essai a un entrepot des documents 
                         entrepotDB.UpdateEssaiXEntrepot(model.idEssai);
-                        return View("ConfirmationEntrepot");
+                        // Rajouter la date de création de l'entrepot pour le projet
+                        bool isOk = entrepotDB.SaveDateCreationEntrepot(proj.id);
+                        if (isOk)
+                        {
+                            return View("ConfirmationEntrepot");
+                        }
+                        else
+                        {
+                            ViewBag.AfficherMessage = true;
+                            ViewBag.Message = "Problème d'écriture de la date création entrepot pour ce projet";
+                            return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
+                        }
                     }
                     else
                     {
