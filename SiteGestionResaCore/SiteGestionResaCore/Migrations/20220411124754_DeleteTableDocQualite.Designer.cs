@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220411124754_DeleteTableDocQualite")]
+    partial class DeleteTableDocQualite
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "cac49725-449b-4633-8c81-c55c37c9f56d",
+                            ConcurrencyStamp = "6e7bfd2c-c3a8-4d35-a177-d86758da66f8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "20a5ce8a-a295-4d3f-9818-60ab0676b98e",
+                            ConcurrencyStamp = "0f16180a-175c-4cc9-9bad-ea92bf91b106",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "acb9e878-03b6-4428-92d2-da129f56dac1",
+                            ConcurrencyStamp = "639263cc-03cf-4dc9-a890-cb20d4a2bbfa",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "e68b0fab-96e5-43d8-8aeb-9d8608d2eacf",
+                            ConcurrencyStamp = "68b1240d-f700-4c65-81a6-0cc895f8996d",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "9adcd793-c41d-442a-a922-3aebec6215e4",
+                            ConcurrencyStamp = "5cff1c39-036f-45a3-aafe-6bc4d5f5f5eb",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -184,40 +186,6 @@ namespace SiteGestionResaCore.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.doc_qualite", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte[]>("contenu_doc_qualite")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)")
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("date_modif_doc")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("description_doc_qualite")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("nom_document")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("nom_rubrique_doc")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.ToTable("doc_qualite");
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.enquete", b =>

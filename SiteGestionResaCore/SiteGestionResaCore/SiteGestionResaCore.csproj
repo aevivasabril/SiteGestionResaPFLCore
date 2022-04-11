@@ -31,6 +31,8 @@
   <ItemGroup>
     <Folder Include="Areas\AboutPFL\Models\" />
     <Folder Include="Areas\Calendrier\Models\" />
+    <Folder Include="Areas\Equipe\Data\ModifDocAq\" />
+    <Folder Include="Areas\Equipe\Views\ModifDocAq\" />
     <Folder Include="Areas\Maintenance\Models\" />
     <Folder Include="Controllers\" />
   </ItemGroup>

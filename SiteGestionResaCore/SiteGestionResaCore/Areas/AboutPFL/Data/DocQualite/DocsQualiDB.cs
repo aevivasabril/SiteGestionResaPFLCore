@@ -19,7 +19,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
         public List<DocumentQualite> ListDocs()
         {
             List<DocumentQualite> listXVue = new List<DocumentQualite>();
-            var list = context.doc_qualite.ToList();
+            /*var list = context.doc_qualite.ToList();
             foreach (var doc in list)
             {
                 listXVue.Add(new DocumentQualite
@@ -29,13 +29,14 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
                     CheminDocument = doc.chemin_document,
                     DescriptionDoc = doc.description_doc
                 });
-            }
+            }*/
             return listXVue;
         }
 
         public string GetCheminDocQualite(int id)
         {
-            return context.doc_qualite.First(d => d.id == id).chemin_document;
+            //return context.doc_qualite.First(d => d.id == id).chemin_document;
+            return "";
         }
 
         public string GetNomDoc(string cheminDoc)

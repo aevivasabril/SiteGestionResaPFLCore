@@ -341,15 +341,21 @@ namespace SiteGestionResaCore.Data.Data
 
             modelBuilder.Entity<doc_qualite>(entity =>
             {
+                entity.Property(e => e.contenu_doc_qualite)
+                    .IsRequired()
+                    .IsUnicode(false);
+
                 entity.Property(e => e.nom_document)
                     .IsRequired()
                     .IsUnicode(false);
 
-                entity.Property(e => e.chemin_document)
+                entity.Property(e => e.nom_rubrique_doc)
                     .IsRequired()
                     .IsUnicode(false);
 
-                entity.Property(e => e.description_doc).IsUnicode(false);
+                entity.Property(e => e.description_doc_qualite).IsUnicode(false);
+
+                entity.Property(e => e.date_modif_doc).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
@@ -465,11 +471,11 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" }
             });
 
-            modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\politique-qualité.pdf"},
-                new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
-                new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf"}/*,
-                new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
-            });
+            //modelBuilder.Entity<doc_qualite>().HasData(new doc_qualite[] { new doc_qualite { id = 1, nom_document = "Politique qualité", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\politique-qualité.pdf"},
+            //    new doc_qualite { id = 2, nom_document = "Certificat LRQA", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\certificat-lrqa.pdf", description_doc = "Document de certification norme ISO 9001"},
+            //    new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf"}/*,
+            //    new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
+            //});
 
             base.OnModelCreating(modelBuilder);
         }
