@@ -1,0 +1,125 @@
+﻿@model SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq.DocAqModifVM
+@{
+    ViewBag.Title = "ListeDocsAQ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-center">Ajoutez des nouveaux documents et rubriques</h2>
+<h6 class="text-center">
+    Mettez à disposition des utilisateurs un nouveau document AQ.
+</h6>
+<br />
+<div class="form-group text-center">
+    <a class="btn btn-secondary" asp-action="AjouterDocAq" asp-controller="ModifDocAq" asp-area="Equipe">Ajouter un nouveau document</a>
+</div>
+<br />
+<hr />
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h5 class="text-center"><strong>Documents qualité Plate-forme LAIT</strong></h5>
+        <h6 class="text-center">Modifiez ou supprimmez les documents ci-dessous</h6>
+    </div>
+</div>
+<br />
+@foreach (var x in Model.ListDocToModif)
+{
+    <div class="card">
+        <h5 class="card-header">
+            @x.NomRubriqDoc
+        </h5>
+        <div class="card-body">
+            <p class="card-text"><strong>Nom Document: </strong>@x.NomDocument</p>
+            <p class="card-text"><strong>Description Document: </strong>@x.DescripDoc</p>
+            <p class="card-text"><strong>Date dernière modification: </strong>@x.DernierDateModif</p>
+            <div class="text-center">
+                <a class="btn btn-secondary text-center" asp-action="SupprimerDoc" asp-controller="ModifDocAq" asp-area="Equipe" asp-route-id="@x.IdDoc">Supprimer document</a>
+            </div>           
+        </div>
+    </div>
+    <br />
+}
+
+<form asp-area="Equipe" asp-controller="ModifDocAq" asp-action="ValidAjoutDoc" method="post" enctype="multipart/form-data">
+    <!-- Modal pop-up pour ajout d'un nouveau document AQ-->
+    <div class="modal fade" id="AddingDocAQ" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Ajout des documents qualité </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p>Sélectionnez un fichier local pour le rajouter dans la BDD</p>
+                    <div class="form-row">
+                        <input type="file" name="file" required />
+                    </div>
+                    <br />
+                    <p>Donnez une description du document</p>
+                    <div class="form-row">
+                        <input type="text" autocomplete="off" placeholder="Description du fichier" name="description" required />
+                    </div>
+                    <br />
+                    <p>Donnez un nom à la rubrique. Ex: <strong>Certificat ISO 9001...</strong></p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.NomRubriqueDoc, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.NomRubriqueDoc, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Ajouter document" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-action="ConfirmSuppDoc" asp-controller="ModifDocAq" asp-route-id="@Model.IdDocToSupp" asp-area="Equipe" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppDoc" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Suppression document AQ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Après confirmation, le document "@Model.NomRubriqueDoc" sera supprimé <strong>DEFINITIVEMENT</strong>.
+                        Cette opération est irreversible. On y va? 
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    @*<button type="button" class="btn btn-primary">Valider</button>*@
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+                @*@Html.HiddenFor(m => m.UserToChange.Id)*@
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+<script>
+        @{
+            if (ViewBag.ModalAddingDoc == null)
+            {
+                ViewBag.ModalAddingDoc = "hide";
+            }
+            if (ViewBag.ModalSuppDoc == null)
+            {
+                ViewBag.ModalSuppDoc = "hide";
+            }
+        }
+        $('#AddingDocAQ').modal('@ViewBag.ModalAddingDoc');
+        $('#suppDoc').modal('@ViewBag.ModalSuppDoc');
+
+</script>
+}
