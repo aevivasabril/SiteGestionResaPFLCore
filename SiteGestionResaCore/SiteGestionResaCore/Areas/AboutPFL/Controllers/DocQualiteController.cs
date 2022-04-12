@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +32,8 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
 
         public IActionResult TelechargerDocxId(int? id)
         {
-            string cheminDoc = docsQualiDB.GetCheminDocQualite(id.Value);
-            string nomDoc = docsQualiDB.GetNomDoc(cheminDoc);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(cheminDoc);
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, nomDoc);
+            doc_qualite doc = docsQualiDB.ObtenirDocAQ(id.Value);
+            return File(doc.contenu_doc_qualite, System.Net.Mime.MediaTypeNames.Application.Octet, doc.nom_document);
         }
     }
 }

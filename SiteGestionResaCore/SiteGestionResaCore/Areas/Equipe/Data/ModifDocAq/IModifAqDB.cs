@@ -8,12 +8,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq
 {
     public interface IModifAqDB
     {
-        public List<DocQualiteToModif> ObtenirDocsAQXModif();
-
-        public bool AjouterDocToBDD(DocQualiteToModif doc);
-
-        public doc_qualite ObtenirDocQualite(int IdDoc);
-
-        public bool SupprimerDocAQ(int IdDoc);
+        List<DocQualiteToModif> ObtenirDocsAQXModif();
+        bool AjouterDocToBDD(DocQualiteToModif doc);
+        doc_qualite ObtenirDocQualite(int IdDoc);
+        bool SupprimerDocAQ(int IdDoc);
     }
 }

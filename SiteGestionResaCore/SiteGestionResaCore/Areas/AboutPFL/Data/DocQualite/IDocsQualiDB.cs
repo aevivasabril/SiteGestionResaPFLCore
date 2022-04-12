@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SiteGestionResaCore.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,5 +11,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
         List<DocumentQualite> ListDocs();
         string GetCheminDocQualite(int id);
         string GetNomDoc(string cheminDoc);
+        doc_qualite ObtenirDocAQ(int IdDoc);
+
     }
 }

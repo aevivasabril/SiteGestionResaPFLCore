@@ -8,8 +8,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
     public class DocumentQualite
     {
         public int IdDocument { get; set; }
-        public string NomDocument { get; set; }
-        public string CheminDocument { get; set; }
+        public string NomRubriqueDoc { get; set; }
         public string DescriptionDoc { get; set; }
     }
 }
