@@ -62,7 +62,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq
             }
             catch(Exception e)
             {
-                logger.LogError(e, "Erreur d'écriture du document dans la table doc_essai_pgd");
+                logger.LogError(e, "Erreur d'écriture du document dans la table doc_essai_pgd: " + e.ToString());
                 isOk = false;
             }
 
@@ -72,6 +72,24 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq
         public doc_qualite ObtenirDocQualite(int id)
         {
             return contextDb.doc_qualite.First(d => d.id == id);
+        }
+
+        public bool SupprimerDocAQ(int IdDoc)
+        {
+            bool IsOk = false;
+            try
+            {
+                doc_qualite doc = contextDb.doc_qualite.First(d => d.id == IdDoc);
+                contextDb.doc_qualite.Remove(doc);
+                contextDb.SaveChanges();
+                IsOk = true;
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e, "Erreur lors de la suppression du document qualité: "+ e.ToString());
+                IsOk = false;
+            }
+            return IsOk;
         }
     }
 }

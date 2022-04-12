@@ -91,5 +91,23 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             ViewBag.ModalSuppDoc = "show";
             return View("VueModifDocsAQ", model);
         }
+
+        [HttpPost]
+        public IActionResult ConfirmSuppDoc(int? id)
+        {
+            DocAqModifVM model = HttpContext.GetFromSession<DocAqModifVM>("DocAqModifVM");
+            bool isOk = modifAqDB.SupprimerDocAQ(id.Value);
+            if(!isOk)
+            {
+                ModelState.AddModelError("", "Problème lors de la suppression du document AQ");
+                return View("VueModifDocsAQ", model);
+            }
+            else
+            {
+                model.ListDocToModif = modifAqDB.ObtenirDocsAQXModif();
+                this.HttpContext.AddToSession("DocAqModifVM", model);
+                return View("VueModifDocsAQ", model);
+            }
+        }
     }
 }

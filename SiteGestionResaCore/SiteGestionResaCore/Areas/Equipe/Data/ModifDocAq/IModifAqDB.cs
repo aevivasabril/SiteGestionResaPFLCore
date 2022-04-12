@@ -12,6 +12,8 @@ namespace SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq
 
         public bool AjouterDocToBDD(DocQualiteToModif doc);
 
-        public doc_qualite ObtenirDocQualite(int id);
+        public doc_qualite ObtenirDocQualite(int IdDoc);
+
+        public bool SupprimerDocAQ(int IdDoc);
     }
 }
