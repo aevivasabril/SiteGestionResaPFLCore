@@ -12,6 +12,7 @@
     </div>
 </div>
 <hr />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
 @foreach (var x in Model.ListDocsQualite)
 {
     <div class="card">

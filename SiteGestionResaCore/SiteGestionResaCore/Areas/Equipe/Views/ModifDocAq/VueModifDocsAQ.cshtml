@@ -22,6 +22,7 @@
     </div>
 </div>
 <br />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
 @foreach (var x in Model.ListDocToModif)
 {
     <div class="card">
@@ -34,7 +35,7 @@
             <p class="card-text"><strong>Date dernière modification: </strong>@x.DernierDateModif</p>
             <div class="text-center">
                 <a class="btn btn-secondary text-center" asp-action="SupprimerDoc" asp-controller="ModifDocAq" asp-area="Equipe" asp-route-id="@x.IdDoc">Supprimer document</a>
-            </div>           
+            </div>
         </div>
     </div>
     <br />
@@ -91,7 +92,7 @@
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold text-center">
                         Après confirmation, le document "@Model.NomRubriqueDoc" sera supprimé <strong>DEFINITIVEMENT</strong>.
-                        Cette opération est irreversible. On y va? 
+                        Cette opération est irreversible. On y va?
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -107,7 +108,7 @@
 
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-<script>
+    <script>
         @{
             if (ViewBag.ModalAddingDoc == null)
             {
@@ -121,5 +122,5 @@
         $('#AddingDocAQ').modal('@ViewBag.ModalAddingDoc');
         $('#suppDoc').modal('@ViewBag.ModalSuppDoc');
 
-</script>
+    </script>
 }
