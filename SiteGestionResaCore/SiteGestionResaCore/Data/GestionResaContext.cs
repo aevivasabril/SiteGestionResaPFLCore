@@ -62,9 +62,9 @@ namespace SiteGestionResaCore.Data.Data
             {
                 entity.Property(e => e.nomTabPcVue).IsUnicode(false);
 
-                entity.Property(e => e.cheminFicheMateriel).IsUnicode(false);
+                //entity.Property(e => e.cheminFicheMateriel).IsUnicode(false);
 
-                entity.Property(e => e.cheminFicheMetrologie).IsUnicode(false);
+                //entity.Property(e => e.cheminFicheMetrologie).IsUnicode(false);
 
                 entity.Property(e => e.nom)
                     .IsRequired()

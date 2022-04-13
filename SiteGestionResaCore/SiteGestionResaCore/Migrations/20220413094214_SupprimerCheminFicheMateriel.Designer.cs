@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220413094214_SupprimerCheminFicheMateriel")]
+    partial class SupprimerCheminFicheMateriel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "bd3482e9-c7f1-4bb3-8b63-0b9db2b1d57a",
+                            ConcurrencyStamp = "090bb604-6260-443a-8eb9-6209732b9c31",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "51d26f63-4d5e-48f6-bc1e-5e3546cbbe30",
+                            ConcurrencyStamp = "d8936f67-eeb3-4814-906f-4d82a66d9f49",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "94158c4c-f90a-40cf-9ef7-5e99947c278a",
+                            ConcurrencyStamp = "3748541c-39ca-4b51-9c2b-1ecd50591725",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "d8e6f34d-5d35-4395-8f7c-cdd2adadaa89",
+                            ConcurrencyStamp = "ab134143-3299-497f-a8e8-7fb6edab92f8",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "191e2f16-fd7b-4e90-bfa7-9525a25df6a2",
+                            ConcurrencyStamp = "98574eeb-ea56-4c00-859a-549c36a01e7c",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -260,6 +262,10 @@ namespace SiteGestionResaCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("cheminFicheMetrologie")
+                        .HasColumnType("varchar(max)")
+                        .IsUnicode(false);
 
                     b.Property<bool?>("mobile")
                         .HasColumnType("bit");

@@ -30,22 +30,22 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
         public List<InfosEquipement> ListeEquipementsXZone(int idZone)
         {
             List<InfosEquipement> List = new List<InfosEquipement>();
-            bool cheminFicheMat = false;
+            //bool cheminFicheMat = false;
             bool cheminFicheMet = false;
             // Liste des équipements de la zone
             var query = context.equipement.Where(e => e.zoneID == idZone).ToList();
 
             foreach(var equip in query)
             {
-                cheminFicheMat = (equip.cheminFicheMateriel != null);
-                cheminFicheMet = (equip.cheminFicheMetrologie != null);
+                //cheminFicheMat = (equip.cheminFicheMateriel != null);
+                //cheminFicheMet = (equip.cheminFicheMetrologie != null);
                 List.Add(new InfosEquipement
                 {
                     IdEquipement = equip.id,
                     NomEquipement = equip.nom,
                     NumGmaoEquipement = equip.numGmao,
-                    CheminFicheMateriel = cheminFicheMat,
-                    CheminFicheMetrologie = cheminFicheMet
+                    //CheminFicheMateriel = cheminFicheMat,
+                    //CheminFicheMetrologie = cheminFicheMet
                 });
             }
             return List;
@@ -58,7 +58,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
 
         public string GetCheminFicheMateriel(int idEquipement)
         {
-            return context.equipement.First(z => z.id == idEquipement).cheminFicheMateriel;
+            return context.equipement.First(z => z.id == idEquipement).nom;
         }
         public string GetNomXChemin(string cheminFichier)
         {
