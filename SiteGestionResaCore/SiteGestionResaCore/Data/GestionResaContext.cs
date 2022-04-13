@@ -38,6 +38,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<reservation_maintenance> reservation_maintenance { get; set; }
         public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
         public virtual DbSet<doc_qualite> doc_qualite { get; set; }
+        public virtual DbSet<doc_fiche_materiel> doc_fiche_materiel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -61,10 +62,6 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<equipement>(entity =>
             {
                 entity.Property(e => e.nomTabPcVue).IsUnicode(false);
-
-                //entity.Property(e => e.cheminFicheMateriel).IsUnicode(false);
-
-                //entity.Property(e => e.cheminFicheMetrologie).IsUnicode(false);
 
                 entity.Property(e => e.nom)
                     .IsRequired()
@@ -356,6 +353,25 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.description_doc_qualite).IsUnicode(false);
 
                 entity.Property(e => e.date_modif_doc).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<doc_fiche_materiel>(entity =>
+            {
+                entity.Property(e => e.contenu_fiche)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_modification).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.doc_fiche_materiel)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_doc_fiche_materiel_equipement");
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
