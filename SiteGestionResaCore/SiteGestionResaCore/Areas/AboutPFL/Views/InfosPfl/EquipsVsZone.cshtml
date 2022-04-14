@@ -18,7 +18,7 @@
             @Html.HiddenFor(m => m.ListeEquipements[i].NumGmaoEquipement)
         </div>
         <div class="col-sm-2 col-md-2 text-center">
-            @if (Model.ListeEquipements[i].CheminFicheMateriel == true)
+            @if (Model.ListeEquipements[i].FicheMaterielDispo == true)
             {
                 <td><a asp-action="DownloadFichMat" asp-area="AboutPFL" asp-controller="InfosPfl" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Téléchargement Fiche Materiel</a></td>
             }

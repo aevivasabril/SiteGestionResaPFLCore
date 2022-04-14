@@ -9,15 +9,17 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
     {
         // id equipement calendrier view model
         public int IdEquipement { get; set; }
-
         // nom equipement calendrier view model
         public string NomEquipement { get; set; }
-
         // num GMAO calendrier view model
         public string NumGmaoEquipement { get; set; }
+        public bool FicheMetrologieDispo { get; set; }
 
-        public bool CheminFicheMateriel { get; set; }
-
-        public bool CheminFicheMetrologie { get; set; }
+        #region Infos sur la fiche materiel si elle existe
+        public bool FicheMaterielDispo { get; set; }
+        public int IdFicheMat { get; set; }
+        public string NomFicheMat { get; set; }
+        public DateTime DateModif { get; set; }
+        #endregion
     }
 }

@@ -1,0 +1,37 @@
+﻿@model EquipsXModifVM
+@{
+    ViewBag.Title = "ModifierInfosEquipements";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h5 class="text-center">Liste des équipements pour la zone @Model.NomZone </h5>
+<h6 class="text-center">Plusieurs actions sont possibles par équipement</h6>
+<br />
+@for (int i = 0; i < Model.ListeEquipements.Count(); i++)
+{
+    <div class="card">
+        <h5 class="card-header">
+            <strong>@Model.ListeEquipements[i].NomEquipement (Num GMAO: @Model.ListeEquipements[i].NumGmaoEquipement)</strong>
+        </h5>
+        <div class="card-body">            
+            @if (Model.ListeEquipements[i].FicheMaterielDispo == true)
+            {
+                <p class="card-text"><strong>Nom Document: </strong>@Model.ListeEquipements[i].NomFicheMat</p>
+                <p class="card-text"><strong>Date dernière modification: </strong>@Model.ListeEquipements[i].DateModif</p>
+                <a class="btn btn-secondary text-center" asp-action="SupprimerFiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Supprimer Fiche Materiel</a>
+                <a class="btn btn-secondary text-center" asp-action="ModifierFiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Modifier Fiche Materiel</a>  
+            }
+            else
+            {
+                <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Ajouter Fiche Materiel</a>
+            }                
+            <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Modifier Num GMAO</a>
+        </div>
+    </div>
+    <br />
+}
+<br />
+<div class="row justify-content-center">
+    <a asp-action="GestionEquipements" asp-controller="ModifEquip" asp-area="AboutPFL">Revenir à la page précedente</a>
+</div>
