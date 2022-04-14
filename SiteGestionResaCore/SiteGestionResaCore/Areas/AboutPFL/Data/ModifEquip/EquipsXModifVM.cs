@@ -9,5 +9,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
     {
         public List<InfosEquipement> ListeEquipements { get; set; }
         public string NomZone { get; set; }
+        public int IdZone { get; set; }
+        public int IdEquipement { get; set; }
     }
 }

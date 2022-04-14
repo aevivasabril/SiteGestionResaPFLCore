@@ -8,25 +8,27 @@
 <h5 class="text-center">Liste des équipements pour la zone @Model.NomZone </h5>
 <h6 class="text-center">Plusieurs actions sont possibles par équipement</h6>
 <br />
+
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
 @for (int i = 0; i < Model.ListeEquipements.Count(); i++)
 {
     <div class="card">
         <h5 class="card-header">
             <strong>@Model.ListeEquipements[i].NomEquipement (Num GMAO: @Model.ListeEquipements[i].NumGmaoEquipement)</strong>
         </h5>
-        <div class="card-body">            
+        <div class="card-body">
             @if (Model.ListeEquipements[i].FicheMaterielDispo == true)
             {
                 <p class="card-text"><strong>Nom Document: </strong>@Model.ListeEquipements[i].NomFicheMat</p>
                 <p class="card-text"><strong>Date dernière modification: </strong>@Model.ListeEquipements[i].DateModif</p>
-                <a class="btn btn-secondary text-center" asp-action="SupprimerFiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Supprimer Fiche Materiel</a>
-                <a class="btn btn-secondary text-center" asp-action="ModifierFiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Modifier Fiche Materiel</a>  
+                <a class="btn btn-secondary text-center" asp-action="SupprimerFiche" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Supprimer Fiche Materiel</a>
+                <a class="btn btn-secondary text-center" asp-action="ModifierFiche" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Modifier Fiche Materiel</a>
             }
             else
             {
-                <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Ajouter Fiche Materiel</a>
-            }                
-            <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="Equipe" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Modifier Num GMAO</a>
+                <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Ajouter Fiche Materiel</a>
+            }
+            <a class="btn btn-secondary" asp-action="ModifNumGMAO" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Modifier Num GMAO</a>
         </div>
     </div>
     <br />
@@ -35,3 +37,49 @@
 <div class="row justify-content-center">
     <a asp-action="GestionEquipements" asp-controller="ModifEquip" asp-area="AboutPFL">Revenir à la page précedente</a>
 </div>
+
+
+<form asp-area="AboutPFL" asp-controller="ModifEquip" asp-action="ValidAjoutFiche" asp-route-id="@Model.IdEquipement" method="post" enctype="multipart/form-data"> 
+    <!-- Modal pop-up pour ajout d'un nouveau document AQ-->
+    <div class="modal fade" id="AddFicheMat" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Ajout d'une fiche materiel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    @if (ViewBag.AfficherMessage == true)
+                    {
+                        <p class="text-center" style="color:red">@ViewBag.MessagePopUp</p>
+                    }
+                    <p>Sélectionnez un fichier local (uniquement format PDF)</p>
+                    <div class="form-row">
+                        <input type="file" name="file" required />
+                    </div>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Ajouter document" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.ModalAddingFic == null)
+            {
+                ViewBag.ModalAddingFic = "hide";
+            }
+        }
+        $('#AddFicheMat').modal('@ViewBag.ModalAddingFic');
+
+    </script>
+}
