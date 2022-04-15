@@ -232,5 +232,44 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
                 }
             }
         }
+
+        public IActionResult ModifNumGMAO(int? id)
+        {
+            // Récupérer la session "EquipsXModifVM"
+            EquipsXModifVM vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+            vm.IdEquipement = id.Value;
+            vm.NomEquipement = equipsToModifDB.ObtNomEquipement(id.Value);
+            ViewBag.ModifNumGmao = "show";
+            this.HttpContext.AddToSession("EquipsXModifVM", vm);
+            return View("EquipsXModif", vm);
+        }
+
+        [HttpPost]
+        public IActionResult ConfNumGMAO(EquipsXModifVM vm, int? id)
+        {            
+            if (ModelState.IsValid)
+            {
+                bool IsOk = equipsToModifDB.ModifierNumGMAO(vm.NumGmao, id.Value);
+                if (!IsOk)
+                {
+                    ModelState.AddModelError("", "Une erreur est survenue lors de la modification du numèro GMAO");
+                    vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+                    return View("EquipsXModif", vm);
+                }
+                else
+                {
+                    vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+                    vm.ListeEquipements = equipsToModifDB.ListeEquipementsXZone(vm.IdZone);
+                    this.HttpContext.AddToSession("EquipsXModifVM", vm);
+                    return View("EquipsXModif", vm);
+                }
+            }
+            else
+            {
+                vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+                ViewBag.ModifNumGmao = "show";
+                return View("EquipsXModif", vm);
+            }
+        }
     }
 }

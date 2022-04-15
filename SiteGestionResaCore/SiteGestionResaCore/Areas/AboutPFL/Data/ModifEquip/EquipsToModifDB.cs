@@ -128,5 +128,30 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
            
             return IsOk;
         }
+
+        public string ObtNomEquipement(int IdEquipement)
+        {
+            return context.equipement.First(e => e.id == IdEquipement).nom;
+        }
+
+        public bool ModifierNumGMAO(string numGmao, int idEquipement)
+        {
+            bool IsOk = false;
+            equipement equip = new equipement();
+
+            try
+            {
+                equip = context.equipement.First(e => e.id == idEquipement);
+                equip.numGmao = numGmao;
+                context.SaveChanges();
+                IsOk = true;
+            }
+            catch(Exception e)
+            {
+                IsOk = false;
+                logger.LogError("", "Problème pour modifier le numéro GMAO pour l'équipement: " + equip.nom + ". Erreur: " + e.ToString());
+            }
+            return IsOk;
+        }
     }
 }

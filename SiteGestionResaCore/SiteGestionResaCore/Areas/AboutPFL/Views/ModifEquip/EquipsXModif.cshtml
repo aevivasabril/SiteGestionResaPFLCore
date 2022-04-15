@@ -127,6 +127,38 @@
     </div>
 </form>
 
+<form asp-area="AboutPFL" asp-controller="ModifEquip" asp-action="ConfNumGMAO" asp-route-id="@Model.IdEquipement" method="post" enctype="multipart/form-data">
+    <!-- Modal pop-up pour ajout d'un nouveau document AQ-->
+    <div class="modal fade" id="ModifNumGmao" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Modification du numéro GMAO</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    @if (ViewBag.AfficherMessage == true)
+                    {
+                        <p class="text-center" style="color:red">@ViewBag.MessagePopUp</p>
+                    }
+                    <p>Nouveau numéro GMAO pour l'équipement</p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.NumGmao, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.NumGmao, "", new { @class = "text-danger" })
+                    </div>
+                    <br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Remplacer numéro GMAO" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
 <script>
@@ -143,10 +175,15 @@
             {
                 ViewBag.ModalModifFiche = "hide";
             }
+            if (ViewBag.ModifNumGmao == null)
+            {
+                ViewBag.ModifNumGmao = "hide";
+            }
         }
         $('#AddFicheMat').modal('@ViewBag.ModalAddingFic');
         $('#suppFiche').modal('@ViewBag.ModalConfirSupp');
         $('#ModifFicheMat').modal('@ViewBag.ModalModifFiche');
+        $('#ModifNumGmao').modal('@ViewBag.ModifNumGmao');
 
 </script>
 }
