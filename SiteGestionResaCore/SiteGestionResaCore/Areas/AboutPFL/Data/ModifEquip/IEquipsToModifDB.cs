@@ -9,5 +9,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
     {
         List<InfosEquipement> ListeEquipementsXZone(int idZone);
         bool AjouterFicheXEquipement(int idEquipement, byte[] content, string nom);
+        bool SupprimerFicheMat(int IdFiche);
+        bool ModifierFicheMat(int IdFiche, byte[] Contenu, string nomDoc);
     }
 }

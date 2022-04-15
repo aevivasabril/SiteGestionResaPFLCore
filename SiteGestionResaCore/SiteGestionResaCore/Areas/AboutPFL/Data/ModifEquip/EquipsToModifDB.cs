@@ -20,6 +20,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
             this.context = context;
             this.logger = logger;
         }
+
         public List<InfosEquipement> ListeEquipementsXZone(int idZone)
         {
             List<InfosEquipement> List = new List<InfosEquipement>();
@@ -58,6 +59,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
             }
             return List;
         }
+
         public bool AjouterFicheXEquipement(int idEquipement, byte[] content, string nom)
         {
             bool IsOk = false;
@@ -81,6 +83,49 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
                 logger.LogError("Problème lors de l'écriture de la fiche materiel: " + nom + "dans la BDD: " + e.ToString());
                 IsOk = false;
             }
+            return IsOk;
+        }
+
+        public bool SupprimerFicheMat(int IdFiche)
+        {
+            bool isOk = false;
+            doc_fiche_materiel doc = new doc_fiche_materiel();
+            try
+            {
+                doc = context.doc_fiche_materiel.First(d => d.id == IdFiche);
+                context.doc_fiche_materiel.Remove(doc);
+                context.SaveChanges();
+                isOk = true;
+            }
+            catch(Exception e)
+            {
+                isOk = false;
+                logger.LogError("", "Problème pour supprimer la fiche materiel: " + doc.nom_document + "Erreur: " + e.ToString());
+            }
+
+            return isOk;
+        }
+
+        public bool ModifierFicheMat(int IdFiche, byte[] Contenu, string nomDoc)
+        {
+            bool IsOk = false;
+            doc_fiche_materiel fiche = new doc_fiche_materiel();
+
+            try
+            {
+                fiche = context.doc_fiche_materiel.First(f => f.id == IdFiche);
+                fiche.contenu_fiche = Contenu;
+                fiche.nom_document = nomDoc;
+                fiche.date_modification = DateTime.Now;
+                context.SaveChanges();
+                IsOk = true;
+            }
+            catch(Exception e)
+            {
+                IsOk = false;
+                logger.LogError("", "Problème pour modifier la fiche materiel: " + fiche.nom_document + ". Erreur: " + e.ToString());
+            }
+           
             return IsOk;
         }
     }
