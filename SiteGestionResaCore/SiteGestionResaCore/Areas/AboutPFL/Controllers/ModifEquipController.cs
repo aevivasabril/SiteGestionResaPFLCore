@@ -233,7 +233,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
             }
         }
 
-        public IActionResult ModifNumGMAO(int? id)
+        /*public IActionResult ModifNumGMAO(int? id)
         {
             // Récupérer la session "EquipsXModifVM"
             EquipsXModifVM vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
@@ -270,6 +270,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
                 ViewBag.ModifNumGmao = "show";
                 return View("EquipsXModif", vm);
             }
-        }
+        }*/
     }
 }

@@ -31,22 +31,38 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
         {
             List<InfosEquipement> List = new List<InfosEquipement>();
             //bool cheminFicheMat = false;
-            bool cheminFicheMet = false;
+            //bool cheminFicheMet = false;
             // Liste des équipements de la zone
             var query = context.equipement.Where(e => e.zoneID == idZone).ToList();
 
-            foreach(var equip in query)
+            foreach (var equip in query)
             {
-                //cheminFicheMat = (equip.cheminFicheMateriel != null);
-                //cheminFicheMet = (equip.cheminFicheMetrologie != null);
-                List.Add(new InfosEquipement
+                // Vérifier s'il existe une fiche materiel pour cet équipement
+                var fiche = context.doc_fiche_materiel.FirstOrDefault(d => d.equipementID == equip.id);
+
+                if (fiche == null)
                 {
-                    IdEquipement = equip.id,
-                    NomEquipement = equip.nom,
-                    NumGmaoEquipement = equip.numGmao,
-                    //CheminFicheMateriel = cheminFicheMat,
-                    //CheminFicheMetrologie = cheminFicheMet
-                });
+                    List.Add(new InfosEquipement
+                    {
+                        IdEquipement = equip.id,
+                        NomEquipement = equip.nom,
+                        NumGmaoEquipement = equip.numGmao,
+                        FicheMaterielDispo = false
+                    });
+                }
+                else
+                {
+                    List.Add(new InfosEquipement
+                    {
+                        IdEquipement = equip.id,
+                        NomEquipement = equip.nom,
+                        NumGmaoEquipement = equip.numGmao,
+                        FicheMaterielDispo = true,
+                        NomFicheMat = fiche.nom_document,
+                        DateModif = fiche.date_modification,
+                        IdFicheMat = fiche.id
+                    });
+                }
             }
             return List;
         }

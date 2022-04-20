@@ -134,7 +134,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
             return context.equipement.First(e => e.id == IdEquipement).nom;
         }
 
-        public bool ModifierNumGMAO(string numGmao, int idEquipement)
+        /*public bool ModifierNumGMAO(string numGmao, int idEquipement)
         {
             bool IsOk = false;
             equipement equip = new equipement();
@@ -152,6 +152,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
                 logger.LogError("", "Problème pour modifier le numéro GMAO pour l'équipement: " + equip.nom + ". Erreur: " + e.ToString());
             }
             return IsOk;
-        }
+        }*/
     }
 }
