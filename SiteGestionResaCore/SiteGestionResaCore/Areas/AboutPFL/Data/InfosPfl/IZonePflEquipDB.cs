@@ -11,7 +11,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
         List<zone> ListeZones();
         List<InfosEquipement> ListeEquipementsXZone(int idZone);
         string NomZoneXEquipement(int idZone);
-        string GetCheminFicheMateriel(int idEquipement);
-        string GetNomXChemin(string cheminFichier);
+        doc_fiche_materiel ObtenirDocMateriel(int idDoc);
     }
 }

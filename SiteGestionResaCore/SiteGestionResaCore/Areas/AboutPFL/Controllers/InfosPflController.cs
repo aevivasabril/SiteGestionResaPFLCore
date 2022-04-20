@@ -52,12 +52,15 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
             return View("EquipsVsZone", vm);
         }
 
+        /// <summary>
+        /// Méthode pour télécharger la doc depuis la bases des données
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IActionResult DownloadFichMat(int? id)
         {
-            string cheminFichier = pflEquipDB.GetCheminFicheMateriel(id.Value);
-            string NomFichier = pflEquipDB.GetNomXChemin(cheminFichier);
-            byte[] fileBytes = System.IO.File.ReadAllBytes(cheminFichier);
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, NomFichier);
+            doc_fiche_materiel doc = pflEquipDB.ObtenirDocMateriel(id.Value);
+            return File(doc.contenu_fiche, System.Net.Mime.MediaTypeNames.Application.Octet, doc.nom_document);
         }
     }
 }

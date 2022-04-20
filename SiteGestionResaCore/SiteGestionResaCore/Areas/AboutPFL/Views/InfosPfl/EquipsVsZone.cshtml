@@ -10,30 +10,25 @@
 <br />
 @for (int i = 0; i < Model.ListeEquipements.Count(); i++)
 {
-    <div class="form-row">
-        <div class="col-sm-8 col-md-8 text">           
-            <strong> -> @Html.Label(Model.ListeEquipements[i].NomEquipement + "( Num GMAO: " + Model.ListeEquipements[i].NumGmaoEquipement + " )")</strong>
-            @Html.HiddenFor(m => m.ListeEquipements[i].IdEquipement)
-            @Html.HiddenFor(m => m.ListeEquipements[i].NomEquipement)
-            @Html.HiddenFor(m => m.ListeEquipements[i].NumGmaoEquipement)
-        </div>
-        <div class="col-sm-2 col-md-2 text-center">
+    <div class="card">
+        <h5 class="card-header">
+            <strong>@Model.ListeEquipements[i].NomEquipement (Num GMAO: @Model.ListeEquipements[i].NumGmaoEquipement)</strong>
+        </h5>
+        <div class="card-body">
             @if (Model.ListeEquipements[i].FicheMaterielDispo == true)
             {
-                <td><a asp-action="DownloadFichMat" asp-area="AboutPFL" asp-controller="InfosPfl" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Téléchargement Fiche Materiel</a></td>
+                <a class="btn btn-secondary text-center" asp-action="DownloadFichMat" asp-area="AboutPFL" asp-controller="InfosPfl" asp-route-id="@Model.ListeEquipements[i].IdFicheMat">Téléchargement Fiche Materiel</a>
             }
             else
             {
-                <td>Fiche materiel (doc indisponible)</td>
+                <p>Fiche materiel(doc indisponible)</p>
             }
+            <a>Fiche Métrologie</a>
         </div>
-        <div class="col-sm-2 col-md-2 text-center">           
-            @*@Html.CheckBoxFor(m => m.ListeEquipements[i].IsEquipSelect, new { @class = "col-md-1 control-label" })*@
-            @Html.Label("Fiche métrologie")
-        </div>
-        <br />
     </div>
+    <br />
 }
+
 <br />
 <div class="row justify-content-center">
     <a asp-action="PlanZones" asp-controller="InfosPfl" asp-area="AboutPFL">Revenir à la page précedente</a>

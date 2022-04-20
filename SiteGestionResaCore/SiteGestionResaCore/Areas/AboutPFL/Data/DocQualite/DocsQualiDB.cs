@@ -33,12 +33,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
             return listXVue;
         }
 
-        public string GetCheminDocQualite(int id)
-        {
-            //return context.doc_qualite.First(d => d.id == id).chemin_document;
-            return "";
-        }
-
         public string GetNomDoc(string cheminDoc)
         {
             // Appliquer une regex pour extraire uniquement le nom
