@@ -21,7 +21,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         public override async Task<Task> ProcessInScope(IServiceProvider scopeServiceProvider)
         {
             string message = "";
-            // Reperer les entrepots qui ont 2 ans et 11 mois dans la BDD (notification avant suppression)
+            // Reperer les entrepots qui ont 1 an et 11 mois dans la BDD (notification avant suppression)
             var listProjs = entrepotTaskDB.GetProjetsXNotification();
 
             #region Envoi mail pour le propiètaire projet, invitiation à récupérer son entrepot des données avant suppression définitive
@@ -40,7 +40,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
             #endregion
 
-            #region Suppression des entrepôts dont la création date de 3 ans ou plus
+            #region Suppression des entrepôts dont la création date de 2 ans ou plus
 
             var ListProjXSupp = entrepotTaskDB.GetProjetsXSuppression();
 
@@ -51,7 +51,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
                 if (isOk)
                 {
-                    message = @"<html><body><p> Bonjour, <br><br> Après 3 ans de stockage dans notre système, votre entrêpot des données pour le projet: 
+                    message = @"<html><body><p> Bonjour, <br><br> Après 2 ans de stockage dans notre système, votre entrêpot des données pour le projet: 
                             <b> </b>  N°: " + proj.num_projet + ": <strong> \"" + proj.titre_projet + "\" </strong> vient d'être supprimé définitivement.<br/> " +
                             "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 

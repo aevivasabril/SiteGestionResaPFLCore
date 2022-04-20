@@ -30,17 +30,18 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         /// <returns></returns>
         public List<projet> GetProjetsXNotification()
         {
-            // 2 ans et 11 mois = 1065 jours environ
-            // 3 ans            = 1095 jours environ
+            // 1 an et 11 mois = 700 jours environ
+            // 2 ans            = 730 jours environ
             List<projet> list = new List<projet>();
-
+            int LimitInf = 700;
+            int LimitSup = 730;
             var listProj = resaDb.projet.Where(p => p.entrepot_supprime == null && p.date_creation_entrepot != null);
 
             foreach (var p in listProj)
             {
                 TimeSpan diff = DateTime.Now - p.date_creation_entrepot.Value;
                 // Si le projet rentre dans la condition alors on envoie un mail
-                if(diff.Days > 1065 & diff.Days < 1095)
+                if(diff.Days > LimitInf & diff.Days < LimitSup)
                 {
                     list.Add(p);
                 }         
@@ -51,13 +52,14 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         public List<projet> GetProjetsXSuppression()
         {
             List<projet> list = new List<projet>();
+            int LimitSup = 730;
 
             var listP = resaDb.projet.Where(p => p.entrepot_supprime == null && p.date_creation_entrepot != null);
 
             foreach(var p in listP)
             {
                 TimeSpan diff = DateTime.Now - p.date_creation_entrepot.Value;
-                if(diff.Days >= 1095)
+                if(diff.Days >= LimitSup)
                 {
                     list.Add(p);
                 }
