@@ -210,6 +210,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         [Required(ErrorMessage = "Titre essai requis")]
         [Display(Name = "Titre ESSAI (Précisez des éléments de l'essai qui vous permettront de le retrouver plus facilement par la suite) (*)")]
+        [RegularExpression(@"^[\w][^\/;\\.!:*?,]*$", ErrorMessage = "Le format est incorrect, évitez les caractères suivants:  /;\\.!:*?,")]
         public string TitreEssai { get; set; }
 
         #endregion
