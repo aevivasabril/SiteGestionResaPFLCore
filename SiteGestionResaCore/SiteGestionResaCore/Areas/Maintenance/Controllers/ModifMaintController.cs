@@ -128,78 +128,62 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
                     NewDate = new DateTime(vm.DateFin.Value.Year,
                         vm.DateFin.Value.Month, vm.DateFin.Value.Day, 18, 0, 0, DateTimeKind.Local);
                 }
-
-                if (NewDate < DateTime.Now)
-                {
-                    ModelState.AddModelError("", "Sélectionnez une date supérieure à aujourd'hui");
-                    // Récupérer la session VM
-                    ModifMaintenanceVM Modell = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
-                    Modell.IdIntervCom = id;
-                    Modell.OpenModifInter = vm.Ouvert;
-                    Modell.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id); // On met à jour uniquement les interventions communs 
-
-                    ViewBag.modalModif = "show";
-                    return View("ModificationIntervention", Modell);
-                }
-                else
-                {
                    
-                    // Mettre à jour la date pour l'intervention des équipements communs
-                    DateTime AncienneDateFin = modifMaintDb.ChangeDateFinEquipCommun(id, NewDate);
+                // Mettre à jour la date pour l'intervention des équipements communs
+                DateTime AncienneDateFin = modifMaintDb.ChangeDateFinEquipCommun(id, NewDate);
 
-                    resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
-                    // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
-                    // si enregistrement OK alors envoyer le mail
-                    MsgUser = @"<html>
-                            <body> 
-                            <p> Bonjour, <br><br> L'équipe PFL vous informe que la date fin pour l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
-                                   + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + "</b> a été mise à jour."
-                                    + "<p>Ancienne date: <b> " + resaCommun.date_debut + " au  " + AncienneDateFin + " </b></p><p> Nouvelle date: <b>" + resaCommun.date_debut + " au " +
-                                    resaCommun.date_fin + "</b></p></b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
-                                   " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
-                                   "</p>" +
-                                   "</body>" +
-                                   "</html>";
-                    // Obtenir la liste des utilisateurs
-                    List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
+                resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
+                // Envoyer le mail à tous les utilisateurs pour informer de cette nouvelle date
+                // si enregistrement OK alors envoyer le mail
+                MsgUser = @"<html>
+                        <body> 
+                        <p> Bonjour, <br><br> L'équipe PFL vous informe que la date fin pour l'intervention du type  : <b> " + maint.type_maintenance + "</b>. Code d'intervention:<b> "
+                                + maint.code_operation + "</b>. Descriptif du problème: <b>" + maint.description_operation + "</b> a été mise à jour."
+                                + "<p>Ancienne date: <b> " + resaCommun.date_debut + " au  " + AncienneDateFin + " </b></p><p> Nouvelle date: <b>" + resaCommun.date_debut + " au " +
+                                resaCommun.date_fin + "</b></p></b>.</p> <p> Cette intervention pénalise vos manips en cours ou à venir." +
+                                " Merci d'annuler vos manips et attendre jusqu'à la réception du mail de fin d'intervention. </p> <p>L'équipe PFL, " +
+                                "</p>" +
+                                "</body>" +
+                                "</html>";
+                // Obtenir la liste des utilisateurs
+                List<utilisateur> users = modifMaintDb.ObtenirListUtilisateursSite();
 
-                    // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-                    foreach (var usr in users)
+                // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                foreach (var usr in users)
+                {
+                    success = false;
+                    while (!success && retryCount > 0)
                     {
-                        success = false;
-                        while (!success && retryCount > 0)
+                        try
                         {
-                            try
+                            await emailSender.SendEmailAsync(usr.Email, "Mise à jour intervention dépannage materiel commun", MsgUser);
+                            success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            retryCount--;
+                            if (retryCount == 0)
                             {
-                                await emailSender.SendEmailAsync(usr.Email, "Mise à jour intervention dépannage materiel commun", MsgUser);
-                                success = true;
-                            }
-                            catch (Exception e)
-                            {
-                                retryCount--;
-                                if (retryCount == 0)
-                                {
-                                    ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
-                                    //ViewBag.AfficherMessage = true;
-                                    //ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
-                                    return View("ModificationIntervention", vm);
-                                }
+                                ModelState.AddModelError("", "Problème de connexion pour l'envoie du mail: " + e.Message + ". ");
+                                //ViewBag.AfficherMessage = true;
+                                //ViewBag.Message = "Problème de connexion pour l'envoie du mail: " + e.Message + ".";
+                                return View("ModificationIntervention", vm);
                             }
                         }
                     }
-
-                    // Récupérer la session VM
-                    ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
-                    Model.IdIntervCom = id;
-                    Model.OpenModifInter = vm.Ouvert;
-                    Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
-                    // Sauvegarder la session data du view model car il a les infos sur l'intervention complète
-                    this.HttpContext.AddToSession("ModifMaintVM", Model);
-
-                    ViewBag.modalModif = "";
-                    return View("ModificationIntervention", Model);
                 }
+
+                // Récupérer la session VM
+                ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+                Model.IdIntervCom = id;
+                Model.OpenModifInter = vm.Ouvert;
+                Model.ListEquipsCommuns = modifMaintDb.ListMaintAdj(maint.id);
+                // Sauvegarder la session data du view model car il a les infos sur l'intervention complète
+                this.HttpContext.AddToSession("ModifMaintVM", Model);
+
+                ViewBag.modalModif = "";
                 
+                return View("ModificationIntervention", Model);                
             }
             
         }
