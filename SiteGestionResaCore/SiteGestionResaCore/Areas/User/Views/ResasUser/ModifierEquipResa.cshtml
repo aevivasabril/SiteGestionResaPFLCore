@@ -37,6 +37,7 @@
                         <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="PreSupprimerResa" asp-area="User" asp-controller="ResasUser" asp-route-id="@r.IdResa">
                             <span class="fas fa-trash"></span>
                         </a>
+                        <a asp-action="ModifierResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@r.IdResa">Modifier dates</a>
                     </td>
                 </tr>
             }
@@ -69,7 +70,7 @@
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold">
                         Cette réservation sera supprimée définitivement de votre essai, on continue?
-                        @Html.HiddenFor(m=>m.IdEssai)
+                        @Html.HiddenFor(m => m.IdEssai)
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -81,6 +82,9 @@
     </div>
 </form>
 
+<!-- Modal pour affichage des infos "essai"-->
+<div id="ResaXModif"></div>
+
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
     <script>
@@ -91,5 +95,19 @@
             }
         }
         $('#ConfirmSupp').modal('@ViewBag.modalConfirm');
+
+        function ModifDatesResa(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("ModifierResa", "ResasUser", new { Area = "User" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#ResaXModif").html(html);
+                        $("#ModifDates").modal('show');
+                    }
+                });
+            }
+        }
     </script>
 }

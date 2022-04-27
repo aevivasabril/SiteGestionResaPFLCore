@@ -17,15 +17,18 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         private readonly GestionResaContext resaDB;
         private readonly ILogger<ResasUserDB> logger;
         private readonly UserManager<utilisateur> userManager;
+        private readonly IReservationDb reservationDb;
 
         public ResasUserDB(
             GestionResaContext resaDB,
             ILogger<ResasUserDB> logger,
-            UserManager<utilisateur> userManager)
+            UserManager<utilisateur> userManager,
+            IReservationDb reservationDb)
         {
             this.resaDB = resaDB;
             this.logger = logger;
             this.userManager = userManager;
+            this.reservationDb = reservationDb;
         }
         /// <summary>
         /// Obtenir les essais crées par l'utilisateur authentifié
@@ -488,27 +491,117 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return IsChangeOk;
         }
 
-        /*private bool IsEssaiReadyToSupp(int IdEssai)
+        public equipement ObtenirEquipement(int IdResa)
         {
-            var essai = resaDB.essai.First(e => e.id == IdEssai);
-            // si l'essai est refusé ou annulé alors essai non modifiable
-            if (essai.status_essai == EnumStatusEssai.Refuse.ToString() || essai.status_essai == EnumStatusEssai.Canceled.ToString())
-                return false;
-            else // Essais modifiables mais uniquement si l'essai n'est pas passé
+            var resa = resaDB.reservation_projet.First(r => r.id == IdResa);
+            return resaDB.equipement.First(r => r.id == resa.equipementID);
+        }
+
+        /// <summary>
+        /// Méthode permettant de retourner les réservations à afficher sur le calendrier
+        /// </summary>
+        /// <param name="IsForOneWeek"> boolean true ou false pour indiquer si l'affichage est de 7 jours ou pas</param>
+        /// <param name="idEquipement"> id de l'équipement</param>
+        /// <param name="DateDu"> date à partir de laquelle on récupére les réservations</param>
+        /// <param name="DateAu"> date jusqu'à laquelle on récupére les réservations</param>
+        /// <returns> liste des réservations </returns>
+        public List<ReservationsJour> DonneesCalendrierEquipement(bool IsForOneWeek, int idEquipement, DateTime? DateDu, DateTime? DateAu)
+        {
+            // Variables 
+            List<ReservationsJour> ListResas = new List<ReservationsJour>();  // Liste des réservations pour une semaine ou pour une durée déterminée
+            ReservationsJour ResaJour = new ReservationsJour(); // Reservation pour une journée defini 
+            DateTime TodayDate = new DateTime(); // Datetime pour obtenir la date actuelle
+            DateTime DateRecup = new DateTime();
+            int NbJours = 0;
+
+            //Afficher toujours à partir du lundi de la semaine en cours 
+            TodayDate = DateTime.Now;
+            DayOfWeek dow = TodayDate.DayOfWeek;
+
+            #region Déterminer s'il s'agit d'un calendrier pour une semaine ou pour une durée déterminée
+
+            switch (IsForOneWeek)
             {
-                // vérifier si l'essai est modifiable ou pas en regardant les réservations (dates et confidentialité) 
-                var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
+                case true:
+                    // Revenir toujours au lundi de la semaine en cours
+                    if (dow == DayOfWeek.Tuesday) TodayDate = TodayDate.AddDays(-1);
+                    if (dow == DayOfWeek.Wednesday) TodayDate = TodayDate.AddDays(-2);
+                    if (dow == DayOfWeek.Thursday) TodayDate = TodayDate.AddDays(-3);
+                    if (dow == DayOfWeek.Friday) TodayDate = TodayDate.AddDays(-4);
+                    if (dow == DayOfWeek.Saturday) TodayDate = TodayDate.AddDays(-5);
+                    if (dow == DayOfWeek.Sunday) TodayDate = TodayDate.AddDays(-6);
 
-                // Retrouver la date la plus recente des réservations
-                var dateInf = resas.OrderBy(r => r.date_debut).ToList();
+                    NbJours = 7;
+                    // Ajouter l'heure (à 7h00) car sinon on va avoir un problème pour faire la comparaison lors de la récupération des "essai"
+                    DateRecup = new DateTime(TodayDate.Year, TodayDate.Month, TodayDate.Day, 7, 0, 0, DateTimeKind.Local);
+                    break;
+                case false:
+                    // Calculer la difference des jours entre la date debut d'affichage et la date fin d'affichage
+                    if (DateDu.Equals(DateAu))
+                    {
+                        // Si la personne souhaite afficher qu'un jour pour le calendrier, afficher la semaine pour éviter d'afficher qu'une colonne
+                        NbJours = 7;
+                    }
+                    else
+                    {
+                        NbJours = (DateAu.Value - DateDu.Value).Days;
+                        NbJours = NbJours + 1;  // Car il compte pas la bonne quantité 
+                        if (NbJours < 7) // Afficher au moins une semaine 
+                            NbJours = 7;
 
-                TimeSpan diff = DateTime.Today - dateInf[0].date_debut;
-                 
-                if (diff.Days<2) // Permettre de supprimer une réservation maximum 2 jours après le début de l'essai
-                    return true;
-                else
-                    return false;
+                    }
+                    // Ajouter l'heure (à 7h00) car sinon on va avoir un problème pour faire la comparaison lors de la récupération des "essai"
+                    DateRecup = new DateTime(DateDu.Value.Year, DateDu.Value.Month, DateDu.Value.Day, 7, 0, 0, DateTimeKind.Local);
+                    break;
             }
-        }*/
+
+            #endregion
+
+            #region Recueil des réservations pour la durée demandée
+
+            // for pour recupérer les réservations des N jours à partir du lundi
+            for (int i = 0; i < NbJours; i++)
+            {
+                // Obtenir l'emploi du temps du jour de la semaine i pour un équipement
+                ResaJour = reservationDb.ObtenirReservationsJourEssai(DateRecup, idEquipement);
+                // ajouter à la liste de la semaine
+                ListResas.Add(ResaJour);
+                // incrementer le nombre des jours à partir du lundi
+                DateRecup = DateRecup.AddDays(1);
+            }
+
+            #endregion 
+
+            return ListResas;
+        }
+
+        public bool ChangerDatesResa(DateTime dateDebut, DateTime dateFin, int IdResa)
+        {
+            try
+            {
+                var resa = resaDB.reservation_projet.First(r => r.id == IdResa);
+                resa.date_debut = dateDebut;
+                resa.date_fin = dateFin;
+                resaDB.SaveChanges();
+            }
+            catch(Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la suppression réservation");
+                return false;
+            }
+
+            return true;
+        }
+
+        public projet ObtenirProjet(int IdProjet)
+        {
+            return resaDB.projet.First(p => p.id == IdProjet);
+        }
+
+        public void UpdateStatusEssai(essai essai)
+        {
+            essai.status_essai = EnumStatusEssai.WaitingValidation.ToString();
+            resaDB.SaveChanges();
+        }
     }
 }
