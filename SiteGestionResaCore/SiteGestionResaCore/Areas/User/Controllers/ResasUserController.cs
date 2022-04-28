@@ -598,13 +598,13 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                     switch (Essai.confidentialite)
                     {
                         case "Ouvert":
-                            isResaOkToAdd = reservationDb.VerifDisponibilitéEquipementOuvert(debutToSave, finToSave, ModifDatesVM.IdEquipement);
+                            // Car il s'agit d'une modification on utilise une methode differente 
+                            isResaOkToAdd = reservationDb.DispoEssaiOuvertPourAjout(debutToSave, finToSave, ModifDatesVM.IdEquipement, Essai.id);
                             if (isResaOkToAdd == false)
                             {
                                 ModelState.AddModelError("", "Equipement indisponible pour les dates choisies. Veuillez rectifier votre modification de réservation");
                                 return View("ModificationDates", ModifDatesVM);
-                            }
-                            
+                            }                            
                             break;
                         case "Restreint":
                             isResaOkToAdd = reservationDb.DispoEssaiRestreintPourAjout(debutToSave, finToSave, ModifDatesVM.IdEquipement, Essai.id);
@@ -657,7 +657,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
                         mssLogis += @" <tr>"+ "<td>" + eq.nom
                                        + "   </td>" + "<td>   " + reser.date_debut.ToString()
-                                       + "   </td>" + "<td>   " + reser.date_debut.ToString()
+                                       + "   </td>" + "<td>   " + reser.date_fin.ToString()
                                        + "   </td> </tr>";
 
                         // Envoyer le mail récapitulatif utilisateur
