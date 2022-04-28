@@ -491,10 +491,9 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
             return IsChangeOk;
         }
 
-        public equipement ObtenirEquipement(int IdResa)
+        public equipement ObtenirEquipement(int IdEquipement)
         {
-            var resa = resaDB.reservation_projet.First(r => r.id == IdResa);
-            return resaDB.equipement.First(r => r.id == resa.equipementID);
+            return resaDB.equipement.First(r => r.id == IdEquipement);
         }
 
         /// <summary>
@@ -602,6 +601,15 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         {
             essai.status_essai = EnumStatusEssai.WaitingValidation.ToString();
             resaDB.SaveChanges();
+        }
+
+        /// <summary>
+        /// Obtenir la liste des admin "logistic" 
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<utilisateur>> ObtenirUsersLogisticAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("Logistic");
         }
     }
 }

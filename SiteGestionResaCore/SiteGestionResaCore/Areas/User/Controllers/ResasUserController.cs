@@ -12,6 +12,7 @@ using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
+using SiteGestionResaCore.Services;
 
 namespace SiteGestionResaCore.Areas.User.Controllers
 {
@@ -21,16 +22,19 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         private readonly UserManager<utilisateur> userManager;
         private readonly IResasUserDB resasUserDB;
         private readonly IReservationDb reservationDb;
+        private readonly IEmailSender emailSender;
 
         public ResasUserController(
             UserManager<utilisateur> userManager, 
             IResasUserDB resasUserDB,
-            IReservationDb reservationDb
+            IReservationDb reservationDb,
+            IEmailSender emailSender
             )
         {
             this.userManager = userManager;
             this.resasUserDB = resasUserDB;
             this.reservationDb = reservationDb;
+            this.emailSender = emailSender;
         }
 
         public async Task<IActionResult> MesReservationsAsync()
@@ -446,7 +450,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
         {
             ModifDatesVM vm = new ModifDatesVM();
             var resa = resasUserDB.ObtenirResa(id.Value);
-            var equip = resasUserDB.ObtenirEquipement(id.Value);
+            var equip = resasUserDB.ObtenirEquipement(resa.equipementID);
             vm.NomEquipement = equip.nom;
             vm.IdEquipement = equip.id;
             vm.IdEssai = resa.essaiID;
@@ -498,8 +502,11 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             DateTime debutToSave = new DateTime();
             DateTime finToSave = new DateTime();
             string mssLogis = "";
-            string messUser = "";
             var user = await userManager.FindByIdAsync(User.GetUserId());           // Utilisateur qui modifie la date
+                                                                                    // Retry pour envoi mail
+            int NumberOfRetries = 5;
+            var retryCount = NumberOfRetries;
+            var success = false;
 
             // Récupérer la session "ModifDatesVM"
             ModifDatesVM ModifDatesVM = HttpContext.GetFromSession<ModifDatesVM>("ModifDatesVM");
@@ -643,7 +650,6 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
                         mssLogis += @"<table>
                                 <tr>
-                                    <th> Zone </th>
                                     <th> Equipement </th>
                                     <th> Date début </th>
 	                                <th> Date fin </th>
@@ -664,7 +670,41 @@ namespace SiteGestionResaCore.Areas.User.Controllers
 
                         // Changer le status de l'essai à Waiting4Valid
                         resasUserDB.UpdateStatusEssai(Essai);
-                    }                         
+                       
+                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                        #region Envoi de mail notifications aux "Admin"/"Logistic"
+
+                        // récupérer les "Administrateurs" dont ils ont un rôle supplementaire égal à "Logistic"
+                        IList<utilisateur> UsersLogistic = await resasUserDB.ObtenirUsersLogisticAsync();
+                       
+                        for (int index = 0; index < UsersLogistic.Count(); index++)
+                        {
+                            NumberOfRetries = 5;
+                            retryCount = NumberOfRetries;
+                            success = false;
+
+                            while (!success && retryCount > 0)
+                            {
+                                try
+                                {
+                                    await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Modification réservation à valider", mssLogis);
+                                    success = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    retryCount--;
+
+                                    if (retryCount == 0)
+                                    {
+                                        ModelState.AddModelError("", "Problème de connexion pour l'envoie de mail! : " + e.Message + ".");
+                                        return View("ModificationDates", ModifDatesVM);  //or handle error and break/return
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+                    }
                 }
                 else
                 {

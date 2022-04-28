@@ -63,7 +63,7 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         bool AnnulerEssai(int IdEssai, string RaisonAnnulation);
 
-        equipement ObtenirEquipement(int IdResa);
+        equipement ObtenirEquipement(int IdEquipement);
 
         List<ReservationsJour> DonneesCalendrierEquipement(bool IsForOneWeek, int idEquipement, DateTime? DateDu, DateTime? DateAu);
 
@@ -73,5 +73,6 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
 
         void UpdateStatusEssai(essai ess);
 
+        Task<IList<utilisateur>> ObtenirUsersLogisticAsync();
     }
 }
