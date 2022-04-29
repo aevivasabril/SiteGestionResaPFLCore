@@ -809,7 +809,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                         }
 
                         TimeSpan diff = debutToSave - DateTime.Now;
-                        if (zonesReservation.IdEssaiXAjoutEquip == 0) // Dans le cas de réservation standard vérifier le seuil de 7 jours avant 
+                        if (zonesReservation.IdEssaiXAjoutEquip == 0) // Dans le cas de réservation standard vérifier le seuil de 3 jours avant 
                         {
                             if (diff.Days < 3 && IsLogistic == false) // Délai de 3 jours pour les personnes qui sont pas dans le groupe des utilisateurs "Logistic"
                             {

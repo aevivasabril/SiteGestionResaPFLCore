@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Reservation.Data;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
@@ -61,5 +62,17 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
         bool SupprimerResa(int idResa);
 
         bool AnnulerEssai(int IdEssai, string RaisonAnnulation);
+
+        equipement ObtenirEquipement(int IdEquipement);
+
+        List<ReservationsJour> DonneesCalendrierEquipement(bool IsForOneWeek, int idEquipement, DateTime? DateDu, DateTime? DateAu);
+
+        bool ChangerDatesResa(DateTime dateDebut, DateTime dateFin, int IdResa);
+
+        projet ObtenirProjet(int IdProjet);
+
+        void UpdateStatusEssai(essai ess);
+
+        Task<IList<utilisateur>> ObtenirUsersLogisticAsync();
     }
 }

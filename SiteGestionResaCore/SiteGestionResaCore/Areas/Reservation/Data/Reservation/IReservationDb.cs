@@ -42,5 +42,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         string ObtenirNumGMAOEquip(int IdEquipement);
 
+        bool DispoEssaiOuvertPourAjout(DateTime dateDebut, DateTime dateFin, int idEquipement, int IdEssai);
+
     }
 }
