@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ using SiteGestionResaCore.Models;
 namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 {
     [Area("DonneesPGD")]
+    [Authorize(Roles = "Admin, MainAdmin")]
     public class CreationEntrepotController : Controller
     {
         private readonly IEssaisXEntrepotDB entrepotDB;

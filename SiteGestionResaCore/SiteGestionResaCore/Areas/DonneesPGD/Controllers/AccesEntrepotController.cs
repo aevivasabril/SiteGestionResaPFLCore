@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 using System.IO;
 using Ionic.Zip;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 {
     [Area("DonneesPGD")]
+    [Authorize(Roles = "Admin, MainAdmin")]
     public class AccesEntrepotController : Controller
     {
         private readonly IAccesEntrepotDB accesEntrepotDB;
