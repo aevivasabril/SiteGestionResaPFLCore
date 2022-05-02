@@ -22,6 +22,8 @@ namespace SiteGestionResaCore.Data
         public string description_projet { get; set; }
         public DateTime date_creation { get; set; }
         public int compte_userID { get; set; }
+        public bool? entrepot_supprime { get; set; }
+        public DateTime? date_creation_entrepot { get; set; }
 
         public virtual organisme organisme { get; set; }
         public virtual ICollection<essai> essai { get; set; }

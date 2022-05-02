@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220215162146_AjouterTableDocEssaiXPgd")]
+    partial class AjouterTableDocEssaiXPgd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,30 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
+                            ConcurrencyStamp = "c1e92d53-c07b-42e7-aa0c-c0e48b046b52",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
+                            ConcurrencyStamp = "85f61371-d4f9-4bfd-a9e5-a29b5a089809",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
+                            ConcurrencyStamp = "d6066292-91ee-4e0d-8272-6cfb1289b2c0",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
+                            ConcurrencyStamp = "ef550ef7-7bb0-41e3-a6ab-2de194aa4101",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
+                            ConcurrencyStamp = "be1e56da-6c1b-4357-9734-bddd9660bd47",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -180,7 +187,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.ToTable("AspNetUserTokens");
                 });
-
 
             modelBuilder.Entity("SiteGestionResaCore.Data.activite_pfl", b =>
                 {
@@ -359,7 +365,7 @@ namespace SiteGestionResaCore.Migrations
                     b.Property<DateTime>("date_creation")
                         .HasColumnType("datetime");
 
-                    b.Property<int?>("equipementID")
+                    b.Property<int>("equipementID")
                         .HasColumnType("int");
 
                     b.Property<int>("essaiID")
@@ -370,9 +376,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
-                    b.Property<int>("type_activiteID")
-                        .HasColumnType("int");
-
                     b.Property<int>("type_documentID")
                         .HasColumnType("int");
 
@@ -382,41 +385,9 @@ namespace SiteGestionResaCore.Migrations
 
                     b.HasIndex("essaiID");
 
-                    b.HasIndex("type_activiteID");
-
                     b.HasIndex("type_documentID");
 
                     b.ToTable("doc_essai_pgd");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.doc_fiche_materiel", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<byte[]>("contenu_fiche")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)")
-                        .IsUnicode(false);
-
-                    b.Property<DateTime>("date_modification")
-                        .HasColumnType("datetime");
-
-                    b.Property<int>("equipementID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("nom_document")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.HasIndex("equipementID");
-
-                    b.ToTable("doc_fiche_materiel");
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.doc_qualite", b =>
@@ -426,15 +397,12 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte[]>("contenu_doc_qualite")
+                    b.Property<string>("chemin_document")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)")
+                        .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
-                    b.Property<DateTime?>("date_modif_doc")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("description_doc_qualite")
+                    b.Property<string>("description_doc")
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
@@ -443,15 +411,30 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
-                    b.Property<string>("nom_rubrique_doc")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
                     b.HasKey("id");
 
                     b.ToTable("doc_qualite");
-                   
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\politique-qualité.pdf",
+                            nom_document = "Politique qualité"
+                        },
+                        new
+                        {
+                            id = 2,
+                            chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\certificat-lrqa.pdf",
+                            description_doc = "Document de certification norme ISO 9001",
+                            nom_document = "Certificat LRQA"
+                        },
+                        new
+                        {
+                            id = 3,
+                            chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf",
+                            nom_document = "Organigramme de la Plate-forme LAIT"
+                        });
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.enquete", b =>
@@ -495,9 +478,16 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    
                     b.Property<int?>("activiteID")
                         .HasColumnType("int");
+
+                    b.Property<string>("cheminFicheMateriel")
+                        .HasColumnType("varchar(max)")
+                        .IsUnicode(false);
+
+                    b.Property<string>("cheminFicheMetrologie")
+                        .HasColumnType("varchar(max)")
+                        .IsUnicode(false);
 
                     b.Property<bool?>("mobile")
                         .HasColumnType("bit");
@@ -2060,15 +2050,9 @@ namespace SiteGestionResaCore.Migrations
                     b.Property<DateTime>("date_creation")
                         .HasColumnType("datetime");
 
-                    b.Property<DateTime?>("date_creation_entrepot")
-                        .HasColumnType("datetime");
-
                     b.Property<string>("description_projet")
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
-
-                    b.Property<bool?>("entrepot_supprime")
-                        .HasColumnType("bit");
 
                     b.Property<string>("financement")
                         .HasColumnType("varchar(max)")
@@ -2512,33 +2496,19 @@ namespace SiteGestionResaCore.Migrations
                         .IsRequired();
                 });
 
-			modelBuilder.Entity("SiteGestionResaCore.Data.doc_fiche_materiel", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
-                        .WithMany("doc_fiche_materiel")
-                        .HasForeignKey("equipementID")
-                        .HasConstraintName("FK_doc_fiche_materiel_equipement")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SiteGestionResaCore.Data.doc_essai_pgd", b =>
                 {
                     b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
                         .WithMany("doc_essai_pgd")
                         .HasForeignKey("equipementID")
-                        .HasConstraintName("FK_doc_essai_pgd_equipement");
+                        .HasConstraintName("FK_doc_essai_pgd_equipement")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SiteGestionResaCore.Data.essai", "essai")
                         .WithMany("doc_essai_pgd")
                         .HasForeignKey("essaiID")
                         .HasConstraintName("FK_doc_essai_pgd_essai")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SiteGestionResaCore.Data.activite_pfl", "activite_pfl")
-                        .WithMany("doc_essai_pgd")
-                        .HasForeignKey("type_activiteID")
-                        .HasConstraintName("FK_doc_essai_pgd_activite_pfl")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -1,0 +1,315 @@
+﻿@model CreationEntrepotVM
+@{
+    ViewData["Title"] = "CreationEntrepotEssai";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+@if (Model.AjoutDocs == true)
+{
+    <h3 class="text-center"><strong>Ajouter des documents dans l'entrepôt pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>   
+}
+else
+{
+    <h3 class="text-center"><strong>Creation d'entrepôt selon PGD PFL pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>
+    <h6 class="text-center">Avant de créer un entrepôt, assurez-vous que l'essai est fini</h6>
+}
+
+<br />
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:red"><strong> @ViewBag.Message</strong> </h5>
+}
+
+<hr />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<form asp-action="ValiderCreationEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD" method="post">
+    <!--Informations Essai-->
+    <div class="form-row">
+        <div class="col-sm-6">
+            Le document contenant les informations essai sera généré automatiquement
+        </div>
+        <div class="col-sm-4 offset-2">
+            <a class="btn btn-secondary" href="#" onclick="ModalInfosEssai(@Model.idEssai)">Voir informations essai N° @Model.idEssai</a>
+        </div>
+    </div>
+    <hr />
+    <!--Matière première et ingredients (PARTIE 1)-->
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Matière première et ingredients</strong></h4>
+        </div>
+        <br />
+    </div>
+    <div class="form-row text-center">
+        <div class="col-sm-2 offset-1">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="1">Matières premières</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="3">Matière première 1</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="4">Matière première 2</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="5">Matière première 3</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="2">Ingredients</a>
+        </div>
+    </div>
+
+    <br />
+    <div class="form-row text-center">
+        <div class="col-sm-12 col-md-12">
+            <h6><strong>Récapitulatif Documents ajoutés</strong></h6>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom document</th>
+                        <th scope="col">Type données</th>
+                        <th scope="col">Type d'activité</th>
+                        <th scope="col">Supprimer?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ListDocsPartieUn.Count; i++)
+                    {
+                        <tr>
+                            <th style="color:green">@Model.ListDocsPartieUn[i].NomDocument</th>
+                            <td>@Model.ListDocsPartieUn[i].TypeDonnees</td>
+                            <td>@Model.ListDocsPartieUn[i].TypeActivite</td>
+                            <td>
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@i">
+                                    <span class="fas fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <!--Equipements réservés pour ajout des documents-->
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Equipements réservés pour ajout des documents</strong></h4>
+        </div>
+        <br />
+    </div>
+    <div class="form-row">
+        <div class="col-md-8 text-center">
+            <br />
+            <h6>Cliquez sur les options des documents pour charger des fichiers (pdf, word, etc).</h6>
+            <h6 style="color:blue">NOTE: Les données PcVue ont une durée de vie de 3 mois. 
+            Elles seront enregistrées automatiquement si l'essai date de moins de 3 moins. Rajoutez les fichiers s'ils sont indiqués "Données indisponibles"</h6>
+            <br />
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Equipement</th>
+                        <th scope="col">Fichier PcVue?</th>
+                        <th scope="col">Ajouter des fichiers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var resa in Model.ListReservationsXEssai)
+                    {
+                        <tr>
+                            <th>@resa.NomEquipement</th>
+                            <td style="color:@resa.color">@resa.FichierPcVue</td>
+                            <td style="width: 15rem;">
+                                <a class="btn-link" asp-action="OuvrirUploadDocTwo" asp-controller="CreationEntrepot" asp-area="DonneesPGD" asp-route-id="@resa.idResa">Ajouter des fichiers</a>
+                                <br>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3 offset-1">
+            <div class="card text-dark bg-light mb-3">
+                <div class="card-header">
+                    Types des documents
+                </div>
+                <div class="card-body">
+                    @foreach (var typ in Model.ListeTypeDoc)
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label><strong>@typ.identificateur :</strong> @typ.nom_document</label>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row text-center">
+        <div class="col-sm-12 col-md-12">
+            <h6><strong>Récapitulatif documents ajoutés</strong></h6>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom du document</th>
+                        <th scope="col">Equipement</th>
+                        <th scope="col">Type des données</th>
+                        <th scope="col">Supprimer?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int j = 0; j < Model.ListDocsPartieDeux.Count(); j++)
+                    {
+                        <tr>
+                            <th style="color:green">@Model.ListDocsPartieDeux[j].NomDocument</th>
+                            <td>@Model.ListDocsPartieDeux[j].NomEquipement</td>
+                            <td>@Model.ListDocsPartieDeux[j].TypeDonnees</td>
+                            <td>
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieDeux" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@j">
+                                    <span class="fas fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <br />
+            @if (Model.AjoutDocs == true)
+            {
+                <input type="submit" class="btn navbar-inra" value="Ajouter documents" />
+            }
+            else
+            {
+                <input type="submit" class="btn navbar-inra" value="Valider création entrepôt" />
+            }
+        </div>
+        <div class="row justify-content-center">
+            @if (Model.AjoutDocs == true)
+            {
+                <a asp-action="MesEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD">Revenir à "Mes entrepôts"</a>
+            }
+            else
+            {
+                <a asp-action="CreerEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD">Revenir à la page précedente</a>
+            }
+        </div>
+    </div>
+</form>
+
+<form asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-action="AjouterDocument" method="post" enctype="multipart/form-data">
+    <!-- Modal pop-up pour ajout de document Matière première et ingredients-->
+    <div class="modal fade" id="AddingDoc" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Ajoutez des documents pour la rubrique "@Model.NomActivite" </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <div class="form-row">
+                        <input type="file" name="file" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="text" autocomplete="off" placeholder="Description du fichier" name="description" required />
+                    </div>
+                    <div class="form-row">
+                        @Html.LabelFor(m => m.TypeDocumentID, new { @class = "col-md-3 col-lg-3 control-label" })
+                        <select asp-for="TypeDocumentID" asp-items="@Model.TypeDocumentItem" class="form-control">
+                            <option value="-1">- Type de document -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.TypeDocumentID, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(m => m.IDActivite)
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Ajouter document" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-action="AjouterDocumentXEquip" method="post" enctype="multipart/form-data">
+    <!-- Modal pop-up pour ajout de document Matière première et ingredients-->
+    <div class="modal fade" id="AddingDocXEquip" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Ajoutez des documents pour l'équipement "@Model.NomEquipement" </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <div class="form-row">
+                        <input type="file" name="file" required />
+                    </div>
+                    <div class="form-row">
+                        <input type="text" autocomplete="off" placeholder="Description du fichier" name="description" required />
+                    </div>
+                    <div class="form-row">
+                        @Html.LabelFor(m => m.TypeDocumentID, new { @class = "col-md-3 col-lg-3 control-label" })
+                        <select asp-for="TypeDocumentID" asp-items="@Model.TypeDocumentItem" class="form-control">
+                            <option value="-1">- Type de document -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.TypeDocumentID, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(m => m.IDActivite)
+                        @Html.HiddenFor(m => m.IDEquipement)
+                        @Html.HiddenFor(m => m.idResa)
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Ajouter document" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div id="InfosEssai"></div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.ModalDocOne == null)
+            {
+                ViewBag.ModalDocOne = "hide";
+            }
+            if (ViewBag.ModalDocTwo == null)
+            {
+                ViewBag.ModalDocTwo = "hide";
+            }
+        }
+        $('#AddingDoc').modal('@ViewBag.ModalDocOne');
+        $('#AddingDocXEquip').modal('@ViewBag.ModalDocTwo');
+
+        function ModalInfosEssai(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+    </script>
+}

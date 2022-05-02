@@ -1,0 +1,112 @@
+﻿@model EssaisXEntrepotVM
+@{
+    ViewData["Title"] = "ListeEssaisXEntrepot";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h1 class="text-center">Créer un entrepôt des données selon PGD Plate-forme</h1>
+<br />
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <h5 class="text-center">Si vous souhaitez créer un entrepôt des données pour stocker vos documents par essai. Cliquez sur le lien.</h5>
+        <h5 class="text-center">NOTE: Les données génerées à partir des pilotes seront récupéres automatiquement.</h5>
+        <br />
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Projet</th>
+                            <th scope="col">Numéro projet</th>
+                            <th scope="col">Responsable projet</th>
+                            <th scope="col">Infos Essai</th>
+                            <th scope="col">Equipements réservées</th>
+                            <th scope="col">Date création</th>
+                            <th scope="col">Créer un Entrepôt?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.InfosResasSansEntrepot)
+                        {
+                            <tr>
+                                <td><a href="#" onclick="ModalInfosProjet(@x.idProj)">@x.NomProjet</a></td>
+                                <td>@x.NumProjet</td>
+                                <td>@x.MailRespProj</td>
+                                <td><a href="#" onclick="ModalInfosEssai(@x.idEssai)">@x.TitreEssai</a></td>
+                                <td><a href="#" onclick="ModalEquipReserv(@x.idEssai)">Equipements réservés</a></td>
+                                <td>@x.DateSaisieEssai</td>
+                                <td><a class="btn navbar-inra" asp-action="CreationEntrepotEssai" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@x.idEssai">Créer entrepôt</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour affichage des infos "projet"-->
+<div id="InfosProjet"></div>
+
+<!-- Modal pour affichage des infos "essai"-->
+<div id="InfosEssai"></div>
+
+<!-- Modal pour affichage des infos "Reservations"-->
+<div id="EquipReserves"></div>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+            if (ViewBag.modalResas == null)
+            {
+                ViewBag.modalResas = "hide";
+            }
+        }
+        $('#ResaModal').modal('@ViewBag.modalResas');
+
+        function ModalInfosEssai(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosEssai").html(html);
+                        $("#EssaiModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalInfosProjet(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirInfosProj", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#InfosProjet").html(html);
+                        $("#ProjModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function ModalEquipReserv(id) {
+            if (id)
+            {
+                $.ajax({
+                    url: "@Url.Action("VoirReservations", "Consultation", new { Area = "Reservation" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) {
+                        $("#EquipReserves").html(html);
+                        $("#ResaModal").modal('show');
+                    }
+                });
+            }
+    }
+
+    </script>
+}

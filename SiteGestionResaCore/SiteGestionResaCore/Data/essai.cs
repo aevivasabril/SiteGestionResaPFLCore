@@ -9,6 +9,7 @@ namespace SiteGestionResaCore.Data
         public essai()
         {
             reservation_projet = new HashSet<reservation_projet>();
+            doc_essai_pgd = new HashSet<doc_essai_pgd>();
         }
 
         public int id { get; set; }
@@ -34,11 +35,13 @@ namespace SiteGestionResaCore.Data
         public DateTime? date_inf_confidentiel { get; set; }
         public DateTime? date_sup_confidentiel { get; set; }
         public int? enqueteId { get; set; }
+        public bool? entrepot_cree { get; set; }
 
         public virtual utilisateur manipulateur { get; set; }
         public virtual projet projet { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
 
         public virtual enquete enquete { get; set; }
+        public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }
     }
 }

@@ -39,6 +39,10 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<resa_maint_equip_adjacent> resa_maint_equip_adjacent { get; set; }
         public virtual DbSet<doc_qualite> doc_qualite { get; set; }
         public virtual DbSet<doc_fiche_materiel> doc_fiche_materiel { get; set; }
+        public virtual DbSet<type_document> type_document { get; set; }
+        public virtual DbSet<activite_pfl> activite_pfl { get; set; }
+        public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,6 +67,7 @@ namespace SiteGestionResaCore.Data.Data
             {
                 entity.Property(e => e.nomTabPcVue).IsUnicode(false);
 
+
                 entity.Property(e => e.nom)
                     .IsRequired()
                     .IsUnicode(false);
@@ -76,6 +81,12 @@ namespace SiteGestionResaCore.Data.Data
                     .HasForeignKey(d => d.zoneID)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_equipement_zone");
+
+                entity.HasOne(d => d.activite_pfl)
+                    .WithMany(p => p.equipement)
+                    .HasForeignKey(d => d.activiteID)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_equipement_activite_pfl");
             });
 
             modelBuilder.Entity<essai>(entity =>
@@ -211,6 +222,8 @@ namespace SiteGestionResaCore.Data.Data
                     .WithMany(p => p.projet)
                     .HasForeignKey(d => d.organismeID)
                     .HasConstraintName("FK_projet_organisme");
+
+                entity.Property(e => e.date_creation_entrepot).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<reservation_projet>(entity =>
@@ -374,6 +387,58 @@ namespace SiteGestionResaCore.Data.Data
                     .HasConstraintName("FK_doc_fiche_materiel_equipement");
             });
 
+            modelBuilder.Entity<type_document>(entity =>
+            {
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+                entity.Property(e => e.identificateur)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<activite_pfl>(entity =>
+            {
+                entity.Property(e => e.nom_activite)
+                    .IsRequired()
+                    .IsUnicode(false);
+                entity.Property(e => e.type_documents)
+                    .IsRequired()
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<doc_essai_pgd>(entity =>
+            {
+                entity.Property(e => e.contenu_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_creation).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.equipementID)
+                    .HasConstraintName("FK_doc_essai_pgd_equipement");
+
+                entity.HasOne(d => d.essai)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.essaiID)
+                    .HasConstraintName("FK_doc_essai_pgd_essai");
+
+                entity.HasOne(d => d.type_document)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.type_documentID)
+                    .HasConstraintName("FK_doc_essai_pgd_type_document");
+
+                entity.HasOne(d => d.activite_pfl)
+                    .WithMany(p => p.doc_essai_pgd)
+                    .HasForeignKey(d => d.type_activiteID)
+                    .HasConstraintName("FK_doc_essai_pgd_activite_pfl");
+            });
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7}, 
@@ -396,60 +461,64 @@ namespace SiteGestionResaCore.Data.Data
                 new zone { id = 18, nom_zone = "Salle AP7 A" }, new zone { id = 19, nom_zone = "Salle AP7 B" }, new zone { id = 20, nom_zone = "Salle AP7 C" }
             });
 
-            modelBuilder.Entity<equipement>().HasData(new equipement[] { new equipement { id = 162, nom = "Balance Arpège 150k", zoneID = 5, numGmao = "BAL0002", mobile = false }, new equipement { id = 163, nom = "Balance 32 Kg (KA32s)", zoneID = 9, numGmao = "BAL0003", mobile = false }, 
-                new equipement { id = 164, nom = "Balance 300Kg (ID2 + KCS300)", zoneID = 3, numGmao = "BAL0004", mobile = false }, new equipement { id = 165, nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)", zoneID = 16, numGmao = "BAL0011", mobile = true }, 
-                new equipement { id = 166, nom = "Balance HBM 60 Kg (WE2110)", zoneID = 1, numGmao = "BAL0054", mobile = true }, new equipement { id = 167, nom = "Balance 60Kg PRECIA MOLEN (X112-A)", zoneID = 17, numGmao = "BAL0057", mobile = true }, 
-                /*new equipement { id = 168, nom = "Analyseur humidité METTLER TOLEDO 71 g (HE73/01)", zoneID = 11, numGmao = "BAL0059", mobile = false }, */new equipement { id = 169, nom = "Brassoires PM", zoneID = 6, numGmao = "BRAS0001", mobile = false }, 
-                new equipement { id = 170, nom = "Mélangeur cuiseur stéphan", zoneID = 9, numGmao = "CUISMEL0001", mobile = false }, new equipement { id = 171, nom = "Echangeur récupérateur", zoneID = 17, numGmao = "ECH0001", mobile = true }, 
-                new equipement { id = 172, nom = "Echangeur avec pompe centrifuge (regulation chaud/froid)", zoneID = 17, numGmao = "ECH0002", mobile = true }, new equipement { id = 173, nom = "Thermorégulateur vulcatherm (membrane)", zoneID = 17, numGmao = "ECH0004", mobile = true },
-                new equipement { id = 174, nom = "Thermorégulateur vulcatherm (séchage)", zoneID = 17, numGmao = "ECH0005", mobile = true }, new equipement { id = 175, nom = "Echangeur avec pompe centrifuge(bleu)", zoneID = 17, numGmao = "ECH0006", mobile = true }, 
-                new equipement { id = 176, nom = "Echangeur avec pompe centrifuge", zoneID = 17, numGmao = "ECH0007", mobile = true }, new equipement { id = 177, nom = "Echangeur avec comptage", zoneID = 17, numGmao = "ECH0009", mobile = true },
-                new equipement { id = 178, nom = "Echangeur à surface raclée Contherm (ESR)", zoneID = 4, numGmao = "ECH0010", mobile = false }, new equipement { id = 179, nom = "Armoire affinage AFV7HC Elimeca 1", zoneID = 16, numGmao = "ECLIM0001", mobile = false }, 
-                new equipement { id = 180, nom = "Armoire affinage AFV7HC Elimeca 2", zoneID = 16, numGmao = "ECLIM0002", mobile = false }, new equipement { id = 181, nom = "Ecrémeuse ELECREM modèle 3 (150L/h)", zoneID = 17, numGmao = "ECREM0001", mobile = true }, 
-                new equipement { id = 182, nom = "Ecrémeuse Westfalia EASYCREAM", zoneID = 3, numGmao = "ECREM0002", mobile = false, nomTabPcVue = "tab_UA_ECREM" }, new equipement { id = 183, nom = "Mini-cuve N°1 (100L)", zoneID = 17, numGmao = "ECUV0003", mobile = true },
-                new equipement { id = 184, nom = "Mini-cuve N°6 (150L)", zoneID = 17, numGmao = "ECUV0004", mobile = true }, new equipement { id = 185, nom = "Mini-cuve N°2 (100L)", zoneID = 17, numGmao = "ECUV0005", mobile = true }, 
-                new equipement { id = 186, nom = "Mini-cuve N°3 (100L)", zoneID = 17, numGmao = "ECUV0006", mobile = true }, new equipement { id = 187, nom = "Mini cuve 150L", zoneID = 17, numGmao = "ECUV0007", mobile = true }, 
-                new equipement { id = 188, nom = "2 cuves maturation 500L", zoneID = 3, numGmao = "ECUV0010", mobile = false, nomTabPcVue = "tab_UA_MAT" }, new equipement { id = 189, nom = "Tank 1000L avec agitation et groupe froid", zoneID = 4, numGmao = "ECUV0012", mobile = false },
-                new equipement { id = 190, nom = "Cuve PPC Châlon-Mégard 1000 litres", zoneID = 7, numGmao = "ECUV0014", mobile = false }, new equipement { id = 191, nom = "Table égouttage PM 1", zoneID = 5, numGmao = "ECUV0016", mobile = true },
-                new equipement { id = 192, nom = "Table égouttage PM 2", zoneID = 5, numGmao = "ECUV0017", mobile = true }, new equipement { id = 193, nom = "Table égouttage PM 3", zoneID = 5, numGmao = "ECUV0018", mobile = true }, 
-                new equipement { id = 194, nom = "Mini-cuve N°8 (150L)", zoneID = 17, numGmao = "ECUV0019", mobile = true }, new equipement { id = 195, nom = "Mini-cuve N°4 (100L)", zoneID = 17, numGmao = "ECUV0020", mobile = true }, 
-                new equipement { id = 196, nom = "Mini-cuve de fabrication 1(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0021", mobile = true }, new equipement { id = 197, nom = "Mini-cuve de fabrication 2(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0022", mobile = true },
-                new equipement { id = 198, nom = "Mini-cuve de fabrication 3(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0023", mobile = true }, new equipement { id = 199, nom = "Tank GEA 550L avec agitation et groupe froid CVB", zoneID = 8, numGmao = "ECUV0025", mobile = false },
-                new equipement { id = 200, nom = "Cuve 2000L avec agitateur", zoneID = 2, numGmao = "ECUV0026", mobile = false, nomTabPcVue= "tab_UA_CUV" }, new equipement { id = 201, nom = "Mini-cuve N°5 (150L)", zoneID = 17, numGmao = "ECUV0027", mobile = true }, 
-                new equipement { id = 202, nom = "Machine emballage sous vide BRITEK SC800L", zoneID = 15, numGmao = "EMB0001", mobile = true }, new equipement { id = 203, nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116", zoneID = 12, numGmao = "EMB0003", mobile = true },
-                new equipement { id = 204, nom = "Chariot dosage ERECAM combidos 102T (doseuse)", zoneID = 9, numGmao = "EMB0004", mobile = true }, new equipement { id = 205, nom = "Etuve biocomcept BC240 FIRLABO", zoneID = 12, numGmao = "ETUV0039", mobile = true }, 
-                new equipement { id = 206, nom = "Homogénéisateur 2 têtes RANNIE", zoneID = 3, numGmao = "HOMO0002", mobile = false }, new equipement { id = 207, nom = "Homogénéisateur 12/51H RANNIE", zoneID = 3, numGmao = "HOMO0003", mobile = false },
-                new equipement { id = 208, nom = "Homogénéisateur Panda", zoneID = 15, numGmao = "HOMO0007", mobile = true }, new equipement { id = 209, nom = "Chariots porte-bassines PM (N°1)", zoneID = 6, numGmao = "MANUT002", mobile = true }, 
-                new equipement { id = 210, nom = "Chariots porte-bassines PM (N°2)", zoneID = 6, numGmao = "MANUT0012", mobile = true }, new equipement { id = 211, nom = "Ensemble NEP", zoneID = 2, numGmao = "MLAV0016", mobile = false, nomTabPcVue = "tab_UA_NEP" }, 
-                new equipement { id = 212, nom = "Système de moulage PM et basculeur", zoneID = 5, numGmao = "MOUL0001", mobile = false }, new equipement { id = 213, nom = "Pilote ultrafiltration TIA spirale", zoneID = 8, numGmao = "PILOT0001", mobile = false, nomTabPcVue = "tab_UA_SPI" }, 
-                new equipement { id = 214, nom = "Pilote UF TIA/PALL 0,02u (JYG)", zoneID = 8, numGmao = "PILOT0002", mobile = false, nomTabPcVue= "tab_UA_UFMF" }, new equipement { id = 215, nom = "Pilote OI NF UF Prolab Milipore", zoneID = 8, numGmao = "PILOT0003", mobile = false }, 
-                new equipement { id = 216, nom = "Pilote filtration engineering (OI et NF)", zoneID = 4, numGmao = "PILOT0004", mobile = false }, new equipement { id = 217, nom = "Pilote de microfiltration MFS1", zoneID = 8, numGmao = "PILOT0005", mobile = true }, 
-                new equipement { id = 218, nom = "Pilote de microfiltration MFMG", zoneID = 3, numGmao = "PILOT0006", mobile = false, nomTabPcVue = "tab_UA_MFMG" }, new equipement { id = 219, nom = "Pilote de microfiltration MFS19", zoneID = 4, numGmao = "PILOT0007", mobile = false }, 
-                new equipement { id = 220, nom = "Pilote de microfiltration GP7", zoneID = 4, numGmao = "PILOT0008", mobile = false, nomTabPcVue= "tab_UA_GP7" }, new equipement { id = 221, nom = "UF TAMI/tech-sep 8 kDa (13 m2)", zoneID = 8, numGmao = "PILOT0009", mobile = false }, 
-                new equipement { id = 222, nom = "Stérilisateur pilote tubulaire électrique ACTINI", zoneID = 3, numGmao = "PILOT0010", mobile = false, nomTabPcVue = "tab_UA_ACT" }, new equipement { id = 223, nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH", zoneID = 8, numGmao = "PILOT0011", mobile = false, nomTabPcVue = "tab_UA_MTH" }, 
-                new equipement { id = 224, nom = "Pilote UF TAMI/Tia 8Kda mobile", zoneID = 8, numGmao = "PILOT0013", mobile = true }, new equipement { id = 225, nom = "Pilote évaporateur à flot tombant FF-1", zoneID = 1, numGmao = "PILOT0014", mobile = false, nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB" },//, cheminFicheMateriel ="M:\\PFL\\Dossier matériel et métrologie\\Dossiers finalisés\\EN-MAT-123_évapo.doc" }, 
-                new equipement { id = 226, nom = "Pilote de microfiltration P3", zoneID = 8, numGmao = "PILOT0015", mobile = false }, new equipement { id = 227, nom = "Pilote de sèchage mono-disperse", zoneID = 1, numGmao = "PILOT0016", mobile = false }, 
-                new equipement { id = 228, nom = "Pilote tour de sèchage MINOR", zoneID = 1, numGmao = "PILOT0017", mobile = false, nomTabPcVue = "tab_UA_SEC" }, new equipement { id = 229, nom = "Pilote VALOBAB (MF et UF) SKID 12EO46", zoneID = 3, numGmao = "PILOT0018", mobile = false, nomTabPcVue= "tab_UA_VALO" }, 
-                new equipement { id = 230, nom = "Pilote UF (optimal)", zoneID = 4, numGmao = "PILOT0019", mobile = false, nomTabPcVue = "tab_UA_OPTIMAL" }, new equipement { id = 231, nom = "Pompe centrifuge 20 à 30 m3/h", zoneID = 17, numGmao = "POMPE0002", mobile = true }, 
-                new equipement { id = 232, nom = "Pompe PCM - 5 m3/h", zoneID = 17, numGmao = "POMPE0003", mobile = true }, new equipement { id = 233, nom = "Pompe disperseur de poudre - TRIBLENDER", zoneID = 17, numGmao = "POMPE0004", mobile = true }, 
-                new equipement { id = 234, nom = "Pompe de transfert de lait 58L/min (bleue)", zoneID = 2, numGmao = "POMPE0006", mobile = true }, new equipement { id = 235, nom = "Presse à fromage verticale", zoneID = 7, numGmao = "PRES0002", mobile = false }, 
-                new equipement { id = 236, nom = "Presse à fromage horizontale", zoneID = 7, numGmao = "PRES0003", mobile = false }, new equipement { id = 237, nom = "Tranche-caillé", zoneID = 6, numGmao = "TRAN0001", mobile = false }, 
-                new equipement { id = 238, nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h", zoneID = 3, numGmao = "ACTALIA", mobile = false }, new equipement { id = 239, nom = "Camion collecte", zoneID = 2, numGmao = "", mobile = true }, 
-                new equipement { id = 240, nom = "Bac de saumurage", zoneID = 10, numGmao = "ECUV0015", mobile = false }, new equipement { id = 241, nom = "3 cuves fromagerie 200 Litres", zoneID = 7, numGmao = "ECUV0034, ECUV0035, ECUV0036", mobile = false }, 
-                new equipement { id = 242, nom = "Hotte PSM", zoneID = 12, numGmao = "", mobile = false }, new equipement { id = 243, nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", zoneID = 8, numGmao = "PILOT0022", mobile = false }, 
-                new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true },
-                new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true },
-                new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true },
+            
+            modelBuilder.Entity<equipement>().HasData(new equipement[] { new equipement { id = 162, nom = "Balance Arpège 150k", zoneID = 5, numGmao = "BAL0002", mobile = false, activiteID = 1 }, new equipement { id = 163, nom = "Balance 32 Kg (KA32s)", zoneID = 9, numGmao = "BAL0003", mobile = false, activiteID = 2 }, 
+                new equipement { id = 164, nom = "Balance 300Kg (ID2 + KCS300)", zoneID = 3, numGmao = "BAL0004", mobile = false, activiteID = 1 }, new equipement { id = 165, nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)", zoneID = 16, numGmao = "BAL0011", mobile = true, activiteID = 2 }, 
+                new equipement { id = 166, nom = "Balance HBM 60 Kg (WE2110)", zoneID = 1, numGmao = "BAL0054", mobile = true, activiteID = 1 }, new equipement { id = 167, nom = "Balance 60Kg PRECIA MOLEN (X112-A)", zoneID = 17, numGmao = "BAL0057", mobile = true, activiteID = 1 }, 
+                /*new equipement { id = 168, nom = "Analyseur humidité METTLER TOLEDO 71 g (HE73/01)", zoneID = 11, numGmao = "BAL0059", mobile = false }, */new equipement { id = 169, nom = "Brassoires PM", zoneID = 6, numGmao = "BRAS0001", mobile = false, activiteID = 14 }, 
+                new equipement { id = 170, nom = "Mélangeur cuiseur stéphan", zoneID = 9, numGmao = "CUISMEL0001", mobile = false, activiteID = 14 }, new equipement { id = 171, nom = "Echangeur récupérateur", zoneID = 17, numGmao = "ECH0001", mobile = true, activiteID = 23 }, 
+                new equipement { id = 172, nom = "Echangeur avec pompe centrifuge (regulation chaud/froid)", zoneID = 17, numGmao = "ECH0002", mobile = true, activiteID = 23 }, new equipement { id = 173, nom = "Thermorégulateur vulcatherm (membrane)", zoneID = 17, numGmao = "ECH0004", mobile = true, activiteID = 23 },
+                new equipement { id = 174, nom = "Thermorégulateur vulcatherm (séchage)", zoneID = 17, numGmao = "ECH0005", mobile = true, activiteID = 23 }, new equipement { id = 175, nom = "Echangeur avec pompe centrifuge(bleu)", zoneID = 17, numGmao = "ECH0006", mobile = true, activiteID = 23 }, 
+                new equipement { id = 176, nom = "Echangeur avec pompe centrifuge", zoneID = 17, numGmao = "ECH0007", mobile = true, activiteID = 23 }, new equipement { id = 177, nom = "Echangeur avec comptage", zoneID = 17, numGmao = "ECH0009", mobile = true, activiteID = 23 },
+                new equipement { id = 178, nom = "Echangeur à surface raclée Contherm (ESR)", zoneID = 4, numGmao = "ECH0010", mobile = false, activiteID = 23 }, new equipement { id = 179, nom = "Armoire affinage AFV7HC Elimeca 1", zoneID = 16, numGmao = "ECLIM0001", mobile = false, activiteID = 14 }, 
+                new equipement { id = 180, nom = "Armoire affinage AFV7HC Elimeca 2", zoneID = 16, numGmao = "ECLIM0002", mobile = false, activiteID = 14 }, new equipement { id = 181, nom = "Ecrémeuse ELECREM modèle 3 (150L/h)", zoneID = 17, numGmao = "ECREM0001", mobile = true, activiteID = 9 }, 
+                new equipement { id = 182, nom = "Ecrémeuse Westfalia EASYCREAM", zoneID = 3, numGmao = "ECREM0002", mobile = false, nomTabPcVue = "tab_UA_ECREM", activiteID = 9 }, new equipement { id = 183, nom = "Mini-cuve N°1 (100L)", zoneID = 17, numGmao = "ECUV0003", mobile = true, activiteID = 6 },
+                new equipement { id = 184, nom = "Mini-cuve N°6 (150L)", zoneID = 17, numGmao = "ECUV0004", mobile = true, activiteID = 6 }, new equipement { id = 185, nom = "Mini-cuve N°2 (100L)", zoneID = 17, numGmao = "ECUV0005", mobile = true, activiteID = 6 }, 
+                new equipement { id = 186, nom = "Mini-cuve N°3 (100L)", zoneID = 17, numGmao = "ECUV0006", mobile = true, activiteID = 6 }, new equipement { id = 187, nom = "Mini cuve 150L", zoneID = 17, numGmao = "ECUV0007", mobile = true, activiteID = 6 }, 
+                new equipement { id = 188, nom = "2 cuves maturation 500L", zoneID = 3, numGmao = "ECUV0010", mobile = false, nomTabPcVue = "tab_UA_MAT", activiteID = 12 }, new equipement { id = 189, nom = "Tank 1000L avec agitation et groupe froid", zoneID = 4, numGmao = "ECUV0012", mobile = false, activiteID = 12 },
+                new equipement { id = 190, nom = "Cuve PPC Châlon-Mégard 1000 litres", zoneID = 7, numGmao = "ECUV0014", mobile = false, activiteID = 15 }, new equipement { id = 191, nom = "Table égouttage PM 1", zoneID = 5, numGmao = "ECUV0016", mobile = true, activiteID = 13 },
+                new equipement { id = 192, nom = "Table égouttage PM 2", zoneID = 5, numGmao = "ECUV0017", mobile = true, activiteID = 13 }, new equipement { id = 193, nom = "Table égouttage PM 3", zoneID = 5, numGmao = "ECUV0018", mobile = true, activiteID = 13 }, 
+                new equipement { id = 194, nom = "Mini-cuve N°8 (150L)", zoneID = 17, numGmao = "ECUV0019", mobile = true, activiteID = 6 }, new equipement { id = 195, nom = "Mini-cuve N°4 (100L)", zoneID = 17, numGmao = "ECUV0020", mobile = true, activiteID = 6 }, 
+                new equipement { id = 196, nom = "Mini-cuve de fabrication 1(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0021", mobile = true, activiteID = 15 }, new equipement { id = 197, nom = "Mini-cuve de fabrication 2(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0022", mobile = true, activiteID = 15 },
+                new equipement { id = 198, nom = "Mini-cuve de fabrication 3(2 cuves 10 litres et 20 litres)", zoneID = 5, numGmao = "ECUV0023", mobile = true, activiteID = 15 }, new equipement { id = 199, nom = "Tank GEA 550L avec agitation et groupe froid CVB", zoneID = 8, numGmao = "ECUV0025", mobile = false, activiteID = 6 },
+                new equipement { id = 200, nom = "Cuve 2000L avec agitateur", zoneID = 2, numGmao = "ECUV0026", mobile = false, nomTabPcVue= "tab_UA_CUV", activiteID = 1 }, new equipement { id = 201, nom = "Mini-cuve N°5 (150L)", zoneID = 17, numGmao = "ECUV0027", mobile = true, activiteID = 6 }, 
+                new equipement { id = 202, nom = "Machine emballage sous vide BRITEK SC800L", zoneID = 15, numGmao = "EMB0001", mobile = true, activiteID = 15 }, new equipement { id = 203, nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116", zoneID = 12, numGmao = "EMB0003", mobile = true, activiteID = 15 },
+                new equipement { id = 204, nom = "Chariot dosage ERECAM combidos 102T (doseuse)", zoneID = 9, numGmao = "EMB0004", mobile = true, activiteID = 17 }, new equipement { id = 205, nom = "Etuve biocomcept BC240 FIRLABO", zoneID = 12, numGmao = "ETUV0039", mobile = true, activiteID = 23 }, 
+                new equipement { id = 206, nom = "Homogénéisateur 2 têtes RANNIE", zoneID = 3, numGmao = "HOMO0002", mobile = false, activiteID = 10 }, new equipement { id = 207, nom = "Homogénéisateur 12/51H RANNIE", zoneID = 3, numGmao = "HOMO0003", mobile = false, activiteID = 10 },
+                new equipement { id = 208, nom = "Homogénéisateur Panda", zoneID = 15, numGmao = "HOMO0007", mobile = true, activiteID = 10 }, new equipement { id = 209, nom = "Chariots porte-bassines PM (N°1)", zoneID = 6, numGmao = "MANUT002", mobile = true, activiteID = 14 }, 
+                new equipement { id = 210, nom = "Chariots porte-bassines PM (N°2)", zoneID = 6, numGmao = "MANUT0012", mobile = true, activiteID = 23 }, new equipement { id = 211, nom = "Ensemble NEP", zoneID = 2, numGmao = "MLAV0016", mobile = false, nomTabPcVue = "tab_UA_NEP", activiteID = 12 }, 
+                new equipement { id = 212, nom = "Système de moulage PM et basculeur", zoneID = 5, numGmao = "MOUL0001", mobile = false, activiteID = 14 }, new equipement { id = 213, nom = "Pilote ultrafiltration TIA spirale", zoneID = 8, numGmao = "PILOT0001", mobile = false, nomTabPcVue = "tab_UA_SPI", activiteID = 19 }, 
+                new equipement { id = 214, nom = "Pilote UF TIA/PALL 0,02u (JYG)", zoneID = 8, numGmao = "PILOT0002", mobile = false, nomTabPcVue= "tab_UA_UFMF", activiteID = 19 }, new equipement { id = 215, nom = "Pilote OI NF UF Prolab Milipore", zoneID = 8, numGmao = "PILOT0003", mobile = false, activiteID = 19 }, 
+                new equipement { id = 216, nom = "Pilote filtration engineering (OI et NF)", zoneID = 4, numGmao = "PILOT0004", mobile = false, activiteID = 18 }, new equipement { id = 217, nom = "Pilote de microfiltration MFS1", zoneID = 8, numGmao = "PILOT0005", mobile = true, activiteID = 19 }, 
+                new equipement { id = 218, nom = "Pilote de microfiltration MFMG", zoneID = 3, numGmao = "PILOT0006", mobile = false, nomTabPcVue = "tab_UA_MFMG", activiteID = 19 }, new equipement { id = 219, nom = "Pilote de microfiltration MFS19", zoneID = 4, numGmao = "PILOT0007", mobile = false, activiteID = 19 }, 
+                new equipement { id = 220, nom = "Pilote de microfiltration GP7", zoneID = 4, numGmao = "PILOT0008", mobile = false, nomTabPcVue= "tab_UA_GP7", activiteID = 19 }, new equipement { id = 221, nom = "UF TAMI/tech-sep 8 kDa (13 m2)", zoneID = 8, numGmao = "PILOT0009", mobile = false, activiteID = 19 }, 
+                new equipement { id = 222, nom = "Stérilisateur pilote tubulaire électrique ACTINI", zoneID = 3, numGmao = "PILOT0010", mobile = false, nomTabPcVue = "tab_UA_ACT", activiteID = 8 }, new equipement { id = 223, nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH", zoneID = 8, numGmao = "PILOT0011", mobile = false, nomTabPcVue = "tab_UA_MTH", activiteID = 8 }, 
+                new equipement { id = 224, nom = "Pilote UF TAMI/Tia 8Kda mobile", zoneID = 8, numGmao = "PILOT0013", mobile = true, activiteID = 19 }, new equipement { id = 225, nom = "Pilote évaporateur à flot tombant FF-1", zoneID = 1, numGmao = "PILOT0014", mobile = false, nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB", activiteID = 20 },//, cheminFicheMateriel ="M:\\PFL\\Dossier matériel et métrologie\\Dossiers finalisés\\EN-MAT-123_évapo.doc" }, 
+                new equipement { id = 226, nom = "Pilote de microfiltration P3", zoneID = 8, numGmao = "PILOT0015", mobile = false, activiteID = 19 }, new equipement { id = 227, nom = "Pilote de sèchage mono-disperse", zoneID = 1, numGmao = "PILOT0016", mobile = false, activiteID = 21 }, 
+                new equipement { id = 228, nom = "Pilote tour de sèchage MINOR", zoneID = 1, numGmao = "PILOT0017", mobile = false, nomTabPcVue = "tab_UA_SEC", activiteID = 21 }, new equipement { id = 229, nom = "Pilote VALOBAB (MF et UF) SKID 12EO46", zoneID = 3, numGmao = "PILOT0018", mobile = false, nomTabPcVue= "tab_UA_VALO", activiteID = 19 }, 
+                new equipement { id = 230, nom = "Pilote UF (optimal)", zoneID = 4, numGmao = "PILOT0019", mobile = false, nomTabPcVue = "tab_UA_OPTIMAL", activiteID = 19 }, new equipement { id = 231, nom = "Pompe centrifuge 20 à 30 m3/h", zoneID = 17, numGmao = "POMPE0002", mobile = true, activiteID = 23 }, 
+                new equipement { id = 232, nom = "Pompe PCM - 5 m3/h", zoneID = 17, numGmao = "POMPE0003", mobile = true, activiteID = 23 }, new equipement { id = 233, nom = "Pompe disperseur de poudre - TRIBLENDER", zoneID = 17, numGmao = "POMPE0004", mobile = true, activiteID = 2 }, 
+                new equipement { id = 234, nom = "Pompe de transfert de lait 58L/min (bleue)", zoneID = 2, numGmao = "POMPE0006", mobile = true, activiteID = 23 }, new equipement { id = 235, nom = "Presse à fromage verticale", zoneID = 7, numGmao = "PRES0002", mobile = false, activiteID = 15 }, 
+                new equipement { id = 236, nom = "Presse à fromage horizontale", zoneID = 7, numGmao = "PRES0003", mobile = false, activiteID = 15 }, new equipement { id = 237, nom = "Tranche-caillé", zoneID = 6, numGmao = "TRAN0001", mobile = false, activiteID = 15 }, 
+                new equipement { id = 238, nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h", zoneID = 3, numGmao = "ACTALIA", mobile = false, activiteID = 9 }, new equipement { id = 239, nom = "Camion collecte", zoneID = 2, numGmao = "", mobile = true, activiteID = 23 }, 
+                new equipement { id = 240, nom = "Bac de saumurage", zoneID = 10, numGmao = "ECUV0015", mobile = false, activiteID = 13 }, new equipement { id = 241, nom = "3 cuves fromagerie 200 Litres", zoneID = 7, numGmao = "ECUV0034, ECUV0035, ECUV0036", mobile = false, activiteID = 15 }, 
+                new equipement { id = 242, nom = "Hotte PSM", zoneID = 12, numGmao = "", mobile = false, activiteID = 23 }, new equipement { id = 243, nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", zoneID = 8, numGmao = "PILOT0022", mobile = false, activiteID = 8 }, 
+                new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true, activiteID = 2 },
+                new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true, activiteID = 2 }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true, activiteID = 1 },
+                new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true, activiteID = 23 }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true, activiteID = 8 },
 
-                new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false }, new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false }, new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false },
-                new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false },
+               
+                new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false, activiteID = 23 }, new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false, activiteID = 23 },
+                new equipement { id = 252, nom = "Salle AP8", zoneID = 15, numGmao = "CHF012", mobile = false, activiteID = 23 },
+                new equipement { id = 253, nom = "Salle AP9", zoneID = 16, numGmao = "CHF014", mobile = false, activiteID = 23 }, new equipement { id = 254, nom = "Bac de saumurage 800 lts", zoneID = 10, numGmao = "ECUV0037", mobile = false, activiteID = 13 },
 
-                new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false },
-                new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false },
-                new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0079", mobile = true },
-                new equipement { id = 261, nom = "Salle Saumurage", zoneID = 10, numGmao = "CHF018", mobile = false }, new equipement { id = 262, nom = "Salle Pâtes molles moulage", zoneID = 5, numGmao = "LAB0048", mobile = false },
-                new equipement { id = 263, nom = "Salle Pâtes molles tranchage", zoneID = 6, numGmao = "LAB0049", mobile = false }, new equipement { id = 264, nom = "Salle Labo", zoneID = 11, numGmao = "LAB0017", mobile = false },
-                new equipement { id = 265, nom = "Salle Pâtes préssées cuites", zoneID = 7, numGmao = "LAB0047", mobile = false }, new equipement { id = 266, nom = "Salle Sthepan", zoneID = 9, numGmao = "LAB0046", mobile = false }
+
+                new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false, activiteID = 8 }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false, activiteID = 13 },
+                new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false, activiteID = 13 }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false, activiteID = 13 },
+                new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false, activiteID = 6 }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0079", mobile = true, activiteID = 2 },
+                new equipement { id = 261, nom = "Salle Saumurage", zoneID = 10, numGmao = "CHF018", mobile = false, activiteID = 13 }, new equipement { id = 262, nom = "Salle Pâtes molles moulage", zoneID = 5, numGmao = "LAB0048", mobile = false, activiteID = 14 },
+                new equipement { id = 263, nom = "Salle Pâtes molles tranchage", zoneID = 6, numGmao = "LAB0049", mobile = false, activiteID = 14 }, new equipement { id = 264, nom = "Salle Labo", zoneID = 11, numGmao = "LAB0017", mobile = false, activiteID = 23 },
+                new equipement { id = 265, nom = "Salle Pâtes préssées cuites", zoneID = 7, numGmao = "LAB0047", mobile = false, activiteID = 15 }, new equipement { id = 266, nom = "Salle Sthepan", zoneID = 9, numGmao = "LAB0046", mobile = false, activiteID = 22 }
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
@@ -492,6 +561,39 @@ namespace SiteGestionResaCore.Data.Data
             //    new doc_qualite { id = 3, nom_document = "Organigramme de la Plate-forme LAIT", chemin_document = "D:\\SiteReservation2021\\smq-site-resa\\doc_qualite\\organigramme.pdf"}/*,
             //    new doc_qualite { id = 4, nom_document = "Manuel Qualité", chemin_document = "M:\\PFL\\smq-pfl\\smq-site-resa\\manuel-qualite.pdf"}*/
             //});
+
+            modelBuilder.Entity<type_document>().HasData(new type_document[] { new type_document { id = 1, nom_document = "Données Physico-chimiques", identificateur = "PC"},
+                new type_document { id = 2, nom_document = "Données Microbiologiques", identificateur = "M"},
+                new type_document { id = 3, nom_document = "Données Rhéologiques", identificateur = "R"},
+                new type_document { id = 4, nom_document = "Tableau excel recapitulatif", identificateur = "E"},
+                new type_document { id = 5, nom_document = "Compte rendu Word", identificateur = "W"},
+                new type_document { id = 6, nom_document = "Autre format", identificateur = "A"}
+            });
+
+            modelBuilder.Entity<activite_pfl>().HasData(new activite_pfl[] { new activite_pfl { id = 1, nom_activite = "Matières premières", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 2, nom_activite = "Ingrédients", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 3, nom_activite = "Matière première 1", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 4, nom_activite = "Matière première 2", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 5, nom_activite = "Matière première 3", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 6, nom_activite = "Stockage", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 7, nom_activite = "Microfiltration", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 8, nom_activite = "Traitement thermique", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 9, nom_activite = "Ecrémage", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 10, nom_activite = "Homogénéisation", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 11, nom_activite = "Ultrafiltration", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 12, nom_activite = "Maturation/stockage", type_documents = "PC,M,E,W"},
+                new activite_pfl { id = 13, nom_activite = "Pâtes fraîches", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 14, nom_activite = "Pâtes molles", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 15, nom_activite = "Pâtes pressées", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 16, nom_activite = "Pâtes cuites", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 17, nom_activite = "Autres pâtes", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 18, nom_activite = "Nanofiltration", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 19, nom_activite = "Autres filtrations", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 20, nom_activite = "Evaporation", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 21, nom_activite = "Séchage", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 22, nom_activite = "Processed Cheese", type_documents = "PC,M,E,W,A,R"},
+                new activite_pfl { id = 23, nom_activite = "Autres", type_documents = "PC,M,E,W,A,R"}
+            });
 
             base.OnModelCreating(modelBuilder);
         }

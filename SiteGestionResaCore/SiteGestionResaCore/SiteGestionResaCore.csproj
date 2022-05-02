@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.11">
@@ -31,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Areas\AboutPFL\Models\" />
     <Folder Include="Areas\Calendrier\Models\" />
+    <Folder Include="Areas\DonneesPGD\Models\" />
     <Folder Include="Areas\Maintenance\Models\" />
     <Folder Include="Controllers\" />
   </ItemGroup>
