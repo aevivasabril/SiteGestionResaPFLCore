@@ -105,7 +105,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         {
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM vm = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
-            //vm.OpenUploadPartUn = "";
             // Création d'une liste dropdownlist pour sélectionner le type de document d'une activité
             vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXActivite(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document+": " + f.identificateur });
             vm.NomActivite = entrepotDB.ObtenirNomActivite(id.Value);
@@ -119,8 +118,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         [HttpPost]
         public async Task<IActionResult> AjouterDocumentAsync(IFormFile file, string description, CreationEntrepotVM vm)
         {
+            // 1000 octets => 0.9765625 Ko convertir à Ko (moins long) comme ça on peut stocker comme un integer
             DocAjoutePartieUn docAjoutePartieUn = new DocAjoutePartieUn();
-
+            double conver = 0.9765625;
             if (ModelState.IsValid)
             {
                 docAjoutePartieUn.NomDocument = file.FileName.ToString();
@@ -128,6 +128,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 docAjoutePartieUn.TypeDonneesID = vm.TypeDocumentID;
                 docAjoutePartieUn.TypeActivite = entrepotDB.ObtenirNomActivite(vm.IDActivite);
                 docAjoutePartieUn.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
+                docAjoutePartieUn.TailleKo = Math.Round(((file.Length * conver) / 1000), 3);
                 // Creates a new MemoryStream object , convert file to memory object and appends into our model’s object.
                 using (var datastream = new MemoryStream())
                 {
@@ -149,7 +150,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 ViewBag.ModalDocOne = "show";
                 return View("CreationEntrepotXEssai", model); // Si error alors on recharge la page pour montrer les messages
             }
-
         }
 
         public IActionResult SupprimerDocPartieUn(int id)
@@ -207,6 +207,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         [HttpPost]
         public async Task<IActionResult> AjouterDocumentXEquipAsync(IFormFile file, string description, CreationEntrepotVM vm)
         {
+            // 1000 octets => 0.9765625 Ko convertir à Ko (moins long) comme ça on peut stocker comme un integer
+            double conver = 0.9765625;
             DocAjoutePartieDeux docAjoutePartieDeux = new DocAjoutePartieDeux();
 
             if (ModelState.IsValid)
@@ -220,6 +222,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 docAjoutePartieDeux.NomEquipement = entrepotDB.ObtenirEquipement(vm.IDEquipement).nom;
                 docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
                 docAjoutePartieDeux.idReservation = vm.idResa;
+                docAjoutePartieDeux.TailleKo = Math.Round(((file.Length * conver) / 1000), 3);
                 // Creates a new MemoryStream object , convert file to memory object and appends into our model’s object.
                 using (var datastream = new MemoryStream())
                 {
@@ -246,6 +249,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         [HttpPost]
         public IActionResult ValiderCreationEntrepot()
         {
+            // 1000 octets => 0.9765625 Ko convertir à Ko (moins long) comme ça on peut stocker comme un integer
+            double conver = 0.9765625;
             bool IsDocStock = false;
             // Récupérer la session "CreationEntrepotVM"
             CreationEntrepotVM model = HttpContext.GetFromSession<CreationEntrepotVM>("CreationEntrepotVM");
@@ -347,7 +352,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                         equipementID = resa.IdEquipement,
                                         essaiID = model.idEssai,
                                         type_activiteID = equipem.activiteID.Value,
-                                        type_documentID = 4 // car c'est un tableau excel PcVue
+                                        type_documentID = 4, // car c'est un tableau excel PcVue
+                                        taille_ko = Math.Round(((donneesPcVue.FileContents.Length * conver) / 1000), 3)
                                     };
 
                                     IsDocStock = entrepotDB.SaveDocEssaiPgd(doc, "Excel PcVue");
@@ -447,9 +453,10 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                             date_creation = DateTime.Now,
                             essaiID = model.idEssai,
                             type_activiteID = 23, // Autres
-                            type_documentID = 6 // Autre format
+                            type_documentID = 6,  // Autre format
+                            taille_ko = Math.Round(((txtEssai.FileContents.Length * conver) / 1000), 3)
                         };
-
+                        //double y = Math.Round(((txtEssai.FileContents.Length * conver) / 1000), 3); // limiter à 3 decimales
                         IsDocStock = entrepotDB.SaveDocEssaiPgd(docTXT, ".txt infos essai");
                         if (!IsDocStock)
                         {

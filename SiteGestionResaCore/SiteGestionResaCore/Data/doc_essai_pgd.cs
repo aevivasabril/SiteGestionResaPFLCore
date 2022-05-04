@@ -15,6 +15,7 @@ namespace SiteGestionResaCore.Data
         public int type_documentID { get; set; }
         public DateTime date_creation { get; set; }
         public int type_activiteID { get; set; }
+        public double taille_ko { get; set; }
 
         public virtual equipement equipement { get; set; }
         public virtual essai essai { get; set; }

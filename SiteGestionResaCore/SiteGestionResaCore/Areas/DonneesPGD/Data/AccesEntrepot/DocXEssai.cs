@@ -13,5 +13,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public int? IdEquipement { get; set; }
         public string TypeActivite { get; set; }
         public string TypeDonnees { get; set; }
+        public double TailleKo { get; set; }
     }
 }

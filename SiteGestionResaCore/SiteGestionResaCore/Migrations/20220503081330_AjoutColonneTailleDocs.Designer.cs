@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220503081330_AjoutColonneTailleDocs")]
+    partial class AjoutColonneTailleDocs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "6276df84-2589-4cfb-a2e9-eaba759c0946",
+                            ConcurrencyStamp = "e9b7d60d-6e35-40a3-a0f2-8e8c80d4eeb2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a6397e48-6ea2-4d6b-b8b1-3642640cc4e2",
+                            ConcurrencyStamp = "a28444ab-ee66-4766-ac69-1dfe894cb214",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "b1a8c7dc-f43e-44bb-b89c-2eb01677c0d5",
+                            ConcurrencyStamp = "8236489d-8d73-4b49-b363-0508324deae8",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "39896873-7917-437d-8129-b2417a73a092",
+                            ConcurrencyStamp = "077b1862-3f1c-43a1-98d4-2a594b90a027",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "8307feff-8c15-4b25-872f-339435de5047",
+                            ConcurrencyStamp = "b873dce2-a108-420f-a3cd-525b080b0778",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -374,8 +376,8 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
-                    b.Property<double>("taille_ko")
-                        .HasColumnType("float");
+                    b.Property<int>("taille_ko")
+                        .HasColumnType("int");
 
                     b.Property<int>("type_activiteID")
                         .HasColumnType("int");

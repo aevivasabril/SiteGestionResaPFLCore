@@ -69,7 +69,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                         NomEquipement = contextDB.equipement.FirstOrDefault(e => e.id == l.equipementID).nom,
                         TypeDonnees = contextDB.type_document.First(t => t.id == l.type_documentID).nom_document,
                         TypeActivite = contextDB.activite_pfl.First(a => a.id == l.type_activiteID).nom_activite,
-                        NomDocument = l.nom_document
+                        NomDocument = l.nom_document,
+                        TailleKo = l.taille_ko
                     };
                 }
                 else
@@ -79,7 +80,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                         IdDoc = l.id,
                         TypeDonnees = contextDB.type_document.First(t => t.id == l.type_documentID).nom_document,
                         TypeActivite = contextDB.activite_pfl.First(a => a.id == l.type_activiteID).nom_activite,
-                        NomDocument = l.nom_document
+                        NomDocument = l.nom_document,
+                        TailleKo = l.taille_ko
                     };
                     
                 }
@@ -254,6 +256,23 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             }
 
             return true;
+        }
+
+        public double CalculTotalKoEntrepot(int IdProjet)
+        {
+            double sommeTotal = 0.0;
+            var listEssai = contextDB.essai.Where(d => d.projetID == IdProjet).ToList();
+            foreach(var essa in listEssai)
+            {
+                var listDocs = contextDB.doc_essai_pgd.Where(d => d.essaiID == essa.id);
+
+                foreach (var l in listDocs)
+                {
+                    sommeTotal = sommeTotal + l.taille_ko;
+                }
+            }
+            
+            return Math.Round(sommeTotal, 3);
         }
     }
 }

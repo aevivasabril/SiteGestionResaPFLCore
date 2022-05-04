@@ -26,5 +26,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public string TraiterChaineCaract(string titre, int taille);
         public type_document ObtenirTypeDocument(int idTypeDoc);
         public bool SupprimerEntrepotXProjet(int IdProjet);
+        public double CalculTotalKoEntrepot(int idProjet);
     }
 }

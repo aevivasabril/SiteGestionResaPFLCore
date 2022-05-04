@@ -16,5 +16,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public int IdActivite { get; set; }
         public string NomActivite { get; set; }
         public int idReservation { get; set; }
+        public double TailleKo { get; set; }
     }
 }

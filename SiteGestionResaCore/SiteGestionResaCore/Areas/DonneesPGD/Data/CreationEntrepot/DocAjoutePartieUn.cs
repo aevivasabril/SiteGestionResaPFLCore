@@ -13,5 +13,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public string NomDocument { get; set; }
         public int TypeDonneesID { get; set; }
         public string TypeDonnees { get; set; }
+        public double TailleKo { get; set; }
     }
 }

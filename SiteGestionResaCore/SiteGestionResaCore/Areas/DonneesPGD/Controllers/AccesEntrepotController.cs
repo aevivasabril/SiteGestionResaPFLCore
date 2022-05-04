@@ -52,6 +52,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             vm.HideListeDocsXEssai = "";
             vm.HideListeDocs = "none";
             vm.NumProjetSelect = accesEntrepotDB.ObtNumProjet(id.Value);
+            vm.TotalKo = accesEntrepotDB.CalculTotalKoEntrepot(id.Value);
+            vm.IdProjSelect = id.Value;
             this.HttpContext.AddToSession("MesEntrepotsVM", vm);
 
             return View("MesEntrepots", vm);
@@ -67,6 +69,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             vm.HideListeDocs = "";
             vm.IdEssai = id.Value;
             vm.TitreEssai = accesEntrepotDB.ObtTitreEssai(id.Value);
+            vm.TotalKo = accesEntrepotDB.CalculTotalKoEntrepot(vm.IdProjSelect);
             this.HttpContext.AddToSession("MesEntrepotsVM", vm);
             return View("MesEntrepots", vm);
         }

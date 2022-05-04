@@ -256,7 +256,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                         type_activiteID = docu.TypeActiviteID,
                         type_documentID = docu.TypeDonneesID,
                         date_creation = DateTime.Now,
-                        essaiID = model.idEssai
+                        essaiID = model.idEssai,
+                        taille_ko = docu.TailleKo
                     };
                     contextDB.doc_essai_pgd.Add(doc);
                     contextDB.SaveChanges();
@@ -291,7 +292,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                         type_documentID = docu.IdTypeDonnees,
                         date_creation = DateTime.Now,
                         equipementID = docu.IdEquipement,
-                        essaiID = model.idEssai
+                        essaiID = model.idEssai,
+                        taille_ko = docu.TailleKo
                     };
                     contextDB.doc_essai_pgd.Add(doc);
                     contextDB.SaveChanges();
@@ -505,7 +507,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                                 if (table == "tab_UA_EVAA")
                                 {
                                     query = (from donnees in pcVueDb.tab_UA_EVAA
-                                             where donnees.Chrono >= dateDebut.Ticks
+                                             where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                              select donnees).Any();
                                     if (query)
                                         break;
@@ -513,7 +515,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                                 else
                                 {
                                     query = (from donnees in pcVueDb.tab_UA_EVAB
-                                             where donnees.Chrono >= dateDebut.Ticks
+                                             where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                              select donnees).Any();
                                     if (query)
                                         break;

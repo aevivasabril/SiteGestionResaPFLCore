@@ -17,5 +17,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         public int IdEssaiXAffichage { get; set; }
         public int IdEssai { get; set; }
         public string TitreEssai { get; set; }
+        public double TotalKo { get; set; }
     }
 }
