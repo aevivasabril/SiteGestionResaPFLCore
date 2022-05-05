@@ -181,7 +181,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 {
                     // Récupérer le nom de l'id Activité
                     var docu = accesEntrepotDB.ObtActivite(doc.Key);
-                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.nom_activite, 25);     
+                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.id.ToString() + "_" + docu.nom_activite, 25);     
 
                     string PathAct = pathE + @"\" + nameAct;
 
