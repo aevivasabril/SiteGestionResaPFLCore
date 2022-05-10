@@ -80,9 +80,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
             int idEssai = accesEntrepotDB.RecupIdEssaiXDoc(id.Value);
             // Vérifier si le document est supprimable: document different à "Informations_Essai_##.txt" et "DonneesPcVue_..."
-            bool IsDocSupp = accesEntrepotDB.DocSupprimable(id.Value);
-            if(IsDocSupp == true)
-            {
+            //bool IsDocSupp = accesEntrepotDB.DocSupprimable(id.Value);
+            //if(IsDocSupp == true)
+            //{
                 bool IsDeletedOk = accesEntrepotDB.SupprimerDocument(id.Value);
                 if (IsDeletedOk == false)
                 {
@@ -96,14 +96,14 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                     vm.ListDocsXEssai = accesEntrepotDB.ObtListDocsXEssai(idEssai);
                     this.HttpContext.AddToSession("MesEntrepotsVM", vm);
                 }
-            }
+            /*}
             else
             {
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Vous ne pouvez pas supprimer ce document car il a été généré automatiquement lors de la création entrepôt!";
                 vm.ListDocsXEssai = accesEntrepotDB.ObtListDocsXEssai(idEssai);
                 this.HttpContext.AddToSession("MesEntrepotsVM", vm);
-            }
+            }*/
             
             return View("MesEntrepots", vm);
         }
