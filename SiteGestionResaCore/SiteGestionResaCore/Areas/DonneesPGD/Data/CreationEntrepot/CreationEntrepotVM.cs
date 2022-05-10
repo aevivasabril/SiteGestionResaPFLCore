@@ -21,7 +21,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
 
         public List<DocAjoutePartieUn> ListDocsPartieUn { get; set; }
         public List<DocAjoutePartieDeux> ListDocsPartieDeux { get; set; }
-
+        public List<DocAjoutePartieUn> ListDocsProduit { get; set; }
+        public List<DocAjoutePartieUn> ListDocsProcede { get; set; }
         public IEnumerable<SelectListItem> TypeDocumentItem { get; set; } // Liste pour sélectionner le type de document
         
         /// <summary>

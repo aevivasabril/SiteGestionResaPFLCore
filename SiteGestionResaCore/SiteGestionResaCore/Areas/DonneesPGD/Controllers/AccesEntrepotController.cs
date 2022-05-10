@@ -288,6 +288,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 vm.ListEntrepotXProjet = accesEntrepotDB.ObtenirListProjetsAvecEntrepotCree(user);
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Entrepôt supprimé avec succès";
+                this.HttpContext.AddToSession("MesEntrepotsVM", vm);
                 return View("MesEntrepots", vm);
             }
             else

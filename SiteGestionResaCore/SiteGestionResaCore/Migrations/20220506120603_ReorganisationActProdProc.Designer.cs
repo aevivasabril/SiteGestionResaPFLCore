@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220506120603_ReorganisationActProdProc")]
+    partial class ReorganisationActProdProc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "1f021397-4676-4ba4-bdae-197b6e88cc08",
+                            ConcurrencyStamp = "d05a5b67-0cd5-4759-8180-e7e41180a815",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "37cc3326-b4ec-4b32-bcab-664354a0dc37",
+                            ConcurrencyStamp = "2fd85e5f-d46f-42b5-9160-6e6be241f9ac",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "daa9de19-a736-4bd0-89c0-ce78e3ed1dd3",
+                            ConcurrencyStamp = "4e769f46-43cc-4c1d-8c26-3e8998414a6c",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "5e8e1567-3bd2-4ab0-b852-09051253b4dc",
+                            ConcurrencyStamp = "215af7e1-aeb7-4ab4-89a9-b3539180cfcf",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "f2309fb9-f92b-46e8-8f02-819e69ce4f57",
+                            ConcurrencyStamp = "2d796a18-22d8-4672-80dc-a7d08d4132fc",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -542,7 +544,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 162,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Balance Arpège 150k",
                             numGmao = "BAL0002",
@@ -551,7 +553,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 163,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = false,
                             nom = "Balance 32 Kg (KA32s)",
                             numGmao = "BAL0003",
@@ -560,7 +562,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 164,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Balance 300Kg (ID2 + KCS300)",
                             numGmao = "BAL0004",
@@ -569,7 +571,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 165,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)",
                             numGmao = "BAL0011",
@@ -578,7 +580,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 166,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance HBM 60 Kg (WE2110)",
                             numGmao = "BAL0054",
@@ -587,7 +589,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 167,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance 60Kg PRECIA MOLEN (X112-A)",
                             numGmao = "BAL0057",
@@ -596,7 +598,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 169,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Brassoires PM",
                             numGmao = "BRAS0001",
@@ -605,7 +607,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 170,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Mélangeur cuiseur stéphan",
                             numGmao = "CUISMEL0001",
@@ -614,7 +616,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 171,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur récupérateur",
                             numGmao = "ECH0001",
@@ -623,7 +625,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 172,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge (regulation chaud/froid)",
                             numGmao = "ECH0002",
@@ -632,7 +634,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 173,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Thermorégulateur vulcatherm (membrane)",
                             numGmao = "ECH0004",
@@ -641,7 +643,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 174,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Thermorégulateur vulcatherm (séchage)",
                             numGmao = "ECH0005",
@@ -650,7 +652,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 175,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge(bleu)",
                             numGmao = "ECH0006",
@@ -659,7 +661,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 176,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge",
                             numGmao = "ECH0007",
@@ -668,7 +670,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 177,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec comptage",
                             numGmao = "ECH0009",
@@ -677,7 +679,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 178,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Echangeur à surface raclée Contherm (ESR)",
                             numGmao = "ECH0010",
@@ -686,7 +688,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 179,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Armoire affinage AFV7HC Elimeca 1",
                             numGmao = "ECLIM0001",
@@ -695,7 +697,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 180,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Armoire affinage AFV7HC Elimeca 2",
                             numGmao = "ECLIM0002",
@@ -704,7 +706,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 181,
-                            activiteID = 10,
+                            activiteID = 9,
                             mobile = true,
                             nom = "Ecrémeuse ELECREM modèle 3 (150L/h)",
                             numGmao = "ECREM0001",
@@ -713,7 +715,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 182,
-                            activiteID = 10,
+                            activiteID = 9,
                             mobile = false,
                             nom = "Ecrémeuse Westfalia EASYCREAM",
                             nomTabPcVue = "tab_UA_ECREM",
@@ -723,7 +725,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 183,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°1 (100L)",
                             numGmao = "ECUV0003",
@@ -732,7 +734,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 184,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°6 (150L)",
                             numGmao = "ECUV0004",
@@ -741,7 +743,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 185,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°2 (100L)",
                             numGmao = "ECUV0005",
@@ -750,7 +752,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 186,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°3 (100L)",
                             numGmao = "ECUV0006",
@@ -759,7 +761,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 187,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini cuve 150L",
                             numGmao = "ECUV0007",
@@ -768,7 +770,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 188,
-                            activiteID = 13,
+                            activiteID = 12,
                             mobile = false,
                             nom = "2 cuves maturation 500L",
                             nomTabPcVue = "tab_UA_MAT",
@@ -778,7 +780,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 189,
-                            activiteID = 13,
+                            activiteID = 12,
                             mobile = false,
                             nom = "Tank 1000L avec agitation et groupe froid",
                             numGmao = "ECUV0012",
@@ -787,7 +789,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 190,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Cuve PPC Châlon-Mégard 1000 litres",
                             numGmao = "ECUV0014",
@@ -796,7 +798,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 191,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 1",
                             numGmao = "ECUV0016",
@@ -805,7 +807,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 192,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 2",
                             numGmao = "ECUV0017",
@@ -814,7 +816,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 193,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 3",
                             numGmao = "ECUV0018",
@@ -823,7 +825,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 194,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°8 (150L)",
                             numGmao = "ECUV0019",
@@ -832,7 +834,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 195,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°4 (100L)",
                             numGmao = "ECUV0020",
@@ -841,7 +843,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 196,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 1(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0021",
@@ -850,7 +852,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 197,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 2(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0022",
@@ -859,7 +861,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 198,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 3(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0023",
@@ -868,7 +870,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 199,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = false,
                             nom = "Tank GEA 550L avec agitation et groupe froid CVB",
                             numGmao = "ECUV0025",
@@ -877,7 +879,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 200,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Cuve 2000L avec agitateur",
                             nomTabPcVue = "tab_UA_CUV",
@@ -887,7 +889,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 201,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°5 (150L)",
                             numGmao = "ECUV0027",
@@ -896,7 +898,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 202,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Machine emballage sous vide BRITEK SC800L",
                             numGmao = "EMB0001",
@@ -905,7 +907,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 203,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116",
                             numGmao = "EMB0003",
@@ -914,7 +916,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 204,
-                            activiteID = 18,
+                            activiteID = 17,
                             mobile = true,
                             nom = "Chariot dosage ERECAM combidos 102T (doseuse)",
                             numGmao = "EMB0004",
@@ -923,7 +925,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 205,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Etuve biocomcept BC240 FIRLABO",
                             numGmao = "ETUV0039",
@@ -932,7 +934,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 206,
-                            activiteID = 11,
+                            activiteID = 10,
                             mobile = false,
                             nom = "Homogénéisateur 2 têtes RANNIE",
                             numGmao = "HOMO0002",
@@ -941,7 +943,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 207,
-                            activiteID = 11,
+                            activiteID = 10,
                             mobile = false,
                             nom = "Homogénéisateur 12/51H RANNIE",
                             numGmao = "HOMO0003",
@@ -950,7 +952,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 208,
-                            activiteID = 11,
+                            activiteID = 10,
                             mobile = true,
                             nom = "Homogénéisateur Panda",
                             numGmao = "HOMO0007",
@@ -959,7 +961,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 209,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = true,
                             nom = "Chariots porte-bassines PM (N°1)",
                             numGmao = "MANUT002",
@@ -968,7 +970,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 210,
-                            activiteID = 15,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Chariots porte-bassines PM (N°2)",
                             numGmao = "MANUT0012",
@@ -977,7 +979,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 211,
-                            activiteID = 13,
+                            activiteID = 12,
                             mobile = false,
                             nom = "Ensemble NEP",
                             nomTabPcVue = "tab_UA_NEP",
@@ -987,7 +989,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 212,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Système de moulage PM et basculeur",
                             numGmao = "MOUL0001",
@@ -996,7 +998,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 213,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote ultrafiltration TIA spirale",
                             nomTabPcVue = "tab_UA_SPI",
@@ -1006,7 +1008,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 214,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote UF TIA/PALL 0,02u (JYG)",
                             nomTabPcVue = "tab_UA_UFMF",
@@ -1016,7 +1018,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 215,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote OI NF UF Prolab Milipore",
                             numGmao = "PILOT0003",
@@ -1025,7 +1027,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 216,
-                            activiteID = 20,
+                            activiteID = 18,
                             mobile = false,
                             nom = "Pilote filtration engineering (OI et NF)",
                             numGmao = "PILOT0004",
@@ -1034,7 +1036,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 217,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = true,
                             nom = "Pilote de microfiltration MFS1",
                             numGmao = "PILOT0005",
@@ -1043,7 +1045,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 218,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration MFMG",
                             nomTabPcVue = "tab_UA_MFMG",
@@ -1053,7 +1055,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 219,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration MFS19",
                             numGmao = "PILOT0007",
@@ -1062,7 +1064,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 220,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration GP7",
                             nomTabPcVue = "tab_UA_GP7",
@@ -1072,7 +1074,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 221,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "UF TAMI/tech-sep 8 kDa (13 m2)",
                             numGmao = "PILOT0009",
@@ -1081,7 +1083,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 222,
-                            activiteID = 9,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Stérilisateur pilote tubulaire électrique ACTINI",
                             nomTabPcVue = "tab_UA_ACT",
@@ -1091,7 +1093,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 223,
-                            activiteID = 9,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH",
                             nomTabPcVue = "tab_UA_MTH",
@@ -1101,7 +1103,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 224,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = true,
                             nom = "Pilote UF TAMI/Tia 8Kda mobile",
                             numGmao = "PILOT0013",
@@ -1110,7 +1112,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 225,
-                            activiteID = 22,
+                            activiteID = 20,
                             mobile = false,
                             nom = "Pilote évaporateur à flot tombant FF-1",
                             nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB",
@@ -1120,7 +1122,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 226,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration P3",
                             numGmao = "PILOT0015",
@@ -1129,7 +1131,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 227,
-                            activiteID = 23,
+                            activiteID = 21,
                             mobile = false,
                             nom = "Pilote de sèchage mono-disperse",
                             numGmao = "PILOT0016",
@@ -1138,7 +1140,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 228,
-                            activiteID = 23,
+                            activiteID = 21,
                             mobile = false,
                             nom = "Pilote tour de sèchage MINOR",
                             nomTabPcVue = "tab_UA_SEC",
@@ -1148,7 +1150,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 229,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote VALOBAB (MF et UF) SKID 12EO46",
                             nomTabPcVue = "tab_UA_VALO",
@@ -1158,7 +1160,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 230,
-                            activiteID = 21,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote UF (optimal)",
                             nomTabPcVue = "tab_UA_OPTIMAL",
@@ -1168,7 +1170,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 231,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe centrifuge 20 à 30 m3/h",
                             numGmao = "POMPE0002",
@@ -1177,7 +1179,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 232,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe PCM - 5 m3/h",
                             numGmao = "POMPE0003",
@@ -1186,7 +1188,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 233,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Pompe disperseur de poudre - TRIBLENDER",
                             numGmao = "POMPE0004",
@@ -1195,7 +1197,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 234,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe de transfert de lait 58L/min (bleue)",
                             numGmao = "POMPE0006",
@@ -1204,7 +1206,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 235,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Presse à fromage verticale",
                             numGmao = "PRES0002",
@@ -1213,7 +1215,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 236,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Presse à fromage horizontale",
                             numGmao = "PRES0003",
@@ -1222,7 +1224,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 237,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Tranche-caillé",
                             numGmao = "TRAN0001",
@@ -1231,7 +1233,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 238,
-                            activiteID = 10,
+                            activiteID = 9,
                             mobile = false,
                             nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h",
                             numGmao = "ACTALIA",
@@ -1240,7 +1242,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 239,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Camion collecte",
                             numGmao = "",
@@ -1249,7 +1251,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 240,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Bac de saumurage",
                             numGmao = "ECUV0015",
@@ -1258,7 +1260,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 241,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "3 cuves fromagerie 200 Litres",
                             numGmao = "ECUV0034, ECUV0035, ECUV0036",
@@ -1267,7 +1269,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 242,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Hotte PSM",
                             numGmao = "",
@@ -1276,7 +1278,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 243,
-                            activiteID = 9,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35",
                             numGmao = "PILOT0022",
@@ -1285,7 +1287,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 244,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage",
                             numGmao = "BAL0068",
@@ -1294,7 +1296,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 245,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0074",
@@ -1303,7 +1305,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 246,
-                            activiteID = 2,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance PRECIA MOLEN 150 kg",
                             numGmao = "BAL0073",
@@ -1312,7 +1314,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 247,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Tablette Latitude 7212 Dell",
                             numGmao = "",
@@ -1321,7 +1323,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 248,
-                            activiteID = 9,
+                            activiteID = 8,
                             mobile = true,
                             nom = "Thermomix",
                             numGmao = "",
@@ -1330,7 +1332,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 250,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP5",
                             numGmao = "CHF011",
@@ -1339,7 +1341,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 251,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP6",
                             numGmao = "CHF013",
@@ -1348,7 +1350,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 252,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP8",
                             numGmao = "CHF012",
@@ -1357,7 +1359,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 253,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP9",
                             numGmao = "CHF014",
@@ -1366,7 +1368,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 254,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Bac de saumurage 800 lts",
                             numGmao = "ECUV0037",
@@ -1375,7 +1377,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 255,
-                            activiteID = 9,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Cuve 10 lts Coquard",
                             numGmao = "CUISMEL0002",
@@ -1384,7 +1386,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 256,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 A",
                             numGmao = "CHF015",
@@ -1393,7 +1395,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 257,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 B",
                             numGmao = "CHF021",
@@ -1402,7 +1404,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 258,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 C",
                             numGmao = "CHF022",
@@ -1411,7 +1413,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 259,
-                            activiteID = 7,
+                            activiteID = 6,
                             mobile = false,
                             nom = "Tank 850 L",
                             numGmao = "ECUV0038",
@@ -1420,7 +1422,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 260,
-                            activiteID = 3,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0079",
@@ -1429,7 +1431,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 261,
-                            activiteID = 14,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle Saumurage",
                             numGmao = "CHF018",
@@ -1438,7 +1440,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 262,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Salle Pâtes molles moulage",
                             numGmao = "LAB0048",
@@ -1447,7 +1449,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 263,
-                            activiteID = 15,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Salle Pâtes molles tranchage",
                             numGmao = "LAB0049",
@@ -1456,7 +1458,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 264,
-                            activiteID = 24,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle Labo",
                             numGmao = "LAB0017",
@@ -1465,7 +1467,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 265,
-                            activiteID = 16,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Salle Pâtes préssées cuites",
                             numGmao = "LAB0047",
@@ -1474,7 +1476,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 266,
-                            activiteID = 23,
+                            activiteID = 22,
                             mobile = false,
                             nom = "Salle Sthepan",
                             numGmao = "LAB0046",

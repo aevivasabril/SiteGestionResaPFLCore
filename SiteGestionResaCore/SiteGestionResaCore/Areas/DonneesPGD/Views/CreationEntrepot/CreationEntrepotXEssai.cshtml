@@ -7,12 +7,12 @@
 <br />
 @if (Model.AjoutDocs == true)
 {
-    <h3 class="text-center"><strong>Ajouter des documents dans l'entrepôt pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>   
+    <h3 class="text-center">Ajouter des documents dans l'entrepôt pour l'essai: <strong> @Model.TitreEssai (N° @Model.idEssai)</strong></h3>   
 }
 else
 {
-    <h3 class="text-center"><strong>Creation d'entrepôt selon PGD PFL pour l'essai "@Model.TitreEssai" (N° @Model.idEssai)</strong></h3>
-    <h6 class="text-center">Avant de créer un entrepôt, assurez-vous que l'essai est fini</h6>
+    <h3 class="text-center">Creation d'entrepôt selon PGD PFL pour l'essai: <strong>@Model.TitreEssai (N° @Model.idEssai)</strong></h3>
+    <h6 class="text-center"><strong>Avant de créer un entrepôt, assurez-vous que l'essai est fini</strong></h6>
 }
 
 <br />
@@ -21,10 +21,21 @@ else
 {
     <h5 class="text-center" style="color:red"><strong> @ViewBag.Message</strong> </h5>
 }
-
 <hr />
+
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <form asp-action="ValiderCreationEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD" method="post">
+    <!--Métadonnées-->
+    <div class="form-row">
+        <div class="col-sm-6">
+            Rajoutez le document contenant vos métadonnées "Essai"
+        </div>
+        <div class="col-sm-4 offset-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="1">Informations sur votre essai (métadonnées)</a>
+        </div>
+    </div>
+    <hr />
+    <hr />
     <!--Informations Essai-->
     <div class="form-row">
         <div class="col-sm-6">
@@ -35,6 +46,7 @@ else
         </div>
     </div>
     <hr />
+    <hr />
     <!--Matière première et ingredients (PARTIE 1)-->
     <div class="row">
         <div class="col-sm-12 text-center">
@@ -44,58 +56,28 @@ else
     </div>
     <div class="form-row text-center">
         <div class="col-sm-2 offset-1">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="1">Matières premières</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="2">Matières premières</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="3">Matière première 1</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="4">Matière première 1</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="4">Matière première 2</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="5">Matière première 2</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="5">Matière première 3</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="6">Matière première 3</a>
         </div>
         <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="2">Ingredients</a>
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="3">Ingredients</a>
         </div>
     </div>
-
     <br />
-    <div class="form-row text-center">
-        <div class="col-sm-12 col-md-12">
-            <h6><strong>Récapitulatif Documents ajoutés</strong></h6>
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">Nom document</th>
-                        <th scope="col">Type données</th>
-                        <th scope="col">Type d'activité</th>
-                        <th scope="col">Supprimer?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.ListDocsPartieUn.Count; i++)
-                    {
-                        <tr>
-                            <th style="color:green">@Model.ListDocsPartieUn[i].NomDocument</th>
-                            <td>@Model.ListDocsPartieUn[i].TypeDonnees</td>
-                            <td>@Model.ListDocsPartieUn[i].TypeActivite</td>
-                            <td>
-                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@i">
-                                    <span class="fas fa-trash"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <hr />
     <hr />
     <!--Equipements réservés pour ajout des documents-->
     <div class="row">
         <div class="col-sm-12 text-center">
-            <h4><strong>Equipements réservés pour ajout des documents</strong></h4>
+            <h4><strong>Ajouter des documents pour des équipements reservés</strong></h4>
         </div>
         <br />
     </div>
@@ -103,8 +85,10 @@ else
         <div class="col-md-8 text-center">
             <br />
             <h6>Cliquez sur les options des documents pour charger des fichiers (pdf, word, etc).</h6>
-            <h6 style="color:blue">NOTE: Les données PcVue ont une durée de vie de 3 mois. 
-            Elles seront enregistrées automatiquement si l'essai date de moins de 3 moins. Rajoutez les fichiers s'ils sont indiqués "Données indisponibles"</h6>
+            <h6 style="color:blue">
+                NOTE: Les données PcVue ont une durée de vie de 3 mois.
+                Elles seront enregistrées automatiquement si l'essai date de moins de 3 moins. Rajoutez les fichiers s'ils sont indiqués "Données indisponibles"
+            </h6>
             <br />
             <table class="table table-sm table-bordered">
                 <thead>
@@ -178,7 +162,95 @@ else
             </table>
         </div>
     </div>
-
+    <br />
+    <hr />
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Produits</strong></h4>
+            <h6>Rajoutez les documents concernant le produit fabriqué lors de votre essai (si un produit a été fabriqué)</h6>
+        </div>
+    </div>
+    <br />
+    <div class="form-row text-center">
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="14">Pâtes fraîches</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="15">Pâtes molles</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="16">Pâtes pressées</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="17">Pâtes cuites</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="18">Autres pâtes</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="19">Processed cheese</a>
+        </div>
+    </div>
+    <br />
+    <hr />
+    <hr />
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h4><strong>Procèdes</strong></h4>
+            <h6>Rajoutez les documents concernant un procède appliqué lors de votre essai (si un procède a été étudié)</h6>
+        </div>
+    </div>
+    <br />
+    <div class="form-row text-center">
+        <div class="col-sm-2 offset-1">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="20">Nanofiltration</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="21">Autres filtrations</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="22">Evaporation</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="23">Séchage</a>
+        </div>
+        <div class="col-sm-2">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="24">Autres</a>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div class="form-row text-center">
+        <div class="col-sm-12 col-md-12">
+            <h4 class="text-center"><strong>Récapitulatif documents ajoutés pour les rubriques: "Matière première et ingredients, produit et/ou procède"</strong></h4>
+            <table class="table table-sm table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Nom document</th>
+                        <th scope="col">Type données</th>
+                        <th scope="col">Type d'activité</th>
+                        <th scope="col">Supprimer?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ListDocsPartieUn.Count; i++)
+                    {
+                        <tr>
+                            <th style="color:green">@Model.ListDocsPartieUn[i].NomDocument</th>
+                            <td>@Model.ListDocsPartieUn[i].TypeDonnees</td>
+                            <td>@Model.ListDocsPartieUn[i].TypeActivite</td>
+                            <td>
+                                <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieUn" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@i">
+                                    <span class="fas fa-trash"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12 text-center">
             <br />
@@ -284,32 +356,32 @@ else
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
     <script>
-        @{
-            if (ViewBag.ModalDocOne == null)
-            {
-                ViewBag.ModalDocOne = "hide";
-            }
-            if (ViewBag.ModalDocTwo == null)
-            {
-                ViewBag.ModalDocTwo = "hide";
-            }
+    @{
+        if (ViewBag.ModalDocOne == null)
+        {
+            ViewBag.ModalDocOne = "hide";
         }
-        $('#AddingDoc').modal('@ViewBag.ModalDocOne');
-        $('#AddingDocXEquip').modal('@ViewBag.ModalDocTwo');
+        if (ViewBag.ModalDocTwo == null)
+        {
+            ViewBag.ModalDocTwo = "hide";
+        }
+    }
+    $('#AddingDoc').modal('@ViewBag.ModalDocOne');
+    $('#AddingDocXEquip').modal('@ViewBag.ModalDocTwo');
 
-        function ModalInfosEssai(id) {
-            if (id)
-            {
-                $.ajax({
-                    url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
-                    type: 'POST',
-                    success: function (html) {
-                        $("#InfosEssai").html(html);
-                        $("#EssaiModal").modal('show');
-                    }
-                });
-            }
+    function ModalInfosEssai(id) {
+        if (id)
+        {
+            $.ajax({
+                url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                type: 'POST',
+                success: function (html) {
+                    $("#InfosEssai").html(html);
+                    $("#EssaiModal").modal('show');
+                }
+            });
         }
+    }
 
     </script>
 }
