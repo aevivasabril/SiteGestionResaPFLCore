@@ -7,5 +7,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 {
     public interface IStatistiquesDB
     {
+        List<InfosReservations> ObtenirResasDuAu(DateTime datedu, DateTime dateau);
     }
 }
