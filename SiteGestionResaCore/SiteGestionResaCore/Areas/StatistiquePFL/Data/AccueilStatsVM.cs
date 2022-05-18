@@ -21,5 +21,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         //[Required]
         [DataType(DataType.Date)]
         public DateTime? DateAu { get; set; }
+
+        public List<ZoneStats> ListZones { get; set; }
+
+        public int AnneeActuel { get; set; }
     }
 }

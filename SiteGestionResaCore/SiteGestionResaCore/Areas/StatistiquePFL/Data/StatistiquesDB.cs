@@ -91,5 +91,71 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             return infos;
         }
+
+        public List<ZoneStats> ObtenirListZones()
+        {
+            List<ZoneStats> Liste = new List<ZoneStats>();
+
+            var zons = resaDB.zone.Distinct().ToList();
+            foreach(var zon in zons)
+            {
+                ZoneStats zone = new ZoneStats { IdZone = zon.id, NomZone = zon.nom_zone };
+                Liste.Add(zone);
+            }
+
+            return Liste;
+        }
+
+        public List<InfosEquipVsJours> ObtListEquipsVsJours(int idZone, int Annee)
+        {
+            List<InfosEquipVsJours> list = new List<InfosEquipVsJours>();
+
+            var reservations = (from resa in resaDB.reservation_projet
+                                from equip in resaDB.equipement
+                                where resa.date_debut.Year == Annee && resa.date_fin.Year == Annee
+                                && equip.zoneID == idZone
+                                select resa).Distinct().ToList().GroupBy(r=>r.equipementID);
+
+            var equipements = resaDB.equipement.Where(e=>e.zoneID == idZone).Distinct().ToList();
+
+            foreach(var equip in equipements)
+            {
+                double nbJours = 0;
+                if(reservations.Where(r=>r.Key == equip.id).Count() != 0) // Si existe au moins une réservation pour cet équipement cet année
+                {
+                    var listResasXEquip = reservations.Where(r => r.Key == equip.id).ToList(); // Reagrouper les réservations pour cet équipement
+                    foreach(var obje in listResasXEquip)
+                    {
+                        foreach(var resa in obje)
+                        {
+                            #region Calcul des jours pour une reservation
+
+                            var diff = resa.date_fin - resa.date_debut;
+
+                            if (diff.Hours == 5) // démi journée
+                                nbJours = nbJours + diff.Days + 0.5;
+                            else if (diff.Hours >= 5) // réservation commençant l'aprèm et finissant le jour suivant le matin 
+                                nbJours = nbJours + diff.Days + 1;
+
+                            #endregion
+                        }
+                    }
+                }
+                else // Pas de réservation pour cet équipement donc 0 jours
+                {
+                    nbJours = 0;
+                }
+
+                InfosEquipVsJours infos = new InfosEquipVsJours { 
+                    IdEquipement = equip.id,
+                    NomEquipement = equip.nom,
+                    NbJours = nbJours
+                };
+
+                list.Add(infos);
+            }
+
+            return list;
+        }
     }
 }

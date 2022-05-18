@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.StatistiquePFL.Data;
+using SiteGestionResaCore.Extensions;
 
 namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
 {
@@ -22,12 +23,17 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         public IActionResult AccueilStats()
         {
             AccueilStatsVM vm = new AccueilStatsVM();
+            vm.ListZones = statistiquesDB.ObtenirListZones();
+            vm.AnneeActuel = DateTime.Today.Year;
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
         }
 
         [HttpPost]
         public IActionResult GenererExcelResas(AccueilStatsVM vm)
         {
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
             StringBuilder csv = new StringBuilder();
             string titreCsv = null;
             HeadersCsvResas headersCsv = new HeadersCsvResas();
@@ -52,6 +58,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
 
                     foreach(var resa in List)
                     {
+                        #region Ecriture dans le fichier excel
                         csv.Append(resa.NumProjet);
                         csv.Append(";");
                         csv.Append(resa.TitreProjet);
@@ -79,7 +86,12 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                         csv.Append(resa.NbJours);
                         csv.Append(";");
                         csv.AppendLine();
+                        #endregion
                     }
+
+                    model.DateAu = vm.DateAu;
+                    model.DateDu = vm.DateDu;
+
                     titreCsv = "Reservations_" + vm.DateDu.Value.ToShortDateString() + "_Au_" + vm.DateAu.Value.ToShortDateString() + ".csv";
                     Encoding encoding = Encoding.GetEncoding("iso-8859-1");
                     return File(encoding.GetBytes(csv.ToString()), "text/csv", titreCsv);
@@ -94,7 +106,22 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                 ModelState.AddModelError("", "Oups! Vous avez oublié de saisir les dates! ");
             }
 
-            return View("AccueilStats", vm);
+            return View("AccueilStats", model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id zone</param>
+        /// <returns></returns>
+        public IActionResult EquipVsDays(int id)
+        {
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+
+            EquipsVsJoursVM vm = new EquipsVsJoursVM();
+            vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, model.AnneeActuel);
+            
+            return PartialView("_EquipsVsJours", vm);
         }
     }
 }
