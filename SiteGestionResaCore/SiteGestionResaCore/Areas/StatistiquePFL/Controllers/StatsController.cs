@@ -120,7 +120,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
 
             EquipsVsJoursVM vm = new EquipsVsJoursVM();
             vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, model.AnneeActuel);
-            
+            vm.NomZone = statistiquesDB.ObtNomZone(id).nom_zone;
             return PartialView("_EquipsVsJours", vm);
         }
     }

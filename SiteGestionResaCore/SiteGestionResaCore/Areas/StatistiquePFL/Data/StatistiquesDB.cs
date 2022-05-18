@@ -157,5 +157,10 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             return list;
         }
+
+        public zone ObtNomZone(int id)
+        {
+            return resaDB.zone.First(z => z.id == id);
+        }
     }
 }
