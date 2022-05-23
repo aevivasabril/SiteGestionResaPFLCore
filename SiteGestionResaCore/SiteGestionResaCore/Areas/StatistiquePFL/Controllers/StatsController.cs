@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.StatistiquePFL.Data;
 using SiteGestionResaCore.Extensions;
 
@@ -122,6 +123,20 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, model.AnneeActuel);
             vm.NomZone = statistiquesDB.ObtNomZone(id).nom_zone;
             return PartialView("_EquipsVsJours", vm);
+        }
+
+        public IActionResult SelectProjet()
+        {
+            UseXProjetVM vm = new UseXProjetVM();
+            vm.ProjetItem = statistiquesDB.ObtenirListProjet().Select(f => new SelectListItem { Value = f.id.ToString(), Text = "Projet N°" + f.num_projet + ": " + f.titre_projet });
+            return PartialView("_UtilisationXProjet", vm);
+        }
+
+        [HttpPost]
+        public IActionResult RecapXProjet(UseXProjetVM vm)
+        {
+            List<InfosReservations> list = statistiquesDB.ObtRecapitulatifXProjet(vm.SelectProjetId);
+            return View();
         }
     }
 }

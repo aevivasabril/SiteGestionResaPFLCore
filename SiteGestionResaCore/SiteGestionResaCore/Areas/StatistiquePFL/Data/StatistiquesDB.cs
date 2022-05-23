@@ -110,10 +110,12 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         {
             List<InfosEquipVsJours> list = new List<InfosEquipVsJours>();
 
+            // TODO: Améliorer car je prends en compte tous les essais même supprimés
             var reservations = (from resa in resaDB.reservation_projet
                                 from equip in resaDB.equipement
+                                from essa in resaDB.essai
                                 where resa.date_debut.Year == Annee && resa.date_fin.Year == Annee
-                                && equip.zoneID == idZone
+                                && equip.zoneID == idZone && essa.resa_refuse != true && essa.resa_supprime != true && resa.essaiID == essa.id
                                 select resa).Distinct().ToList().GroupBy(r=>r.equipementID);
 
             var equipements = resaDB.equipement.Where(e=>e.zoneID == idZone).Distinct().ToList();
@@ -131,12 +133,10 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                             #region Calcul des jours pour une reservation
 
                             var diff = resa.date_fin - resa.date_debut;
-
                             if (diff.Hours == 5) // démi journée
                                 nbJours = nbJours + diff.Days + 0.5;
                             else if (diff.Hours >= 5) // réservation commençant l'aprèm et finissant le jour suivant le matin 
                                 nbJours = nbJours + diff.Days + 1;
-
                             #endregion
                         }
                     }
@@ -161,6 +161,57 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public zone ObtNomZone(int id)
         {
             return resaDB.zone.First(z => z.id == id);
+        }
+
+        public List<projet> ObtenirListProjet()
+        {
+            return resaDB.projet.Distinct().OrderByDescending(p => p.date_creation).ToList();
+        }
+
+        public List<InfosReservations> ObtRecapitulatifXProjet(int IdProjet)
+        {
+            List<InfosReservations> infos = new List<InfosReservations>();
+            InfosReservations info = new InfosReservations();
+
+            var projet = resaDB.projet.First(p => p.id == IdProjet);
+            var organisme = resaDB.organisme.First(o => o.id == projet.organismeID);
+
+            var essaisXProjet = (from ess in resaDB.essai
+                                 where ess.projetID == IdProjet && ess.resa_refuse != true && ess.resa_supprime != true
+                                 select ess).Distinct().ToList();
+
+            var equipeStlo = (from user in resaDB.Users
+                              from equipe in resaDB.ld_equipes_stlo
+                              where user.equipeID == equipe.id && user.Id == projet.compte_userID
+                              select equipe).First();
+
+            foreach (var x in essaisXProjet)
+            {
+                var reservs = resaDB.reservation_projet.Where(r => r.essaiID == x.id);
+                foreach(var res in reservs)
+                {
+                    var equipement = resaDB.equipement.First(e => e.id == res.equipementID);
+
+                    info = new InfosReservations
+                    {
+                        NumProjet = projet.num_projet,
+                        TypeProjet = projet.type_projet,
+                        RespProjet = projet.mailRespProjet,
+                        TitreProjet = projet.titre_projet,
+                        TitreEssai = x.titreEssai,
+                        DateCreation = x.date_creation,
+                        NomOrganisme = organisme.nom_organisme,
+                        IdEssai = x.id,
+                        DateDebutResa = res.date_debut,
+                        DateFinResa = res.date_fin,
+                        NomEquipement = equipement.nom,
+                        NomEquipe = equipeStlo.nom_equipe
+                    };
+                    infos.Add(info);
+                }
+            }
+
+            return infos;
         }
     }
 }

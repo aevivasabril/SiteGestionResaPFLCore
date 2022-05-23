@@ -12,5 +12,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         List<ZoneStats> ObtenirListZones();
         List<InfosEquipVsJours> ObtListEquipsVsJours(int idZone, int Annee);
         zone ObtNomZone(int id);
+        List<projet> ObtenirListProjet();
+        List<InfosReservations> ObtRecapitulatifXProjet(int IdProjet);
     }
 }
