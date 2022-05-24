@@ -141,6 +141,7 @@ else
                         <th scope="col">Nom du document</th>
                         <th scope="col">Equipement</th>
                         <th scope="col">Type des données</th>
+                        <th scope="col">Type d'activité</th>
                         <th scope="col">Supprimer?</th>
                     </tr>
                 </thead>
@@ -151,6 +152,7 @@ else
                             <th style="color:green">@Model.ListDocsPartieDeux[j].NomDocument</th>
                             <td>@Model.ListDocsPartieDeux[j].NomEquipement</td>
                             <td>@Model.ListDocsPartieDeux[j].TypeDonnees</td>
+                            <td>@Model.ListDocsPartieDeux[j].NomActivite</td>
                             <td>
                                 <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerDocPartieDeux" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="@j">
                                     <span class="fas fa-trash"></span>
@@ -173,23 +175,14 @@ else
     </div>
     <br />
     <div class="form-row text-center">
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="14">Pâtes fraîches</a>
+        <div class="col-sm-4">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="13">Fromage</a>
         </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="15">Pâtes molles</a>
+        <div class="col-sm-4">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="14">Produits frais</a>
         </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="16">Pâtes pressées</a>
-        </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="17">Pâtes cuites</a>
-        </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="18">Autres pâtes</a>
-        </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="19">Processed cheese</a>
+        <div class="col-sm-4">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="15">Autres produits</a>
         </div>
     </div>
     <br />
@@ -198,32 +191,29 @@ else
     <div class="row">
         <div class="col-sm-12 text-center">
             <h4><strong>Procèdes</strong></h4>
-            <h6>Rajoutez les documents concernant un procède appliqué lors de votre essai (si un procède a été étudié)</h6>
+            <h6>Rajoutez les documents concernant un procédé appliqué lors de votre essai (si un procède a été étudié)</h6>
         </div>
     </div>
     <br />
     <div class="form-row text-center">
-        <div class="col-sm-2 offset-1">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="20">Nanofiltration</a>
+        <div class="col-sm-3">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="8">Séparation membranaire</a>
         </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="21">Autres filtrations</a>
+        <div class="col-sm-3">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="16">Evaporation</a>
         </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="22">Evaporation</a>
+        <div class="col-sm-3">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="17">Séchage</a>
         </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="23">Séchage</a>
-        </div>
-        <div class="col-sm-2">
-            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="24">Autres</a>
+        <div class="col-sm-3">
+            <a class="btn btn-secondary" asp-action="OuvrirUploadDoc" asp-area="DonneesPGD" asp-controller="CreationEntrepot" asp-route-id="18">Autres procédés</a>
         </div>
     </div>
     <br />
     <br />
     <div class="form-row text-center">
         <div class="col-sm-12 col-md-12">
-            <h4 class="text-center"><strong>Récapitulatif documents ajoutés pour les rubriques: "Matière première et ingredients, produit et/ou procède"</strong></h4>
+            <h4 class="text-center"><strong>Récapitulatif documents ajoutés pour les rubriques: "Matière première et ingredients, produit et/ou procédé"</strong></h4>
             <table class="table table-sm table-bordered">
                 <thead>
                     <tr>
@@ -336,10 +326,17 @@ else
                             <option value="-1">- Type de document -</option>
                         </select>
                         @Html.ValidationMessageFor(m => m.TypeDocumentID, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-row">
+                        @Html.LabelFor(m => m.TypeActiviteID, new { @class = "col-md-3 col-lg-3 control-label" })
+                        <select asp-for="TypeActiviteID" asp-items="@Model.TypeActiviteItem" class="form-control">
+                            <option value="-1">- Type d'activité -</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.TypeActiviteID, "", new { @class = "text-danger" })
+                    </div>                       
                         @Html.HiddenFor(m => m.IDActivite)
                         @Html.HiddenFor(m => m.IDEquipement)
-                        @Html.HiddenFor(m => m.idResa)
-                    </div>
+                        @Html.HiddenFor(m => m.idResa)                   
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>

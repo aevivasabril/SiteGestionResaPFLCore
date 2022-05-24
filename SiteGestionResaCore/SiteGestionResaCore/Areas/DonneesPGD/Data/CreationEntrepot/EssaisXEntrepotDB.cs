@@ -159,7 +159,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             foreach(var resa in listeRe)
             {
                 // Obtenir la liste des types des documents pour cet équipement
-                List<string> typesDoc = ListeTypeDoc(contextDB.equipement.First(e => e.id == resa.equipementID).activiteID.Value);
                 // Voir si le fichier PcVue est dispo
                 (IsEquipPcVue, IsDataReady) = EquipementVsDonneesPcVue(resa);
                 if(IsEquipPcVue == true && IsDataReady == true)
@@ -182,7 +181,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                     IdEquipement = resa.equipementID,
                     idResa = resa.id,
                     NomEquipement = contextDB.equipement.First(e => e.id == resa.equipementID).nom, 
-                    ListeTypeDocs = typesDoc,
+                    //ListeTypeDocs = typesDoc,
                     FichierPcVue = donneesDispo,
                     color = color
                 };
@@ -226,15 +225,24 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
             return contextDB.type_document.First(d => d.id == IdTypeDonnees).nom_document;
         }
 
-        public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement)
+        public List<activite_pfl> ObtenirListActiviteXResa(int idResa)
         {
-            int IdActivite = contextDB.equipement.First(d => d.id == IdEquipement).activiteID.Value;
-            return ListeTypeDocumentsXActivite(IdActivite);
-        }
+            List<activite_pfl> List = new List<activite_pfl>();
 
-        public int ObtenirIdActiviteXequip(int id)
-        {
-            return contextDB.equipement.First(a => a.id == id).activiteID.Value;
+            string ExprRegular = @"[0-9][^,]*"; // identifier les id's des activités PFL auxquelles l'équipement est lié
+
+            Regex Rg = new Regex(ExprRegular);
+            var TypeActivite = contextDB.activite_pfl.Distinct().ToList();
+            var resa = contextDB.reservation_projet.First(r => r.id == idResa);
+            var equipement = contextDB.equipement.First(e => e.id == resa.equipementID);
+            MatchCollection collection = Rg.Matches(equipement.type_activites);
+
+            foreach (var col in collection)
+            {
+                var activite = contextDB.activite_pfl.First(a => a.id == Convert.ToInt32(col.ToString()));
+                List.Add(activite);
+            }
+            return List;
         }
 
         public bool EcrireDocTypeUn(CreationEntrepotVM model)
@@ -247,12 +255,20 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
 
             foreach (var docu in list)
             {
+                #region Supprimer les accents d'un string
+
+                string pattern = @"[^0-9a-zA-Z-_$.]";
+                Regex rex = new Regex(pattern);
+                string result = rex.Replace(docu.NomDocument, "");
+
+                #endregion
+
                 try
                 {
                     doc_essai_pgd doc = new doc_essai_pgd
                     {
                         contenu_document = docu.data,
-                        nom_document = docu.NomDocument,
+                        nom_document = result,
                         type_activiteID = docu.TypeActiviteID,
                         type_documentID = docu.TypeDonneesID,
                         date_creation = DateTime.Now,
@@ -282,12 +298,20 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
 
             foreach (var docu in list)
             {
+                #region Supprimer les accents d'un string
+
+                string pattern = @"[^0-9a-zA-Z$.]";
+                Regex rex = new Regex(pattern);
+                string result = rex.Replace(docu.NomDocument, "");
+
+                #endregion
+
                 try
                 {
                     doc_essai_pgd doc = new doc_essai_pgd
                     {
                         contenu_document = docu.ContenuDoc,
-                        nom_document = docu.NomDocument,
+                        nom_document = result,
                         type_activiteID = docu.IdActivite,
                         type_documentID = docu.IdTypeDonnees,
                         date_creation = DateTime.Now,
@@ -379,6 +403,23 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                 isOk = false;
             }
             return isOk;
+        }
+
+        public int ObtIdActiviteXEquip(int IdEquipement)
+        {
+            List<activite_pfl> list = new List<activite_pfl>();
+            string ExprRegular = @"[0-9][^,]*"; // identifier les id's des activités PFL auxquelles l'équipement est lié
+
+            Regex Rg = new Regex(ExprRegular);
+            var equip = contextDB.equipement.First(r => r.id == IdEquipement);
+            MatchCollection collection = Rg.Matches(equip.type_activites);
+
+            foreach (var col in collection)
+            {
+                var activite = contextDB.activite_pfl.First(a => a.id == Convert.ToInt32(col.ToString()));
+                list.Add(activite);
+            }
+            return list.Last().id;
         }
 
         #region Méthodes complémentaires

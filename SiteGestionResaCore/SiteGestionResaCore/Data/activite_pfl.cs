@@ -9,14 +9,12 @@ namespace SiteGestionResaCore.Data
     {
         public activite_pfl()
         {
-            equipement = new HashSet<equipement>();
             doc_essai_pgd = new HashSet<doc_essai_pgd>();
         }
         public int id { get; set; }
         public string nom_activite { get; set; }
         public string type_documents { get; set; }
 
-        public virtual ICollection<equipement> equipement { get; set; }
         public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }
     }
 }

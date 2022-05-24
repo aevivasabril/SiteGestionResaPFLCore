@@ -23,7 +23,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public List<DocAjoutePartieDeux> ListDocsPartieDeux { get; set; }
         public List<DocAjoutePartieUn> ListDocsProduit { get; set; }
         public List<DocAjoutePartieUn> ListDocsProcede { get; set; }
-        public IEnumerable<SelectListItem> TypeDocumentItem { get; set; } // Liste pour sélectionner le type de document
         
         /// <summary>
         /// Id d'un item de la liste des responsables projet
@@ -32,6 +31,18 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         [Display(Name = "Type document*")]
         [Range(1, 20, ErrorMessage = "Sélectionnez un type de document")]
         public int TypeDocumentID { get; set; }
+
+        public IEnumerable<SelectListItem> TypeDocumentItem { get; set; } // Liste pour sélectionner le type de document
+
+        /// <summary>
+        /// Id d'un item de la liste des responsables projet
+        /// </summary>
+        [Required]
+        [Display(Name = "Type activité*")]
+        [Range(1, 20, ErrorMessage = "Sélectionnez un type d'activité")]
+        public int TypeActiviteID { get; set; }
+
+        public IEnumerable<SelectListItem> TypeActiviteItem { get; set; } // Liste pour sélectionner le type de document
 
         public string NomEquipement { get; set; }
         public int IDEquipement { get; set; }

@@ -19,8 +19,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public int ObtenirIDActivite(int id);
         public List<type_document> ListeTypeDocumentsXActivite(int IdActivite);
         public string ObtenirNomTypeDonnees(int IdTypeDonnees);
-        public List<type_document> ListeTypeDocumentsXEquip(int IdEquipement);
-        public int ObtenirIdActiviteXequip(int id);
+        public List<activite_pfl> ObtenirListActiviteXResa(int IdResa);
         public bool EcrireDocTypeUn(CreationEntrepotVM model);
         public bool EcrireDocTypeDeux(CreationEntrepotVM model);
         public void UpdateEssaiXEntrepot(int idEssai);
@@ -32,5 +31,6 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public organisme ObtenirOrgXProj(int IdOrg);
         public string ObtenirTitreEssai(int idEssai);
         public bool SaveDateCreationEntrepot(int idProjet);
+        public int ObtIdActiviteXEquip(int IdEquipement);
     }
 }

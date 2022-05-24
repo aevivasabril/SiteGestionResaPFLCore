@@ -251,6 +251,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 }
             }
             #endregion
+
         ENDT:
             return View("MesEntrepots", vm);
         }
@@ -262,6 +263,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
             vm.NumProjetSelect = accesEntrepotDB.ObtNumProjet(id.Value);
             vm.IdProjSelect = id.Value;
+            vm.HideListeDocsXEssai = "none";
+            vm.HideListeDocs = "none";
 
             ViewBag.modalSuppEnt = "show";
             return View("MesEntrepots", vm);
