@@ -121,6 +121,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             // 1000 octets => 0.9765625 Ko convertir à Ko (moins long) comme ça on peut stocker comme un integer
             DocAjoutePartieUn docAjoutePartieUn = new DocAjoutePartieUn();
             double conver = 0.9765625;
+            ModelState.Remove("TypeActiviteID"); // Pas nécessaire quand il s'agit pas d'un équipement réservé
             if (ModelState.IsValid)
             {
                 docAjoutePartieUn.NomDocument = file.FileName.ToString();
@@ -190,13 +191,13 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
             var resa = entrepotDB.ObtenirResa(id.Value);
             // Création d'une liste dropdownlist pour sélectionner le type de document pour un équipement
-            vm.TypeDocumentItem = entrepotDB.ListeTypeDocumentsXEquip(resa.equipementID).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document + ": " + f.identificateur });
-            
+            vm.TypeDocumentItem = entrepotDB.ListeTypeDocuments().Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_document + ": " + f.identificateur });
+            vm.TypeActiviteItem = entrepotDB.ObtenirListActiviteXResa(id.Value).Select(f => new SelectListItem { Value = f.id.ToString(), Text = f.nom_activite });
             vm.IDEquipement = resa.equipementID;
             vm.NomEquipement = entrepotDB.ObtenirEquipement(resa.equipementID).nom;
 
             vm.idResa = id.Value;
-            vm.IDActivite = entrepotDB.ObtenirIdActiviteXequip(resa.equipementID);
+            //vm.IDActivite = entrepotDB.ObtenirIdActiviteXequip(resa.equipementID);
 
             this.HttpContext.AddToSession("CreationEntrepotVM", vm);
             ViewBag.ModalDocTwo = "show";
@@ -214,10 +215,10 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             if (ModelState.IsValid)
             {
                 docAjoutePartieDeux.NomDocument = file.FileName.ToString();
-                docAjoutePartieDeux.IdActivite = vm.IDActivite;
+                docAjoutePartieDeux.IdActivite = vm.TypeActiviteID;
                 docAjoutePartieDeux.IdTypeDonnees = vm.TypeDocumentID;
                 docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
-                docAjoutePartieDeux.NomActivite = entrepotDB.ObtenirNomActivite(vm.IDActivite);
+                docAjoutePartieDeux.NomActivite = entrepotDB.ObtenirNomActivite(vm.TypeActiviteID);
                 docAjoutePartieDeux.IdEquipement = vm.IDEquipement;
                 docAjoutePartieDeux.NomEquipement = entrepotDB.ObtenirEquipement(vm.IDEquipement).nom;
                 docAjoutePartieDeux.TypeDonnees = entrepotDB.ObtenirNomTypeDonnees(vm.TypeDocumentID);
@@ -344,6 +345,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                     var donneesPcVue = File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
                                     // Obtenir l'équipement
                                     equipement equipem = entrepotDB.ObtenirEquipement(resa.IdEquipement);
+                                    int actId = entrepotDB.ObtIdActiviteXEquip(resa.IdEquipement);
                                     doc_essai_pgd doc = new doc_essai_pgd
                                     {
                                         contenu_document = donneesPcVue.FileContents,
@@ -351,7 +353,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                         date_creation = DateTime.Now,
                                         equipementID = resa.IdEquipement,
                                         essaiID = model.idEssai,
-                                        type_activiteID = equipem.activiteID.Value,
+                                        type_activiteID = actId, // Quand il s'agit des données recuperés de PcVue alors prendre le dernier valeur de la liste (pas le choix)
                                         type_documentID = 4, // car c'est un tableau excel PcVue
                                         taille_ko = Math.Round(((donneesPcVue.FileContents.Length * conver) / 1000), 3)
                                     };
@@ -452,11 +454,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                             nom_document = txtEssai.FileDownloadName,
                             date_creation = DateTime.Now,
                             essaiID = model.idEssai,
-                            type_activiteID = 23, // Autres
+                            type_activiteID = 1, // Metadonnées
                             type_documentID = 6,  // Autre format
                             taille_ko = Math.Round(((txtEssai.FileContents.Length * conver) / 1000), 3)
                         };
-                        //double y = Math.Round(((txtEssai.FileContents.Length * conver) / 1000), 3); // limiter à 3 decimales
+
                         IsDocStock = entrepotDB.SaveDocEssaiPgd(docTXT, ".txt infos essai");
                         if (!IsDocStock)
                         {

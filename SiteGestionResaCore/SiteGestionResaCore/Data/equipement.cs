@@ -23,10 +23,9 @@ namespace SiteGestionResaCore.Data
 
         //public string? cheminFicheMateriel { get; set; }
         //public string? cheminFicheMetrologie { get; set; }
-        public int? activiteID { get; set; }
+        public string type_activites { get; set; }
 
         public virtual zone zone { get; set; }
-        public virtual activite_pfl activite_pfl { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
         public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
         public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }

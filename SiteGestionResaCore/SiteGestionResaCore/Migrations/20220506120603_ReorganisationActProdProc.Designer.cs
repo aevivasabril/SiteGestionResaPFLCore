@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20220506120603_ReorganisationActProdProc")]
+    partial class ReorganisationActProdProc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,35 +53,35 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "6b9fbc40-2047-4c29-b2ec-8368e4728b6e",
+                            ConcurrencyStamp = "d05a5b67-0cd5-4759-8180-e7e41180a815",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "ce38b4e7-b934-42b6-84c3-329ba9fe5bb1",
+                            ConcurrencyStamp = "2fd85e5f-d46f-42b5-9160-6e6be241f9ac",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "a5917fd7-b27f-40cb-819e-048b81f8de94",
+                            ConcurrencyStamp = "4e769f46-43cc-4c1d-8c26-3e8998414a6c",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "c1a4c58a-9fd6-4957-9581-9bd2cb9fb765",
+                            ConcurrencyStamp = "215af7e1-aeb7-4ab4-89a9-b3539180cfcf",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "8c652731-8d72-40bb-b4b4-70d514b0b23e",
+                            ConcurrencyStamp = "2d796a18-22d8-4672-80dc-a7d08d4132fc",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         });
@@ -253,7 +255,7 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 8,
-                            nom_activite = "Séparation membranaire",
+                            nom_activite = "Microfiltration",
                             type_documents = "PC,M,E,W"
                         },
                         new
@@ -277,43 +279,79 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 12,
-                            nom_activite = "Maturation/stockage",
+                            nom_activite = "Ultrafiltration",
                             type_documents = "PC,M,E,W"
                         },
                         new
                         {
                             id = 13,
-                            nom_activite = "Fromage",
-                            type_documents = "PC,M,E,W,A,R"
+                            nom_activite = "Maturation/stockage",
+                            type_documents = "PC,M,E,W"
                         },
                         new
                         {
                             id = 14,
-                            nom_activite = "Produits Frais",
+                            nom_activite = "Pâtes fraîches",
                             type_documents = "PC,M,E,W,A,R"
                         },
                         new
                         {
                             id = 15,
-                            nom_activite = "Autres produits",
+                            nom_activite = "Pâtes molles",
                             type_documents = "PC,M,E,W,A,R"
                         },
                         new
                         {
                             id = 16,
-                            nom_activite = "Evaporation",
+                            nom_activite = "Pâtes pressées",
                             type_documents = "PC,M,E,W,A,R"
                         },
                         new
                         {
                             id = 17,
-                            nom_activite = "Séchage",
+                            nom_activite = "Pâtes cuites",
                             type_documents = "PC,M,E,W,A,R"
                         },
                         new
                         {
                             id = 18,
-                            nom_activite = "Autres procèdes",
+                            nom_activite = "Autres pâtes",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 19,
+                            nom_activite = "Processed Cheese",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 20,
+                            nom_activite = "Nanofiltration",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 21,
+                            nom_activite = "Autres filtrations",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 22,
+                            nom_activite = "Evaporation",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 23,
+                            nom_activite = "Séchage",
+                            type_documents = "PC,M,E,W,A,R"
+                        },
+                        new
+                        {
+                            id = 24,
+                            nom_activite = "Autres",
                             type_documents = "PC,M,E,W,A,R"
                         });
                 });
@@ -471,6 +509,9 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("activiteID")
+                        .HasColumnType("int");
+
                     b.Property<bool?>("mobile")
                         .HasColumnType("bit");
 
@@ -488,15 +529,12 @@ namespace SiteGestionResaCore.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(false);
 
-                    b.Property<string>("type_activites")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
                     b.Property<int?>("zoneID")
                         .HasColumnType("int");
 
                     b.HasKey("id");
+
+                    b.HasIndex("activiteID");
 
                     b.HasIndex("zoneID");
 
@@ -506,942 +544,942 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             id = 162,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Balance Arpège 150k",
                             numGmao = "BAL0002",
-                            type_activites = "2,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 5
                         },
                         new
                         {
                             id = 163,
+                            activiteID = 2,
                             mobile = false,
                             nom = "Balance 32 Kg (KA32s)",
                             numGmao = "BAL0003",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 9
                         },
                         new
                         {
                             id = 164,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Balance 300Kg (ID2 + KCS300)",
                             numGmao = "BAL0004",
-                            type_activites = "2,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 3
                         },
                         new
                         {
                             id = 165,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)",
                             numGmao = "BAL0011",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 16
                         },
                         new
                         {
                             id = 166,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance HBM 60 Kg (WE2110)",
                             numGmao = "BAL0054",
-                            type_activites = "2,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 1
                         },
                         new
                         {
                             id = 167,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance 60Kg PRECIA MOLEN (X112-A)",
                             numGmao = "BAL0057",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 169,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Brassoires PM",
                             numGmao = "BRAS0001",
-                            type_activites = "13",
                             zoneID = 6
                         },
                         new
                         {
                             id = 170,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Mélangeur cuiseur stéphan",
                             numGmao = "CUISMEL0001",
-                            type_activites = "13,14,15",
                             zoneID = 9
                         },
                         new
                         {
                             id = 171,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur récupérateur",
                             numGmao = "ECH0001",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 172,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge (regulation chaud/froid)",
                             numGmao = "ECH0002",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 173,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Thermorégulateur vulcatherm (membrane)",
                             numGmao = "ECH0004",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 174,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Thermorégulateur vulcatherm (séchage)",
                             numGmao = "ECH0005",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 175,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge(bleu)",
                             numGmao = "ECH0006",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 176,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec pompe centrifuge",
                             numGmao = "ECH0007",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 177,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Echangeur avec comptage",
                             numGmao = "ECH0009",
-                            type_activites = "2,4,5,6,8,9,10,13,14,15,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 178,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Echangeur à surface raclée Contherm (ESR)",
                             numGmao = "ECH0010",
-                            type_activites = "13,14,15",
                             zoneID = 4
                         },
                         new
                         {
                             id = 179,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Armoire affinage AFV7HC Elimeca 1",
                             numGmao = "ECLIM0001",
-                            type_activites = "13,14,15",
                             zoneID = 16
                         },
                         new
                         {
                             id = 180,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Armoire affinage AFV7HC Elimeca 2",
                             numGmao = "ECLIM0002",
-                            type_activites = "13,14,15",
                             zoneID = 16
                         },
                         new
                         {
                             id = 181,
+                            activiteID = 9,
                             mobile = true,
                             nom = "Ecrémeuse ELECREM modèle 3 (150L/h)",
                             numGmao = "ECREM0001",
-                            type_activites = "10",
                             zoneID = 17
                         },
                         new
                         {
                             id = 182,
+                            activiteID = 9,
                             mobile = false,
                             nom = "Ecrémeuse Westfalia EASYCREAM",
                             nomTabPcVue = "tab_UA_ECREM",
                             numGmao = "ECREM0002",
-                            type_activites = "10",
                             zoneID = 3
                         },
                         new
                         {
                             id = 183,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°1 (100L)",
                             numGmao = "ECUV0003",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 184,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°6 (150L)",
                             numGmao = "ECUV0004",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 185,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°2 (100L)",
                             numGmao = "ECUV0005",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 186,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°3 (100L)",
                             numGmao = "ECUV0006",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 187,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini cuve 150L",
                             numGmao = "ECUV0007",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 188,
+                            activiteID = 12,
                             mobile = false,
                             nom = "2 cuves maturation 500L",
                             nomTabPcVue = "tab_UA_MAT",
                             numGmao = "ECUV0010",
-                            type_activites = "2,4,5,6,7,13,14,15",
                             zoneID = 3
                         },
                         new
                         {
                             id = 189,
+                            activiteID = 12,
                             mobile = false,
                             nom = "Tank 1000L avec agitation et groupe froid",
                             numGmao = "ECUV0012",
-                            type_activites = "2,4,5,6,7,8,12",
                             zoneID = 4
                         },
                         new
                         {
                             id = 190,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Cuve PPC Châlon-Mégard 1000 litres",
                             numGmao = "ECUV0014",
-                            type_activites = "13,14,15",
                             zoneID = 7
                         },
                         new
                         {
                             id = 191,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 1",
                             numGmao = "ECUV0016",
-                            type_activites = "13,14",
                             zoneID = 5
                         },
                         new
                         {
                             id = 192,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 2",
                             numGmao = "ECUV0017",
-                            type_activites = "13,14",
                             zoneID = 5
                         },
                         new
                         {
                             id = 193,
+                            activiteID = 13,
                             mobile = true,
                             nom = "Table égouttage PM 3",
                             numGmao = "ECUV0018",
-                            type_activites = "13,14",
                             zoneID = 5
                         },
                         new
                         {
                             id = 194,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°8 (150L)",
                             numGmao = "ECUV0019",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 195,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°4 (100L)",
                             numGmao = "ECUV0020",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 196,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 1(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0021",
-                            type_activites = "13,14,15",
                             zoneID = 5
                         },
                         new
                         {
                             id = 197,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 2(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0022",
-                            type_activites = "13,14,15",
                             zoneID = 5
                         },
                         new
                         {
                             id = 198,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Mini-cuve de fabrication 3(2 cuves 10 litres et 20 litres)",
                             numGmao = "ECUV0023",
-                            type_activites = "13,14,15",
                             zoneID = 5
                         },
                         new
                         {
                             id = 199,
+                            activiteID = 6,
                             mobile = false,
                             nom = "Tank GEA 550L avec agitation et groupe froid CVB",
                             numGmao = "ECUV0025",
-                            type_activites = "2,4,5,6,7,8,12",
                             zoneID = 8
                         },
                         new
                         {
                             id = 200,
+                            activiteID = 1,
                             mobile = false,
                             nom = "Cuve 2000L avec agitateur",
                             nomTabPcVue = "tab_UA_CUV",
                             numGmao = "ECUV0026",
-                            type_activites = "2,4,5,6,7",
                             zoneID = 2
                         },
                         new
                         {
                             id = 201,
+                            activiteID = 6,
                             mobile = true,
                             nom = "Mini-cuve N°5 (150L)",
                             numGmao = "ECUV0027",
-                            type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 202,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Machine emballage sous vide BRITEK SC800L",
                             numGmao = "EMB0001",
-                            type_activites = "13,14,15",
                             zoneID = 15
                         },
                         new
                         {
                             id = 203,
+                            activiteID = 15,
                             mobile = true,
                             nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116",
                             numGmao = "EMB0003",
-                            type_activites = "14,15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 204,
+                            activiteID = 17,
                             mobile = true,
                             nom = "Chariot dosage ERECAM combidos 102T (doseuse)",
                             numGmao = "EMB0004",
-                            type_activites = "13,14,15",
                             zoneID = 9
                         },
                         new
                         {
                             id = 205,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Etuve biocomcept BC240 FIRLABO",
                             numGmao = "ETUV0039",
-                            type_activites = "13,14,15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 206,
+                            activiteID = 10,
                             mobile = false,
                             nom = "Homogénéisateur 2 têtes RANNIE",
                             numGmao = "HOMO0002",
-                            type_activites = "11",
                             zoneID = 3
                         },
                         new
                         {
                             id = 207,
+                            activiteID = 10,
                             mobile = false,
                             nom = "Homogénéisateur 12/51H RANNIE",
                             numGmao = "HOMO0003",
-                            type_activites = "11",
                             zoneID = 3
                         },
                         new
                         {
                             id = 208,
+                            activiteID = 10,
                             mobile = true,
                             nom = "Homogénéisateur Panda",
                             numGmao = "HOMO0007",
-                            type_activites = "11",
                             zoneID = 15
                         },
                         new
                         {
                             id = 209,
+                            activiteID = 14,
                             mobile = true,
                             nom = "Chariots porte-bassines PM (N°1)",
                             numGmao = "MANUT002",
-                            type_activites = "13",
                             zoneID = 6
                         },
                         new
                         {
                             id = 210,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Chariots porte-bassines PM (N°2)",
                             numGmao = "MANUT0012",
-                            type_activites = "13",
                             zoneID = 6
                         },
                         new
                         {
                             id = 211,
+                            activiteID = 12,
                             mobile = false,
                             nom = "Ensemble NEP",
                             nomTabPcVue = "tab_UA_NEP",
                             numGmao = "MLAV0016",
-                            type_activites = "2,4,5,6,7,9,10,12",
                             zoneID = 2
                         },
                         new
                         {
                             id = 212,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Système de moulage PM et basculeur",
                             numGmao = "MOUL0001",
-                            type_activites = "13",
                             zoneID = 5
                         },
                         new
                         {
                             id = 213,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote ultrafiltration TIA spirale",
                             nomTabPcVue = "tab_UA_SPI",
                             numGmao = "PILOT0001",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 214,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote UF TIA/PALL 0,02u (JYG)",
                             nomTabPcVue = "tab_UA_UFMF",
                             numGmao = "PILOT0002",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 215,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote OI NF UF Prolab Milipore",
                             numGmao = "PILOT0003",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 216,
+                            activiteID = 18,
                             mobile = false,
                             nom = "Pilote filtration engineering (OI et NF)",
                             numGmao = "PILOT0004",
-                            type_activites = "8",
                             zoneID = 4
                         },
                         new
                         {
                             id = 217,
+                            activiteID = 19,
                             mobile = true,
                             nom = "Pilote de microfiltration MFS1",
                             numGmao = "PILOT0005",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 218,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration MFMG",
                             nomTabPcVue = "tab_UA_MFMG",
                             numGmao = "PILOT0006",
-                            type_activites = "8",
                             zoneID = 3
                         },
                         new
                         {
                             id = 219,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration MFS19",
                             numGmao = "PILOT0007",
-                            type_activites = "8",
                             zoneID = 4
                         },
                         new
                         {
                             id = 220,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration GP7",
                             nomTabPcVue = "tab_UA_GP7",
                             numGmao = "PILOT0008",
-                            type_activites = "8",
                             zoneID = 4
                         },
                         new
                         {
                             id = 221,
+                            activiteID = 19,
                             mobile = false,
                             nom = "UF TAMI/tech-sep 8 kDa (13 m2)",
                             numGmao = "PILOT0009",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 222,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Stérilisateur pilote tubulaire électrique ACTINI",
                             nomTabPcVue = "tab_UA_ACT",
                             numGmao = "PILOT0010",
-                            type_activites = "9",
                             zoneID = 3
                         },
                         new
                         {
                             id = 223,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Pilote de traitement thermique UHT-HTST Lab 25EDH",
                             nomTabPcVue = "tab_UA_MTH",
                             numGmao = "PILOT0011",
-                            type_activites = "9",
                             zoneID = 8
                         },
                         new
                         {
                             id = 224,
+                            activiteID = 19,
                             mobile = true,
                             nom = "Pilote UF TAMI/Tia 8Kda mobile",
                             numGmao = "PILOT0013",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 225,
+                            activiteID = 20,
                             mobile = false,
                             nom = "Pilote évaporateur à flot tombant FF-1",
                             nomTabPcVue = "tab_UA_EVAA, tab_UA_EVAB",
                             numGmao = "PILOT0014",
-                            type_activites = "16",
                             zoneID = 1
                         },
                         new
                         {
                             id = 226,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote de microfiltration P3",
                             numGmao = "PILOT0015",
-                            type_activites = "8",
                             zoneID = 8
                         },
                         new
                         {
                             id = 227,
+                            activiteID = 21,
                             mobile = false,
                             nom = "Pilote de sèchage mono-disperse",
                             numGmao = "PILOT0016",
-                            type_activites = "17",
                             zoneID = 1
                         },
                         new
                         {
                             id = 228,
+                            activiteID = 21,
                             mobile = false,
                             nom = "Pilote tour de sèchage MINOR",
                             nomTabPcVue = "tab_UA_SEC",
                             numGmao = "PILOT0017",
-                            type_activites = "17",
                             zoneID = 1
                         },
                         new
                         {
                             id = 229,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote VALOBAB (MF et UF) SKID 12EO46",
                             nomTabPcVue = "tab_UA_VALO",
                             numGmao = "PILOT0018",
-                            type_activites = "8",
                             zoneID = 3
                         },
                         new
                         {
                             id = 230,
+                            activiteID = 19,
                             mobile = false,
                             nom = "Pilote UF (optimal)",
                             nomTabPcVue = "tab_UA_OPTIMAL",
                             numGmao = "PILOT0019",
-                            type_activites = "8",
                             zoneID = 4
                         },
                         new
                         {
                             id = 231,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe centrifuge 20 à 30 m3/h",
                             numGmao = "POMPE0002",
-                            type_activites = "18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 232,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe PCM - 5 m3/h",
                             numGmao = "POMPE0003",
-                            type_activites = "18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 233,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Pompe disperseur de poudre - TRIBLENDER",
                             numGmao = "POMPE0004",
-                            type_activites = "13,14,15",
                             zoneID = 17
                         },
                         new
                         {
                             id = 234,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Pompe de transfert de lait 58L/min (bleue)",
                             numGmao = "POMPE0006",
-                            type_activites = "18",
                             zoneID = 2
                         },
                         new
                         {
                             id = 235,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Presse à fromage verticale",
                             numGmao = "PRES0002",
-                            type_activites = "13",
                             zoneID = 7
                         },
                         new
                         {
                             id = 236,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Presse à fromage horizontale",
                             numGmao = "PRES0003",
-                            type_activites = "13",
                             zoneID = 7
                         },
                         new
                         {
                             id = 237,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Tranche-caillé",
                             numGmao = "TRAN0001",
-                            type_activites = "13",
                             zoneID = 6
                         },
                         new
                         {
                             id = 238,
+                            activiteID = 9,
                             mobile = false,
                             nom = "Ecrémeuse Elecrem (ACTALIA) 500 l/h",
                             numGmao = "ACTALIA",
-                            type_activites = "10",
                             zoneID = 3
                         },
                         new
                         {
                             id = 239,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Camion collecte",
                             numGmao = "",
-                            type_activites = "2,15",
                             zoneID = 2
                         },
                         new
                         {
                             id = 240,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Bac de saumurage",
                             numGmao = "ECUV0015",
-                            type_activites = "13,14,15",
                             zoneID = 10
                         },
                         new
                         {
                             id = 241,
+                            activiteID = 15,
                             mobile = false,
                             nom = "3 cuves fromagerie 200 Litres",
                             numGmao = "ECUV0034, ECUV0035, ECUV0036",
-                            type_activites = "13,15",
                             zoneID = 7
                         },
                         new
                         {
                             id = 242,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Hotte PSM",
                             numGmao = "",
-                            type_activites = "14,15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 243,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35",
                             numGmao = "PILOT0022",
-                            type_activites = "11,13,14,15",
                             zoneID = 8
                         },
                         new
                         {
                             id = 244,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage",
                             numGmao = "BAL0068",
-                            type_activites = "16,17",
                             zoneID = 1
                         },
                         new
                         {
                             id = 245,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0074",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 16
                         },
                         new
                         {
                             id = 246,
+                            activiteID = 1,
                             mobile = true,
                             nom = "Balance PRECIA MOLEN 150 kg",
                             numGmao = "BAL0073",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 7
                         },
                         new
                         {
                             id = 247,
+                            activiteID = 23,
                             mobile = true,
                             nom = "Tablette Latitude 7212 Dell",
                             numGmao = "",
-                            type_activites = "18",
                             zoneID = 17
                         },
                         new
                         {
                             id = 248,
+                            activiteID = 8,
                             mobile = true,
                             nom = "Thermomix",
                             numGmao = "",
-                            type_activites = "9,13,14,15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 250,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP5",
                             numGmao = "CHF011",
-                            type_activites = "15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 251,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP6",
                             numGmao = "CHF013",
-                            type_activites = "15",
                             zoneID = 13
                         },
                         new
                         {
                             id = 252,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP8",
                             numGmao = "CHF012",
-                            type_activites = "15",
                             zoneID = 15
                         },
                         new
                         {
                             id = 253,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle AP9",
                             numGmao = "CHF014",
-                            type_activites = "15",
                             zoneID = 16
                         },
                         new
                         {
                             id = 254,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Bac de saumurage 800 lts",
                             numGmao = "ECUV0037",
-                            type_activites = "13,14,15",
                             zoneID = 10
                         },
                         new
                         {
                             id = 255,
+                            activiteID = 8,
                             mobile = false,
                             nom = "Cuve 10 lts Coquard",
                             numGmao = "CUISMEL0002",
-                            type_activites = "13,14,15",
                             zoneID = 12
                         },
                         new
                         {
                             id = 256,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 A",
                             numGmao = "CHF015",
-                            type_activites = "13,14,15",
                             zoneID = 18
                         },
                         new
                         {
                             id = 257,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 B",
                             numGmao = "CHF021",
-                            type_activites = "13,14,15",
                             zoneID = 19
                         },
                         new
                         {
                             id = 258,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle AP7 C",
                             numGmao = "CHF022",
-                            type_activites = "13,14,15",
                             zoneID = 20
                         },
                         new
                         {
                             id = 259,
+                            activiteID = 6,
                             mobile = false,
                             nom = "Tank 850 L",
                             numGmao = "ECUV0038",
-                            type_activites = "7",
                             zoneID = 4
                         },
                         new
                         {
                             id = 260,
+                            activiteID = 2,
                             mobile = true,
                             nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0079",
-                            type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
                             zoneID = 12
                         },
                         new
                         {
                             id = 261,
+                            activiteID = 13,
                             mobile = false,
                             nom = "Salle Saumurage",
                             numGmao = "CHF018",
-                            type_activites = "13,14,15",
                             zoneID = 10
                         },
                         new
                         {
                             id = 262,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Salle Pâtes molles moulage",
                             numGmao = "LAB0048",
-                            type_activites = "13,14,15",
                             zoneID = 5
                         },
                         new
                         {
                             id = 263,
+                            activiteID = 14,
                             mobile = false,
                             nom = "Salle Pâtes molles tranchage",
                             numGmao = "LAB0049",
-                            type_activites = "13,14,15",
                             zoneID = 6
                         },
                         new
                         {
                             id = 264,
+                            activiteID = 23,
                             mobile = false,
                             nom = "Salle Labo",
                             numGmao = "LAB0017",
-                            type_activites = "15,18",
                             zoneID = 11
                         },
                         new
                         {
                             id = 265,
+                            activiteID = 15,
                             mobile = false,
                             nom = "Salle Pâtes préssées cuites",
                             numGmao = "LAB0047",
-                            type_activites = "13,14,15",
                             zoneID = 7
                         },
                         new
                         {
                             id = 266,
+                            activiteID = 22,
                             mobile = false,
                             nom = "Salle Sthepan",
                             numGmao = "LAB0046",
-                            type_activites = "13,14,15",
                             zoneID = 9
                         });
                 });
@@ -2537,6 +2575,12 @@ namespace SiteGestionResaCore.Migrations
 
             modelBuilder.Entity("SiteGestionResaCore.Data.equipement", b =>
                 {
+                    b.HasOne("SiteGestionResaCore.Data.activite_pfl", "activite_pfl")
+                        .WithMany("equipement")
+                        .HasForeignKey("activiteID")
+                        .HasConstraintName("FK_equipement_activite_pfl")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("SiteGestionResaCore.Data.zone", "zone")
                         .WithMany("equipement")
                         .HasForeignKey("zoneID")

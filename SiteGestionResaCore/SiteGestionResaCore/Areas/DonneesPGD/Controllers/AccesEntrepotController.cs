@@ -80,9 +80,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             MesEntrepotsVM vm = HttpContext.GetFromSession<MesEntrepotsVM>("MesEntrepotsVM");
             int idEssai = accesEntrepotDB.RecupIdEssaiXDoc(id.Value);
             // Vérifier si le document est supprimable: document different à "Informations_Essai_##.txt" et "DonneesPcVue_..."
-            bool IsDocSupp = accesEntrepotDB.DocSupprimable(id.Value);
-            if(IsDocSupp == true)
-            {
+            //bool IsDocSupp = accesEntrepotDB.DocSupprimable(id.Value);
+            //if(IsDocSupp == true)
+            //{
                 bool IsDeletedOk = accesEntrepotDB.SupprimerDocument(id.Value);
                 if (IsDeletedOk == false)
                 {
@@ -96,14 +96,14 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                     vm.ListDocsXEssai = accesEntrepotDB.ObtListDocsXEssai(idEssai);
                     this.HttpContext.AddToSession("MesEntrepotsVM", vm);
                 }
-            }
+            /*}
             else
             {
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Vous ne pouvez pas supprimer ce document car il a été généré automatiquement lors de la création entrepôt!";
                 vm.ListDocsXEssai = accesEntrepotDB.ObtListDocsXEssai(idEssai);
                 this.HttpContext.AddToSession("MesEntrepotsVM", vm);
-            }
+            }*/
             
             return View("MesEntrepots", vm);
         }
@@ -181,7 +181,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 {
                     // Récupérer le nom de l'id Activité
                     var docu = accesEntrepotDB.ObtActivite(doc.Key);
-                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.nom_activite, 25);     
+                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.id.ToString() + "_" + docu.nom_activite, 25);     
 
                     string PathAct = pathE + @"\" + nameAct;
 
@@ -251,6 +251,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 }
             }
             #endregion
+
         ENDT:
             return View("MesEntrepots", vm);
         }
@@ -262,6 +263,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
             vm.NumProjetSelect = accesEntrepotDB.ObtNumProjet(id.Value);
             vm.IdProjSelect = id.Value;
+            vm.HideListeDocsXEssai = "none";
+            vm.HideListeDocs = "none";
 
             ViewBag.modalSuppEnt = "show";
             return View("MesEntrepots", vm);
@@ -288,6 +291,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 vm.ListEntrepotXProjet = accesEntrepotDB.ObtenirListProjetsAvecEntrepotCree(user);
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Entrepôt supprimé avec succès";
+                this.HttpContext.AddToSession("MesEntrepotsVM", vm);
                 return View("MesEntrepots", vm);
             }
             else

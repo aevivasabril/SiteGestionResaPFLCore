@@ -50,7 +50,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             DateTime JourCalendrier;
             string NomJour;
 
-            essai[] SubInfosEssai = new essai[] { };
+            //essai[] SubInfosEssai = new essai[] { };
             List<essai> InfosEssai = new List<essai>();
             equipement Equipement = resaDB.equipement.First(x => x.id == IdEquipement);     // Equipement à enqueter
 
@@ -79,15 +79,17 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                 goto ENDT;
 
             // Récupérer toutes les réservations validés ou en attente valid 
-            SubInfosEssai = (from resa in resaDB.reservation_projet
+            InfosEssai = (from resa in resaDB.reservation_projet
                              from essa in resaDB.essai
                              where resa.essaiID == essa.id &&
                              (essa.status_essai == EnumStatusEssai.Validate.ToString() ||
                              essa.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                             select essa).Distinct().ToArray();
+                             && ((DatEnqDebMatin >= resa.date_debut || DatEnqDebAprem >= resa.date_debut) &&
+                                (DatEnqFinMatin <= resa.date_fin || DatEnqFinAprem <= resa.date_fin))
+                             select essa).Distinct().ToList();
 
             // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
-            foreach (var es in SubInfosEssai)
+            /*foreach (var es in SubInfosEssai)
             {
                 var res = resaDB.reservation_projet.Where(r => r.essaiID == es.id).ToList();
                 foreach (var resEs in res)
@@ -99,7 +101,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         break;
                     }
                 }
-            }
+            }*/
 
             foreach (var ess in InfosEssai)
             {
@@ -165,17 +167,17 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions)
 
-            var maints = (from interMaint in resaDB.reservation_maintenance
+            InfosInterv = (from interMaint in resaDB.reservation_maintenance
                           from maint in resaDB.maintenance
                           where (interMaint.maintenanceID == maint.id)
                           && (maint.maintenance_supprime != true)
                           && ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
                           && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
-                          select maint).Distinct().ToArray();
+                          select maint).Distinct().ToList();
 
 
             // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
-            foreach (var maint in maints)
+            /*foreach (var maint in maints)
             {
                 var resaMaint = resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id).ToList();
                 foreach (var resEs in resaMaint)
@@ -187,9 +189,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         break;
                     }
                 }
-            }
+            }*/
 
-            foreach(var m in InfosInterv.Distinct())
+            foreach(var m in InfosInterv)
             {
                 InfosAffichageMaint affichageMaint = new InfosAffichageMaint
                 {

@@ -233,17 +233,18 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     occupation = new OccupationZonesParJour();
                     bool ZonOccupeMatin = false;
                     bool ZonOccupeAprem = false;
-                    foreach (var equip in equipements)
-                    {
-                        ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
-                        // Vérifier la disponibilité de la zone (juste pour affichage) 
-                        if (EquipResaJour.ListResasMatin.Count() > 0 || EquipResaJour.InfosIntervMatin.Count() > 0) 
-                            // Vérifier pour les opérations de maintenance et les réservations            
-                            ZonOccupeMatin = true;
+                   
+                    //foreach (var equip in equipements)
+                    //{
+                        //ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
+                    // Vérifier la disponibilité de la zone (juste pour affichage) 
+                    if (ListResEquipParjour[d].ListResasMatin.Count() > 0 || ListResEquipParjour[d].InfosIntervMatin.Count() > 0) 
+                        // Vérifier pour les opérations de maintenance et les réservations            
+                        ZonOccupeMatin = true;
 
-                        if ((EquipResaJour.ListResasAprem.Count() > 0 || EquipResaJour.InfosIntervAprem.Count() > 0) && occupation.IsZoneOccupeAprem != true)
+                    if ((ListResEquipParjour[d].ListResasAprem.Count() > 0 || ListResEquipParjour[d].InfosIntervAprem.Count() > 0) && occupation.IsZoneOccupeAprem != true)
                             ZonOccupeAprem = true;
-                    }
+                    //}
 
                     if (ZonOccupeMatin == true)
                         occupation.IsZoneOccupeMatin = true;
