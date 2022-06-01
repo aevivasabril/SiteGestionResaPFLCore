@@ -213,5 +213,120 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             return infos;
         }
+
+        public projet ObtenirProjet(int IdProjet)
+        {
+            return resaDB.projet.First(p => p.id == IdProjet);
+        }
+
+        public List<ld_equipes_stlo> ObtenirListEquip()
+        {
+            return resaDB.ld_equipes_stlo.Distinct().ToList();
+        }
+
+        public List<InfosReservations> ObtRecapitulatifXEquipe(int IdEquipeStlo, DateTime datedebut, DateTime datefin)
+        {
+            List<InfosReservations> infos = new List<InfosReservations>();
+            InfosReservations info = new InfosReservations();
+
+            var equipeStlo = resaDB.ld_equipes_stlo.First(e => e.id == IdEquipeStlo);
+            var requete = (from resa in resaDB.reservation_projet
+                           from equip in resaDB.ld_equipes_stlo
+                           from essa in resaDB.essai
+                           from user in resaDB.Users
+                           where resa.date_debut >= datedebut && resa.date_fin <= datefin
+                           && (resa.essaiID == essa.id && essa.compte_userID == user.Id && user.equipeID == IdEquipeStlo
+                           && essa.resa_supprime != true && essa.resa_refuse != true)
+                           select resa).Distinct().ToList();
+            
+            foreach(var r in requete)
+            {
+                var essai = resaDB.essai.First(e => e.id == r.essaiID);
+                var projet = resaDB.projet.First(p=>p.id == essai.projetID);
+                var organisme = resaDB.organisme.First(o => o.id == projet.organismeID);
+                var equipement = resaDB.equipement.First(e => e.id == r.equipementID);
+
+                info = new InfosReservations
+                {
+                    NumProjet = projet.num_projet,
+                    TypeProjet = projet.type_projet,
+                    RespProjet = projet.mailRespProjet,
+                    TitreProjet = projet.titre_projet,
+                    TitreEssai = essai.titreEssai,
+                    DateCreation = essai.date_creation,
+                    NomOrganisme = organisme.nom_organisme,
+                    IdEssai = essai.id,
+                    DateDebutResa = r.date_debut,
+                    DateFinResa = r.date_fin,
+                    NomEquipement = equipement.nom,
+                    NomEquipe = equipeStlo.nom_equipe
+                };
+                infos.Add(info);
+            }
+            return infos;
+        }
+
+        public ld_equipes_stlo ObtInfosEquipe(int IdEquipe)
+        {
+            return resaDB.ld_equipes_stlo.First(e => e.id == IdEquipe);
+        }
+
+        public List<organisme> ListeOrganismes()
+        {
+            return resaDB.organisme.ToList();
+        }
+
+        public List<InfosReservations> ObtRecapitulatifXOrg(int IdOrg, DateTime datedebut, DateTime datefin)
+        {
+            List<InfosReservations> infos = new List<InfosReservations>();
+            InfosReservations info = new InfosReservations();
+
+            var org = resaDB.organisme.First(e => e.id == IdOrg);
+            var requete = (from resa in resaDB.reservation_projet
+                           from orga in resaDB.organisme
+                           from essa in resaDB.essai
+                           from user in resaDB.Users
+                           where resa.date_debut >= datedebut && resa.date_fin <= datefin
+                           && (resa.essaiID == essa.id && essa.compte_userID == user.Id && user.organismeID == IdOrg
+                           && essa.resa_supprime != true && essa.resa_refuse != true)
+                           select resa).Distinct().ToList();
+
+            foreach (var r in requete)
+            {
+                var essai = resaDB.essai.First(e => e.id == r.essaiID);
+                var projet = resaDB.projet.First(p => p.id == essai.projetID);
+
+                var equipeStlo = (from user in resaDB.Users
+                                  from equipe in resaDB.ld_equipes_stlo
+                                  where user.equipeID == equipe.id && user.Id == projet.compte_userID
+                                  select equipe).First();
+
+                var organisme = resaDB.organisme.First(o => o.id == projet.organismeID);
+                var equipement = resaDB.equipement.First(e => e.id == r.equipementID);
+
+                info = new InfosReservations
+                {
+                    NumProjet = projet.num_projet,
+                    TypeProjet = projet.type_projet,
+                    RespProjet = projet.mailRespProjet,
+                    TitreProjet = projet.titre_projet,
+                    TitreEssai = essai.titreEssai,
+                    DateCreation = essai.date_creation,
+                    NomOrganisme = organisme.nom_organisme,
+                    IdEssai = essai.id,
+                    DateDebutResa = r.date_debut,
+                    DateFinResa = r.date_fin,
+                    NomEquipement = equipement.nom,
+                    NomEquipe = equipeStlo.nom_equipe
+                };
+                infos.Add(info);
+            }
+            return infos;
+        }
+
+        public organisme ObtenirOrganisme(int IdOrg)
+        {
+            return resaDB.organisme.First(o => o.id == IdOrg);
+        }
     }
 }

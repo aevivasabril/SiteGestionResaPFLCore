@@ -14,5 +14,12 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         zone ObtNomZone(int id);
         List<projet> ObtenirListProjet();
         List<InfosReservations> ObtRecapitulatifXProjet(int IdProjet);
+        projet ObtenirProjet(int IdProjet);
+        List<ld_equipes_stlo> ObtenirListEquip();
+        List<InfosReservations> ObtRecapitulatifXEquipe(int IdEquipeStlo, DateTime datedebut, DateTime datefin);
+        ld_equipes_stlo ObtInfosEquipe(int IdEquipe);
+        List<organisme> ListeOrganismes();
+        List<InfosReservations> ObtRecapitulatifXOrg(int IdOrg, DateTime datedebut, DateTime datefin);
+        organisme ObtenirOrganisme(int IdOrg);
     }
 }
