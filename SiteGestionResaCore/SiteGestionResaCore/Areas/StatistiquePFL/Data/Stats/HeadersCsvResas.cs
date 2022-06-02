@@ -14,7 +14,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public string TitreEssai = "Titre essai";
         public string NomOrganisme = "Nom de l'organisme";
         public string NomEquipe = "Equipe STLO";
-        public string NomEquipement = "Nom equipement";
+        public string NomEquipement = "Nom équipement";
+        public string ZonEquipement = "Zone équipement";
         public string IdEssai = "Id essai";
         public string DateCreation = "Date creation essai";
         public string DateDebutResa = "Date debut réservation";

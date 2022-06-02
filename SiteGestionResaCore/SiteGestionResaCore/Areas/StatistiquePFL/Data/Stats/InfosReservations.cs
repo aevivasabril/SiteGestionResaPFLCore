@@ -15,6 +15,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public string NomOrganisme { get; set; }
         public string NomEquipe { get; set; }
         public string NomEquipement { get; set; }
+        public string ZoneEquipement { get; set; }
         public int IdEssai { get; set; }
         public DateTime DateCreation { get; set; }
         public DateTime DateDebutResa { get; set; }

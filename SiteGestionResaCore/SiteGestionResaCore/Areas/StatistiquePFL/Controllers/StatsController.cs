@@ -27,6 +27,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             AccueilStatsVM vm = new AccueilStatsVM();
             vm.ListZones = statistiquesDB.ObtenirListZones();
             vm.AnneeActuel = DateTime.Today.Year;
+            vm.ListProvenances = statistiquesDB.ListeProvenances();
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
@@ -47,7 +48,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                     List<InfosReservations> List = statistiquesDB.ObtenirResasDuAu(vm.DateDu.Value, vm.DateAu.Value);
                     // Déterminer les headers tableau
                     var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme, 
-                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement,
+                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
                                         headersCsv.DateDebutResa, headersCsv.DateFinResa, headersCsv.NbJours};
 
                     foreach (var col in headers)
@@ -80,6 +81,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                         csv.Append(resa.DateCreation);
                         csv.Append(";");
                         csv.Append(resa.NomEquipement);
+                        csv.Append(";");
+                        csv.Append(resa.ZoneEquipement);
                         csv.Append(";");
                         csv.Append(resa.DateDebutResa);
                         csv.Append(";");
@@ -124,7 +127,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, model.AnneeActuel);
             vm.NomZone = statistiquesDB.ObtNomZone(id).nom_zone;
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-            this.HttpContext.AddToSession("AccueilStatsVM", vm);
+            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return PartialView("_EquipsVsJours", vm);
         }
 
@@ -162,7 +165,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                     var projet = statistiquesDB.ObtenirProjet(vm.SelectProjetId);
                     // Déterminer les headers tableau
                     var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
-                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement,
+                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
                                         headersCsv.DateDebutResa, headersCsv.DateFinResa};
 
                     foreach (var col in headers)
@@ -195,6 +198,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                         csv.Append(resa.DateCreation);
                         csv.Append(";");
                         csv.Append(resa.NomEquipement);
+                        csv.Append(";");
+                        csv.Append(resa.ZoneEquipement);
                         csv.Append(";");
                         csv.Append(resa.DateDebutResa);
                         csv.Append(";");
@@ -258,7 +263,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                         var equipeStlo = statistiquesDB.ObtInfosEquipe(vm.SelectEquipeId);
                         // Déterminer les headers tableau
                         var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
-                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement,
+                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
                                         headersCsv.DateDebutResa, headersCsv.DateFinResa};
 
                         foreach (var col in headers)
@@ -291,6 +296,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                             csv.Append(resa.DateCreation);
                             csv.Append(";");
                             csv.Append(resa.NomEquipement);
+                            csv.Append(";");
+                            csv.Append(resa.ZoneEquipement);
                             csv.Append(";");
                             csv.Append(resa.DateDebutResa);
                             csv.Append(";");
@@ -357,7 +364,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                         var organisme = statistiquesDB.ObtenirOrganisme(vm.SelectOrgId);
                         // Déterminer les headers tableau
                         var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
-                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement,
+                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
                                         headersCsv.DateDebutResa, headersCsv.DateFinResa};
 
                         foreach (var col in headers)
@@ -391,6 +398,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                             csv.Append(";");
                             csv.Append(resa.NomEquipement);
                             csv.Append(";");
+                            csv.Append(resa.ZoneEquipement);
+                            csv.Append(";");
                             csv.Append(resa.DateDebutResa);
                             csv.Append(";");
                             csv.Append(resa.DateFinResa);
@@ -412,6 +421,30 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                 return View("AccueilStats", model);
             }
 
+        }
+
+        public IActionResult ProvenanceXProjet(int id)
+        {
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+
+            ProvXProjVM vm = new ProvXProjVM();
+            vm.ListProjetsXProv = statistiquesDB.ListProjXProvenance(id);
+            vm.ProvenanceProjet = statistiquesDB.NomProvenance(id).nom_provenance;
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
+            return PartialView("_ListeProjXProvenanc", vm);
+        }
+
+        public IActionResult ProvenanceXProjetSans()
+        {
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+
+            ProvXProjVM vm = new ProvXProjVM();
+            vm.ListProjetsXProv = statistiquesDB.ListProjXNonProv();
+            vm.ProvenanceProjet = "Sans provenance";
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
+            return PartialView("_ListeProjXProvenanc", vm);
         }
     }
 }

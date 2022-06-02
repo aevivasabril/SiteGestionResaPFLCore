@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -65,7 +66,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                     if (diff.Hours == 5) // démi journée
                         nbJour = diff.Days + 0.5;
                     else if (diff.Hours >= 5) // réservation commençant l'aprèm et finissant le jour suivant le matin 
-                        nbJour = diff.Days + 1; 
+                        nbJour = diff.Days + 1;
 
                     #endregion
 
@@ -76,6 +77,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                         TitreEssai = ess.titreEssai,
                         NomEquipe = equipeStlo.nom_equipe,
                         NomEquipement = equipement.nom,
+                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
                         NomOrganisme = organisme.nom_organisme,
                         NumProjet = projet.num_projet,
                         RespProjet = projet.mailRespProjet,
@@ -123,9 +125,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             foreach(var equip in equipements)
             {
                 double nbJours = 0;
-                if(reservations.Where(r=>r.Key == equip.id).Count() != 0) // Si existe au moins une réservation pour cet équipement cet année
-                {
-                    var listResasXEquip = reservations.Where(r => r.Key == equip.id).ToList(); // Reagrouper les réservations pour cet équipement
+                var listResasXEquip = reservations.Where(r => r.Key == equip.id).ToList(); // Reagrouper les réservations pour cet équipement
+                if (listResasXEquip.Count() != 0) // Si existe au moins une réservation pour cet équipement cet année
+                {                    
                     foreach(var obje in listResasXEquip)
                     {
                         foreach(var resa in obje)
@@ -133,10 +135,40 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                             #region Calcul des jours pour une reservation
 
                             var diff = resa.date_fin - resa.date_debut;
-                            if (diff.Hours == 5) // démi journée
+                            if (diff.Hours == 5 && diff.Days == 0) // une demi journée
+                            {
                                 nbJours = nbJours + diff.Days + 0.5;
-                            else if (diff.Hours >= 5) // réservation commençant l'aprèm et finissant le jour suivant le matin 
+                            }
+                            else if (diff.Hours >= 5 && diff.Hours <= 11 && diff.Days == 0) // réservation commençant l'aprèm et finissant l'aprèm
+                            {
                                 nbJours = nbJours + diff.Days + 1;
+                            }
+                            else if (diff.Hours >= 5 && diff.Days >1) // réservation qui peut se prolonger sur plusieurs jours et pouvant aller même le weekeend
+                            {
+                                var dateBegin = resa.date_debut;
+                                for(int i=0; i <= diff.Days; i++)
+                                {
+                                    if(dateBegin.Date.DayOfWeek.ToString() != "Saturday" && dateBegin.Date.DayOfWeek.ToString() != "Sunday")
+                                    {
+                                        var diffW = resa.date_fin - dateBegin;
+                                        if (diffW.Days == 0 && diffW.Hours == 5)
+                                        {
+                                            // démi journée
+                                            nbJours = nbJours + 0.5;
+                                        }
+                                        if (diffW.Days == 0 && diffW.Hours == 11)
+                                        {
+                                            // une journée
+                                            nbJours = nbJours + 1;
+                                        }
+                                        else if (diffW.Hours >= 5 && diffW.Hours <= 11 && diffW.Days >=1) // réservation commençant l'aprèm et finissant l'aprèm
+                                        {
+                                            nbJours = nbJours + 1;
+                                        }
+                                    }
+                                    dateBegin = dateBegin.AddDays(1);
+                                }
+                            }
                             #endregion
                         }
                     }
@@ -205,6 +237,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                         DateDebutResa = res.date_debut,
                         DateFinResa = res.date_fin,
                         NomEquipement = equipement.nom,
+                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
                         NomEquipe = equipeStlo.nom_equipe
                     };
                     infos.Add(info);
@@ -259,6 +292,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                     DateDebutResa = r.date_debut,
                     DateFinResa = r.date_fin,
                     NomEquipement = equipement.nom,
+                    ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
                     NomEquipe = equipeStlo.nom_equipe
                 };
                 infos.Add(info);
@@ -317,6 +351,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                     DateDebutResa = r.date_debut,
                     DateFinResa = r.date_fin,
                     NomEquipement = equipement.nom,
+                    ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
                     NomEquipe = equipeStlo.nom_equipe
                 };
                 infos.Add(info);
@@ -327,6 +362,72 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public organisme ObtenirOrganisme(int IdOrg)
         {
             return resaDB.organisme.First(o => o.id == IdOrg);
+        }
+
+        public List<ProvenanceXProj> ListProjXProvenance(int IdProv)
+        {
+            List<ProvenanceXProj> list = new List<ProvenanceXProj>();
+           
+            var proj = (from proje in resaDB.projet
+                        from prov in resaDB.ld_provenance
+                        where proje.provenance == prov.nom_provenance
+                        && prov.id == IdProv && proje.date_creation >= DateTime.Now.AddYears(-3)
+                        select proje).Distinct().ToList();
+
+            foreach(var p in proj)
+            {
+                ProvenanceXProj prov = new ProvenanceXProj
+                {
+                    DateCreation = p.date_creation.ToString(),
+                    DescriptProj = p.description_projet,
+                    Financement = p.financement,
+                    NumProjet = p.num_projet,
+                    Organisme = resaDB.organisme.First(o => o.id == p.organismeID).nom_organisme,
+                    Provenance = p.provenance,
+                    RespProjet = p.mailRespProjet,
+                    TitreProj = p.titre_projet,
+                    TypeProj = p.type_projet
+                };
+                list.Add(prov);
+            }
+            return list;
+        }
+
+        public ld_provenance NomProvenance(int IdProvenance)
+        {
+            return resaDB.ld_provenance.First(p => p.id == IdProvenance);
+        }
+
+        public List<ld_provenance> ListeProvenances()
+        {
+            return resaDB.ld_provenance.ToList();
+        }
+
+        public List<ProvenanceXProj> ListProjXNonProv()
+        {
+            List<ProvenanceXProj> list = new List<ProvenanceXProj>();
+
+            var proj = (from proje in resaDB.projet
+                        where proje.provenance == null && proje.date_creation >= DateTime.Now.AddYears(-3)
+                        select proje).Distinct().ToList();
+
+            foreach (var p in proj)
+            {
+                ProvenanceXProj prov = new ProvenanceXProj
+                {
+                    DateCreation = p.date_creation.ToString(),
+                    DescriptProj = p.description_projet,
+                    Financement = p.financement,
+                    NumProjet = p.num_projet,
+                    Organisme = resaDB.organisme.First(o => o.id == p.organismeID).nom_organisme,
+                    Provenance = p.provenance,
+                    RespProjet = p.mailRespProjet,
+                    TitreProj = p.titre_projet,
+                    TypeProj = p.type_projet
+                };
+                list.Add(prov);
+            }
+            return list;
         }
     }
 }

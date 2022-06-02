@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -69,5 +70,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public int SelectOrgId { get; set; }
 
         public IEnumerable<SelectListItem> OrgItem { get; set; }
+
+        public List<ld_provenance> ListProvenances { get; set; }
     }
 }

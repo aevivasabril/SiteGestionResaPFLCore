@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,5 +22,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         List<organisme> ListeOrganismes();
         List<InfosReservations> ObtRecapitulatifXOrg(int IdOrg, DateTime datedebut, DateTime datefin);
         organisme ObtenirOrganisme(int IdOrg);
+        List<ProvenanceXProj> ListProjXProvenance(int IdProv);
+        ld_provenance NomProvenance(int IdProvenance);
+        List<ld_provenance> ListeProvenances();
+        List<ProvenanceXProj> ListProjXNonProv();
     }
 }
