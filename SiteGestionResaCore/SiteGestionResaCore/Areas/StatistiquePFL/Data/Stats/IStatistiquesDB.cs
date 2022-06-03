@@ -26,5 +26,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         ld_provenance NomProvenance(int IdProvenance);
         List<ld_provenance> ListeProvenances();
         List<ProvenanceXProj> ListProjXNonProv();
+        int LaitAnneeEnCours();
+        int LaitXDates(DateTime dateDebut, DateTime dateFin);
     }
 }

@@ -28,6 +28,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ListZones = statistiquesDB.ObtenirListZones();
             vm.AnneeActuel = DateTime.Today.Year;
             vm.ListProvenances = statistiquesDB.ListeProvenances();
+            vm.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
@@ -445,6 +446,14 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             //this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return PartialView("_ListeProjXProvenanc", vm);
+        }
+
+        [HttpPost]
+        public IActionResult CalculLtsLait(AccueilStatsVM vm)
+        {
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            model.QuantiteLaitPeriode = statistiquesDB.LaitXDates(vm.DateDu.Value, vm.DateAu.Value);
+            return View("AccueilStats", model);
         }
     }
 }

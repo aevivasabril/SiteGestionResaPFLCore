@@ -72,5 +72,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public IEnumerable<SelectListItem> OrgItem { get; set; }
 
         public List<ld_provenance> ListProvenances { get; set; }
+
+        public int QuantiteLaitAnnee { get; set; }
+        public int QuantiteLaitPeriode { get; set; }
     }
 }
