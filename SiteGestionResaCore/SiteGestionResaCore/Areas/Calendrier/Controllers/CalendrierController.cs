@@ -222,29 +222,37 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     // Ajouter dans la liste destiné aux zones
                     ListEquiVsResa.Add(equipementVsResa);
                 }
-
+               
                 // Supprimer les anciens valeurs sauvegardés
                 ListeDispoZonesDuAu = new List<OccupationZonesParJour>();
                 // Vérifier si la zone est libre ou occupé pour chaque jour
                 // Remettre la date à sa valeur d'origine sinon on a des dates faussées
                 DateRecup = SaveRecupDate;
+                
                 for (int d = 0; d < NbJours; d++)
                 {
                     occupation = new OccupationZonesParJour();
                     bool ZonOccupeMatin = false;
                     bool ZonOccupeAprem = false;
-                   
-                    //foreach (var equip in equipements)
-                    //{
+                    ResasEquipParJour EquipResaJour = new ResasEquipParJour();
+                    foreach (var equip in equipements)
+                    {
                         //ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
-                    // Vérifier la disponibilité de la zone (juste pour affichage) 
-                    if (ListResEquipParjour[d].ListResasMatin.Count() > 0 || ListResEquipParjour[d].InfosIntervMatin.Count() > 0) 
-                        // Vérifier pour les opérations de maintenance et les réservations            
-                        ZonOccupeMatin = true;
+                        EquipResaJour = ListEquiVsResa.First(l => l.IdEquipement == equip.id).ListResasDuAu.First(p => p.Date == DateRecup);
 
-                    if ((ListResEquipParjour[d].ListResasAprem.Count() > 0 || ListResEquipParjour[d].InfosIntervAprem.Count() > 0) && occupation.IsZoneOccupeAprem != true)
+                        // Vérifier la disponibilité de la zone (juste pour affichage) 
+                        if (EquipResaJour.ListResasMatin.Count() > 0 || EquipResaJour.InfosIntervMatin.Count() > 0)
+                        {
+                            // Vérifier pour les opérations de maintenance et les réservations            
+                            ZonOccupeMatin = true;                           
+                        }
+
+                        if ((EquipResaJour.ListResasAprem.Count() > 0 || EquipResaJour.InfosIntervAprem.Count() > 0) && occupation.IsZoneOccupeAprem != true)
+                        {
                             ZonOccupeAprem = true;
-                    //}
+                        }          
+                        
+                    }
 
                     if (ZonOccupeMatin == true)
                         occupation.IsZoneOccupeMatin = true;
@@ -254,7 +262,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     ListeDispoZonesDuAu.Add(occupation); // occupation de la zone par jour
                     DateRecup = DateRecup.AddDays(1);
                 }
-
+              
                 resasZone = new ResasZone
                 {
                     IdZone = z.id,

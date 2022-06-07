@@ -297,7 +297,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                 }
 
             #endregion
-
+            resasEquip.IdEquipement = IdEquipement;
+            resasEquip.Date = DateRecup;
             return resasEquip;
         }
 

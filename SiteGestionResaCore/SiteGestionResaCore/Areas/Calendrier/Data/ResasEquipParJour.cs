@@ -11,6 +11,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
     /// </summary>
     public class ResasEquipParJour
     {
+        public int IdEquipement { get; set; }
+        public DateTime Date { get; set; }
+
         /// <summary>
         /// Constructeur classe initialisant les Listes
         /// </summary>
