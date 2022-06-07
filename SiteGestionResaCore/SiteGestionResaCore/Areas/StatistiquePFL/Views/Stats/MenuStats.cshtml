@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "MenuStatistiques";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h1 class="text-center">Accès aux statistiques Plate-forme</h1>
+<h5 class="text-center">Téléchargement des fichiers excel ou consultation des statistiques</h5>
+<br />
+<div class="row">
+    <div class="col-md-5">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Téléchargement des fichiers .csv</h5>
+                <p class="card-text">Fichiers contenant les informations sur les réservations, projets et maintenances</p>
+                <a asp-action="AccueilStats" asp-controller="Stats" asp-area="StatistiquePFL" class="btn navbar-inra">Accèder >> </a>
+            </div>
+        </div>
+    </div>
+    <div class="offset-md-2 col-md-5">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-center">Consultations des données</h5>
+                <p class="card-text">Consultation des jours d'utilisation par équipement, les litres de lait travaillées,...</p>
+                <a asp-action="ConsultStats" asp-controller="Stats" asp-area="StatistiquePFL" class="btn navbar-inra">Accèder >> </a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />

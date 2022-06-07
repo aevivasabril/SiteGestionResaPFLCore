@@ -1,0 +1,74 @@
+﻿@model ConsultStatsVM
+
+@{
+    ViewData["Title"] = "Consultation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h4 class="text-center"><strong>Nombre des jours d'utilisation par équipement pour l'année en cours (@Model.AnneeActuel)</strong></h4>
+<h6 class="text-center">Cliquez sur la zone, pour ouvrir la liste des équipements Vs jours</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListZones)
+    {
+        <a class="btn navbar-inra mr-2 mt-2" href="#" onclick="OuvrirComptageZone(@zo.IdZone)">@zo.NomZone</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+</form>
+<br />
+<hr />
+<hr />
+
+<form asp-action="CalculLtsLait" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Quantité du lait travaillée pour l'année en cours (@Model.AnneeActuel) :</strong></h4>
+    <h4 class="text-center" style="color:darkgreen"><strong>@Model.QuantiteLaitAnnee Kgs</strong></h4>
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Calculer Lts lait pour cette periode" />
+    </div>
+    <br />
+    <h4 class="text-center"><strong>Quantité du lait travaillée pour la periode :</strong></h4>
+    <h4 class="text-center" style="color:darkgreen"><strong>@Model.QuantiteLaitPeriode Kgs</strong></h4>
+</form>
+<hr />
+<hr />
+
+@section Scripts
+{
+    <script>
+        function OuvrirComptageZone(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("EquipVsDays", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#InfosJoursZone").html(html);
+                        $("#JoursModal").modal('show');
+                    }
+                });
+            }
+        }
+
+    </script>
+}

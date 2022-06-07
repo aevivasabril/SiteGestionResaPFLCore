@@ -22,13 +22,18 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             this.statistiquesDB = statistiquesDB;
         }
 
+        public IActionResult MenuStats()
+        {
+            return View("MenuStats");
+        }
+
         public IActionResult AccueilStats()
         {
             AccueilStatsVM vm = new AccueilStatsVM();
-            vm.ListZones = statistiquesDB.ObtenirListZones();
+            //vm.ListZones = statistiquesDB.ObtenirListZones();
             vm.AnneeActuel = DateTime.Today.Year;
             vm.ListProvenances = statistiquesDB.ListeProvenances();
-            vm.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
+            //vm.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
@@ -449,11 +454,19 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         }
 
         [HttpPost]
-        public IActionResult CalculLtsLait(AccueilStatsVM vm)
+        public IActionResult CalculLtsLait(ConsultStatsVM vm)
         {
-            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            ConsultStatsVM model = HttpContext.GetFromSession<ConsultStatsVM>("ConsultStatsVM");
             model.QuantiteLaitPeriode = statistiquesDB.LaitXDates(vm.DateDu.Value, vm.DateAu.Value);
             return View("AccueilStats", model);
+        }
+
+        public IActionResult ConsultStats()
+        {
+            ConsultStatsVM model = new ConsultStatsVM();
+            model.ListZones = statistiquesDB.ObtenirListZones();
+            model.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
+            return View("ConsultStats", model);
         }
     }
 }

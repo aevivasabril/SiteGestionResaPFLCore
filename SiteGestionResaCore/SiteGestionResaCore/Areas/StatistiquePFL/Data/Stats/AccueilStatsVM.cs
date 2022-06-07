@@ -24,7 +24,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         [DataType(DataType.Date)]
         public DateTime? DateAu { get; set; }
 
-        public List<ZoneStats> ListZones { get; set; }
 
         public int AnneeActuel { get; set; }
 
@@ -73,7 +72,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
         public List<ld_provenance> ListProvenances { get; set; }
 
-        public int QuantiteLaitAnnee { get; set; }
-        public int QuantiteLaitPeriode { get; set; }
+
     }
 }
