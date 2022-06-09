@@ -143,7 +143,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                             {
                                 nbJours = nbJours + diff.Days + 1;
                             }
-                            else if (diff.Hours >= 5 && diff.Days >1) // réservation qui peut se prolonger sur plusieurs jours et pouvant aller même le weekeend
+                            else if (diff.Hours >= 5 && diff.Days >= 1) // réservation qui peut se prolonger sur plusieurs jours et pouvant aller même le weekeend
                             {
                                 var dateBegin = resa.date_debut;
                                 for(int i=0; i <= diff.Days; i++)
@@ -464,6 +464,80 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                     compteur = compteur + ess.quantite_produit.Value;
             }
             return compteur;
+        }
+
+        public List<MaintenanceInfos> ListMaintenances(DateTime dateDu, DateTime dateAu)
+        {
+            List<MaintenanceInfos> list = new List<MaintenanceInfos>();
+
+            #region Pour les maintenances des équipements réservables 
+
+            var resas = (from m in resaDB.maintenance
+                          from resaM in resaDB.reservation_maintenance
+                          where resaM.date_debut >= dateDu && resaM.date_fin <= dateAu && resaM.maintenanceID == m.id
+                          select resaM).Distinct().ToList();
+
+            foreach(var m in resas)
+            {
+                var maint = resaDB.maintenance.First(ma => ma.id == m.maintenanceID);
+                var user = resaDB.Users.First(u => u.Id == maint.userID);
+                var equip = resaDB.equipement.First(e => e.id == m.equipementID);
+                MaintenanceInfos info = new MaintenanceInfos
+                {
+                    CodeMaintenance = maint.code_operation,
+                    TypeMaintenance = maint.type_maintenance,
+                    MailOperateur = user.Email,
+                    IntervenantExt = maint.intervenant_externe,
+                    NomIntervExt = maint.nom_intervenant_ext,
+                    DescripOperation = maint.description_operation,
+                    MaintSupprimee = maint.maintenance_supprime.HasValue,
+                    DateSuppression = maint.date_suppression,
+                    RaisonSuppression = maint.raison_suppression,
+                    MaintTerminee = maint.maintenance_finie.HasValue,
+                    NomEquipement = equip.nom,
+                    DateDebut = m.date_debut,
+                    DateFin = m.date_fin,
+                    ZoneAffectee = resaDB.zone.First(z => z.id == equip.zoneID).nom_zone
+                };
+
+                list.Add(info);
+            }
+
+            #endregion
+
+            #region Pour les maintenances des équipements communs
+            var maintscomm = (from m in resaDB.maintenance
+                          from resaM in resaDB.resa_maint_equip_adjacent
+                          where resaM.date_debut >= dateDu && resaM.date_fin <= dateAu && resaM.maintenanceID == m.id
+                          select resaM).Distinct().ToList();
+
+            foreach(var m in maintscomm)
+            {
+                var maint = resaDB.maintenance.First(ma => ma.id == m.maintenanceID);
+                var user = resaDB.Users.First(u => u.Id == maint.userID);
+                MaintenanceInfos info = new MaintenanceInfos
+                {
+                    CodeMaintenance = maint.code_operation,
+                    TypeMaintenance = maint.type_maintenance,
+                    MailOperateur = user.Email,
+                    IntervenantExt = maint.intervenant_externe,
+                    NomIntervExt = maint.nom_intervenant_ext,
+                    DescripOperation = maint.description_operation,
+                    MaintSupprimee = maint.maintenance_supprime.HasValue,
+                    DateSuppression = maint.date_suppression,
+                    RaisonSuppression = maint.raison_suppression,
+                    MaintTerminee = maint.maintenance_finie.HasValue,
+                    NomEquipement = m.nom_equipement,
+                    DateDebut = m.date_debut,
+                    DateFin = m.date_fin,
+                    ZoneAffectee = m.zone_affectee
+                };
+                list.Add(info);
+            }
+            #endregion
+
+            return list;
+
         }
     }
 }

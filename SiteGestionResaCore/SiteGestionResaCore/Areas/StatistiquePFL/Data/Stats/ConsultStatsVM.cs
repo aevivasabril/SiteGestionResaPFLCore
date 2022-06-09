@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SiteGestionResaCore.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -27,5 +28,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
         //[Required]
         [DataType(DataType.Date)]
         public DateTime? DateAu { get; set; }
+
+        public List<ld_provenance> ListProvenances { get; set; }
     }
 }

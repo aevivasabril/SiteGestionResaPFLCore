@@ -28,5 +28,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         List<ProvenanceXProj> ListProjXNonProv();
         int LaitAnneeEnCours();
         int LaitXDates(DateTime dateDebut, DateTime dateFin);
+        List<MaintenanceInfos> ListMaintenances(DateTime dateDu, DateTime dateAu);
     }
 }

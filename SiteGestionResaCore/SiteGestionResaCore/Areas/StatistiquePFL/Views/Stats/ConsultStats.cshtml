@@ -7,12 +7,25 @@
 
 <br />
 <h4 class="text-center"><strong>Nombre des jours d'utilisation par équipement pour l'année en cours (@Model.AnneeActuel)</strong></h4>
-<h6 class="text-center">Cliquez sur la zone, pour ouvrir la liste des équipements Vs jours</h6>
+<h6 class="text-center">Cliquez sur la zone, pour ouvrir la liste des équipements Vs jours (weekends non inclus)</h6>
 <form class="form-row justify-content-center">
     @foreach (var zo in Model.ListZones)
     {
         <a class="btn navbar-inra mr-2 mt-2" href="#" onclick="OuvrirComptageZone(@zo.IdZone)">@zo.NomZone</a> <!-- mr= margin rigth and mt= margin top-->
     }
+</form>
+<br />
+<hr />
+<hr />
+
+<h4 class="text-center"><strong>Liste des projets par type de provenance (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur la categorie, pour ouvrir la liste des projets</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListProvenances)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapProv(@zo.id)">@zo.nom_provenance</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansProv()">Sans provenance</a> <!-- mr= margin rigth and mt= margin top-->
 </form>
 <br />
 <hr />
@@ -53,6 +66,11 @@
 <hr />
 <hr />
 
+<div id="InfosJoursZone"></div>
+<div id="ListeProvenance"></div>
+<div class="row justify-content-center">
+    <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
+</div>
 @section Scripts
 {
     <script>
@@ -68,6 +86,30 @@
                     }
                 });
             }
+        }
+        function OuvrirRecapProv(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("ProvenanceXProjet", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeProvenance").html(html);
+                        $("#ProvModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansProv() {
+            $.ajax({
+                url: "@Url.Action("ProvenanceXProjetSans", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeProvenance").html(html);
+                    $("#ProvModal").modal('show');
+                }
+            });
         }
 
     </script>

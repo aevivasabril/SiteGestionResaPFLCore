@@ -30,10 +30,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         public IActionResult AccueilStats()
         {
             AccueilStatsVM vm = new AccueilStatsVM();
-            //vm.ListZones = statistiquesDB.ObtenirListZones();
             vm.AnneeActuel = DateTime.Today.Year;
-            vm.ListProvenances = statistiquesDB.ListeProvenances();
-            //vm.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
@@ -130,10 +127,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
 
             EquipsVsJoursVM vm = new EquipsVsJoursVM();
-            vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, model.AnneeActuel);
+            vm.ListeEquipVsJours = statistiquesDB.ObtListEquipsVsJours(id, DateTime.Today.Year);
             vm.NomZone = statistiquesDB.ObtNomZone(id).nom_zone;
-            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return PartialView("_EquipsVsJours", vm);
         }
 
@@ -437,7 +432,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ListProjetsXProv = statistiquesDB.ListProjXProvenance(id);
             vm.ProvenanceProjet = statistiquesDB.NomProvenance(id).nom_provenance;
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return PartialView("_ListeProjXProvenanc", vm);
         }
 
@@ -449,8 +443,17 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ListProjetsXProv = statistiquesDB.ListProjXNonProv();
             vm.ProvenanceProjet = "Sans provenance";
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
-            //this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return PartialView("_ListeProjXProvenanc", vm);
+        }
+
+        public IActionResult ConsultStats()
+        {
+            ConsultStatsVM model = new ConsultStatsVM();
+            model.ListZones = statistiquesDB.ObtenirListZones();
+            model.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
+            model.ListProvenances = statistiquesDB.ListeProvenances();
+            this.HttpContext.AddToSession("ConsultStatsVM", model);
+            return View("ConsultStats", model);
         }
 
         [HttpPost]
@@ -461,12 +464,96 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             return View("AccueilStats", model);
         }
 
-        public IActionResult ConsultStats()
+        public IActionResult RecapMaintenance(AccueilStatsVM vm)
         {
-            ConsultStatsVM model = new ConsultStatsVM();
-            model.ListZones = statistiquesDB.ObtenirListZones();
-            model.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
-            return View("ConsultStats", model);
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            HeadersCsvMaintenances headersCsv = new HeadersCsvMaintenances();
+            StringBuilder csv = new StringBuilder();
+            string titreCsv = null;
+            ModelState.Remove("SelectProjetId");
+            ModelState.Remove("SelectEquipeId");
+            ModelState.Remove("SelectOrgId");
+            ModelState.Remove("DateDuEquip");
+            ModelState.Remove("DateAuEquip");
+            if (ModelState.IsValid)
+            {
+                if (vm.DateAuMaintenance < vm.DateDuMaintenance)
+                {
+                    ModelState.AddModelError("", "La date fin doit être superieure à la date debut");
+                    return View("AccueilStats", model);
+                }
+                else
+                {
+                    List<MaintenanceInfos> list = statistiquesDB.ListMaintenances(vm.DateDuMaintenance.Value, vm.DateAuMaintenance.Value);
+
+                    if (list.Count() == 0) // Si la liste est vide pas besoin de télécharger excel, il n'y a pas des essais valides pour cet organisme
+                    {
+                        ModelState.AddModelError("", "Il n'y a pas des opérations de maintenance pour les dates saisies");
+                        return View("AccueilStats", model);
+                    }
+                    else
+                    {
+                        // Déterminer les headers tableau
+                        var headers = new string[] { headersCsv.CodeMaint, headersCsv.TypeMainte, headersCsv.MailOper, headersCsv.IntervExt, headersCsv.NomIntervExt, headersCsv.DescripOpe,
+                                        headersCsv.MaintSupp, headersCsv.DateSupp, headersCsv.RaisonSupp, headersCsv.MaintTermin, headersCsv.NomEquip, headersCsv.DateDebut,
+                                        headersCsv.DateFin, headersCsv.ZoneAffecte};
+
+                        foreach (var col in headers)
+                        {
+                            csv.Append(col);
+                            csv.Append(";");
+                        }
+                        csv.AppendLine();
+                        csv.AppendLine();
+
+                        foreach (var resa in list)
+                        {
+                            #region Ecriture dans le fichier excel
+                            csv.Append(resa.CodeMaintenance);
+                            csv.Append(";");
+                            csv.Append(resa.TypeMaintenance);
+                            csv.Append(";");
+                            csv.Append(resa.MailOperateur);
+                            csv.Append(";");
+                            csv.Append(resa.IntervenantExt);
+                            csv.Append(";");
+                            csv.Append(resa.NomIntervExt);
+                            csv.Append(";");
+                            csv.Append(resa.DescripOperation);
+                            csv.Append(";");
+                            csv.Append(resa.MaintSupprimee);
+                            csv.Append(";");
+                            csv.Append(resa.DateSuppression);
+                            csv.Append(";");
+                            csv.Append(resa.RaisonSuppression);
+                            csv.Append(";");
+                            csv.Append(resa.MaintTerminee);
+                            csv.Append(";");
+                            csv.Append(resa.NomEquipement);
+                            csv.Append(";");
+                            csv.Append(resa.DateDebut);
+                            csv.Append(";");
+                            csv.Append(resa.DateFin);
+                            csv.Append(";");
+                            csv.Append(resa.ZoneAffectee);
+                            csv.Append(";");
+
+                            csv.AppendLine();
+                            #endregion
+                        }
+
+                        titreCsv = "Maintenances_Du-" + vm.DateDuMaintenance.Value.ToShortDateString() + "-Au-" + vm.DateAuMaintenance.Value.ToShortDateString() + ".csv";
+                        Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+                        return File(encoding.GetBytes(csv.ToString()), "text/csv", titreCsv);
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.ModalUseOrg = "show";
+                return View("AccueilStats", model);
+            }
         }
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Areas.Maintenance.Data.Maintenance;
 using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
@@ -70,8 +71,21 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
         public IEnumerable<SelectListItem> OrgItem { get; set; }
 
-        public List<ld_provenance> ListProvenances { get; set; }
+        /// <summary>
+        /// Date debut pour recuperation des maintenances
+        /// </summary>
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateDuMaintenance { get; set; }
 
+        /// <summary>
+        /// Date fin pour recuperation des maintenances 
+        /// </summary>
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateAuMaintenance { get; set; }
+
+        public List<MaintenanceInfos> ListMaintenances { get; set; }
 
     }
 }

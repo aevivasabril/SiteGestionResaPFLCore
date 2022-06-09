@@ -7,7 +7,7 @@
 <form asp-action="GenererExcelResas" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
     <br />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <h4 class="text-center"><strong>Récupérer les infos sur les réservations pour une période définie</strong></h4>
+    <h4 class="text-center"><strong>Réservations pour une période définie</strong></h4>
     <div class="form-group row justify-content-center">
         <br />
         <div class="col-sm-4 col-md-4 col-lg-4">
@@ -37,19 +37,6 @@
 <hr />
 <hr />
 
-<h4 class="text-center"><strong>Liste des projets par type de provenance (3 dernières années) </strong></h4>
-<h6 class="text-center">Cliquez sur la categorie, pour ouvrir la liste des projets</h6>
-<form class="form-row justify-content-center">
-    @foreach (var zo in Model.ListProvenances)
-    {
-        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapProv(@zo.id)">@zo.nom_provenance</a> <!-- mr= margin rigth and mt= margin top-->
-    }
-    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansProv()">Sans provenance</a> <!-- mr= margin rigth and mt= margin top-->
-</form>
-<br />
-<hr />
-<hr />
-
 <h4 class="text-center"><strong>Récupérer excel avec les équipements utilisés par categorie</strong></h4>
 <br />
 <form class="form-row justify-content-center">
@@ -67,10 +54,39 @@
 <hr />
 <hr />
 
+<form asp-action="RecapMaintenance" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    <br />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Opérations de maintenance pour une période définie</strong></h4>
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDuMaintenance" asp-for="@Model.DateDuMaintenance" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDuMaintenance, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAuMaintenance" asp-for="@Model.DateAuMaintenance" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAuMaintenance, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Télécharger .csv maintenance" />
+    </div>
+</form>
+<br />
+<hr />
+<hr />
 
-<div id="InfosJoursZone"></div>
-
-<div id="ListeProvenance"></div>
 
 <!--Modal pour sélection du projet -->
 <div class="modal fade" id="UtilXProjetModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -229,6 +245,68 @@
         </div>
     </div>
 </div>
+<!--Modal pour de dates et d'équipe stlo pour récuperer leur activité -->
+<div class="modal fade" id="EquipesModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Utilisations des équipements par équipe STLO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="RecapXEquip" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card">
+                        <div class="card-header">
+                            Sélectionnez un des équipes STLO et les dates pour récupérer le rapport d'utilisation des équipements.
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                @Html.LabelFor(m => m.SelectEquipeId, new { @class = "col-md-9 control-label" })
+                                <select asp-for="SelectEquipeId" asp-items="@Model.EquipeStloItem" class="form-control">
+                                    <option value="-1">- Sélectionnez un équipe STLO -</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.SelectEquipeId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Du : ")
+                                        <input class="form-control" name="DateDuEquip" asp-for="@Model.DateDuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateDuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Au : ")
+                                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                                        <input class="form-control" name="DateAuEquip" asp-for="@Model.DateAuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateAuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par équipe" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
+</div>
 
 @section Scripts
 {
@@ -249,31 +327,7 @@
         }
         $('#UtilXProjetModal').modal('@ViewBag.ModalUseProjet');
         $('#EquipesModal').modal('@ViewBag.ModalUseEquipe');
-        $('#OrgModal').modal('@ViewBag.ModalUseOrg');      
+        $('#OrgModal').modal('@ViewBag.ModalUseOrg');
 
-        function OuvrirRecapProv(id) {
-            if (id) //Vérifier que l'id contient une valeur
-            {
-                $.ajax({
-                    url: "@Url.Action("ProvenanceXProjet", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
-                    type: 'POST',
-                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
-                        $("#ListeProvenance").html(html);
-                        $("#ProvModal").modal('show');
-                    }
-                });
-            }
-        }
-
-        function OuvrirRecapSansProv() {
-            $.ajax({
-                url: "@Url.Action("ProvenanceXProjetSans", "Stats", new { Area = "StatistiquePFL" })",
-                type: 'POST',
-                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
-                    $("#ListeProvenance").html(html);
-                    $("#ProvModal").modal('show');
-                }
-            });
-        }
     </script>
 }
