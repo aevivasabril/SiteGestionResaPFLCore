@@ -11,5 +11,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data.PostEnquete
         List<enquete> GetReponsesEnquetes(DateTime datedu, DateTime dateau);
         essai GetEssai(int IdEssai);
         projet GetProjet(int IdProj);
+        List<EnquetesSansReponse> ObtEnquetesSansRp();
+        enquete GetEnqueteXEssai(int IdEssai);
     }
 }

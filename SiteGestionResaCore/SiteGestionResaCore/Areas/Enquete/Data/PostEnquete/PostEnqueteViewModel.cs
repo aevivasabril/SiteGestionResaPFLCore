@@ -21,5 +21,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Data.PostEnquete
         //[Required]
         [DataType(DataType.Date)]
         public DateTime? DateAu { get; set; }
+
+        public List<EnquetesSansReponse> ListEnquetesSansRp { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SiteGestionResaCore.Areas.DonneesPGD.Data;
 using SiteGestionResaCore.Areas.Enquete.Data.PostEnquete;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Services;
 using SiteGestionResaCore.Services.ScheduleTask;
 using System;
@@ -18,20 +20,24 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
         private readonly IPostEnqueteDB postEnqueteDB;
         private readonly IEmailSender emailSender;
         private readonly IEnqueteTaskDB enquete;
+        private readonly IEssaisXEntrepotDB entrepotDB;
 
         public PostEnqueteController(
             IPostEnqueteDB postEnqueteDB,
             IEmailSender emailSender,
-            IEnqueteTaskDB enquete)
+            IEnqueteTaskDB enquete,
+            IEssaisXEntrepotDB entrepotDB)
         {
             this.postEnqueteDB = postEnqueteDB;
             this.emailSender = emailSender;
             this.enquete = enquete;
+            this.entrepotDB = entrepotDB;
         }
 
         public IActionResult RecupNotesEnquete()
         {
             PostEnqueteViewModel vm = new PostEnqueteViewModel(){ };
+            vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
             return View("RecupNotesEnquete", vm);
         }
 
@@ -305,7 +311,50 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             ViewBag.Message = "Tâche d'envoie des enquêtes executé";
             ViewBag.AfficherMessage = true;
             PostEnqueteViewModel vm = new PostEnqueteViewModel() { };
+            vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
             return View("RecupNotesEnquete", vm);
+        }
+
+        public async Task<IActionResult> EnvoyerRelanceAsync(int id)
+        {
+            var essai = enquete.GetEssaiParEnquete(id);
+            var proj = enquete.GetProjetParEnquete(essai.projetID);
+            var email = enquete.GetEmailCreatorEssai(essai.compte_userID);
+            var enq = postEnqueteDB.GetEnqueteXEssai(id);
+
+            string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + id; // lien pour le serveur caseine! 
+
+            //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+
+            string message = @"<html>
+                            <body> 
+                            <p> Bonjour, <br><br> Tu reçois ce rappel d'enquête car nous avons besoin de tes réponses avant la réunion utilisateurs : <b> </b>  N°" + essai.id 
+                            + ": <strong>" + essai.titreEssai + "</strong> (Projet " + proj.num_projet +
+                        ": " + proj.titre_projet + "). Pour répondre à l'enquête: " + "<a href='[CALLBACK_URL]'>Veuillez cliquer ici</a>.<br/> " +
+                            "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
+                        + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
+
+            await emailSender.SendEmailAsync(email, "(RELANCE ++) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+            //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+            // Mettre à jour la date-envoi_enquete
+            enquete.UpdateDateEnvoiEnquete(enq);
+            PostEnqueteViewModel vm = new PostEnqueteViewModel() { };
+            vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
+            return View("RecupNotesEnquete", vm);
+        }
+
+        /// <summary>
+        /// Action pour afficher les réservations d'un essai sur la liste
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
+        public IActionResult VoirReservations(int id)
+        {
+            EquipementsReservesVM vm = new EquipementsReservesVM()
+            {
+                Reservations = entrepotDB.InfosReservations(id)
+            };
+            return PartialView("~/Views/Shared/_DisplayEquipsReserves.cshtml", vm);
         }
     }
 }
