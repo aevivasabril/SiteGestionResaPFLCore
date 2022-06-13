@@ -147,5 +147,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         {
            return resaDb.Users.Find(userID).Email;
         }
+
+        public void UpdateDateEnvoiEnqueteManuel(enquete enquete)
+        {
+            enquete.date_envoi_enquete = DateTime.Now;
+            if(enquete.date_premier_envoi == null)
+            {
+                enquete.date_premier_envoi = DateTime.Now;
+            }          
+            resaDb.SaveChanges();
+        }
     }
 }

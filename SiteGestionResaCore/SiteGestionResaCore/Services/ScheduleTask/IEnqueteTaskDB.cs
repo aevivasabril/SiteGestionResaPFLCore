@@ -23,5 +23,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         void UpdateDateEnvoiEnquete(enquete enquete);
 
         string GetEmailCreatorEssai(int userID);
+
+        void UpdateDateEnvoiEnqueteManuel(enquete enquete);
     }
 }
