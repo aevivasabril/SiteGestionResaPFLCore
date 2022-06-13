@@ -33,14 +33,19 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         /// <summary>
         /// Methode pour afficher les essais dont le projet n'a pas un entrepot déjà crée et supprimé par l'utilisateur
         /// </summary>
-        /// <param name="usr">utilisateur connecté</param>
+        /// <param name="usr">utilisateur connecté étant responsable projet ou manipulateur essai</param>
         /// <returns>Liste des essais sans entrepot</returns>
         public List<InfosResasSansEntrepot> ObtenirResasSansEntrepotUsr(utilisateur usr)
         {
             List<InfosResasSansEntrepot> infos = new List<InfosResasSansEntrepot>();
 
-            var list = contextDB.essai.Where(e => e.entrepot_cree == null && e.compte_userID == usr.Id &&
-                       e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList().GroupBy(i => i.projetID);
+            var list = (from es in contextDB.essai
+                        from pr in contextDB.projet
+                        where es.projetID == pr.id && es.entrepot_cree == null && (es.compte_userID == usr.Id 
+                        || pr.compte_userID == usr.Id || pr.mailRespProjet == usr.Email) && es.resa_supprime != true && es.resa_refuse != true
+                        select es).OrderByDescending(l => l.date_creation).ToList().GroupBy(i => i.projetID);
+            /*var list = contextDB.essai.Where(e => e.entrepot_cree == null && (e.compte_userID == usr.Id) &&
+                       e.resa_refuse!=true && e.resa_supprime != true).OrderByDescending(l => l.date_creation).ToList().GroupBy(i => i.projetID);*/
 
             foreach (var gr in list)
             {

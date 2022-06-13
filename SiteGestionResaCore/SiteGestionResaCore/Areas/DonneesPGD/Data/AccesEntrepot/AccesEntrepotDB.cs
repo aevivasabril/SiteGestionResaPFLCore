@@ -22,10 +22,20 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             this.contextDB = contextDB;
             this.logger = logger;
         }
+        /// <summary>
+        /// Obtenir liste des projets et essais dont l'utilisateur est propiètaire, responsable projet ou créateur essai
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public List<EntrepotsXProjet> ObtenirListProjetsAvecEntrepotCree(utilisateur user)
         {
             List<EntrepotsXProjet> list = new List<EntrepotsXProjet>();
-            var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id && p.entrepot_supprime == null);
+            var projetXUser = (from pr in contextDB.projet
+                               from es in contextDB.essai
+                               where (pr.compte_userID == user.Id || es.compte_userID == user.Id ||
+                               pr.mailRespProjet == user.Email) && pr.entrepot_supprime == null
+                               select pr).Distinct().ToList();
+            //var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id && p.entrepot_supprime == null);
             foreach(var x in projetXUser)
             {
                 if(contextDB.essai.Where(e => e.projetID == x.id).ToList().Any(e=>e.entrepot_cree == true))
