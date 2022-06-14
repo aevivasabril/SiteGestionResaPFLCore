@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Models;
+using SiteGestionResaCore.Data;
 
 namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 {
@@ -294,7 +295,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
             var resa = resaDB.reservation_projet.First(r => r.id == idResa);
             // Vérifier le nom de la table pour l'équipement
-            string NamePcVueTable = resaDB.equipement.First(e => e.id == resa.equipementID).nomTabPcVue;
+            equipement equipement = resaDB.equipement.First(e => e.id == resa.equipementID);
 
             if(resa.date_debut <= DateToday && resa.date_fin <= DateToday) // Manip finie! 
             {
@@ -328,7 +329,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             // selon le nom de la table alors obtenir les données et les convertir au format globale
             //dateDebutPcVue = new DateTime(2021, 04, 21, 7, 0, 0);
             //dateFinPcVue = new DateTime(2021, 04, 22, 7, 0, 0);
-            switch (NamePcVueTable)
+            switch (equipement.nomTabPcVue)
             {
                 case "tab_UA_ACT":
                     var queryAct = (from donnees in pcVueDb.tab_UA_ACT
@@ -502,7 +503,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                 default: // vérifier le cas des 2 tables pour l'évaporateur
                     //string pattern = @"[\w]+";
                     //Regex rg = new Regex(pattern);
-                    var list = NamePcVueTable.Split(", ");
+                    var list = equipement.nomTabPcVue.Split(", ");
                     //MatchCollection collect = rg.Matches(NamePcVueTable);
 
                     for (int i = 0; i < list.Length; i++)
@@ -545,7 +546,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
                     break;
             }
-            DataPcVue = new AllDataPcVue { DataEquipement = OnlyData, NomEquipement = resaDB.equipement.First(e => e.id == resa.equipementID).nom };
+            DataPcVue = new AllDataPcVue { DataEquipement = OnlyData, NomEquipement = resaDB.equipement.First(e => e.id == resa.equipementID).nom, NumGmao = equipement.numGmao };
             return DataPcVue;
         }
 

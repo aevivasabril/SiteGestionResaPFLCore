@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.DonneesPGD.Data;
+using SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot;
 using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Data;
@@ -25,15 +26,18 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
         private readonly IEssaisXEntrepotDB entrepotDB;
         private readonly IDonneesUsrDB donneesUserDB;
         private readonly UserManager<utilisateur> userManager;
+        private readonly IAccesEntrepotDB accesEntrepotDB;
 
         public CreationEntrepotController(
             IEssaisXEntrepotDB entrepotDB,
             IDonneesUsrDB donneesUserDB,
-            UserManager<utilisateur> userManager)
+            UserManager<utilisateur> userManager,
+            IAccesEntrepotDB accesEntrepotDB)
         {
             this.entrepotDB = entrepotDB;
             this.donneesUserDB = donneesUserDB;
             this.userManager = userManager;
+            this.accesEntrepotDB = accesEntrepotDB;
         }
 
         public async Task<IActionResult> CreerEntrepotAsync()
@@ -339,8 +343,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                         }
                                         csv.AppendLine();
                                     }
-
-                                    titreCsv = "DonneesProjet_EssaiId" + model.idEssai + "_" + essai.titreEssai + "_" + Donnees.NomEquipement + ".csv";
+                                    var sousNom = accesEntrepotDB.TraiterChaineCaract(Donnees.NomEquipement, 20);
+                                    titreCsv = "AutoPcVue_" + sousNom + "-" + Donnees.NumGmao + ".csv";
 
                                     var donneesPcVue = File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
                                     // Obtenir l'équipement
