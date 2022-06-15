@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SiteGestionResaCore.Extensions;
 
 namespace SiteGestionResaCore.Areas.Equipe.Controllers
 {
@@ -39,6 +40,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
             IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
+            IList<utilisateur> ListDonnees = await EquipeResaDb.ObtenirUsersDonneesAsync();
 
             var UsersItem = ListUsr.Users.Select(f => new SelectListItem
             {
@@ -53,6 +55,12 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             }); ;
 
             var MaintItem = ListInterv.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
+            }); ;
+
+            var DonneesItem = ListDonnees.Select(f => new SelectListItem
             {
                 Value = f.Id.ToString(),
                 Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
@@ -65,50 +73,21 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 ListUsersWaiting = ListUsr.UsersWaitingValid, 
                 ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
                 ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
+                ListAdminDonnees = ListDonnees,
                 UserItem = UsersItem,
                 AdminItem = AdminItem,
                 MaintItem = MaintItem
             };
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View(vm);
         }
 
 
-        public async Task<ActionResult> AdminToUserAcces(int? id)
+        public IActionResult AdminToUserAcces(int? id)
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
             ViewBag.modalState = "show";
             ViewBag.NameRole = "Utilisateur";
             return View("GestionUtilisateurs", vm);
@@ -117,6 +96,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> AdminToUserAccesAsync(int id)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.ChangeAccesToUserAsync(id);
@@ -127,86 +109,19 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-
-            #endregion
-
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Changement de rôle \"Admin\" vers \"Utilisateur\" réussi! ";
-
+            listAutresUtilisateurs listAutresUtilisateurs = await EquipeResaDb.ObtenirListAutresAsync();
+            vm.ListUsers = listAutresUtilisateurs.Users;
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
-        public async Task<ActionResult> AddingAdminAsync()
+        public IActionResult AddingAdmin()
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             ViewBag.modalAdm = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -214,6 +129,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> AddingAdminAsync(GestionUsersViewModel model)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.ChangeAccesToAdminAsync(model.UserToUpdateId);
@@ -223,87 +141,20 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Admin\"";
                 return View("Error");
             }
-
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem, 
-                MaintItem = MaintItem
-            };
-            #endregion
-
+      
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"Admin\" réussi! ";
-
+            vm.UsersAdmin = EquipeResaDb.ObtenirListAdmins();
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "MainAdmin")]
-        public async Task<ActionResult> AddingLogistic()
+        public IActionResult AddingLogistic()
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
 
             ViewBag.modalLogic = "show";
             return View("GestionUtilisateurs", vm);
@@ -313,6 +164,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> AddingLogisticAsync(GestionUsersViewModel model)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.AddAdminToLogisticRoleAsync(model.AdminToLogisticId);
@@ -321,90 +175,22 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             {
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Logistic\"";
                 return View("Error");
-            }
-
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-            #endregion
+            }    
 
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"Logistic\" réussi! ";
-
+            vm.ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync();
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "MainAdmin")]
-        public async Task<ActionResult> RemoveLogisticUser(int ?id)
+        public IActionResult RemoveLogisticUser(int? id)
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
-            };
-
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
             ViewBag.modalRemove = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -413,6 +199,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "MainAdmin")]
         public async Task<ActionResult> RemoveLogisticUserAsync(int id)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.RemoveLogisticRoleAsync(id);
@@ -423,88 +212,20 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem, 
-                MaintItem = MaintItem
-            };
-
-            #endregion
-
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Extraction de l'utilisateur du rôle \"Logistic\" réussi! ";
-
+            vm.ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync();
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
-        public async Task<ActionResult> Valider(int? id)
+        public IActionResult Valider(int? id)
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
-                ActionName = "Valider"
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
+            vm.ActionName = "Valider";
             ViewBag.modalWait = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -512,6 +233,8 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> Valider(int id)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             try
             {
                 var user = await userManager.FindByIdAsync(id.ToString());
@@ -540,44 +263,6 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-
-            #endregion
-
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Compte validé! ";
@@ -585,50 +270,22 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
-        public async Task<ActionResult> Refuser(int? id)
+        public IActionResult Refuser(int? id)
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value),
-                ActionName = "Refuser"
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
+            vm.ActionName = "Refuser";
             ViewBag.modalWait = "show";
             return View("GestionUtilisateurs", vm);
         }
 
         [HttpPost]
         public async Task<ActionResult> Refuser(int id)
-        {          
+        {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 //Effacer de la BDD pfl
@@ -646,86 +303,20 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-
-            #endregion
-
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Compte refusé! ";
-
+            listAutresUtilisateurs listAutresUtilisateurs = await EquipeResaDb.ObtenirListAutresAsync();
+            vm.ListUsersWaiting = listAutresUtilisateurs.UsersWaitingValid;
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
-        public async Task<ActionResult> DeleteUser(int? id)
+        public IActionResult DeleteUser(int? id)
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
             ViewBag.modalDelete = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -733,6 +324,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [HttpPost]
         public async Task<ActionResult> DeleteUser(int id)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 var user = await userManager.FindByIdAsync(id.ToString());
@@ -760,86 +354,20 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-            #endregion
-
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Utilisateur supprimé! ";
-
+            listAutresUtilisateurs listAutresUtilisateurs = await EquipeResaDb.ObtenirListAutresAsync();
+            vm.ListUsers = listAutresUtilisateurs.Users;
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
-        public async Task<IActionResult> AddingLogisticIntervAsync()
+        public IActionResult AddingLogisticIntervAsync()
         {
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
 
             ViewBag.modalInterv = "show";
             return View("GestionUtilisateurs", vm);
@@ -849,6 +377,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
         public async Task<IActionResult> AddingAdminIntervAsync(GestionUsersViewModel model)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.AddingAdminToInterv(model.AdminToIntervId);
@@ -857,93 +388,22 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             {
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"LogisticMaint\"";
                 return View("Error");
-            }
-
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-            #endregion
+            }         
 
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"LogisticMaint\" réussi! ";
-
+            vm.ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
-        public async Task<IActionResult> RemoveIntervUserAsync(int? id)
+        public IActionResult RemoveIntervUserAsync(int? id)
         {
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem,
-                UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value)
-            };
-            #endregion
-
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
             ViewBag.modalRemoveInterv = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -952,6 +412,9 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
         public async Task<IActionResult> RemoveIntervUserAsync(int id)
         {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
             try
             {
                 await EquipeResaDb.RemoveLogisticMaintRoleAsync(id);
@@ -960,50 +423,74 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             {
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"LogisticMaint\"";
                 return View("Error");
-            }
-
-            #region Initialiser le view model pour pouvoir afficher le message dans le ViewBag
-
-            listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
-            List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();
-            IList<utilisateur> ListInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
-
-            var UsersItem = ListUsr.Users.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var AdminItem = ListAdmin.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            var MaintItem = ListInterv.Select(f => new SelectListItem
-            {
-                Value = f.Id.ToString(),
-                Text = f.nom + ", " + f.prenom + "( " + f.Email + " )"
-            }); ;
-
-            GestionUsersViewModel vm = new GestionUsersViewModel()
-            {
-                UsersAdmin = ListAdmin,
-                ListUsers = ListUsr.Users,
-                ListUsersWaiting = ListUsr.UsersWaitingValid,
-                ListAdminLogistic = await EquipeResaDb.ObtenirUsersLogisticAsync(),
-                ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync(),
-                UserItem = UsersItem,
-                AdminItem = AdminItem,
-                MaintItem = MaintItem
-            };
-
-            #endregion
+            }        
 
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Extraction de l'utilisateur du rôle \"LogisticMaint\" réussi! ";
+            vm.ListAdminInterv = await EquipeResaDb.ObtenirUsersIntervAsync();
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
+            return View("GestionUtilisateurs", vm);
+        }
 
+        public IActionResult AddAdminDonnees()
+        {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
+            ViewBag.modalDonnees = "show";
+            return View("GestionUtilisateurs", vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddAdminDonneesAsync(GestionUsersViewModel model)
+        {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            try
+            {
+                await EquipeResaDb.AddingAdminToAdmDonnees(model.DonneesAdminItemId);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"LogisticMaint\"";
+                return View("Error");
+            }
+
+            IList<utilisateur> utilisateurs = await EquipeResaDb.ObtenirUsersDonneesAsync();
+            vm.ListAdminDonnees = utilisateurs;
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
+            return View("GestionUtilisateurs", vm);
+        }
+
+        [Authorize(Roles = "DonneesAdmin, MainAdmin")]
+        public IActionResult RemoveDonneesUser(int? id)
+        {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
+            ViewBag.RemoveAdmDonnees = "show";
+            return View("GestionUtilisateurs", vm);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "DonneesAdmin, MainAdmin")]
+        public async Task<IActionResult> RemoveDonneesUserAsync(int id)
+        {
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            try
+            {
+                await EquipeResaDb.RemoveAdmDonneesUsr(id);
+            }
+            catch (Exception e)
+            {
+                ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"DonneesAdmin\"";
+                return View("Error");
+            }
+            IList<utilisateur> ListDonnees = await EquipeResaDb.ObtenirUsersDonneesAsync();
+            vm.ListAdminDonnees = ListDonnees;
+            this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
 

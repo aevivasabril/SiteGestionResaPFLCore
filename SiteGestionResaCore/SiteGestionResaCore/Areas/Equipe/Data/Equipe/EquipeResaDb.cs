@@ -261,5 +261,43 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
                 logger.LogError(e, "Problème requete pour retirer les droits LogisticMaint");
             }
         }
+        public async Task<IList<utilisateur>> ObtenirUsersDonneesAsync()
+        {
+            return await userManager.GetUsersInRoleAsync("DonneesAdmin");
+        }
+
+        public async Task AddingAdminToAdmDonnees(int id)
+        {
+            var user = await context.Users.FindAsync(id);
+            // Submit the changes to the database.
+            try
+            {
+                // Obtenir les rôles utilisateur
+                var allUserRoles = await userManager.GetRolesAsync(user);
+                if (!allUserRoles.Contains("DonneesAdmin"))
+                {
+                    // Pas la peine de vérifier s'il est dans le groupe Admin (vérification déjà faite sur l'équipeViewModel)
+                    await userManager.AddToRoleAsync(user, "DonneesAdmin");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Problème pour ajouter un admin dans le groupe Admin entrepôts");
+
+                // Provide for exceptions.
+            }
+        }
+
+        public async Task RemoveAdmDonneesUsr(int id)
+        {
+            try
+            {
+                await userManager.RemoveFromRoleAsync(await context.Users.FindAsync(id), "DonneesAdmin");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Problème requete pour retirer les droits LogisticMaint");
+            }
+        }
     }
 }

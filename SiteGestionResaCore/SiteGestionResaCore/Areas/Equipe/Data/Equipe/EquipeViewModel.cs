@@ -96,6 +96,23 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
         }
 
         public IEnumerable<SelectListItem> MaintItem { get; set; }
+        /// <summary>
+        /// Id de l'administrateur selectionné pour l'ajout dans le rôle "Logistic"
+        /// </summary>
+        [Range(1, 100, ErrorMessage = "Sélectionnez un administrateur entrepôt des données")]
+        public int DonneesAdminItemId { get; set; }
+
+        /*public IEnumerable<SelectListItem> DonneesAdmItem { get; set; }*/
+
+        private IList<utilisateur> _ListAdminDonnees = new List<utilisateur>();
+        /// <summary>
+        /// List des utilisateurs dont le rôle est 'LogisticInterv'
+        /// </summary>
+        public IList<utilisateur> ListAdminDonnees
+        {
+            get { return _ListAdminDonnees; }
+            set { _ListAdminDonnees = value; }
+        }
 
     }
 

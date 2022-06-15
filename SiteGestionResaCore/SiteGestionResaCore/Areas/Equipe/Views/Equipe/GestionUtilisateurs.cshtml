@@ -135,61 +135,150 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="offset-sm-2 col-md-5">
-        <table class="table table-striped justify-content-center table-sm">
-            <h5 class="text-center">Utilisateurs PFL</h5>
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prénom</th>
-                    <th scope="col">Mail</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var x in Model.ListUsers)
-                {
-                    <tr>
-                        <td>@x.nom</td>
-                        <td>@x.prenom</td>
-                        <td>@x.Email</td>
-                        <td>@Html.ActionLink("Supprimer", "DeleteUser", new { id = x.Id })</td><!--Voir comme faire ce link-->
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <br />
+        <div class="row justify-content-center">
 
-        <form asp-action="DeleteUser" asp-controller="Equipe" asp-area="Equipe" asp-route-id="@Model.UserToChange.Id" method="post">
+            <table class="table table-striped justify-content-center table-sm">
+                <h5 class="text-center">Administrateurs entrepôts des données</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Mail</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.ListAdminDonnees)
+                    {
+                        <tr>
+                            <td>@x.nom</td>
+                            <td>@x.prenom</td>
+                            <td>@x.Email</td>
+                            <td>@Html.ActionLink("Modifier", "RemoveDonneesUser", new { id = x.Id })</td><!--Voir comme faire ce link-->
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="offset-sm-3 col-md-6 text-center">
+                <!--Rajouter le script pour ouvrir la fênetre modal-->
+                <a class="btn btn-default navbar-inra" asp-action="AddAdminDonnees" asp-area="Equipe" asp-controller="Equipe">Ajouter un nouvel administrateur entrepôts</a>
+            </div>
+        </div>
+        <form asp-action="AddAdminDonnees" asp-controller="Equipe" asp-area="Equipe" method="post">
             <!-- Modal pop-up d'info-->
-            <div class="modal fade" id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+            <div class="modal fade" id="AddAdminDonnees" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
                 <div class="modal-dialog navbar-inra" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression compte Utilisateur</h5>
+                            <h5 class="modal-title text-center" id="staticBackdropLabel">Sélectionnez l'utilisateur à rajouter dans le groupe administrateurs entrepôts</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body" id="modalcontent">
+                            <select asp-for="DonneesAdminItemId" asp-items="@Model.AdminItem" class="form-control">
+                                <option value="-1">- Selectionner un utilisateur -</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.AdminToLogisticId, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="modal-footer">
+                            @* ne fonctionne pas! voir la raison après! <a href="/Home/Index" class="btn btn-secondary" data-dismiss="modal" role="button">OK</a>*@
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                            @*<button type="button" class="btn btn-primary">Valider</button>*@
+                            <input type="submit" class="btn btn-primary" value="Valider" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form asp-action="RemoveDonneesUser" asp-controller="Equipe" asp-route-id="@Model.UserToChange.Id" asp-area="Equipe" method="post">
+            <!-- Modal pop-up d'info-->
+            <div class="modal fade" id="removeDonneesModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                <div class="modal-dialog navbar-inra" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">Retirer utilisateur du groupe Administrateurs entrepôts des données</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalcontent">
+                            <p class="font-weight-bold">Pour l'utilisateur:</p>
                             <p>Nom:   @Model.UserToChange.nom</p>
                             <p>Prenom:  @Model.UserToChange.prenom</p>
                             <p>Mail: @Model.UserToChange.Email</p>
-                            <p class="font-weight-bold text-center"> Après confirmation cette compte sera supprimée définitivement, Etês-vous sûr de vouloir continuer?</p>
+                            <p class="font-weight-bold text-center"> Après confirmation cette personne ne sera plus dans le groupe administrateurs "entrepôts des données"</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
                             @*<button type="button" class="btn btn-primary">Valider</button>*@
                             <input type="submit" class="btn btn-primary" value="Valider" />
                         </div>
-                        @Html.HiddenFor(m => m.UserToChange.Id)
+                        @*@Html.HiddenFor(m => m.UserToChange.Id)*@
                     </div>
                 </div>
             </div>
         </form>
-
     </div>
-</div>
+    <div class="offset-sm-2 col-md-5">
+        <div class="row justify-content-center">
+            <table class="table table-striped justify-content-center table-sm">
+                <h5 class="text-center">Utilisateurs PFL</h5>
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Mail</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.ListUsers)
+                    {
+                        <tr>
+                            <td>@x.nom</td>
+                            <td>@x.prenom</td>
+                            <td>@x.Email</td>
+                            <td>@Html.ActionLink("Supprimer", "DeleteUser", new { id = x.Id })</td><!--Voir comme faire ce link-->
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <form asp-action="DeleteUser" asp-controller="Equipe" asp-area="Equipe" asp-route-id="@Model.UserToChange.Id" method="post">
+                <!-- Modal pop-up d'info-->
+                <div class="modal fade" id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+                    <div class="modal-dialog navbar-inra" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression compte Utilisateur</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="modalcontent">
+                                <p>Nom:   @Model.UserToChange.nom</p>
+                                <p>Prenom:  @Model.UserToChange.prenom</p>
+                                <p>Mail: @Model.UserToChange.Email</p>
+                                <p class="font-weight-bold text-center"> Après confirmation cette compte sera supprimée définitivement, Etês-vous sûr de vouloir continuer?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                                @*<button type="button" class="btn btn-primary">Valider</button>*@
+                                <input type="submit" class="btn btn-primary" value="Valider" />
+                            </div>
+                            @Html.HiddenFor(m => m.UserToChange.Id)
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
 <!-- #endregion -->
 
 <br />
@@ -460,6 +549,14 @@
             {
                 ViewBag.modalRemoveInterv = "hide";
             }
+            if (ViewBag.modalDonnees == null)
+            {
+                ViewBag.modalDonnees = "hide";
+            }
+            if (ViewBag.RemoveAdmDonnees == null)
+            {
+                ViewBag.RemoveAdmDonnees = "hide";
+            }
         }
         $('#adminModal').modal('@ViewBag.ModalState');
         $('#AddAdminModal').modal('@ViewBag.modalAdm');
@@ -469,5 +566,8 @@
         $('#removeModal').modal('@ViewBag.modalRemove');
         $('#AddAdminInterv').modal('@ViewBag.modalInterv');
         $('#removeModalInterv').modal('@ViewBag.modalRemoveInterv');
+        $('#AddAdminDonnees').modal('@ViewBag.modalDonnees');
+        $('#removeDonneesModal').modal('@ViewBag.RemoveAdmDonnees');   
+
 </script>
 }

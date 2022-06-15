@@ -36,5 +36,11 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
         Task RemoveLogisticMaintRoleAsync(int id);
 
+        Task<IList<utilisateur>> ObtenirUsersDonneesAsync();
+
+        Task AddingAdminToAdmDonnees(int id);
+
+        Task RemoveAdmDonneesUsr(int id);
+
     }
 }

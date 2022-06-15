@@ -445,7 +445,8 @@ namespace SiteGestionResaCore.Data.Data
                 new IdentityRole<int> { Name = "Utilisateur", Id = 2 , NormalizedName="UTILISATEUR", ConcurrencyStamp = Guid.NewGuid().ToString()}, 
                 new IdentityRole<int> { Name = "MainAdmin", Id = 3, NormalizedName="MAINADMIN", ConcurrencyStamp = Guid.NewGuid().ToString() }, 
                 new IdentityRole<int> { Name="Logistic", Id = 4, NormalizedName="LOGISTIC", ConcurrencyStamp = Guid.NewGuid().ToString()},
-                new IdentityRole<int> { Name="LogisticMaint", Id = 5, NormalizedName="LOGISTICMAINT", ConcurrencyStamp = Guid.NewGuid().ToString()}
+                new IdentityRole<int> { Name="LogisticMaint", Id = 5, NormalizedName="LOGISTICMAINT", ConcurrencyStamp = Guid.NewGuid().ToString()},
+                new IdentityRole<int> { Name="DonneesAdmin", Id = 6, NormalizedName="DONNEESADMIN", ConcurrencyStamp = Guid.NewGuid().ToString()}
             });
 
             modelBuilder.Entity<zone>().HasData(new zone[] { new zone { id = 1, nom_zone = "Concentration & Sechage" }, new zone { id = 2, nom_zone = "Dépotage & Stockage" },
