@@ -256,7 +256,14 @@ else
         <div class="row justify-content-center">
             @if (Model.AjoutDocs == true)
             {
-                <a asp-action="MesEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD">Revenir à "Mes entrepôts"</a>
+                if (Model.AjoutDocsAdmin == true)
+                {
+                    <a asp-action="AccesTousEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD">Revenir à "Tous les entrepôts"</a>
+                }
+                else
+                {
+                    <a asp-action="MesEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD">Revenir à "Mes entrepôts"</a>
+                }
             }
             else
             {

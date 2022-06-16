@@ -49,6 +49,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
         public int idResa { get; set; }
         public string NomBoutonPage { get; set; }
         public bool AjoutDocs { get; set; }
+        public bool AjoutDocsAdmin { get; set; }
 
     }
 }

@@ -274,8 +274,16 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                     IsDocStock = entrepotDB.EcrireDocTypeDeux(model);
                     if (IsDocStock)
                     {
-                        //ViewBag.Message = "Document(s) ajouté(s) dans l'entrepôt essai N°" + model.idEssai;
-                        return RedirectToAction("DocsXEssai", "AccesEntrepot", new { area ="DonneesPGD", id=model.idEssai });
+                        if(model.AjoutDocsAdmin == true)
+                        {
+                            //ViewBag.Message = "Document(s) ajouté(s) dans l'entrepôt essai N°" + model.idEssai;
+                            return RedirectToAction("DocsXEssaiAdm", "AccesEntrepot", new { area = "DonneesPGD", id = model.idEssai });
+                        }
+                        else
+                        {
+                            //ViewBag.Message = "Document(s) ajouté(s) dans l'entrepôt essai N°" + model.idEssai;
+                            return RedirectToAction("DocsXEssai", "AccesEntrepot", new { area = "DonneesPGD", id = model.idEssai });
+                        }
                     }
                     else
                     {
@@ -528,6 +536,38 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 ListDocsPartieUn = new List<DocAjoutePartieUn>(),
                 ListDocsPartieDeux = new List<DocAjoutePartieDeux>(),
                 AjoutDocs = IsAddDoc
+            };
+
+            this.HttpContext.AddToSession("CreationEntrepotVM", vm);
+
+            return View("CreationEntrepotXEssai", vm);
+        }
+
+        /// <summary>
+        /// Action pour ajout des documents dans un entrepot déjà crée (modification ADMIN)
+        /// </summary>
+        /// <param name="id">id essai</param>
+        /// <returns></returns>
+        public IActionResult AjoutDocsDansEntrepotAdm(int? id)
+        {
+            bool IsAddDoc = false;
+            var essai = entrepotDB.ObtenirEssai(id.Value);
+            if (essai.entrepot_cree == true)
+                IsAddDoc = true;
+            else
+                IsAddDoc = false;
+
+            // Initialisation de session pour l'essai X
+            CreationEntrepotVM vm = new CreationEntrepotVM()
+            {
+                ListReservationsXEssai = entrepotDB.ListeReservationsXEssai(id.Value),
+                idEssai = id.Value,
+                TitreEssai = entrepotDB.ObtenirTitreEssai(id.Value),
+                ListeTypeDoc = entrepotDB.ListeTypeDocuments(),
+                ListDocsPartieUn = new List<DocAjoutePartieUn>(),
+                ListDocsPartieDeux = new List<DocAjoutePartieDeux>(),
+                AjoutDocs = IsAddDoc,
+                AjoutDocsAdmin = true             // indiquer qu'il s'agit d'un ajout des documents pour les administrateurs
             };
 
             this.HttpContext.AddToSession("CreationEntrepotVM", vm);

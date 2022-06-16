@@ -23,6 +23,10 @@
             <a asp-action="CreerEntrepot" asp-controller="CreationEntrepot" asp-area="DonneesPGD" class="list-group-item btn-link">Créer un entrêpot des données (selon PGD PFL)</a>
 
             <a asp-action="MesEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD" class="list-group-item btn-link">Mes entrepôts des données</a>
+            @if (User.IsInRole("DonneesAdmin") || User.IsInRole("MainAdmin"))
+            {
+                <a asp-action="AccesTousEntrepots" asp-controller="AccesEntrepot" asp-area="DonneesPGD" class="list-group-item btn-link">Tous les entrepôts des données (Administrateurs)</a>
+            }
         </ul>
     </div>
 }

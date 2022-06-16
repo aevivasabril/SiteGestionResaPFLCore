@@ -8,24 +8,25 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
 {
     public interface IAccesEntrepotDB
     {
-        public List<EntrepotsXProjet> ObtenirListProjetsAvecEntrepotCree(utilisateur user);
-        public List<EssaiAvecEntrepotxProj> ObtenirListEssaiAvecEntrepot(int IdProjet);
-        public string ObtNumProjet(int IdProjet);
-        public List<DocXEssai> ObtListDocsXEssai(int IdEssai);
-        public string ObtTitreEssai(int IdEssai);
-        public int RecupIdEssaiXDoc(int IdDoc);
-        public bool SupprimerDocument(int IdDoc);
-        public bool DocSupprimable(int IdDoc);
-        public List<essai> ListEssaiEntrepotxProjet(int IdProjet);
-        public List<doc_essai_pgd> ListDocsEssai(int IdEssai);
-        public string CorrigerStringNomDossier(string NomDossier);
-        public projet GetProjet(int IdProjet);
-        public bool CreateDirectoryTemp(string path);
-        public activite_pfl ObtActivite(int IdActivite);
-        public equipement GetEquipement(int IdEquip);
-        public string TraiterChaineCaract(string titre, int taille);
-        public type_document ObtenirTypeDocument(int idTypeDoc);
-        public bool SupprimerEntrepotXProjet(int IdProjet);
-        public double CalculTotalKoEntrepot(int idProjet);
+        List<EntrepotsXProjet> ObtenirListProjetsAvecEntrepotCree(utilisateur user);
+        List<EssaiAvecEntrepotxProj> ObtenirListEssaiAvecEntrepot(int IdProjet);
+        string ObtNumProjet(int IdProjet);
+        List<DocXEssai> ObtListDocsXEssai(int IdEssai);
+        string ObtTitreEssai(int IdEssai);
+        int RecupIdEssaiXDoc(int IdDoc);
+        bool SupprimerDocument(int IdDoc);
+        bool DocSupprimable(int IdDoc);
+        List<essai> ListEssaiEntrepotxProjet(int IdProjet);
+        List<doc_essai_pgd> ListDocsEssai(int IdEssai);
+        string CorrigerStringNomDossier(string NomDossier);
+        projet GetProjet(int IdProjet);
+        bool CreateDirectoryTemp(string path);
+        activite_pfl ObtActivite(int IdActivite);
+        equipement GetEquipement(int IdEquip);
+        string TraiterChaineCaract(string titre, int taille);
+        type_document ObtenirTypeDocument(int idTypeDoc);
+        bool SupprimerEntrepotXProjet(int IdProjet);
+        double CalculTotalKoEntrepot(int idProjet);
+        List<EntrepotsXProjet> ObtenirListTousEntrepots();
     }
 }

@@ -284,5 +284,24 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             
             return Math.Round(sommeTotal, 3);
         }
+
+        public List<EntrepotsXProjet> ObtenirListTousEntrepots()
+        {
+            List<EntrepotsXProjet> list = new List<EntrepotsXProjet>();
+            var projetXUser = (from pr in contextDB.projet
+                               from es in contextDB.essai
+                               where pr.entrepot_supprime == null
+                               select pr).Distinct().ToList();
+            //var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id && p.entrepot_supprime == null);
+            foreach (var x in projetXUser)
+            {
+                if (contextDB.essai.Where(e => e.projetID == x.id).ToList().Any(e => e.entrepot_cree == true))
+                {
+                    EntrepotsXProjet entre = new EntrepotsXProjet { NomProjet = x.titre_projet, NumProjet = x.num_projet, IdProjet = x.id, DateCreationEntrepot = x.date_creation_entrepot.Value };
+                    list.Add(entre);
+                }
+            }
+            return list;
+        }
     }
 }
