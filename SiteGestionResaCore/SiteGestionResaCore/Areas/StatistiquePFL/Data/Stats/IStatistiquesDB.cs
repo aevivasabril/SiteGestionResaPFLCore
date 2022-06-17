@@ -22,12 +22,16 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         List<organisme> ListeOrganismes();
         List<InfosReservations> ObtRecapitulatifXOrg(int IdOrg, DateTime datedebut, DateTime datefin);
         organisme ObtenirOrganisme(int IdOrg);
-        List<ProvenanceXProj> ListProjXProvenance(int IdProv);
+        List<CategorieXProj> ListProjXProvenance(int IdProv);
         ld_provenance NomProvenance(int IdProvenance);
         List<ld_provenance> ListeProvenances();
-        List<ProvenanceXProj> ListProjXNonProv();
+        List<CategorieXProj> ListProjXNonProv();
         int LaitAnneeEnCours();
         int LaitXDates(DateTime dateDebut, DateTime dateFin);
         List<MaintenanceInfos> ListMaintenances(DateTime dateDu, DateTime dateAu);
+        List<ld_type_projet> ListTypeProjet();
+        List<CategorieXProj> ListProjetXType(int idType);
+        ld_type_projet NomTypeProj(int Id);
+        List<CategorieXProj> ListProjsSansType();
     }
 }

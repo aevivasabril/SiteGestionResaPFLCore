@@ -30,7 +30,6 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         public IActionResult AccueilStats()
         {
             AccueilStatsVM vm = new AccueilStatsVM();
-            vm.AnneeActuel = DateTime.Today.Year;
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             this.HttpContext.AddToSession("AccueilStatsVM", vm);
             return View("AccueilStats", vm);
@@ -152,6 +151,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("SelectOrgId");
             ModelState.Remove("DateDuEquip");
             ModelState.Remove("DateAuEquip");
+            ModelState.Remove("DateDuMaintenance");
+            ModelState.Remove("DateAuMaintenance");
             if (ModelState.IsValid)
             {
                 List<InfosReservations> list = statistiquesDB.ObtRecapitulatifXProjet(vm.SelectProjetId);
@@ -242,6 +243,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             string titreCsv = null;
             ModelState.Remove("SelectProjetId");
             ModelState.Remove("SelectOrgId");
+            ModelState.Remove("DateDuMaintenance");
+            ModelState.Remove("DateAuMaintenance");
             if (ModelState.IsValid)
             {
                 if (vm.DateAuEquip < vm.DateDuEquip)
@@ -341,7 +344,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             string titreCsv = null;
             ModelState.Remove("SelectProjetId");
             ModelState.Remove("SelectEquipeId");
-
+            ModelState.Remove("DateDuMaintenance");
+            ModelState.Remove("DateAuMaintenance");
             if (ModelState.IsValid)
             {
                 if (vm.DateAuEquip < vm.DateDuEquip)
@@ -426,10 +430,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
 
         public IActionResult ProvenanceXProjet(int id)
         {
-            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
-
-            ProvXProjVM vm = new ProvXProjVM();
-            vm.ListProjetsXProv = statistiquesDB.ListProjXProvenance(id);
+            
+            CategXProjVM vm = new CategXProjVM();
+            vm.ListProjetsXCat = statistiquesDB.ListProjXProvenance(id);
             vm.ProvenanceProjet = statistiquesDB.NomProvenance(id).nom_provenance;
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             return PartialView("_ListeProjXProvenanc", vm);
@@ -437,10 +440,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
 
         public IActionResult ProvenanceXProjetSans()
         {
-            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
 
-            ProvXProjVM vm = new ProvXProjVM();
-            vm.ListProjetsXProv = statistiquesDB.ListProjXNonProv();
+            CategXProjVM vm = new CategXProjVM();
+            vm.ListProjetsXCat = statistiquesDB.ListProjXNonProv();
             vm.ProvenanceProjet = "Sans provenance";
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             return PartialView("_ListeProjXProvenanc", vm);
@@ -452,6 +454,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             model.ListZones = statistiquesDB.ObtenirListZones();
             model.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
             model.ListProvenances = statistiquesDB.ListeProvenances();
+            model.ListTypeProj = statistiquesDB.ListTypeProjet();
+            model.AnneeActuel = DateTime.Today.Year;
             this.HttpContext.AddToSession("ConsultStatsVM", model);
             return View("ConsultStats", model);
         }
@@ -555,5 +559,22 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             }
         }
 
+        public IActionResult TypeXProjet(int id)
+        {
+            CategXProjVM vm = new CategXProjVM();
+            vm.ListProjetsXCat = statistiquesDB.ListProjetXType(id);
+            vm.ProvenanceProjet = statistiquesDB.NomTypeProj(id).nom_type_projet;
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            return PartialView("_ListProjetXType", vm);
+        }
+
+        public IActionResult TypeXProjetSans()
+        {
+            CategXProjVM vm = new CategXProjVM();
+            vm.ListProjetsXCat = statistiquesDB.ListProjsSansType();
+            vm.ProvenanceProjet = "Non défini";
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            return PartialView("_ListProjetXType", vm);
+        }
     }
 }

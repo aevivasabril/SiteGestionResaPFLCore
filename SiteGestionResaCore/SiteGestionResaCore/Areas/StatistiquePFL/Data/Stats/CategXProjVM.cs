@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
 {
-    public class ProvXProjVM
+    public class CategXProjVM
     {
-        public List<ProvenanceXProj> ListProjetsXProv { get; set; }
+        public List<CategorieXProj> ListProjetsXCat { get; set; }
         public string ProvenanceProjet { get; set; }
     }
 }

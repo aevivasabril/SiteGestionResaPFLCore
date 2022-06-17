@@ -195,9 +195,17 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             return resaDB.zone.First(z => z.id == id);
         }
 
+        /// <summary>
+        /// Liste des projets où il y a au moins une réservation valide (non supprimé ou non refusée)
+        /// </summary>
+        /// <returns></returns>
         public List<projet> ObtenirListProjet()
         {
-            return resaDB.projet.Distinct().OrderByDescending(p => p.date_creation).ToList();
+            return  (from pr in resaDB.projet
+                        from ess in resaDB.essai
+                        where pr.id == ess.projetID && ess.resa_supprime != true && ess.resa_refuse != true
+                        select pr).Distinct().OrderByDescending(p => p.date_creation).ToList();
+            //return resaDB.projet.Distinct().OrderByDescending(p => p.date_creation).ToList();
         }
 
         public List<InfosReservations> ObtRecapitulatifXProjet(int IdProjet)
@@ -364,9 +372,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             return resaDB.organisme.First(o => o.id == IdOrg);
         }
 
-        public List<ProvenanceXProj> ListProjXProvenance(int IdProv)
+        public List<CategorieXProj> ListProjXProvenance(int IdProv)
         {
-            List<ProvenanceXProj> list = new List<ProvenanceXProj>();
+            List<CategorieXProj> list = new List<CategorieXProj>();
            
             var proj = (from proje in resaDB.projet
                         from prov in resaDB.ld_provenance
@@ -376,7 +384,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             foreach(var p in proj)
             {
-                ProvenanceXProj prov = new ProvenanceXProj
+                CategorieXProj prov = new CategorieXProj
                 {
                     DateCreation = p.date_creation.ToString(),
                     DescriptProj = p.description_projet,
@@ -403,9 +411,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             return resaDB.ld_provenance.ToList();
         }
 
-        public List<ProvenanceXProj> ListProjXNonProv()
+        public List<CategorieXProj> ListProjXNonProv()
         {
-            List<ProvenanceXProj> list = new List<ProvenanceXProj>();
+            List<CategorieXProj> list = new List<CategorieXProj>();
 
             var proj = (from proje in resaDB.projet
                         where proje.provenance == null && proje.date_creation >= DateTime.Now.AddYears(-3)
@@ -413,7 +421,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             foreach (var p in proj)
             {
-                ProvenanceXProj prov = new ProvenanceXProj
+                CategorieXProj prov = new CategorieXProj
                 {
                     DateCreation = p.date_creation.ToString(),
                     DescriptProj = p.description_projet,
@@ -538,6 +546,73 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
             return list;
 
+        }
+
+        public List<ld_type_projet> ListTypeProjet()
+        {
+            return resaDB.ld_type_projet.ToList();
+        }
+        
+        public List<CategorieXProj> ListProjetXType(int IdType)
+        {
+            List<CategorieXProj> list = new List<CategorieXProj>();
+
+            var proj = (from proje in resaDB.projet
+                        from typP in resaDB.ld_type_projet
+                        where proje.type_projet == typP.nom_type_projet
+                        && typP.id == IdType && proje.date_creation >= DateTime.Now.AddYears(-3)
+                        select proje).Distinct().ToList();
+
+            foreach (var p in proj)
+            {
+                CategorieXProj prov = new CategorieXProj
+                {
+                    DateCreation = p.date_creation.ToString(),
+                    DescriptProj = p.description_projet,
+                    Financement = p.financement,
+                    NumProjet = p.num_projet,
+                    Organisme = resaDB.organisme.First(o => o.id == p.organismeID).nom_organisme,
+                    Provenance = p.provenance,
+                    RespProjet = p.mailRespProjet,
+                    TitreProj = p.titre_projet,
+                    TypeProj = p.type_projet
+                };
+                list.Add(prov);
+            }
+            return list;
+        }
+
+        public ld_type_projet NomTypeProj(int Id)
+        {
+            return resaDB.ld_type_projet.First(t => t.id == Id);
+        }
+        public List<CategorieXProj> ListProjsSansType()
+        {
+            List<CategorieXProj> list = new List<CategorieXProj>();
+
+            var proj = (from proje in resaDB.projet
+                        from typP in resaDB.ld_type_projet
+                        where proje.type_projet == null
+                        && proje.date_creation >= DateTime.Now.AddYears(-3)
+                        select proje).Distinct().ToList();
+
+            foreach (var p in proj)
+            {
+                CategorieXProj prov = new CategorieXProj
+                {
+                    DateCreation = p.date_creation.ToString(),
+                    DescriptProj = p.description_projet,
+                    Financement = p.financement,
+                    NumProjet = p.num_projet,
+                    Organisme = resaDB.organisme.First(o => o.id == p.organismeID).nom_organisme,
+                    Provenance = p.provenance,
+                    RespProjet = p.mailRespProjet,
+                    TitreProj = p.titre_projet,
+                    TypeProj = p.type_projet
+                };
+                list.Add(prov);
+            }
+            return list;
         }
     }
 }

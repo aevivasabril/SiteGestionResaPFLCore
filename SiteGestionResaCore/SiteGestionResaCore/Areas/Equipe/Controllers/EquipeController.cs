@@ -806,6 +806,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
         public async Task<IActionResult> AddingLogisticIntervAsync()
+        
         {
             listAutresUtilisateurs ListUsr = await EquipeResaDb.ObtenirListAutresAsync();
             List<utilisateur> ListAdmin = EquipeResaDb.ObtenirListAdmins();

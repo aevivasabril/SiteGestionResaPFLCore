@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
 {
-    public class ProvenanceXProj
+    public class CategorieXProj
     {
         public string NumProjet { get; set; }
         public string TitreProj { get; set; }

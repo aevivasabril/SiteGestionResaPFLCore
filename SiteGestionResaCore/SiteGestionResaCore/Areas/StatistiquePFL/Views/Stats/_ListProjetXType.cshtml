@@ -1,10 +1,10 @@
 ﻿@model CategXProjVM
 
-<div class="modal fade" id="ProvModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+<div class="modal fade" id="TypeModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
     <div class="modal-dialog modal-xl navbar-inra">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Projets avec une provenance <strong> @Model.ProvenanceProjet </strong> des 3 dernières années</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Projets par type <strong> @Model.ProvenanceProjet </strong> des 3 dernières années</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -43,7 +43,7 @@
                             }
                         </tbody>
                     </table>
-                </div>                   
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>

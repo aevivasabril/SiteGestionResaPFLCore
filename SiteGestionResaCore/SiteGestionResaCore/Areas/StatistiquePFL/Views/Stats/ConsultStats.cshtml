@@ -31,6 +31,18 @@
 <hr />
 <hr />
 
+<h4 class="text-center"><strong>Liste des projets par type (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur le type, pour ouvrir la liste des projets</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListTypeProj)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapType(@zo.id)">@zo.nom_type_projet</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansType()">Aucun</a> <!-- mr= margin rigth and mt= margin top-->
+</form>
+<br />
+<hr />
+<hr />
 <form asp-action="CalculLtsLait" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <h4 class="text-center"><strong>Quantité du lait travaillée pour l'année en cours (@Model.AnneeActuel) :</strong></h4>
@@ -68,6 +80,7 @@
 
 <div id="InfosJoursZone"></div>
 <div id="ListeProvenance"></div>
+<div id="ListeType"></div>
 <div class="row justify-content-center">
     <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
 </div>
@@ -108,6 +121,31 @@
                 success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
                     $("#ListeProvenance").html(html);
                     $("#ProvModal").modal('show');
+                }
+            });
+        }
+
+        function OuvrirRecapType(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("TypeXProjet", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeType").html(html);
+                        $("#TypeModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansType() {
+            $.ajax({
+                url: "@Url.Action("TypeXProjetSans", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeType").html(html);
+                    $("#TypeModal").modal('show');
                 }
             });
         }
