@@ -32,5 +32,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
         public List<ld_provenance> ListProvenances { get; set; }
 
         public List<ld_type_projet> ListTypeProj { get; set; }
+
+        public List<ld_produit_in> ListProdIn { get; set; }
     }
 }

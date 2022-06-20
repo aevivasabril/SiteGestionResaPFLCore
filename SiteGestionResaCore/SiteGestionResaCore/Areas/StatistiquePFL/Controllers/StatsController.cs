@@ -455,6 +455,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             model.QuantiteLaitAnnee = statistiquesDB.LaitAnneeEnCours();
             model.ListProvenances = statistiquesDB.ListeProvenances();
             model.ListTypeProj = statistiquesDB.ListTypeProjet();
+            model.ListProdIn = statistiquesDB.ListProdsEntree();
             model.AnneeActuel = DateTime.Today.Year;
             this.HttpContext.AddToSession("ConsultStatsVM", model);
             return View("ConsultStats", model);
@@ -575,6 +576,25 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             vm.ProvenanceProjet = "Non défini";
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             return PartialView("_ListProjetXType", vm);
+        }
+
+        public IActionResult TypeProdXEssai(int id)
+        {
+
+            EssaisXTypeProdVM vm = new EssaisXTypeProdVM();
+            vm.ListEssais = statistiquesDB.ListEssaisXprod(id);
+            vm.NomProduit = statistiquesDB.NomTypeProd(id);
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            return PartialView("_ListEssaiXProd", vm);
+        }
+
+        public IActionResult SansProdXEssai()
+        {
+            EssaisXTypeProdVM vm = new EssaisXTypeProdVM();
+            vm.ListEssais = statistiquesDB.ListEssaisSansprod();
+            vm.NomProduit = "Non défini";
+            // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
+            return PartialView("_ListEssaiXProd", vm);
         }
     }
 }

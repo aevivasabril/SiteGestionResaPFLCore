@@ -33,5 +33,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         List<CategorieXProj> ListProjetXType(int idType);
         ld_type_projet NomTypeProj(int Id);
         List<CategorieXProj> ListProjsSansType();
+        List<ld_produit_in> ListProdsEntree();
+        List<EssaiXprod> ListEssaisXprod(int idprod);
+        string NomTypeProd(int idprod);
+        List<EssaiXprod> ListEssaisSansprod();
     }
 }

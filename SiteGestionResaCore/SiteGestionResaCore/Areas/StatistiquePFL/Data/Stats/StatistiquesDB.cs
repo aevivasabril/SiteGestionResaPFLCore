@@ -586,12 +586,12 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         {
             return resaDB.ld_type_projet.First(t => t.id == Id);
         }
+
         public List<CategorieXProj> ListProjsSansType()
         {
             List<CategorieXProj> list = new List<CategorieXProj>();
 
             var proj = (from proje in resaDB.projet
-                        from typP in resaDB.ld_type_projet
                         where proje.type_projet == null
                         && proje.date_creation >= DateTime.Now.AddYears(-3)
                         select proje).Distinct().ToList();
@@ -614,5 +614,84 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             }
             return list;
         }
+
+        public List<ld_produit_in> ListProdsEntree()
+        {
+            return resaDB.ld_produit_in.ToList();
+        }
+
+        public List<EssaiXprod> ListEssaisXprod(int idprod)
+        {
+            List<EssaiXprod> list = new List<EssaiXprod>();
+
+            var essais = (from ess in resaDB.essai
+                        from typP in resaDB.ld_produit_in
+                        from pr in resaDB.projet
+                        where ess.type_produit_entrant == typP.nom_produit_in && typP.id == idprod
+                        && pr.date_creation >= DateTime.Now.AddYears(-3) && ess.resa_refuse != true && ess.resa_supprime != true
+                        select ess).Distinct().ToList();
+
+            foreach (var p in essais)
+            {
+                var projet = resaDB.projet.First(pr => pr.id == p.projetID);
+                EssaiXprod prov = new EssaiXprod
+                {
+                    TitreEssai = p.titreEssai,
+                    AuteurEssai = resaDB.Users.First(u=>u.Id == p.compte_userID).Email,
+                    IdEssai = p.id,
+                    PrecisionProd = p.precision_produit,
+                    QuantiteProd = p.quantite_produit.GetValueOrDefault(),
+                    DestProdFinal = p.destination_produit,
+                    DateCreationEssai = p.date_creation,
+                    NumProjet = projet.num_projet,
+                    TitreProjet = projet.titre_projet
+                };
+                list.Add(prov);
+            }
+            return list;
+        }
+
+        public string NomTypeProd(int idprod)
+        {
+            return resaDB.ld_produit_in.First(p => p.id == idprod).nom_produit_in;
+        }
+
+        public List<EssaiXprod> ListEssaisSansprod()
+        {
+            List<EssaiXprod> list = new List<EssaiXprod>();
+
+            var essais = (from ess in resaDB.essai
+                          from pr in resaDB.projet
+                          where ess.type_produit_entrant == null 
+                          && pr.date_creation >= DateTime.Now.AddYears(-3) && ess.resa_refuse != true && ess.resa_supprime != true
+                          select ess).Distinct().ToList();
+
+            foreach (var p in essais)
+            {
+                try
+                {
+                    var projet = resaDB.projet.First(pr => pr.id == p.projetID);
+                    EssaiXprod prov = new EssaiXprod
+                    {
+                        TitreEssai = p.titreEssai,
+                        AuteurEssai = resaDB.Users.First(u => u.Id == p.compte_userID).Email,
+                        IdEssai = p.id,
+                        PrecisionProd = p.precision_produit,
+                        QuantiteProd = p.quantite_produit.GetValueOrDefault(),
+                        DestProdFinal = p.destination_produit,
+                        DateCreationEssai = p.date_creation,
+                        NumProjet = projet.num_projet,
+                        TitreProjet = projet.titre_projet
+                    };
+                    list.Add(prov);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("", "Problème pour initialiser un des objets EssaiXProd");
+                }               
+            }
+            return list;
+        }
+
     }
 }

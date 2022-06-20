@@ -43,6 +43,20 @@
 <br />
 <hr />
 <hr />
+
+<h4 class="text-center"><strong>Liste des essais par type de produit entrant (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur le type de produit entrant, pour ouvrir la liste des essais</h6>
+<form class="form-row justify-content-center">
+    @foreach (var po in Model.ListProdIn)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapProd(@po.id)">@po.nom_produit_in</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansProd()">Aucun</a> <!-- mr= margin rigth and mt= margin top-->
+</form>
+<br />
+<hr />
+<hr />
+
 <form asp-action="CalculLtsLait" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <h4 class="text-center"><strong>Quantité du lait travaillée pour l'année en cours (@Model.AnneeActuel) :</strong></h4>
@@ -81,6 +95,7 @@
 <div id="InfosJoursZone"></div>
 <div id="ListeProvenance"></div>
 <div id="ListeType"></div>
+<div id="ListeProd"></div>
 <div class="row justify-content-center">
     <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
 </div>
@@ -146,6 +161,30 @@
                 success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
                     $("#ListeType").html(html);
                     $("#TypeModal").modal('show');
+                }
+            });
+        }
+        function OuvrirRecapProd(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("TypeProdXEssai", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeProd").html(html);
+                        $("#ProdModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansProd() {
+            $.ajax({
+                url: "@Url.Action("SansProdXEssai", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeProd").html(html);
+                    $("#ProdModal").modal('show');
                 }
             });
         }
