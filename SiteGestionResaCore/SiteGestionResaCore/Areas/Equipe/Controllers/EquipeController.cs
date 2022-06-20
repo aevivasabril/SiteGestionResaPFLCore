@@ -83,8 +83,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
 
+
         public IActionResult AdminToUserAcces(int? id)
         {
+
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
@@ -109,6 +111,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+           
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Changement de rôle \"Admin\" vers \"Utilisateur\" réussi! ";
@@ -118,8 +121,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm); //Cette redirection rentre dans le GET et reconstruit le model :)
         }
 
+
         public IActionResult AddingAdmin()
         {
+            
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             ViewBag.modalAdm = "show";
@@ -141,6 +146,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Admin\"";
                 return View("Error");
             }
+
       
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
@@ -151,11 +157,14 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [Authorize(Roles = "MainAdmin")]
+
         public IActionResult AddingLogistic()
         {
+
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
 
+           
             ViewBag.modalLogic = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -175,8 +184,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             {
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de l'ajout utilisateur dans le rôle \"Logistic\"";
                 return View("Error");
+ 
             }    
 
+          
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"Logistic\" réussi! ";
@@ -186,8 +197,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [Authorize(Roles = "MainAdmin")]
+
         public IActionResult RemoveLogisticUser(int? id)
         {
+            
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
@@ -212,6 +225,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+            
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Extraction de l'utilisateur du rôle \"Logistic\" réussi! ";
@@ -220,8 +234,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+
         public IActionResult Valider(int? id)
         {
+
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
@@ -263,6 +279,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+          
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Compte validé! ";
@@ -270,8 +287,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+
         public IActionResult Refuser(int? id)
         {
+            
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
@@ -281,7 +300,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Refuser(int id)
+        public async Task<ActionResult> Refuser(int id)       
         {
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
@@ -303,6 +322,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+            
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Compte refusé! ";
@@ -312,8 +332,10 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+
         public IActionResult DeleteUser(int? id)
         {
+            
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             vm.UserToChange = EquipeResaDb.ObtenirUtilisateur(id.Value);
@@ -354,6 +376,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+       
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Utilisateur supprimé! ";
@@ -364,11 +387,15 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
         }
 
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
+
         public IActionResult AddingLogisticIntervAsync()
+        
         {
+
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
 
+           
             ViewBag.modalInterv = "show";
             return View("GestionUtilisateurs", vm);
         }
@@ -390,6 +417,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }         
 
+            
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Ajout de l'utilisateur dans le rôle \"LogisticMaint\" réussi! ";
@@ -410,21 +438,27 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
 
         [HttpPost]
         [Authorize(Roles = "LogisticMaint, MainAdmin")]
+
         public async Task<IActionResult> RemoveIntervUserAsync(int id)
         {
+
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
 
+            
             try
             {
+            
                 await EquipeResaDb.RemoveLogisticMaintRoleAsync(id);
             }
             catch (Exception e)
             {
+            
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"LogisticMaint\"";
                 return View("Error");
             }        
 
+           
             // Afficher message pour indiquer que l'opération s'est bien passé
             ViewBag.AfficherMessage = true;
             ViewBag.Message = "Extraction de l'utilisateur du rôle \"LogisticMaint\" réussi! ";
@@ -433,22 +467,26 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+            
         public IActionResult AddAdminDonnees()
         {
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+
 
             ViewBag.modalDonnees = "show";
             return View("GestionUtilisateurs", vm);
         }
 
         [HttpPost]
+
         public async Task<IActionResult> AddAdminDonneesAsync(GestionUsersViewModel model)
         {
             // Récupérer la session "GestionUsersViewModel"
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             try
             {
+
                 await EquipeResaDb.AddingAdminToAdmDonnees(model.DonneesAdminItemId);
             }
             catch (Exception e)
@@ -457,11 +495,13 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
                 return View("Error");
             }
 
+
             IList<utilisateur> utilisateurs = await EquipeResaDb.ObtenirUsersDonneesAsync();
             vm.ListAdminDonnees = utilisateurs;
             this.HttpContext.AddToSession("GestionUsersViewModel", vm);
             return View("GestionUtilisateurs", vm);
         }
+
 
         [Authorize(Roles = "DonneesAdmin, MainAdmin")]
         public IActionResult RemoveDonneesUser(int? id)
@@ -473,6 +513,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+
         [HttpPost]
         [Authorize(Roles = "DonneesAdmin, MainAdmin")]
         public async Task<IActionResult> RemoveDonneesUserAsync(int id)
@@ -481,10 +522,12 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
             try
             {
+           
                 await EquipeResaDb.RemoveAdmDonneesUsr(id);
             }
             catch (Exception e)
             {
+               
                 ViewBag.Message = e.ToString() + ". Problème survenue lors de la extraction de l'utilisateur du rôle \"DonneesAdmin\"";
                 return View("Error");
             }

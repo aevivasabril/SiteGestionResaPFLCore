@@ -1,0 +1,333 @@
+﻿@model AccueilStatsVM
+@{
+    ViewData["Title"] = "Statistiques";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form asp-action="GenererExcelResas" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    <br />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Réservations pour une période définie</strong></h4>
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Télécharger .csv réservations" />
+    </div>
+</form>
+<br />
+<hr />
+<hr />
+
+<h4 class="text-center"><strong>Récupérer excel avec les équipements utilisés par categorie</strong></h4>
+<br />
+<form class="form-row justify-content-center">
+    <div class="col-md-4">
+        <a class="btn btn-light" asp-action="SelectProjet" asp-controller="Stats" asp-area="StatistiquePFL"><strong>Equipements utilisés par projet</strong></a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-light" asp-action="SelectOrganisme" asp-controller="Stats" asp-area="StatistiquePFL"><strong>Equipements utilisés par organisme</strong></a>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-light" asp-action="SelectEquipe" asp-controller="Stats" asp-area="StatistiquePFL"><strong>Equipements utilisés par equipe STLO</strong></a>
+    </div>
+</form>
+<br />
+<hr />
+<hr />
+
+<form asp-action="RecapMaintenance" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    <br />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Opérations de maintenance pour une période définie</strong></h4>
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDuMaintenance" asp-for="@Model.DateDuMaintenance" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDuMaintenance, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAuMaintenance" asp-for="@Model.DateAuMaintenance" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAuMaintenance, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Télécharger .csv maintenance" />
+    </div>
+</form>
+<br />
+<hr />
+<hr />
+
+
+<!--Modal pour sélection du projet -->
+<div class="modal fade" id="UtilXProjetModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Utilisations des équipements par projet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="RecapXProjet" asp-controller="Stats" asp-area="StatistiquePFL" asp-route-id="@Model.SelectProjetId" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card">
+                        <div class="card-header">
+                            Sélectionnez un projet pour récupérer le rapport d'utilisation des équipements. La liste des projets est organisée par ordre descendant selon la date création projet
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                @Html.LabelFor(m => m.SelectProjetId, new { @class = "col-md-9 control-label" })
+                                <select asp-for="SelectProjetId" asp-items="@Model.ProjetItem" class="form-control">
+                                    <option value="-1">- Projet -</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.SelectProjetId, "", new { @class = "text-danger" })
+                            </div>
+                            <hr />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer les essais pour ce projet" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal pour de dates et d'équipe stlo pour récuperer leur activité -->
+<div class="modal fade" id="EquipesModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Utilisations des équipements par équipe STLO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="RecapXEquip" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card">
+                        <div class="card-header">
+                            Sélectionnez un des équipes STLO et les dates pour récupérer le rapport d'utilisation des équipements.
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                @Html.LabelFor(m => m.SelectEquipeId, new { @class = "col-md-9 control-label" })
+                                <select asp-for="SelectEquipeId" asp-items="@Model.EquipeStloItem" class="form-control">
+                                    <option value="-1">- Sélectionnez un équipe STLO -</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.SelectEquipeId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Du : ")
+                                        <input class="form-control" name="DateDuEquip" asp-for="@Model.DateDuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateDuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Au : ")
+                                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                                        <input class="form-control" name="DateAuEquip" asp-for="@Model.DateAuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateAuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par équipe" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal pour de dates et d'organisme (celulles hebergées) pour récuperer leur activité -->
+<div class="modal fade" id="OrgModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Utilisations des équipements par organisme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="RecapXOrg" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card">
+                        <div class="card-header">
+                            Sélectionnez un des organismes et les dates pour récupérer le rapport d'utilisation des équipements.
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                @Html.LabelFor(m => m.SelectOrgId, new { @class = "col-md-9 control-label" })
+                                <select asp-for="SelectOrgId" asp-items="@Model.OrgItem" class="form-control">
+                                    <option value="-1">- Sélectionnez un organisme -</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.SelectOrgId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Du : ")
+                                        <input class="form-control" name="DateDuEquip" asp-for="@Model.DateDuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateDuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Au : ")
+                                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                                        <input class="form-control" name="DateAuEquip" asp-for="@Model.DateAuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateAuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par équipe" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal pour de dates et d'équipe stlo pour récuperer leur activité -->
+<div class="modal fade" id="EquipesModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Utilisations des équipements par équipe STLO</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <form asp-action="RecapXEquip" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="card">
+                        <div class="card-header">
+                            Sélectionnez un des équipes STLO et les dates pour récupérer le rapport d'utilisation des équipements.
+                        </div>
+                        <div class="card-body">
+                            <div class="form-row">
+                                @Html.LabelFor(m => m.SelectEquipeId, new { @class = "col-md-9 control-label" })
+                                <select asp-for="SelectEquipeId" asp-items="@Model.EquipeStloItem" class="form-control">
+                                    <option value="-1">- Sélectionnez un équipe STLO -</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.SelectEquipeId, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-row">
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Du : ")
+                                        <input class="form-control" name="DateDuEquip" asp-for="@Model.DateDuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateDuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                    <!--Date picker -->
+                                    <div class="form-group">
+                                        @Html.Label("Au : ")
+                                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                                        <input class="form-control" name="DateAuEquip" asp-for="@Model.DateAuEquip" type="date" />
+                                        @Html.ValidationMessageFor(m => m.DateAuEquip, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par équipe" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
+</div>
+
+@section Scripts
+{
+    <script>
+     @{
+            if (ViewBag.ModalUseProjet == null)
+            {
+                ViewBag.ModalUseProjet = "hide";
+            }
+            if (ViewBag.ModalUseEquipe == null)
+            {
+                ViewBag.ModalUseEquipe = "hide";
+            }
+            if (ViewBag.ModalUseOrg == null)
+            {
+                ViewBag.ModalUseOrg = "hide";
+            }
+        }
+        $('#UtilXProjetModal').modal('@ViewBag.ModalUseProjet');
+        $('#EquipesModal').modal('@ViewBag.ModalUseEquipe');
+        $('#OrgModal').modal('@ViewBag.ModalUseOrg');
+
+    </script>
+}

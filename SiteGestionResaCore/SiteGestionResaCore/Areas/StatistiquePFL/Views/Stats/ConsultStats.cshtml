@@ -1,0 +1,194 @@
+﻿@model ConsultStatsVM
+
+@{
+    ViewData["Title"] = "Consultation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h4 class="text-center"><strong>Nombre des jours d'utilisation par équipement pour l'année en cours (@Model.AnneeActuel)</strong></h4>
+<h6 class="text-center">Cliquez sur la zone, pour ouvrir la liste des équipements Vs jours (weekends non inclus)</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListZones)
+    {
+        <a class="btn navbar-inra mr-2 mt-2" href="#" onclick="OuvrirComptageZone(@zo.IdZone)">@zo.NomZone</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+</form>
+<br />
+<hr />
+<hr />
+
+<h4 class="text-center"><strong>Liste des projets par type de provenance (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur la categorie, pour ouvrir la liste des projets</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListProvenances)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapProv(@zo.id)">@zo.nom_provenance</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansProv()">Sans provenance</a> <!-- mr= margin rigth and mt= margin top-->
+</form>
+<br />
+<hr />
+<hr />
+
+<h4 class="text-center"><strong>Liste des projets par type (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur le type, pour ouvrir la liste des projets</h6>
+<form class="form-row justify-content-center">
+    @foreach (var zo in Model.ListTypeProj)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapType(@zo.id)">@zo.nom_type_projet</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansType()">Aucun</a> <!-- mr= margin rigth and mt= margin top-->
+</form>
+<br />
+<hr />
+<hr />
+
+<h4 class="text-center"><strong>Liste des essais par type de produit entrant (3 dernières années) </strong></h4>
+<h6 class="text-center">Cliquez sur le type de produit entrant, pour ouvrir la liste des essais</h6>
+<form class="form-row justify-content-center">
+    @foreach (var po in Model.ListProdIn)
+    {
+        <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapProd(@po.id)">@po.nom_produit_in</a> <!-- mr= margin rigth and mt= margin top-->
+    }
+    <a class="btn btn-secondary mr-2 mt-2" href="#" onclick="OuvrirRecapSansProd()">Aucun</a> <!-- mr= margin rigth and mt= margin top-->
+</form>
+<br />
+<hr />
+<hr />
+
+<form asp-action="CalculLtsLait" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Quantité du lait travaillée pour l'année en cours (@Model.AnneeActuel) :</strong></h4>
+    <h4 class="text-center" style="color:darkgreen"><strong>@Model.QuantiteLaitAnnee Kgs</strong></h4>
+    <hr />
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDu" asp-for="@Model.DateDu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Calculer Lts lait pour cette periode" />
+    </div>
+    <br />
+    <h4 class="text-center"><strong>Quantité du lait travaillée pour la periode :</strong></h4>
+    <h4 class="text-center" style="color:darkgreen"><strong>@Model.QuantiteLaitPeriode Kgs</strong></h4>
+</form>
+<hr />
+<hr />
+
+<div id="InfosJoursZone"></div>
+<div id="ListeProvenance"></div>
+<div id="ListeType"></div>
+<div id="ListeProd"></div>
+<div class="row justify-content-center">
+    <a asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Revenir à la page précedente</a>
+</div>
+@section Scripts
+{
+    <script>
+        function OuvrirComptageZone(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("EquipVsDays", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#InfosJoursZone").html(html);
+                        $("#JoursModal").modal('show');
+                    }
+                });
+            }
+        }
+        function OuvrirRecapProv(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("ProvenanceXProjet", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeProvenance").html(html);
+                        $("#ProvModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansProv() {
+            $.ajax({
+                url: "@Url.Action("ProvenanceXProjetSans", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeProvenance").html(html);
+                    $("#ProvModal").modal('show');
+                }
+            });
+        }
+
+        function OuvrirRecapType(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("TypeXProjet", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeType").html(html);
+                        $("#TypeModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansType() {
+            $.ajax({
+                url: "@Url.Action("TypeXProjetSans", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeType").html(html);
+                    $("#TypeModal").modal('show');
+                }
+            });
+        }
+        function OuvrirRecapProd(id) {
+            if (id) //Vérifier que l'id contient une valeur
+            {
+                $.ajax({
+                    url: "@Url.Action("TypeProdXEssai", "Stats", new { Area = "StatistiquePFL" })?id=" + id,
+                    type: 'POST',
+                    success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                        $("#ListeProd").html(html);
+                        $("#ProdModal").modal('show');
+                    }
+                });
+            }
+        }
+
+        function OuvrirRecapSansProd() {
+            $.ajax({
+                url: "@Url.Action("SansProdXEssai", "Stats", new { Area = "StatistiquePFL" })",
+                type: 'POST',
+                success: function (html) { // si Action s'exécute bien alors on charge le contenu html sur la page actuel sans altérer les actions utilisateur
+                    $("#ListeProd").html(html);
+                    $("#ProdModal").modal('show');
+                }
+            });
+        }
+
+    </script>
+}

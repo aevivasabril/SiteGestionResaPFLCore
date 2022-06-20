@@ -1,0 +1,53 @@
+﻿@model CategXProjVM
+
+<div class="modal fade" id="ProvModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl navbar-inra">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Projets avec une provenance <strong> @Model.ProvenanceProjet </strong> des 3 dernières années</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalcontent">
+                <!--TODO: je pourrais insérer uniquement la vue partielle _InfoEquipemReserves.cshtml-->
+                <div class="fixed_head">
+                    <table class="table table-sm table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Numéro projet</th>
+                                <th scope="col">Titre projet</th>
+                                <th scope="col">Type projet</th>
+                                <th scope="col">Financement</th>
+                                <th scope="col">Organisme</th>
+                                <th scope="col">Responsable projet</th>
+                                <th scope="col">Provenance projet</th>
+                                <th scope="col">Description projet</th>
+                                <th scope="col">Date création</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var x in Model.ListProjetsXCat)
+                            {
+                                <tr>
+                                    <td>@x.NumProjet</td>
+                                    <td>@x.TitreProj</td>
+                                    <td>@x.TypeProj</td>
+                                    <td>@x.Financement</td>
+                                    <td>@x.Organisme</td>
+                                    <td>@x.RespProjet</td>
+                                    <td>@x.Provenance</td>
+                                    <td>@x.DescriptProj</td>
+                                    <td>@x.DateCreation</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>                   
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
