@@ -42,16 +42,22 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             StringBuilder csv = new StringBuilder();
             string titreCsv = null;
             HeadersCsvResas headersCsv = new HeadersCsvResas();
-
-            if (vm.DateAu != null && vm.DateDu != null) // Vérification uniquement des datePicker pour l'affichage du calendrier
+            ModelState.Remove("SelectEquipeId");
+            ModelState.Remove("SelectOrgId");
+            ModelState.Remove("SelectProjetId");
+            ModelState.Remove("DateDuEquip");
+            ModelState.Remove("DateAuEquip");
+            ModelState.Remove("DateDuMaintenance");
+            ModelState.Remove("DateAuMaintenance");
+            if (ModelState.IsValid)
             {
                 if (vm.DateDu.Value <= vm.DateAu.Value)
                 {
                     List<InfosReservations> List = statistiquesDB.ObtenirResasDuAu(vm.DateDu.Value, vm.DateAu.Value);
                     // Déterminer les headers tableau
-                    var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme, 
-                                        headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
-                                        headersCsv.DateDebutResa, headersCsv.DateFinResa, headersCsv.NbJours};
+                    var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
+                                    headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
+                                    headersCsv.DateDebutResa, headersCsv.DateFinResa, headersCsv.NbJours};
 
                     foreach (var col in headers)
                     {
@@ -61,7 +67,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                     csv.AppendLine();
                     csv.AppendLine();
 
-                    foreach(var resa in List)
+                    foreach (var resa in List)
                     {
                         #region Ecriture dans le fichier excel
                         csv.Append(resa.NumProjet);
@@ -106,14 +112,14 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                 else
                 {
                     ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
-                }
+                    return View("AccueilStats", model);
+                }               
             }
             else
             {
                 ModelState.AddModelError("", "Oups! Vous avez oublié de saisir les dates! ");
+                return View("AccueilStats", model);
             }
-
-            return View("AccueilStats", model);
         }
 
         /// <summary>
