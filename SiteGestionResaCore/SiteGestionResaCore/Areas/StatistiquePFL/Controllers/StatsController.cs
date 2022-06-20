@@ -466,7 +466,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         {
             ConsultStatsVM model = HttpContext.GetFromSession<ConsultStatsVM>("ConsultStatsVM");
             model.QuantiteLaitPeriode = statistiquesDB.LaitXDates(vm.DateDu.Value, vm.DateAu.Value);
-            return View("AccueilStats", model);
+            return View("ConsultStats", model);
         }
 
         public IActionResult RecapMaintenance(AccueilStatsVM vm)
