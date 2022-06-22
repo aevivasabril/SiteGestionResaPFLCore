@@ -38,7 +38,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         [HttpPost]
         public IActionResult GenererExcelResas(AccueilStatsVM vm)
         {
-            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            //AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
             StringBuilder csv = new StringBuilder();
             string titreCsv = null;
             HeadersCsvResas headersCsv = new HeadersCsvResas();
@@ -54,71 +54,80 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                 if (vm.DateDu.Value <= vm.DateAu.Value)
                 {
                     List<InfosReservations> List = statistiquesDB.ObtenirResasDuAu(vm.DateDu.Value, vm.DateAu.Value);
-                    // Déterminer les headers tableau
-                    var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
+                    if (List.Count() == 0) // Si la liste est vide pas besoin de télécharger excel, il n'y a pas des reservations valides pour ces dates
+                    {
+                        ModelState.AddModelError("", "Il n'y a pas des réservations valides pour les dates saisies");
+                        return View("AccueilStats", vm);
+                    }
+                    else
+                    {
+                        // Déterminer les headers tableau
+                        var headers = new string[] { headersCsv.NumProjet, headersCsv.TitreProjet, headersCsv.RespProjet, headersCsv.TypeProjet, headersCsv.NomOrganisme,
                                     headersCsv.TitreEssai, headersCsv.IdEssai, headersCsv.NomEquipe, headersCsv.DateCreation, headersCsv.NomEquipement, headersCsv.ZonEquipement,
                                     headersCsv.DateDebutResa, headersCsv.DateFinResa, headersCsv.NbJours};
 
-                    foreach (var col in headers)
-                    {
-                        csv.Append(col);
-                        csv.Append(";");
-                    }
-                    csv.AppendLine();
-                    csv.AppendLine();
-
-                    foreach (var resa in List)
-                    {
-                        #region Ecriture dans le fichier excel
-                        csv.Append(resa.NumProjet);
-                        csv.Append(";");
-                        csv.Append(resa.TitreProjet);
-                        csv.Append(";");
-                        csv.Append(resa.RespProjet);
-                        csv.Append(";");
-                        csv.Append(resa.TypeProjet);
-                        csv.Append(";");
-                        csv.Append(resa.NomOrganisme);
-                        csv.Append(";");
-                        csv.Append(resa.TitreEssai);
-                        csv.Append(";");
-                        csv.Append(resa.IdEssai);
-                        csv.Append(";");
-                        csv.Append(resa.NomEquipe);
-                        csv.Append(";");
-                        csv.Append(resa.DateCreation);
-                        csv.Append(";");
-                        csv.Append(resa.NomEquipement);
-                        csv.Append(";");
-                        csv.Append(resa.ZoneEquipement);
-                        csv.Append(";");
-                        csv.Append(resa.DateDebutResa);
-                        csv.Append(";");
-                        csv.Append(resa.DateFinResa);
-                        csv.Append(";");
-                        csv.Append(resa.NbJours);
-                        csv.Append(";");
+                        foreach (var col in headers)
+                        {
+                            csv.Append(col);
+                            csv.Append(";");
+                        }
                         csv.AppendLine();
-                        #endregion
-                    }
+                        csv.AppendLine();
 
-                    model.DateAu = vm.DateAu;
-                    model.DateDu = vm.DateDu;
+                        foreach (var resa in List)
+                        {
+                            #region Ecriture dans le fichier excel
+                            csv.Append(resa.NumProjet);
+                            csv.Append(";");
+                            csv.Append(resa.TitreProjet);
+                            csv.Append(";");
+                            csv.Append(resa.RespProjet);
+                            csv.Append(";");
+                            csv.Append(resa.TypeProjet);
+                            csv.Append(";");
+                            csv.Append(resa.NomOrganisme);
+                            csv.Append(";");
+                            csv.Append(resa.TitreEssai);
+                            csv.Append(";");
+                            csv.Append(resa.IdEssai);
+                            csv.Append(";");
+                            csv.Append(resa.NomEquipe);
+                            csv.Append(";");
+                            csv.Append(resa.DateCreation);
+                            csv.Append(";");
+                            csv.Append(resa.NomEquipement);
+                            csv.Append(";");
+                            csv.Append(resa.ZoneEquipement);
+                            csv.Append(";");
+                            csv.Append(resa.DateDebutResa);
+                            csv.Append(";");
+                            csv.Append(resa.DateFinResa);
+                            csv.Append(";");
+                            csv.Append(resa.NbJours);
+                            csv.Append(";");
+                            csv.AppendLine();
+                            #endregion
+                        }
 
-                    titreCsv = "Reservations_" + vm.DateDu.Value.ToShortDateString() + "_Au_" + vm.DateAu.Value.ToShortDateString() + ".csv";
-                    Encoding encoding = Encoding.GetEncoding("iso-8859-1");
-                    return File(encoding.GetBytes(csv.ToString()), "text/csv", titreCsv);
+                        vm.DateAu = vm.DateAu;
+                        vm.DateDu = vm.DateDu;
+
+                        titreCsv = "Reservations_" + vm.DateDu.Value.ToShortDateString() + "_Au_" + vm.DateAu.Value.ToShortDateString() + ".csv";
+                        Encoding encoding = Encoding.GetEncoding("iso-8859-1");
+                        this.HttpContext.AddToSession("AccueilStatsVM", vm);
+                        return File(encoding.GetBytes(csv.ToString()), "text/csv", titreCsv);
+                    }                        
                 }
                 else
                 {
                     ModelState.AddModelError("", "La date fin pour l'affichage du planning équipement ne peut pas être inférieure à la date début");
-                    return View("AccueilStats", model);
+                    return View("AccueilStats", vm);
                 }               
             }
             else
             {
                 ModelState.AddModelError("", "Oups! Vous avez oublié de saisir les dates! ");
-                return View("AccueilStats", model);
+                return View("AccueilStats", vm);
             }
         }
 
