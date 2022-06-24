@@ -46,7 +46,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 var equipeStlo = (from user in resaDB.Users
                                  from equipe in resaDB.ld_equipes_stlo
                                  where user.equipeID == equipe.id && user.Id == projet.compte_userID
-                                 select equipe).First();
+                                 select equipe).FirstOrDefault();
 
                 var ListResas = (from resa in resaDB.reservation_projet
                                 from essai in resaDB.essai
@@ -69,28 +69,49 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                         nbJour = diff.Days + 1;
 
                     #endregion
-
-                    info = new InfosReservations
+                    if(equipeStlo == null)
                     {
-                        IdEssai = ess.id,
-                        DateCreation = ess.date_creation,
-                        TitreEssai = ess.titreEssai,
-                        NomEquipe = equipeStlo.nom_equipe,
-                        NomEquipement = equipement.nom,
-                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
-                        NomOrganisme = organisme.nom_organisme,
-                        NumProjet = projet.num_projet,
-                        RespProjet = projet.mailRespProjet,
-                        TitreProjet = projet.titre_projet,
-                        TypeProjet = projet.type_projet,
-                        DateDebutResa = resa.date_debut,
-                        DateFinResa = resa.date_fin,
-                        NbJours = nbJour
-                    };
+                        info = new InfosReservations
+                        {
+                            IdEssai = ess.id,
+                            DateCreation = ess.date_creation,
+                            TitreEssai = ess.titreEssai,
+                            NomEquipe = null,
+                            NomEquipement = equipement.nom,
+                            ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                            NomOrganisme = organisme.nom_organisme,
+                            NumProjet = projet.num_projet,
+                            RespProjet = projet.mailRespProjet,
+                            TitreProjet = projet.titre_projet,
+                            TypeProjet = projet.type_projet,
+                            DateDebutResa = resa.date_debut,
+                            DateFinResa = resa.date_fin,
+                            NbJours = nbJour
+                        };
+                    }
+                    else
+                    {
+                        info = new InfosReservations
+                        {
+                            IdEssai = ess.id,
+                            DateCreation = ess.date_creation,
+                            TitreEssai = ess.titreEssai,
+                            NomEquipe = equipeStlo.nom_equipe,
+                            NomEquipement = equipement.nom,
+                            ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                            NomOrganisme = organisme.nom_organisme,
+                            NumProjet = projet.num_projet,
+                            RespProjet = projet.mailRespProjet,
+                            TitreProjet = projet.titre_projet,
+                            TypeProjet = projet.type_projet,
+                            DateDebutResa = resa.date_debut,
+                            DateFinResa = resa.date_fin,
+                            NbJours = nbJour
+                        };
+                    }                    
                     infos.Add(info);
                 }
             }
-
             return infos;
         }
 
@@ -223,7 +244,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             var equipeStlo = (from user in resaDB.Users
                               from equipe in resaDB.ld_equipes_stlo
                               where user.equipeID == equipe.id && user.Id == projet.compte_userID
-                              select equipe).First();
+                              select equipe).FirstOrDefault();
 
             foreach (var x in essaisXProjet)
             {
@@ -232,26 +253,47 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 {
                     var equipement = resaDB.equipement.First(e => e.id == res.equipementID);
 
-                    info = new InfosReservations
+                    if(equipeStlo == null)
                     {
-                        NumProjet = projet.num_projet,
-                        TypeProjet = projet.type_projet,
-                        RespProjet = projet.mailRespProjet,
-                        TitreProjet = projet.titre_projet,
-                        TitreEssai = x.titreEssai,
-                        DateCreation = x.date_creation,
-                        NomOrganisme = organisme.nom_organisme,
-                        IdEssai = x.id,
-                        DateDebutResa = res.date_debut,
-                        DateFinResa = res.date_fin,
-                        NomEquipement = equipement.nom,
-                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
-                        NomEquipe = equipeStlo.nom_equipe
-                    };
+                        info = new InfosReservations
+                        {
+                            NumProjet = projet.num_projet,
+                            TypeProjet = projet.type_projet,
+                            RespProjet = projet.mailRespProjet,
+                            TitreProjet = projet.titre_projet,
+                            TitreEssai = x.titreEssai,
+                            DateCreation = x.date_creation,
+                            NomOrganisme = organisme.nom_organisme,
+                            IdEssai = x.id,
+                            DateDebutResa = res.date_debut,
+                            DateFinResa = res.date_fin,
+                            NomEquipement = equipement.nom,
+                            ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                            NomEquipe = null
+                        };
+                    }
+                    else
+                    {
+                        info = new InfosReservations
+                        {
+                            NumProjet = projet.num_projet,
+                            TypeProjet = projet.type_projet,
+                            RespProjet = projet.mailRespProjet,
+                            TitreProjet = projet.titre_projet,
+                            TitreEssai = x.titreEssai,
+                            DateCreation = x.date_creation,
+                            NomOrganisme = organisme.nom_organisme,
+                            IdEssai = x.id,
+                            DateDebutResa = res.date_debut,
+                            DateFinResa = res.date_fin,
+                            NomEquipement = equipement.nom,
+                            ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                            NomEquipe = equipeStlo.nom_equipe
+                        };
+                    }                   
                     infos.Add(info);
                 }
             }
-
             return infos;
         }
 
@@ -341,27 +383,50 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 var equipeStlo = (from user in resaDB.Users
                                   from equipe in resaDB.ld_equipes_stlo
                                   where user.equipeID == equipe.id && user.Id == projet.compte_userID
-                                  select equipe).First();
+                                  select equipe).FirstOrDefault();
 
                 var organisme = resaDB.organisme.First(o => o.id == projet.organismeID);
                 var equipement = resaDB.equipement.First(e => e.id == r.equipementID);
 
-                info = new InfosReservations
+                if(equipeStlo == null)
                 {
-                    NumProjet = projet.num_projet,
-                    TypeProjet = projet.type_projet,
-                    RespProjet = projet.mailRespProjet,
-                    TitreProjet = projet.titre_projet,
-                    TitreEssai = essai.titreEssai,
-                    DateCreation = essai.date_creation,
-                    NomOrganisme = organisme.nom_organisme,
-                    IdEssai = essai.id,
-                    DateDebutResa = r.date_debut,
-                    DateFinResa = r.date_fin,
-                    NomEquipement = equipement.nom,
-                    ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
-                    NomEquipe = equipeStlo.nom_equipe
-                };
+                    info = new InfosReservations
+                    {
+                        NumProjet = projet.num_projet,
+                        TypeProjet = projet.type_projet,
+                        RespProjet = projet.mailRespProjet,
+                        TitreProjet = projet.titre_projet,
+                        TitreEssai = essai.titreEssai,
+                        DateCreation = essai.date_creation,
+                        NomOrganisme = organisme.nom_organisme,
+                        IdEssai = essai.id,
+                        DateDebutResa = r.date_debut,
+                        DateFinResa = r.date_fin,
+                        NomEquipement = equipement.nom,
+                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                        NomEquipe = null
+                    };
+                }
+                else
+                {
+                    info = new InfosReservations
+                    {
+                        NumProjet = projet.num_projet,
+                        TypeProjet = projet.type_projet,
+                        RespProjet = projet.mailRespProjet,
+                        TitreProjet = projet.titre_projet,
+                        TitreEssai = essai.titreEssai,
+                        DateCreation = essai.date_creation,
+                        NomOrganisme = organisme.nom_organisme,
+                        IdEssai = essai.id,
+                        DateDebutResa = r.date_debut,
+                        DateFinResa = r.date_fin,
+                        NomEquipement = equipement.nom,
+                        ZoneEquipement = resaDB.zone.First(z => z.id == equipement.zoneID).nom_zone,
+                        NomEquipe = equipeStlo.nom_equipe
+                    };
+                }
+               
                 infos.Add(info);
             }
             return infos;
@@ -451,7 +516,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             foreach (var ess in essais)
             {
                 if(ess.quantite_produit != null)
-                    compteur = compteur + ess.quantite_produit.Value;
+                    compteur += ess.quantite_produit.Value;
             }
             return compteur;
         }
@@ -490,6 +555,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 var maint = resaDB.maintenance.First(ma => ma.id == m.maintenanceID);
                 var user = resaDB.Users.First(u => u.Id == maint.userID);
                 var equip = resaDB.equipement.First(e => e.id == m.equipementID);
+                
                 MaintenanceInfos info = new MaintenanceInfos
                 {
                     CodeMaintenance = maint.code_operation,
