@@ -139,8 +139,17 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                         // rubrique 2 question 3 concerné
                         Rg = new Regex(pattMIIQtroisConcerne);
                         collect = Rg.Matches(enq.fichierReponse);
-                        csv.Append(collect[0].Groups[1].Value);
-                        csv.Append(";");
+                        // Rajouter oui ou non au lieu de true ou false
+                        if (collect[0].Groups[1].Value == "true")
+                        {
+                            csv.Append("oui");
+                            csv.Append(";");
+                        }
+                        else
+                        {
+                            csv.Append("non");
+                            csv.Append(";");
+                        }                        
                         // rubrique 2 commentaire
                         Rg = new Regex(pattMIIComm);
                         collect = Rg.Matches(enq.fichierReponse);
@@ -184,8 +193,17 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                         // rubrique 4 question 1 concerné
                         Rg = new Regex(pattMIVQunConcerne);
                         collect = Rg.Matches(enq.fichierReponse);
-                        csv.Append(collect[0].Groups[1].Value);
-                        csv.Append(";");
+                        // Rajouter oui ou non au lieu de true ou false
+                        if (collect[0].Groups[1].Value == "true")
+                        {
+                            csv.Append("oui");
+                            csv.Append(";");
+                        }
+                        else
+                        {
+                            csv.Append("non");
+                            csv.Append(";");
+                        }
                         // rubrique 4 question 2
                         Rg = new Regex(pattMIVQdeux);
                         collect = Rg.Matches(enq.fichierReponse);

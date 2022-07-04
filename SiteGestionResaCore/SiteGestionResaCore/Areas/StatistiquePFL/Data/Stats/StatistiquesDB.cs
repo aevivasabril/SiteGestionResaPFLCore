@@ -544,7 +544,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
         public List<MaintenanceInfos> ListMaintenances(DateTime dateDu, DateTime dateAu)
         {
             List<MaintenanceInfos> list = new List<MaintenanceInfos>();
-
+            string supprimee = "";
+            string terminee = "";
+            string intervenant = "";
             #region Pour les maintenances des équipements réservables 
 
             var resas = (from m in resaDB.maintenance
@@ -557,19 +559,31 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 var maint = resaDB.maintenance.First(ma => ma.id == m.maintenanceID);
                 var user = resaDB.Users.First(u => u.Id == maint.userID);
                 var equip = resaDB.equipement.First(e => e.id == m.equipementID);
-                
+                if (maint.maintenance_supprime.HasValue == true)
+                    supprimee = "oui";
+                else
+                    supprimee = "non";
+
+                if (maint.maintenance_finie.HasValue == true)
+                    terminee = "oui";
+                else
+                    terminee = "non";
+                if (maint.intervenant_externe == true)
+                    intervenant = "oui";
+                else
+                    intervenant = "non";
                 MaintenanceInfos info = new MaintenanceInfos
                 {
                     CodeMaintenance = maint.code_operation,
                     TypeMaintenance = maint.type_maintenance,
                     MailOperateur = user.Email,
-                    IntervenantExt = maint.intervenant_externe,
+                    IntervenantExt = intervenant,
                     NomIntervExt = maint.nom_intervenant_ext,
                     DescripOperation = maint.description_operation,
-                    MaintSupprimee = maint.maintenance_supprime.HasValue,
+                    MaintSupprimee = supprimee,
                     DateSuppression = maint.date_suppression,
                     RaisonSuppression = maint.raison_suppression,
-                    MaintTerminee = maint.maintenance_finie.HasValue,
+                    MaintTerminee = terminee,
                     NomEquipement = equip.nom,
                     DateDebut = m.date_debut,
                     DateFin = m.date_fin,
@@ -591,18 +605,31 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
             {
                 var maint = resaDB.maintenance.First(ma => ma.id == m.maintenanceID);
                 var user = resaDB.Users.First(u => u.Id == maint.userID);
+                if (maint.maintenance_supprime.HasValue == true)
+                    supprimee = "oui";
+                else
+                    supprimee = "false";
+
+                if (maint.maintenance_finie.HasValue == true)
+                    terminee = "oui";
+                else
+                    terminee = "false";
+                if (maint.intervenant_externe == true)
+                    intervenant = "oui";
+                else
+                    intervenant = "non";
                 MaintenanceInfos info = new MaintenanceInfos
                 {
                     CodeMaintenance = maint.code_operation,
                     TypeMaintenance = maint.type_maintenance,
                     MailOperateur = user.Email,
-                    IntervenantExt = maint.intervenant_externe,
+                    IntervenantExt = intervenant,
                     NomIntervExt = maint.nom_intervenant_ext,
                     DescripOperation = maint.description_operation,
-                    MaintSupprimee = maint.maintenance_supprime.HasValue,
+                    MaintSupprimee = supprimee,
                     DateSuppression = maint.date_suppression,
                     RaisonSuppression = maint.raison_suppression,
-                    MaintTerminee = maint.maintenance_finie.HasValue,
+                    MaintTerminee = terminee,
                     NomEquipement = m.nom_equipement,
                     DateDebut = m.date_debut,
                     DateFin = m.date_fin,
