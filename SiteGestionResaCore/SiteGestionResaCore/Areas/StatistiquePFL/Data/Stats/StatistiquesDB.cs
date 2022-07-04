@@ -505,13 +505,15 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
         public int LaitAnneeEnCours()
         {
+            // Filtrer pour le type de produit LAIT
             var Today = DateTime.Now;
             int compteur = 0;
             var essais = (from e in resaDB.essai
-                       from r in resaDB.reservation_projet
-                       where r.date_fin <= Today && r.date_fin.Year == Today.Year && r.date_debut.Year == Today.Year
-                       && e.resa_supprime != true && e.resa_refuse != true && e.id == r.essaiID
-                       select e).Distinct().ToList();
+                           from r in resaDB.reservation_projet
+                           where r.date_fin <= Today && r.date_fin.Year == Today.Year && r.date_debut.Year == Today.Year
+                           && e.resa_supprime != true && e.resa_refuse != true && e.id == r.essaiID
+                           && e.type_produit_entrant == "Lait"
+                           select e).Distinct().ToList();
             // calculer la quantité de lait
             foreach (var ess in essais)
             {

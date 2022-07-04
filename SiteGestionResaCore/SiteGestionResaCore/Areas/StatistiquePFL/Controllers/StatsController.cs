@@ -167,7 +167,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         [HttpPost]
         public IActionResult RecapXProjet(AccueilStatsVM vm)
         {
-            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            //AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
             HeadersCsvResas headersCsv = new HeadersCsvResas();
             StringBuilder csv = new StringBuilder();
             string titreCsv = null;
@@ -177,14 +177,16 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("DateAuEquip");
             ModelState.Remove("DateDuMaintenance");
             ModelState.Remove("DateAuMaintenance");
-            if (ModelState.IsValid)
+
+            if (vm.SelectProjetId >= 0)
             {
                 List<InfosReservations> list = statistiquesDB.ObtRecapitulatifXProjet(vm.SelectProjetId);
                 if(list.Count() == 0) // Si la liste est vide pas besoin de télécharger excel, il n'y a pas des essais valides pour ce projet
                 {
+                    //AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
                     ModelState.AddModelError("SelectProjetId", "Ce projet ne contient pas des essais valides!");
                     ViewBag.ModalUseProjet = "show";
-                    return View("AccueilStats", model);
+                    return View("AccueilStats", vm);
                 }
                 else
                 {
@@ -243,9 +245,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Veuillez choisir un projet");
+                ModelState.AddModelError("", "Veuillez choisir un projet!");
                 ViewBag.ModalUseProjet = "show";
-                return View("AccueilStats", model);
+                return View("AccueilStats", vm);
             }          
         }
 
