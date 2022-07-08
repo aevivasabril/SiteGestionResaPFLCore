@@ -42,6 +42,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<type_document> type_document { get; set; }
         public virtual DbSet<activite_pfl> activite_pfl { get; set; }
         public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
+        public virtual DbSet<evenement> evenement { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -436,6 +437,16 @@ namespace SiteGestionResaCore.Data.Data
                     .HasForeignKey(d => d.type_activiteID)
                     .HasConstraintName("FK_doc_essai_pgd_activite_pfl");
             });
+
+            modelBuilder.Entity<evenement>(entity =>
+            {
+                entity.Property(e => e.message)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_creation).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 
                 new organisme { nom_organisme = "Sodiaal", id = 6}, new organisme{ nom_organisme = "Isigny sainte mère", id = 7}, 

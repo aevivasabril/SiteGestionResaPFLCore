@@ -33,6 +33,7 @@
     <Folder Include="Areas\AboutPFL\Models\" />
     <Folder Include="Areas\Calendrier\Models\" />
     <Folder Include="Areas\DonneesPGD\Models\" />
+    <Folder Include="Areas\Evenements\Models\" />
     <Folder Include="Areas\Maintenance\Models\" />
     <Folder Include="Areas\StatistiquePFL\Models\" />
     <Folder Include="Controllers\" />
