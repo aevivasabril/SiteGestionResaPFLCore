@@ -23,7 +23,7 @@ namespace SiteGestionResaCore.Areas.Evenements.Data
 
         public List<evenement> ListEvenements()
         {
-            return resaDB.evenement.Distinct().ToList();
+            return resaDB.evenement.Distinct().OrderByDescending(i=>i.date_creation).ToList();
         }
 
         public bool AjoutEvent(string message)
