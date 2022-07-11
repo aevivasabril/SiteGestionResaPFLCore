@@ -1,99 +1,105 @@
-﻿@{
+﻿@model SiteGestionResaCore.Models.HomeVM
+@{
     ViewBag.Title = "Accueil";
 }
 
-    <div class="container-fluid row">
-        <div id="carouselImagePFL" class="carousel col-lg-9 col-md-9" style="padding-top:15px" data-ride="carousel">
-            <ol class="carousel-indicators">
-                <li data-target="#carouselImagePFL" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="1"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="2"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="3"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="4"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="5"></li>
-                <li data-target="#carouselImagePFL" data-slide-to="6"></li>
-            </ol>
-            <div class="carousel-inner" style="background-color:#000000">
-                <!--Il faut rajouter au moins un des élements à active sinon le carousel n'est pas active-->
-                <div class="carousel-item active">
-                    <img src="~/Content/Images/PageAccueil/carousel9.JPG" class="d-block w-100 img-fluid" alt="First slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Plateforme de recherche en Technologie laitière</h6> <!--Titre de la slide-->
-                        <p>Des équipements permettant de simuler toutes les étapes de l'industrie repartis sur 800m²</p><!--Titre d'ordre 2 de la slide-->
-                    </div>
+<div class="container-fluid row">
+    <div id="carouselImagePFL" class="carousel col-lg-9 col-md-9" style="padding-top:15px" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselImagePFL" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="1"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="2"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="3"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="4"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="5"></li>
+            <li data-target="#carouselImagePFL" data-slide-to="6"></li>
+        </ol>
+        <div class="carousel-inner" style="background-color:#000000">
+            <!--Il faut rajouter au moins un des élements à active sinon le carousel n'est pas active-->
+            <div class="carousel-item active">
+                <img src="~/Content/Images/PageAccueil/carousel9.JPG" class="d-block w-100 img-fluid" alt="First slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Plateforme de recherche en Technologie laitière</h6> <!--Titre de la slide-->
+                    <p>Des équipements permettant de simuler toutes les étapes de l'industrie repartis sur 800m²</p><!--Titre d'ordre 2 de la slide-->
                 </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel4.JPG" class="d-block w-100 img-fluid" alt="Second slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Concevoir • Développer • Transformer • Valoriser</h6>
-                        <p>La plateforme LAIT est une installation unique de recherche à l'échelle pilote dédiée au lait et à ses dérivés</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel5.JPG" class="d-block w-100 img-fluid" alt="Third slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Concevoir • Développer • Transformer • Valoriser</h6>
-                        <p>Elle se caractérise par son approche scientifique s’appuyant sur une large gamme de procédés modulables</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel6.jpg" class="d-block w-100 img-fluid" alt="Fourth slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Une des expertises:</h6>
-                        <p>Conception de matrices laitières modèles : fractions de lait, fromages, concentrés, poudres…</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel7.jpg" class="d-block w-100 img-fluid" alt="fifth slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Ouverture et partenariat</h6>
-                        <p>Elle constitue un lieu privilégié d’accueil et de collaboration ouvert aux partenaires académiques et industriels</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel8.jpg" class="d-block w-100 img-fluid" alt="sixth slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>4 procédés font l'objet d'études spécifiques au sein de la plateforme :</h6>
-                        <p>Séparation membranaire • Technologie fromagère • Concentration • Séchage</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="~/Content/Images/PageAccueil/carousel10.jpg" class="d-block w-100 img-fluid" alt="seventh slide" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h6>Enregistrement des données scientifiques</h6>
-                        <p>14 pilotes instrumentés des capteurs et reliés à un système d'acquisition et enregistrement des données</p>
-                    </div>
-                </div>
-                <!--Rajouter les fleches de navigation des slides -->
-                <a class="carousel-control-prev" href="#carouselImagePFL" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselImagePFL" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                    <span class="sr-only">Next</span>
-                </a>
             </div>
-        </div>
-        <div class="col-md-2 col-lg-2" style="padding-top:15px">
-            @*@Html.Partial("_ProfilPartial")*@
-            <partial name="_ProfilPartial"></partial>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel4.JPG" class="d-block w-100 img-fluid" alt="Second slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Concevoir • Développer • Transformer • Valoriser</h6>
+                    <p>La plateforme LAIT est une installation unique de recherche à l'échelle pilote dédiée au lait et à ses dérivés</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel5.JPG" class="d-block w-100 img-fluid" alt="Third slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Concevoir • Développer • Transformer • Valoriser</h6>
+                    <p>Elle se caractérise par son approche scientifique s’appuyant sur une large gamme de procédés modulables</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel6.jpg" class="d-block w-100 img-fluid" alt="Fourth slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Une des expertises:</h6>
+                    <p>Conception de matrices laitières modèles : fractions de lait, fromages, concentrés, poudres…</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel7.jpg" class="d-block w-100 img-fluid" alt="fifth slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Ouverture et partenariat</h6>
+                    <p>Elle constitue un lieu privilégié d’accueil et de collaboration ouvert aux partenaires académiques et industriels</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel8.jpg" class="d-block w-100 img-fluid" alt="sixth slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>4 procédés font l'objet d'études spécifiques au sein de la plateforme :</h6>
+                    <p>Séparation membranaire • Technologie fromagère • Concentration • Séchage</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="~/Content/Images/PageAccueil/carousel10.jpg" class="d-block w-100 img-fluid" alt="seventh slide" />
+                <div class="carousel-caption d-none d-md-block">
+                    <h6>Enregistrement des données scientifiques</h6>
+                    <p>14 pilotes instrumentés des capteurs et reliés à un système d'acquisition et enregistrement des données</p>
+                </div>
+            </div>
+            <!--Rajouter les fleches de navigation des slides -->
+            <a class="carousel-control-prev" href="#carouselImagePFL" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselImagePFL" role="button" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
     </div>
-    <br />
-    <br />
-    <hr />
+    <div class="col-md-2 col-lg-2" style="padding-top:15px">
+        @*@Html.Partial("_ProfilPartial")*@
+        <partial name="_ProfilPartial"></partial>
+    </div>
+</div>
+<br />
+<br />
+<hr />
+
+@if (Model.Evenements.Count() != 0)
+{
     <div class="container">
-        <h4 class="text-center">Actualités Plate-forme</h4>
+        <h4 class="text-center"><strong>Actualités Plate-forme</strong></h4>
         <div id="carouselContent" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner" role="listbox">
                 <div class="carousel-item active text-center p-4">
-                    <p style="color:red"><strong>lorem ipsum </strong></p>
+                    <h5 style="color:red"><strong> @Model.Evenements[0].message </strong></h5>
                 </div>
-                <div class="carousel-item text-center p-4">
-
-                    <p style="color:red"><strong>lorem ipsum (imagine longer text)</strong></p>
-                </div>
+                @for (var i = 1; i < Model.Evenements.Count(); i++)
+                {
+                    <div class="carousel-item text-center p-4">
+                        <h5 style="color:red"><strong> @Model.Evenements[i].message </strong></h5>
+                    </div>                   
+                }
             </div>
             <a class="carousel-control-prev" href="#carouselContent" role="button" data-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -106,111 +112,113 @@
         </div>
     </div>
     <hr />
-    <h1 class="text-center" style="color:#00a3a6"><strong>Technologies de la PFL</strong></h1>
-    <br />
-    <div class="container-fluid row">
-        <div class="card-deck">
-            <div class="card">
-                <img class="card-img-top" src="~/Content/Images/PageAccueil/Evaporation.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Evaporation</strong></h5>
-                    <p class="card-text">
-                        Ce technique consiste à introduire le
-                        liquide en ébullition, dans une enceinte sous vide.
-                        Toute chaleur ensuite fournie au liquide
-                        entraînera la vaporisation d’une partie de l’eau.
-                    </p>
-                    @*Je mets le lien direct vers le site web PFL pour ouvrir les pdfs*@
-                    <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3182/32448/version/1/file/PFL-PostersEvaporation.pdf" class="btn navbar-inra">Voir poster</a>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Référente techno: Gaëlle TANGUY</small>
-                </div>
+}
+
+<h1 class="text-center" style="color:#00a3a6"><strong>Technologies de la PFL</strong></h1>
+<br />
+<div class="container-fluid row">
+    <div class="card-deck">
+        <div class="card">
+            <img class="card-img-top" src="~/Content/Images/PageAccueil/Evaporation.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Evaporation</strong></h5>
+                <p class="card-text">
+                    Ce technique consiste à introduire le
+                    liquide en ébullition, dans une enceinte sous vide.
+                    Toute chaleur ensuite fournie au liquide
+                    entraînera la vaporisation d’une partie de l’eau.
+                </p>
+                @*Je mets le lien direct vers le site web PFL pour ouvrir les pdfs*@
+                <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3182/32448/version/1/file/PFL-PostersEvaporation.pdf" class="btn navbar-inra">Voir poster</a>
             </div>
-            <div class="card">
-                <img class="card-img-top" src="~/Content/Images/PageAccueil/FiltrationFusion.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Filtration tangentielle sur membrane</strong></h5>
-                    <p class="card-text">
-                        Procédé physique athermique qui permet, sous l’effet
-                        d’une pression, de séparer et/ou concentrer les
-                        constituants d’un liquide selon leurs propriétés
-                    </p>
-                    <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3180/32442/version/1/file/PFL-PostersFiltration.pdf" class="btn navbar-inra">Voir poster</a>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Référente(s) techno: Nadine LECONTE, Marielle HAREL-OGER</small>
-                </div>
+            <div class="card-footer">
+                <small class="text-muted">Référente techno: Gaëlle TANGUY</small>
             </div>
-            <div class="card">
-                <img class="card-img-top" src="~/Content/Images/PageAccueil/Fromagerie.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Transformation fromagères</strong></h5>
-                    <p class="card-text">
-                        Consiste en
-                        une succession d’étapes
-                        unitaires qui permettent de
-                        passer du lait au fromage: Maturation & coagulation, Découpage, Brassage, Chauffage et Pressage
-                    </p>
-                    <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3181/32445/version/1/file/PFL-PostersTech.Fromage%CC%80res.pdf" class="btn navbar-inra">Voir poster</a>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Référente(s) techno:  Marielle HAREL-OGER, Gilles GARRIC</small>
-                </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="~/Content/Images/PageAccueil/FiltrationFusion.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Filtration tangentielle sur membrane</strong></h5>
+                <p class="card-text">
+                    Procédé physique athermique qui permet, sous l’effet
+                    d’une pression, de séparer et/ou concentrer les
+                    constituants d’un liquide selon leurs propriétés
+                </p>
+                <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3180/32442/version/1/file/PFL-PostersFiltration.pdf" class="btn navbar-inra">Voir poster</a>
             </div>
-            <div class="card">
-                <img class="card-img-top" src="~/Content/Images/PageAccueil/Sechage.jpg" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title"><strong>Séchage</strong></h5>
-                    <p class="card-text">
-                        Le séchage par atomisation consiste
-                        à pulvériser le produit, sous forme
-                        liquide ou en suspension, dans un
-                        courant d’air chaud afin d’éliminer
-                        l’eau et d’obtenir une poudre.
-                    </p>
-                    <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3183/32451/version/1/file/PFL-PostersSechage.pdf" class="btn navbar-inra">Voir poster</a>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Référente(s) techno: Emeline GOUSSE, Luca LANOTTE. Image: tour bionov</small>
-                </div>
+            <div class="card-footer">
+                <small class="text-muted">Référente(s) techno: Nadine LECONTE, Marielle HAREL-OGER</small>
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="~/Content/Images/PageAccueil/Fromagerie.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Transformation fromagères</strong></h5>
+                <p class="card-text">
+                    Consiste en
+                    une succession d’étapes
+                    unitaires qui permettent de
+                    passer du lait au fromage: Maturation & coagulation, Découpage, Brassage, Chauffage et Pressage
+                </p>
+                <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3181/32445/version/1/file/PFL-PostersTech.Fromage%CC%80res.pdf" class="btn navbar-inra">Voir poster</a>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Référente(s) techno:  Marielle HAREL-OGER, Gilles GARRIC</small>
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="~/Content/Images/PageAccueil/Sechage.jpg" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title"><strong>Séchage</strong></h5>
+                <p class="card-text">
+                    Le séchage par atomisation consiste
+                    à pulvériser le produit, sous forme
+                    liquide ou en suspension, dans un
+                    courant d’air chaud afin d’éliminer
+                    l’eau et d’obtenir une poudre.
+                </p>
+                <a href="https://www6.rennes.inrae.fr/plateforme_lait/content/download/3183/32451/version/1/file/PFL-PostersSechage.pdf" class="btn navbar-inra">Voir poster</a>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Référente(s) techno: Emeline GOUSSE, Luca LANOTTE. Image: tour bionov</small>
             </div>
         </div>
     </div>
-    <hr />
-    <h1 class="text-center" style="color:#00a3a6"><strong>Hall technologie laitière</strong></h1>
-    <br />
-    <div class="container-fluid row">
-        <img class="imge" src="~/Content/Images/PageAccueil/carousel2.JPG"/>     
-    </div>
-    <br /> 
-    <div class="col text-center">
-        <h5>Plus d'infos sur le site web PFL: <a href="https://www6.rennes.inrae.fr/plateforme_lait" class="btn-link">https://www6.rennes.inrae.fr/plateforme_lait/</a></h5>
-    </div>
+</div>
+<hr />
+<h1 class="text-center" style="color:#00a3a6"><strong>Hall technologie laitière</strong></h1>
+<br />
+<div class="container-fluid row">
+    <img class="imge" src="~/Content/Images/PageAccueil/carousel2.JPG" />
+</div>
+<br />
+<div class="col text-center">
+    <h5>Plus d'infos sur le site web PFL: <a href="https://www6.rennes.inrae.fr/plateforme_lait" class="btn-link">https://www6.rennes.inrae.fr/plateforme_lait/</a></h5>
+</div>
 @*<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>*@
+        <h1>ASP.NET</h1>
+        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    </div>*@
 
 @*<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>*@
+        <div class="col-md-4">
+            <h2>Getting started</h2>
+            <p>
+                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+                enables a clean separation of concerns and gives you full control over markup
+                for enjoyable, agile development.
+            </p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Get more libraries</h2>
+            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Web Hosting</h2>
+            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+            <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+        </div>
+    </div>*@
