@@ -32,8 +32,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
             List<EntrepotsXProjet> list = new List<EntrepotsXProjet>();
             var projetXUser = (from pr in contextDB.projet
                                from es in contextDB.essai
-                               where (pr.compte_userID == user.Id || es.compte_userID == user.Id ||
-                               pr.mailRespProjet == user.Email) && pr.entrepot_supprime == null
+                               where (es.projetID == pr.id && pr.entrepot_supprime == null)
+                               && (pr.compte_userID == user.Id || es.compte_userID == user.Id || pr.mailRespProjet == user.Email)
                                select pr).Distinct().ToList();
             //var projetXUser = contextDB.projet.Where(p => p.compte_userID == user.Id && p.entrepot_supprime == null);
             foreach(var x in projetXUser)
