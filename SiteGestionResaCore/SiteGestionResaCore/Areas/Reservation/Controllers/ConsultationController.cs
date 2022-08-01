@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Reservation.Data.Consultation;
 using SiteGestionResaCore.Areas.Reservation.Data.Validation;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore.Areas.Reservation.Controllers
@@ -104,6 +105,50 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 ResasNonValid = consultDB.ObtInfosEssaisSupprimees()
             };
             return View("ResasSupprimees", model);
+        }
+
+        public IActionResult SupprimerEssaiAdm(int? id)
+        {
+            ConsultationViewModel model = new ConsultationViewModel()
+            {
+                ResasValid = consultDB.ObtInfEssaiValidees(),
+                IdEssai = id.Value,
+                TitreEssai = consultDB.ObtenirEssai(id.Value).titreEssai,
+                Reservations = new List<InfosReservation>()
+            };
+            // Sauvegarder la session data consultation
+            this.HttpContext.AddToSession("ConsultationViewModel", model);
+
+            ViewBag.modalAnnul = "show";
+            return View("ResasValidees", model);
+        }
+
+        [HttpPost]
+        public IActionResult ConfSuppEssaiAdm(int id, ConsultationViewModel model)
+        {
+            // Récupérer la session "ConsultationViewModel"
+            ConsultationViewModel vm = HttpContext.GetFromSession<ConsultationViewModel>("ConsultationViewModel");
+
+            if (ModelState.IsValid)
+            {
+                bool IsAnnulationOk = consultDB.AnnulerEssaiAdm(id, model.RaisonAnnulation);
+                if (IsAnnulationOk)
+                {
+                    ViewBag.AfficherMessage = true;
+                    ViewBag.Message = "Essai supprimé avec succès! ";
+                    vm.ResasValid = consultDB.ObtInfEssaiValidees();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Problème pour annuler la réservation. Veuillez essayer ultérieurement");
+                }
+            }
+            else
+            {
+
+                ViewBag.modalAnnul = "show";
+            }
+            return View("ResasValidees", vm);
         }
     }
 }

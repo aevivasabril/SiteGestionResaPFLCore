@@ -282,11 +282,6 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
 
             return View("ReservationsAValider", vm);
         }
-
-        public IActionResult SupprimerEssaiAdm(int? id)
-        {
-
-            return View();
-        }
+      
     }
 }

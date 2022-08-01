@@ -7,6 +7,11 @@
 <h1>Réservations validées </h1>
 <h6>En tant qu'administrateur vous pouvez supprimer un essai à la demande d'un utilisateur</h6>
 <br />
+
+@if (ViewBag.AfficherMessage == true)
+{
+    <h5 class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </h5>
+}
 <div class="row">
     <div class="col-sm-12 col-md-12 text-center">
         <div class="fixed_head_resas">
@@ -22,7 +27,7 @@
                             <th scope="col">Date création</th>
                             <th scope="col">Date de validation</th>
                             <th scope="col">Confidentialité</th>
-                            <th scope="col">Suppression tardive?</th>
+                            <th scope="col">Supprimer?</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,9 +44,9 @@
                                 <td>@x.DateValidation</td>
                                 <td>@x.Confidentialit</td>
                                 <td>
-                                    <a class="btn navbar-inra" asp-action="SupprimerEssaiAdm" asp-area="Reservation" asp-controller="Validation" asp-route-id="@x.idEssai">Supprimer</a>
+                                    <a class="btn navbar-inra" asp-action="SupprimerEssaiAdm" asp-area="Reservation" asp-controller="Consultation" asp-route-id="@x.idEssai">Supprimer</a>
                                 </td>
-                                
+
                             </tr>
                         }
                     </tbody>
@@ -64,20 +69,55 @@
 <!-- Modal pour affichage des infos "Reservations"-->
 <div id="EquipReserves"></div>
 
+<!-- Modal pour affichage de la confirmation "Refuser"-->
+<form asp-action="ConfSuppEssaiAdm" asp-controller="Consultation" asp-area="Reservation" asp-route-id="@Model.IdEssai" method="post">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="AnnulerEssAdm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        @Html.AntiForgeryToken()
+        <div class="modal-dialog navbar-inra">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Annulation Essai</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Etês-vous sûr de vouloir annuler votre essai N° @Model.IdEssai
+                        "@Model.TitreEssai"?
+                    </p>
+                    <p>Indiquez le(s) raison(s) de l'annulation: </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.RaisonAnnulation, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.RaisonAnnulation, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
-<script>
+    <script>
         @{
-            /*if (ViewBag.modalEssai == null)
+            if (ViewBag.modalAnnul == null)
             {
-                ViewBag.modalEssai = "hide";
-            }*/
+                ViewBag.modalAnnul = "hide";
+            }
             if (ViewBag.modalResas == null)
             {
                 ViewBag.modalResas = "hide";
             }
         }
         $('#ResaModal').modal('@ViewBag.modalResas');
+        $('#AnnulerEssAdm').modal('@ViewBag.modalAnnul');
 
         function ModalInfosEssai(id) {
             if (id)
@@ -121,5 +161,5 @@
             }
     }
 
-</script>
+    </script>
 }

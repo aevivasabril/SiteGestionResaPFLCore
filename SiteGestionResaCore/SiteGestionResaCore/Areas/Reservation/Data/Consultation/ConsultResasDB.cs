@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
@@ -83,6 +84,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
                            DateSaisie = m.date_creation,
                            IdProj = proj.id,
                            Confi = m.confidentialite,
+                           dateValidation = m.date_validation,
                        }).Distinct();
 
             foreach (var x in Reg)
@@ -97,7 +99,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
                     NomProjet = x.NomProjet,
                     NumProjet = x.NumProjet,
                     idProj = x.IdProj,
-                    Confidentialit = x.Confi
+                    Confidentialit = x.Confi,
+                    DateValidation = x.dateValidation.GetValueOrDefault()
                 };
 
                 list.Add(infos);
@@ -128,6 +131,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
                            DateSaisie = m.date_creation,
                            IdProj = proj.id,
                            Confi = m.confidentialite,
+                           DateValid = m.date_validation,
                        }).Distinct();
 
             foreach (var x in Reg)
@@ -142,12 +146,46 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
                     NomProjet = x.NomProjet,
                     NumProjet = x.NumProjet,
                     idProj = x.IdProj,
-                    Confidentialit = x.Confi
+                    Confidentialit = x.Confi,
+                    DateValidation = x.DateValid.GetValueOrDefault()
                 };
 
                 list.Add(infos);
             }
             return list.OrderByDescending(x => x.DateSaisieEssai).ToList(); // Ordonner la liste par ordre chronologique descendant
-        }    
+        }
+
+        public essai ObtenirEssai(int id)
+        {
+            return resaDB.essai.First(e => e.id == id);
+        }
+
+        public bool AnnulerEssaiAdm(int id, string raisonAnnulation)
+        {
+            bool IsChangeOk = false;
+
+            int retry = 0;
+
+            var essai = resaDB.essai.First(e => e.id == id);
+            essai.status_essai = EnumStatusEssai.Canceled.ToString();
+            essai.date_validation = DateTime.Now;
+            essai.resa_supprime = true;
+            essai.raison_suppression = "Supprimé par un Admin: " + raisonAnnulation;
+            while (retry < 3 && IsChangeOk != true)
+            {
+                try
+                {
+                    resaDB.SaveChanges();
+                    IsChangeOk = true;
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Erreur lors de la validation de l'essai N° :" + id);
+                    retry++;
+                }
+            }
+
+            return IsChangeOk;
+        }
     }
 }

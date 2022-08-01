@@ -16,5 +16,10 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         //public ConsultInfosEssaiChildVM InfosEssai { get; set; }
 
         public List<InfosReservation> Reservations { get; set; }
+
+        public int IdEssai { get; set; }
+        public string TitreEssai { get; set; }
+
+        public string RaisonAnnulation { get; set; }
     }
 }
