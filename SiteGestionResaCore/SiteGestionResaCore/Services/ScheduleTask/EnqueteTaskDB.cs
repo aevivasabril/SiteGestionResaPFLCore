@@ -34,6 +34,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         {
             List<enquete> enquetesNonEnvoyées = new List<enquete>();
             List<enquete> enquetesToReturn = new List<enquete>();
+            List<reservation_projet> reservations = new List<reservation_projet>();
 
             enquetesNonEnvoyées = resaDb.enquete.Where(e => e.date_envoi_enquete == null).ToList(); // enquetes dont l'essai n'était pas fini lors de la dernière exécution de la tâche
             
@@ -46,7 +47,18 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                     if (esssai.resa_refuse != true && esssai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
                     {
                         // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
-                        List<reservation_projet> reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
+                        // ajouter un try catch car si l'essai n'a pas de réservation alors cela peut produire une erreur
+                        try
+                        {
+                            reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
+                        }
+                        catch(Exception e)
+                        {
+                            logger.LogError("Probleme de recuperation des reservations pour l'essai Id: " + enq.essaiId +
+                                "./n exception: " + e.Message);
+                            goto ENDT;
+                        }
+                       
                         // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
                         if(reservations.Count != 0)
                         {
@@ -57,7 +69,11 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 resaDb.SaveChanges();
                                 enquetesToReturn.Add(enq);
                             }
-                        }                        
+                        }
+                        else
+                        {
+                            logger.LogWarning("Il n'y a pas des réservations pour l'essai N° : " + enq.essaiId);
+                        }
                     }
                 }
             }
@@ -66,6 +82,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 logger.LogError(e, "Problème pour obtenir les enquetes à envoyer pour la 1ere fois");
             }          
 
+            ENDT:
             return enquetesToReturn;
         }
 

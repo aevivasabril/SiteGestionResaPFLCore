@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,16 @@ namespace SiteGestionResaCore.Services.ScheduleTask
     public class EnqueteTask : ScheduledProcessor
     {
         private readonly IEnqueteTaskDB enqueteTaskDB;
+        private readonly ILogger<EnqueteTask> logger;
         private readonly IEmailSender emailSender;
 
-        public EnqueteTask(IServiceScopeFactory serviceScopeFactory): base(serviceScopeFactory)
+        public EnqueteTask(IServiceScopeFactory serviceScopeFactory,
+            ILogger<EnqueteTask> logger): base(serviceScopeFactory)
         {
             // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
             emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
+            this.logger = logger;
         }
         //protected override string Schedule => "*/2 * * * *";
         protected override string Schedule => "50 22 * * *"; // tous les jours à 22:50
@@ -29,6 +33,9 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             List<enquete> ListEnquetesXRelance = new List<enquete>();
 
             string message;
+
+            // Ajouter un log pour tracer l'execution de la tâche planifié
+            logger.LogWarning("Execution de la tâche automatique envoie d'enquetes le:  " + DateTime.Now);
 
             #region Rajouter les enquetes pour les essais dont elle a pas été crée automatiquement (Environnement Prod) TODO: A effacer une fois la MAJ est faite en Prod
 
@@ -58,8 +65,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                             ": "+ proj.titre_projet+ "). Pour répondre à cette enquete: "+ "<a href='[CALLBACK_URL]'>Veuillez cliquer ici</a>.<br/> " +
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
-                    
-                await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                try
+                {
+                    await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                }
+                catch(Exception e)
+                {
+                    logger.LogError("Problème d'envoi de mail enquete pour l'essai Id: " + essai.id + " .Message: " + e.Message);
+                }
+               
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
 
                 // Mettre à jour la date-envoi_enquete
@@ -96,7 +110,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 "Cette enquête s'inscrit dans la démarche qualité de la PFL. <br>Merci par avance de prendre un court instant pour y répondre."
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
-                await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                try
+                {
+                    await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
+                }
+                catch (Exception e)
+                {
+                    logger.LogError("Problème d'envoi de mail enquete (RELANCE) pour l'essai Id: " + essai.id + " .Message: " + e.Message);
+                }
+                
                 //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 // Mettre à jour la date-envoi_enquete
                 enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
