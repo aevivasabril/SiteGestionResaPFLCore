@@ -104,8 +104,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             else
             {
                 // si la personne n'appartient pas au même organisme mais qu'ils sont dans la même équipe (cas particulier de françoise)
-                if (usr.equipeID.Value == auteur.equipeID.Value)
-                    equipeOk = true;
+                if(usr.equipeID.HasValue != false && auteur.equipeID.HasValue != false) // s'une des personnes ou les 2 n'ont pas d'équipe alors false
+                {
+                    if (usr.equipeID.Value == auteur.equipeID.Value)
+                        equipeOk = true;
+                }
+                else
+                {
+                    equipeOk = false;
+                }
+
             }
             #endregion
             return (propProjOk || adminSiteOk || organismeOk || equipeOk);
