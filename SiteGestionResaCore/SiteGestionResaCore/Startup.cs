@@ -37,6 +37,7 @@ using SiteGestionResaCore.Areas.Equipe.Data.ModifDocAq;
 using SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip;
 using SiteGestionResaCore.Areas.StatistiquePFL.Data;
 using SiteGestionResaCore.Areas.Evenements.Data;
+using SiteGestionResaCore.Areas.Metrologie.Data;
 
 namespace SiteGestionResaCore
 {
@@ -85,6 +86,7 @@ namespace SiteGestionResaCore
             services.AddScoped<IEntrepotTaskDB, EntrepotTaskDB>();
             services.AddScoped<IStatistiquesDB, StatistiquesDB>();
             services.AddScoped<IEvenementDB, EvenementDB>();
+            services.AddScoped<IDocMetroDB, DocMetroDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();

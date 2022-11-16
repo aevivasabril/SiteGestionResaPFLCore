@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = "MenuMetrologie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h1 class="text-center">Opérations de métrologie</h1>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Ajouter, modifier ou supprimer un capteur</h5>
+                <a asp-action="OperationCapteurs" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-center">Enregistrement métrologie d'un capteur</h5>
+                <a asp-action="EnregMetro" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra">Enregistrer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-center">Récupérer un rapport de métrologie</h5>
+                <a asp-action="RecupRappMetro" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra">Téléchargement</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Documentation lié à la métrologie</h5>
+                <a asp-action="DocMetrologie" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra"> Charger ou consulter </a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<br />
+
+<div class="col-sm-12 col-md-12 text-center">
+    <div class="fixed_head_resas">
+        <table class="table justify-content-center table-sm">
+            <h5>Prochaines vérifications à faire ( 6 prochains mois ): </h5>
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id Essai</th>
+                    <th scope="col">Titre essai</th>
+                    <th scope="col">Equipements reservés</th>
+                    <th scope="col">Auteur</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><a>Equipements réservés</a></td>
+                    <td></td>
+                    <td><a>Relance enquête</a></td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+</div>

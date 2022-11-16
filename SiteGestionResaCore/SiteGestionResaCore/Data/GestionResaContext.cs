@@ -43,6 +43,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<activite_pfl> activite_pfl { get; set; }
         public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
         public virtual DbSet<evenement> evenement { get; set; }
+        public virtual DbSet<doc_metrologie> doc_metrologie { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -443,6 +444,21 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.message)
                     .IsRequired()
                     .IsUnicode(false);
+
+                entity.Property(e => e.date_creation).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<doc_metrologie>(entity =>
+            {
+                entity.Property(e => e.contenu_doc)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.description_doc).IsUnicode(false);
 
                 entity.Property(e => e.date_creation).HasColumnType("datetime");
             });
