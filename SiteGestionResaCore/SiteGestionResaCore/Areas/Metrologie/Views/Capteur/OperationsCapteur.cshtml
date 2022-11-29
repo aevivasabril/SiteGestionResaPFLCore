@@ -1,0 +1,51 @@
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Capteur.OperationCapteurVM
+
+@{
+    ViewBag.Title = "Operations Métrologie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Ajouter un capteur</h5>
+                <a asp-action="AjouterCapteur" asp-controller="Capteur" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<br />
+
+<div class="col-sm-12 col-md-12 text-center">
+    <h5>Liste des capteurs enregistrées : </h5>
+    <div class="fixed_head_resas">
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nom capteur</th>
+                    <th scope="col">Capteur du pilote</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model.ListCapteurs)
+                {
+                    <tr>
+                        <td>@x.NomCapteur</td>
+                        <td>@x.NomPilote</td>
+                        <td>
+                            <a class="btn navbar-inra" asp-action="SupprimerCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">Supprimer</a>
+                            <a class="btn navbar-inra" asp-action="ModifierCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">Modifier</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

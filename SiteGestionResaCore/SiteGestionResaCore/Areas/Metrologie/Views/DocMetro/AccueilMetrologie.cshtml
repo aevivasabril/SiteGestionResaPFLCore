@@ -12,7 +12,7 @@
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Ajouter, modifier ou supprimer un capteur</h5>
-                <a asp-action="OperationCapteurs" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
+                <a asp-action="OperationCapteurs" asp-controller="Capteur" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
             </div>
         </div>
     </div>
@@ -53,9 +53,9 @@
 <br />
 
 <div class="col-sm-12 col-md-12 text-center">
+    <h5>Prochaines vérifications à faire (6 prochains mois) : </h5>
     <div class="fixed_head_resas">
         <table class="table justify-content-center table-sm">
-            <h5>Prochaines vérifications à faire (6 prochains mois) : </h5>
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">Id Essai</th>
@@ -73,7 +73,7 @@
                     <td></td>
                     <td><a>Relance enquête</a></td>
                 </tr>
-                
+
             </tbody>
         </table>
     </div>

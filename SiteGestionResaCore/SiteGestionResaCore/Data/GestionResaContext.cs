@@ -44,7 +44,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
         public virtual DbSet<evenement> evenement { get; set; }
         public virtual DbSet<doc_metrologie> doc_metrologie { get; set; }
-
+        public virtual DbSet<capteur> capteur { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -461,6 +461,27 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.description_doc).IsUnicode(false);
 
                 entity.Property(e => e.date_creation).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<capteur>(entity =>
+            {
+                entity.Property(e => e.nom_capteur)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.code_capteur)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_prochaine_verif).HasColumnType("datetime");
+
+                entity.Property(e => e.date_derniere_verif).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.capteur)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_capteur_equipement");
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },

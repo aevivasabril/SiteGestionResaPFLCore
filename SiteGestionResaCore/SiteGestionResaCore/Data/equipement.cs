@@ -12,6 +12,7 @@ namespace SiteGestionResaCore.Data
             reservation_maintenance = new HashSet<reservation_maintenance>();
 			doc_essai_pgd = new HashSet<doc_essai_pgd>();
             doc_fiche_materiel = new HashSet<doc_fiche_materiel>();
+            capteur = new HashSet<capteur>();
         }
 
         public int id { get; set; }
@@ -20,9 +21,6 @@ namespace SiteGestionResaCore.Data
         public string numGmao { get; set; }
         public bool? mobile { get; set; }
         public string? nomTabPcVue { get; set; }
-
-        //public string? cheminFicheMateriel { get; set; }
-        //public string? cheminFicheMetrologie { get; set; }
         public string type_activites { get; set; }
 
         public virtual zone zone { get; set; }
@@ -30,5 +28,6 @@ namespace SiteGestionResaCore.Data
         public virtual ICollection<reservation_maintenance> reservation_maintenance { get; set; }
         public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }
 		public virtual ICollection<doc_fiche_materiel> doc_fiche_materiel { get; set; }
+        public virtual ICollection<capteur> capteur { get; set; }
     }
 }
