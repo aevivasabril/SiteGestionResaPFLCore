@@ -9,7 +9,7 @@ namespace SiteGestionResaCore.Data
     {
         public int id { get; set; }
         public string nom_capteur { get; set; }
-        public string code_capteur { get; set; }
+        public string? code_capteur { get; set; }
         public int equipementID { get; set; }
         public DateTime? date_prochaine_verif { get; set; }
         public DateTime? date_derniere_verif { get; set; }

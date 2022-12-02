@@ -469,9 +469,7 @@ namespace SiteGestionResaCore.Data.Data
                     .IsRequired()
                     .IsUnicode(false);
 
-                entity.Property(e => e.code_capteur)
-                    .IsRequired()
-                    .IsUnicode(false);
+                entity.Property(e => e.code_capteur).IsUnicode(false);
 
                 entity.Property(e => e.date_prochaine_verif).HasColumnType("datetime");
 
