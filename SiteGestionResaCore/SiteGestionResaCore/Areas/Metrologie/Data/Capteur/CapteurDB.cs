@@ -50,15 +50,40 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
             return contextDb.equipement.ToList();
         }
 
-        public bool AjouterCapteur(AjouterCapteurVM model)
+        public bool AjouterCapteur(string NomCapteur, string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerif,
+                    DateTime DateDernierVerif, double period, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif)
         {
-            bool isOk = false;
             capteur capt = new capteur();
-            equipement equip = contextDb.equipement.First(e=>e.id == model.SelectedPiloteID);
+            equipement equip = contextDb.equipement.First(e=>e.id == SelectedPiloteID);
+            if(DateDernierVerif.Year == 0001)
+            {
+                DateDernierVerif = DateDernierVerif.AddYears(1753); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur
+            }
 
-            //capt = new capteur { nom_capteur = model.NomCapteur, code_capteur = model.CodeCapteur, equipementID = model.SelectedPiloteID,  };
+            capt = new capteur
+            {
+                nom_capteur = NomCapteur,
+                code_capteur = CodeCapteur,
+                equipementID = SelectedPiloteID,
+                date_prochaine_verif = DateProchaineVerif,
+                date_derniere_verif = DateDernierVerif,
+                periodicite_metrologie = period,
+                capteur_conforme = CapteurConforme,
+                emt_capteur = EmtCapteur,
+                facteur_correctif = FacteurCorrectif
+            };
 
-            return isOk;
+            try
+            {
+                contextDb.capteur.Add(capt);
+                contextDb.SaveChanges();
+                return true;
+            }
+            catch(Exception e)
+            {
+                logger.LogError("", "problème lors de la sauvegarde du capteur: " + e.ToString());
+                return false;
+            }
         }
     }
 }

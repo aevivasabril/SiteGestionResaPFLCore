@@ -12,6 +12,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         List<equipement> ObtListEquipements();
 
-        bool AjouterCapteur(AjouterCapteurVM model);
+        bool AjouterCapteur(string NomCapteur,string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerif,
+                    DateTime DateDernierVerif, double period, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif);
     }
 }

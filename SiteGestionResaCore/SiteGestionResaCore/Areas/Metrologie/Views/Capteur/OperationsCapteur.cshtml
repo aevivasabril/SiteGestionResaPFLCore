@@ -28,7 +28,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">Nom capteur</th>
-                    <th scope="col">Capteur du pilote</th>
+                    <th scope="col">Pilote</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -39,7 +39,10 @@
                         <td>@x.NomCapteur</td>
                         <td>@x.NomPilote</td>
                         <td>
-                            <a class="btn navbar-inra" asp-action="SupprimerCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">Supprimer</a>
+                            
+                            <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">
+                                <span class="fas fa-trash"></span>
+                            </a>
                             <a class="btn navbar-inra" asp-action="ModifierCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">Modifier</a>
                         </td>
                     </tr>
@@ -48,4 +51,8 @@
             </tbody>
         </table>
     </div>
+</div>
+
+<div class="row justify-content-center">
+    <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
 </div>

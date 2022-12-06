@@ -81,7 +81,21 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                     period = 1;
                 else
                     period = 2;
-                bool IsOk = capteurDB.AjouterCapteur(vm);
+
+                bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerif.Value,
+                    vm.DateDernierVerif.GetValueOrDefault(), period, vm.CapteurConforme.GetValueOrDefault(), vm.EmtCapteur.GetValueOrDefault(),
+                    vm.FacteurCorrectif.GetValueOrDefault());
+                if(IsOk == false)
+                {
+                    ModelState.AddModelError("", "Problème pour rajouter le capteur, veuillez reessayer ultérieurement");
+                    goto ERR;
+                }
+                else
+                {
+                    OperationCapteurVM vmOp = new OperationCapteurVM();
+                    vmOp.ListCapteurs = capteurDB.ObtenirListCapteurs();
+                    return View("OperationsCapteur", vmOp);
+                }
             }
             else
             {
