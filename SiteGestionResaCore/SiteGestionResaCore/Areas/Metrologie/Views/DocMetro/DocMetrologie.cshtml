@@ -50,6 +50,10 @@
     </div>
 </div>
 
+<div class="row justify-content-center">
+    <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
+</div>
+
 <form asp-area="Metrologie" asp-controller="DocMetro" asp-action="EnvoiChargeDoc" method="post" enctype="multipart/form-data">
     <!-- Modal pop-up pour ajout d'un nouveau document AQ-->
     <div class="modal fade" id="AddingDocMetro" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">

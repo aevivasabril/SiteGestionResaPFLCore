@@ -14,5 +14,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         bool AjouterCapteur(string NomCapteur,string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerif,
                     DateTime DateDernierVerif, double period, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif);
+        capteur ObtenirCapteur(int id);
+
+        bool SupprimerCapteur(int idCapteur);
     }
 }

@@ -6,6 +6,8 @@
 }
 
 <br />
+
+<br />
 <div class="row">
     <div class="col-md-4 offset-4">
         <div class="card text-center">
@@ -21,6 +23,7 @@
 <hr />
 <br />
 
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
 <div class="col-sm-12 col-md-12 text-center">
     <h5>Liste des capteurs enregistrées : </h5>
     <div class="fixed_head_resas">
@@ -39,7 +42,7 @@
                         <td>@x.NomCapteur</td>
                         <td>@x.NomPilote</td>
                         <td>
-                            
+
                             <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">
                                 <span class="fas fa-trash"></span>
                             </a>
@@ -56,3 +59,41 @@
 <div class="row justify-content-center">
     <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
 </div>
+
+<form asp-action="ValiderSuppCap" asp-controller="Capteur" asp-area="Metrologie" asp-route-id="@Model.IdCapteurXSupp" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="SuppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression du capteur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold">Etês-vous sûr de vouloir supprimer le capteur @Model.NomCapteurXSupp?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+
+            if (ViewBag.modalSupp == null)
+            {
+                ViewBag.modalSupp = "hide";
+            }
+        }
+        $('#SuppModal').modal('@ViewBag.modalSupp');
+
+    </script>
+}

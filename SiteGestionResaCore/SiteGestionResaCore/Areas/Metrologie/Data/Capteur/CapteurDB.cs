@@ -85,5 +85,30 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
                 return false;
             }
         }
+
+        public capteur ObtenirCapteur(int id)
+        {
+            return contextDb.capteur.First(c => c.id == id);
+        }
+
+        public bool SupprimerCapteur(int idCapteur)
+        {
+            bool isOk = false;
+            capteur capt = new capteur();
+            try
+            {
+                capt = contextDb.capteur.First(d => d.id == idCapteur);
+                contextDb.capteur.Remove(capt);
+                contextDb.SaveChanges();
+                isOk = true;
+            }
+            catch (Exception e)
+            {
+                isOk = false;
+                logger.LogError("", "Problème pour supprimer le capteur: " + capt.nom_capteur + "Erreur: " + e.ToString());
+            }
+
+            return isOk;
+        }
     }
 }

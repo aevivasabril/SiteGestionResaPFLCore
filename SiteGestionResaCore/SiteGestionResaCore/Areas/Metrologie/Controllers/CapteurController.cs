@@ -27,6 +27,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
         {
             OperationCapteurVM vm = new OperationCapteurVM();
             vm.ListCapteurs = capteurDB.ObtenirListCapteurs();
+            this.HttpContext.AddToSession("OperationCapteurVM", vm);
+
             return View("OperationsCapteur", vm);
         }
 
@@ -104,6 +106,34 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
            
         ERR: 
             return View("AjouterCapteur", model);                       
+        }
+
+        public IActionResult SupprimerCapteur(int? id)
+        {
+            OperationCapteurVM model = HttpContext.GetFromSession<OperationCapteurVM>("OperationCapteurVM");
+            model.ListCapteurs = capteurDB.ObtenirListCapteurs();
+            model.IdCapteurXSupp = id.Value;
+            capteur capt = capteurDB.ObtenirCapteur(id.Value);
+            model.NomCapteurXSupp = capt.nom_capteur;
+            ViewBag.modalSupp = "show";
+            return View("OperationsCapteur", model);
+        }
+
+        public IActionResult ValiderSuppCap(int? id)
+        {
+            OperationCapteurVM model = HttpContext.GetFromSession<OperationCapteurVM>("OperationCapteurVM");
+            // Supprimer capteur
+            bool isOk = capteurDB.SupprimerCapteur(id.Value);
+            if (isOk == false)
+            {
+                ModelState.AddModelError("", "Problème pour supprimer le capteur, veuillez reessayer ultérieurement");
+                goto ERR;
+            }
+
+            model.ListCapteurs = capteurDB.ObtenirListCapteurs();
+            this.HttpContext.AddToSession("OperationCapteurVM", model);
+        ERR:
+            return View("OperationsCapteur", model);
         }
     }
 }
