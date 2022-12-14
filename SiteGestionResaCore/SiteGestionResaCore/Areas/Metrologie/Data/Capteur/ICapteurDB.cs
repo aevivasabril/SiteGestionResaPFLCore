@@ -17,5 +17,24 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         capteur ObtenirCapteur(int id);
 
         bool SupprimerCapteur(int idCapteur);
+
+        equipement ObtenirEquipement(int idEquipement);
+
+        bool UpdatePeriodicite(capteur Capteur, double periodicite);
+
+        bool UpdateDateProVerif(capteur capt, DateTime dateverif);
+
+        bool UpdateDateDerniereVerif(capteur capt, DateTime dateverif);
+
+        bool UpdateFacteur(capteur capt, double facteur);
+
+        bool UpdateEMT(capteur capt, double emt);
+
+        bool UpdateCodeCapteur(capteur capt, string code);
+
+        bool UpdateNomCapteur(capteur capt, string nom);
+
+        bool UpdateConformite(capteur capt, bool conformite);
+        double FacteurCorrectif(capteur capt);
     }
 }

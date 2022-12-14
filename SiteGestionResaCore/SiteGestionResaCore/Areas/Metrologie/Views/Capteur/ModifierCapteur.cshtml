@@ -1,27 +1,29 @@
-﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Capteur.AjouterCapteurVM
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Capteur.ModifierCapteurVM
 
 @{
-    ViewBag.Title = "AjoutCapteur";
+    ViewBag.Title = "Operations Métrologie";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<br />
+@if (ViewBag.AfficherMessage == true)
+{
+    <p class="text-center" style="color:green"><strong> @ViewBag.Message</strong> </p>
+}
+
 <hr />
-<h2>Ajouter un capteur</h2>
-<h5>Remplissez les informations concernant le capteur</h5>
+<h2>Modifiez les infos sur le capteur</h2>
+<h5>Remplaciez les informations à changer</h5>
 <hr />
 
 <div class="form-group row">
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @using (Html.BeginForm("ValiderAjoutCapteur", "Capteur", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-    {
+
+    <form asp-action="ModifCapteur" asp-controller="Capteur" asp-area="Metrologie" asp-route-id="@Model.idCapteur" method="post">
         @Html.AntiForgeryToken()
         <div class="form-row">
             <div class="form-group col-md-12 col-lg-12">
-                @Html.LabelFor(m => m.SelectedPiloteID, new { @class = "col-md-12 control-label" })
-                <select asp-for="SelectedPiloteID" asp-items="@Model.PiloteItem" class="form-control">
-                    <option value="-1">- Sélectionnez l'équipement -</option>
-                </select>
-                @Html.ValidationMessageFor(m => m.SelectedPiloteID, "", new { @class = "text-danger" })
+                <p>Associé à l'équipement <b>@Model.NomEquipement</b></p>
             </div>
         </div>
 
@@ -48,7 +50,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m=>m.DateDernierVerif, new { @class = "col-md-8 control-label" })
+            @Html.LabelFor(m => m.DateDernierVerif, new { @class = "col-md-8 control-label" })
             <input class="form-control" name="DateDernierVerif" asp-for="@Model.DateDernierVerif" type="date" />
             @Html.ValidationMessageFor(m => m.DateDernierVerif, "", new { @class = "text-danger" })
         </div>
@@ -98,5 +100,5 @@
                 <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
             </div>
         </div>
-    }
+    </form>
 </div>

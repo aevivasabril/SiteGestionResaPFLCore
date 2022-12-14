@@ -110,5 +110,135 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
             return isOk;
         }
+
+        public equipement ObtenirEquipement(int idEquipement)
+        {
+            return contextDb.equipement.First(e => e.id == idEquipement);
+        }
+
+        public bool UpdatePeriodicite(capteur capt, double periodicite)
+        {
+            try
+            {
+                capt.periodicite_metrologie = periodicite;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la periodicité d'un capteur");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateDateProVerif(capteur capt, DateTime dateverif)
+        {
+            try
+            {
+                capt.date_prochaine_verif = dateverif;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date prochaine vérification");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateDateDerniereVerif(capteur capt, DateTime dateverif)
+        {
+            try
+            {
+                capt.date_derniere_verif = dateverif;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date dernière vérification");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateFacteur(capteur capt, double facteur)
+        {
+            try
+            {
+                capt.facteur_correctif = facteur;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ du facteur de correction");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateEMT(capteur capt, double emt)
+        {
+            try
+            {
+                capt.emt_capteur = emt;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de l'EMT capteur");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateCodeCapteur(capteur capt, string code)
+        {
+            try
+            {
+                capt.code_capteur = code;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ du code capteur");
+                return false;
+            }
+            return true;
+        }
+
+       public bool UpdateNomCapteur(capteur capt, string nom)
+        {
+            try
+            {
+                capt.nom_capteur = nom;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ du nom capteur");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateConformite(capteur capt, bool conformite)
+        {
+            try
+            {
+                capt.capteur_conforme = conformite;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ conformité capteur");
+                return false;
+            }
+            return true;
+        }
+
+        public double FacteurCorrectif(capteur capt)
+        {
+            return contextDb.capteur.First(c => c.id == capt.id).facteur_correctif.Value;
+        }
     }
 }
