@@ -44,7 +44,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 {
                     // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
                     var esssai = resaDb.essai.First(e => e.id == enq.essaiId);
-                    if (esssai.resa_refuse != true && esssai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
+
+                    if (esssai.status_essai == "Validate" || esssai.status_essai == "WaitingValidation")
                     {
                         // retrouver toutes les réservations pour cet essai (retrouver la date fin la plus proche d'aujourd'hui)
                         // ajouter un try catch car si l'essai n'a pas de réservation alors cela peut produire une erreur
@@ -52,15 +53,15 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                         {
                             reservations = resaDb.reservation_projet.Where(r => r.essaiID == esssai.id).OrderByDescending(r => r.date_fin).ToList();
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             logger.LogError("Probleme de recuperation des reservations pour l'essai Id: " + enq.essaiId +
                                 "./n exception: " + e.Message);
                             goto ENDT;
                         }
-                       
+
                         // récupérer la premiere date qu'est la plus récente par rapport à aujourd'hui
-                        if(reservations.Count != 0)
+                        if (reservations.Count != 0)
                         {
                             if (reservations[0].date_fin <= DateTime.Today) // Si la réservation la plus loin est déjà passée alors envoyer l'enquete
                             {
@@ -74,7 +75,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                         {
                             logger.LogWarning("Il n'y a pas des réservations pour l'essai N° : " + enq.essaiId);
                         }
-                    }
+                    }                       
+                    
                 }
             }
             catch(Exception e)
@@ -132,7 +134,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 {
                     // trouver l'essai pour chaque enquete et voir si les réservations pour cet essai sont déjà finis 
                     var essai = resaDb.essai.First(e => e.id == enq.essaiId);
-                    if (essai.resa_refuse != true && essai.resa_supprime != true) // si l'essai n'est pas annulée ou refusé alors on peut envoyer l'enquête
+
+                    if(essai.status_essai == "Validate" || essai.status_essai == "WaitingValidation")
                     {
                         if (enq.date_envoi_enquete.HasValue)
                         {
@@ -143,7 +146,8 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                                 ListPourRelance.Add(enq);
                             }
                         }
-                    }
+                    }                        
+                    
                 }
             }
             catch(Exception e)
