@@ -251,20 +251,6 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
                 #endregion
 
-                #region Conformité du capteur
-
-                if (capt.capteur_conforme != model.CapteurConforme)
-                {
-                    // Mettre à jour la periodicité
-                    isOk = capteurDB.UpdateConformite(capt, model.CapteurConforme.Value);
-                    if (!isOk)
-                    {
-                        ModelState.AddModelError("", "Problème lors de la maj de la conformité du capteur, reesayez ultérieurement.");
-                        goto END;
-                    }
-                }
-                #endregion
-
                 #region Facteur correction si capteur non conforme
 
                 if (model.CapteurConforme == false && (model.FacteurCorrectif == null || model.FacteurCorrectif == 0)) // demander le renseignement du facteur de correction
@@ -291,9 +277,23 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                         ModelState.AddModelError("", "Problème lors de la mise à zéro du facteur de correction, réesayez ultérieurement.");
                         goto END;
                     }
-                    
-                    model.FacteurCorrectif = capteurDB.FacteurCorrectif(capt);
+                    // ligne de code pour recharger la valeur de "facteurCorrectif" à la bonne valeur
+                    ModelState.FirstOrDefault(x => x.Key == "FacteurCorrectif").Value.RawValue = 0; 
                 }
+
+                #region Conformité du capteur
+
+                if (capt.capteur_conforme != model.CapteurConforme)
+                {
+                    // Mettre à jour la periodicité
+                    isOk = capteurDB.UpdateConformite(capt, model.CapteurConforme.Value);
+                    if (!isOk)
+                    {
+                        ModelState.AddModelError("", "Problème lors de la maj de la conformité du capteur, reesayez ultérieurement.");
+                        goto END;
+                    }
+                }
+                #endregion
 
                 #endregion
 
