@@ -53,6 +53,12 @@
             @Html.LabelFor(m => m.DateDernierVerif, new { @class = "col-md-8 control-label" })
             <input class="form-control" name="DateDernierVerif" asp-for="@Model.DateDernierVerif" type="date" />
             @Html.ValidationMessageFor(m => m.DateDernierVerif, "", new { @class = "text-danger" })
+            <p style="color:blue">
+                @if (Model.DateDernierVerif.Value.Year == 2000)
+                {
+                    @Html.Label("*Vérification métrologique jamais faite*")
+                }
+            </p>
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.SelectPeriodID, new { @class = "col-md-12 control-label" })

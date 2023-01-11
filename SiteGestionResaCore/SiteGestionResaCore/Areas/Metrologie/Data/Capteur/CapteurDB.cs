@@ -57,7 +57,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
             equipement equip = contextDb.equipement.First(e=>e.id == SelectedPiloteID);
             if(DateDernierVerif.Year == 0001)
             {
-                DateDernierVerif = DateDernierVerif.AddYears(1753); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur
+                DateDernierVerif = DateDernierVerif.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
+                                                                    // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
             }
 
             capt = new capteur
