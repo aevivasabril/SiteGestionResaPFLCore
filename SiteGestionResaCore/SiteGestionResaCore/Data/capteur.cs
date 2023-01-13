@@ -7,6 +7,11 @@ namespace SiteGestionResaCore.Data
 {
     public class capteur
     {
+        public capteur()
+        {
+            rapport_metrologie = new HashSet<rapport_metrologie>();
+        }
+
         public int id { get; set; }
         public string nom_capteur { get; set; }
         public string? code_capteur { get; set; }
@@ -19,5 +24,7 @@ namespace SiteGestionResaCore.Data
         public double? facteur_correctif { get; set; }
 
         public virtual equipement equipement { get; set; }
+
+        public virtual ICollection<rapport_metrologie> rapport_metrologie { get; set; }
     }
 }
