@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Metrologie.Data.Rapport;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,21 +29,42 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
             IList<EquipVsCapteur> list = rapportDB.GetEquipements();
 
             var listEquip = list.Select(f => new SelectListItem { Value = f.capteurId.ToString(), Text = f.nomEquipement + "(N° GMAO: " + f.numGmao + ") - Capteur: " + f.nomCapteur });
-            model.EquipementItem = listEquip;
+            model.EquipementExterneItem = listEquip;
+            model.EquipementInterneItem = listEquip;
 
+            this.HttpContext.AddToSession("SelectCapteurVM", model);
             return View("SelectionCapteur", model);
         }
 
         [HttpPost]
         public IActionResult AjouterRapportInterne(SelectCapteurVM model)
         {
+            ModelState.Remove("SelectecEquipementExtId");
+            if (ModelState.IsValid)
+            {
 
+            }
+            else
+            {
+                SelectCapteurVM vm = HttpContext.GetFromSession<SelectCapteurVM>("SelectCapteurVM");
+                return View("SelectionCapteur", vm);
+            }
             return View();
         }
 
         [HttpPost]
         public IActionResult AjouterRapportExterne(SelectCapteurVM model)
         {
+            ModelState.Remove("SelectecEquipementIntId");
+            if (ModelState.IsValid)
+            {
+
+            }
+            else
+            {
+                SelectCapteurVM vm = HttpContext.GetFromSession<SelectCapteurVM>("SelectCapteurVM");
+                return View("SelectionCapteur", vm);
+            }
             return View();
         }
     }

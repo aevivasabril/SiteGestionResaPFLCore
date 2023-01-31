@@ -18,10 +18,10 @@
 {
     @Html.AntiForgeryToken()
     <div class="form-group row text-center">
-        <select asp-for="SelectecCapteurId" asp-items="@Model.EquipementItem" class="col-md-10 form-control">
+        <select asp-for="SelectecEquipementIntId" asp-items="@Model.EquipementInterneItem" class="col-md-10 form-control">
             <option value="-1">- Sélectionnez un équipement -</option>
         </select>
-        @Html.ValidationMessageFor(m => m.SelectecCapteurId, "", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.SelectecEquipementIntId, "", new { @class = "text-danger" })
         <hr />
         <strong class="text-center">@ViewBag.Message</strong>
     </div>
@@ -39,10 +39,10 @@
 {
     @Html.AntiForgeryToken()
     <div class="form-group row text-center">
-        <select asp-for="SelectecCapteurId" asp-items="@Model.EquipementItem" class="col-md-10 form-control">
+        <select asp-for="SelectecEquipementExtId" asp-items="@Model.EquipementExterneItem" class="col-md-10 form-control">
             <option value="-1">- Sélectionnez un équipement -</option>
         </select>
-        @Html.ValidationMessageFor(m => m.SelectecCapteurId, "", new { @class = "text-danger" })
+        @Html.ValidationMessageFor(m => m.SelectecEquipementExtId, "", new { @class = "text-danger" })
         <hr />
         <strong class="text-center">@ViewBag.Message</strong>
     </div>

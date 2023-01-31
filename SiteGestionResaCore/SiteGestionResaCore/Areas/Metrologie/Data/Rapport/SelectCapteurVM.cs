@@ -11,20 +11,24 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
     public class SelectCapteurVM
     {
         /// <summary>
-        /// Id d'un item selectionné pour un équipement
+        /// Id d'un item selectionné pour un équipement (rapport interne)
         /// </summary>
         [Display(Name = "Equipement")]
-        public int SelectecEquipementId { get; set; }
+        [Range(1, 100, ErrorMessage = "Sélectionnez un capteur")]
+        public int SelectecEquipementIntId { get; set; }
 
-        public IEnumerable<SelectListItem> EquipementItem { get; set; }
+        public IEnumerable<SelectListItem> EquipementInterneItem { get; set; }
+
 
         /// <summary>
-        /// Id d'un item selectionné pour un capteur appartenant à un équipement
+        /// Id d'un item selectionné pour un équipement (rapport externe)
         /// </summary>
-        [Display(Name = "Capteur équipement")]
-        public int SelectecCapteurId { get; set; }
+        [Display(Name = "Equipement")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez un capteur")]
+        public int SelectecEquipementExtId { get; set; }
 
-        public IEnumerable<SelectListItem> CapteurItem { get; set; }
+        public IEnumerable<SelectListItem> EquipementExterneItem { get; set; }
+
 
     }
 }
