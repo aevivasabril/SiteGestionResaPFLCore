@@ -18,7 +18,7 @@
 {
     @Html.AntiForgeryToken()
     <div class="form-group row text-center">
-        <select asp-for="SelectecEquipementIntId" asp-items="@Model.EquipementInterneItem" class="col-md-10 form-control">
+        <select asp-for="SelectecEquipementIntId" asp-items="@Model.EquipementInterneItem" class="col-md-12 form-control">
             <option value="-1">- Sélectionnez un équipement -</option>
         </select>
         @Html.ValidationMessageFor(m => m.SelectecEquipementIntId, "", new { @class = "text-danger" })
@@ -39,7 +39,7 @@
 {
     @Html.AntiForgeryToken()
     <div class="form-group row text-center">
-        <select asp-for="SelectecEquipementExtId" asp-items="@Model.EquipementExterneItem" class="col-md-10 form-control">
+        <select asp-for="SelectecEquipementExtId" asp-items="@Model.EquipementExterneItem" class="col-md-12 form-control">
             <option value="-1">- Sélectionnez un équipement -</option>
         </select>
         @Html.ValidationMessageFor(m => m.SelectecEquipementExtId, "", new { @class = "text-danger" })
@@ -52,3 +52,7 @@
         </div>
     </div>
 }
+
+<div class="row offset-5">
+    <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
+</div>

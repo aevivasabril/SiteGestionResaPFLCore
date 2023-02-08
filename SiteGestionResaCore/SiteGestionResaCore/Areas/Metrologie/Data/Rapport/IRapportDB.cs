@@ -8,6 +8,14 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
 {
     public interface IRapportDB
     {
-        public IList<EquipVsCapteur> GetEquipements();
+        IList<EquipVsCapteur> GetEquipements();
+
+        capteur ObtenirCapteur(int idCapteur);
+
+        Task<IList<utilisateur>> ObtenirAdminUsrs();
+
+        string NomEquipementXCapteur(int idEquipement);
+
+        bool CreerRapportMetrologie(byte[] data, string nomDoc, int idCapteur, DateTime dateVerif, string TypeRapport);
     }
 }
