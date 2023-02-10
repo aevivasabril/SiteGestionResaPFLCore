@@ -103,5 +103,61 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
            
             return IsOk;
         }
+
+        public bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur)
+        {
+            bool IsOk = false;
+            try
+            {
+                var capteur = contextDb.capteur.First(c => c.id == IdCapteur);
+
+                if (IsCaptConform == false)
+                {
+                    capteur.facteur_correctif = FacteurCorrectif;
+                    capteur.capteur_conforme = IsCaptConform;
+                    contextDb.SaveChanges();
+                }
+                else
+                {
+                    capteur.facteur_correctif = 0;
+                    capteur.capteur_conforme = IsCaptConform;
+                }
+
+                // Mise à jour date de vérification
+                capteur.date_derniere_verif = DateVerifMetro;
+                contextDb.SaveChanges();
+
+                // Mise à jour date prochaine vérification
+                if (capteur.periodicite_metrologie == 0.5) // tous les 6 mois
+                {
+                    var ancienneDate = capteur.date_prochaine_verif;
+                    ancienneDate = ancienneDate.Value.AddMonths(6);
+                    capteur.date_prochaine_verif = ancienneDate;
+                    contextDb.SaveChanges();
+                }
+                else if (capteur.periodicite_metrologie == 1) // tous les ans
+                {
+                    var ancienneDate = capteur.date_prochaine_verif;
+                    ancienneDate = ancienneDate.Value.AddYears(1);
+                    capteur.date_prochaine_verif = ancienneDate;
+                    contextDb.SaveChanges();
+                }
+                else // tous les 2 ans
+                {
+                    var ancienneDate = capteur.date_prochaine_verif;
+                    ancienneDate = ancienneDate.Value.AddYears(2);
+                    capteur.date_prochaine_verif = ancienneDate;
+                    contextDb.SaveChanges();
+                }
+                IsOk = true;
+            }
+            catch(Exception e)
+            {
+                IsOk = false;
+                logger.LogError("Problème lors de la mise à jour du capteur après opération de metrologie: " + e.ToString());
+            }         
+
+            return IsOk;
+        }
     }
 }

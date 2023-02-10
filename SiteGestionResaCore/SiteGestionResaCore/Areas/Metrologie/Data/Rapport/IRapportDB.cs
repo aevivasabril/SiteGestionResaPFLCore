@@ -17,5 +17,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
         string NomEquipementXCapteur(int idEquipement);
 
         bool CreerRapportMetrologie(byte[] data, string nomDoc, int idCapteur, DateTime dateVerif, string TypeRapport);
+
+        bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur);
     }
 }

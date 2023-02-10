@@ -67,25 +67,41 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
         }
 
         [HttpPost]
-        public IActionResult AjouterRapportExterne(SelectCapteurVM model)
+        public async Task<IActionResult> AjouterRapportExterneAsync(SelectCapteurVM model)
         {
             ModelState.Remove("SelectecEquipementIntId");
+
             if (ModelState.IsValid)
             {
+                FormRapportVM vmun = new FormRapportVM();
+                var capt = rapportDB.ObtenirCapteur(model.SelectecEquipementExtId);
+                vmun.idCapteur = capt.id;
+                vmun.nomCapteur = capt.nom_capteur;
+                vmun.emtCapteur = capt.emt_capteur;
+                vmun.TypeMetrologie = "Externe";
+                vmun.nomEquipement = rapportDB.NomEquipementXCapteur(capt.equipementID);
+                vmun.facteurCorrectif = capt.facteur_correctif;
+                // recuperer la liste des utilisateurs "admin"
+                IList<utilisateur> listUsrs = await rapportDB.ObtenirAdminUsrs();
+                vmun.OperateurItem = listUsrs.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
 
+                this.HttpContext.AddToSession("FormRapportVM", vmun);
+                return View("FormRapportMetro", vmun);
             }
             else
             {
                 SelectCapteurVM vm = HttpContext.GetFromSession<SelectCapteurVM>("SelectCapteurVM");
                 return View("SelectionCapteur", vm);
             }
-            return View();
         }
 
         public IActionResult AddDocMetro(FormRapportVM model)
         {
             // Récupérer la session "FormRapportVM"
             FormRapportVM vm = HttpContext.GetFromSession<FormRapportVM>("FormRapportVM");
+            model.capteurConforme = vm.capteurConforme;
+            model.DateVerifMetro = vm.DateVerifMetro;
+            model.SelectecOperateurId = vm.SelectecOperateurId;
             ViewBag.ModalRapport = "show";
             return View("FormRapportMetro", vm);
         }
@@ -134,24 +150,34 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                 // Enregistrer l'opération de métrologie
                 if (rapportDB.CreerRapportMetrologie(vm.contenuRapport, vm.nomDocRapport, vm.idCapteur, vm.DateVerifMetro.Value, vm.TypeMetrologie) == true)
                 {
-                    // Afficher message OK
-                    ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Rapport métrologie " + vm.TypeMetrologie + " ajouté!";
-                    ViewBag.Color = "green";
+                    // maj du facteur correctif et les dates de vérif et date prochaine verification
+                    bool isOk = rapportDB.majCapteurxRapport(vm.capteurConforme.Value, vm.facteurCorrectif.Value, vm.DateVerifMetro.Value, vm.idCapteur);
+                  
+                    if(isOk == true)
+                    {
+                        // Afficher message OK
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Rapport métrologie " + vm.TypeMetrologie + " ajouté!";
+                        ViewBag.Color = "green";
+                    }
+                    else
+                    {
+                        // Afficher message d'erreur
+                        ViewBag.AfficherMessage = true;
+                        ViewBag.Message = "Problème lors de la mise à jour du capteur";
+                        ViewBag.Color = "red";
+                    }
                 }
                 else
                 {
                     // Afficher message d'erreur
                     ViewBag.AfficherMessage = true;
-                    ViewBag.Message = "Rapport métrologie " + vm.TypeMetrologie + " ajouté!";
+                    ViewBag.Message = "Problème lors de l'ajout du rapport  " + vm.TypeMetrologie ;
                     ViewBag.Color = "red";
                 }
-                return View("FormRapportMetro", vm);
             }
-            else
-            {           
-                return View("FormRapportMetro", vm);
-            }
+
+            return View("FormRapportMetro", vm);
         }
     }
 }
