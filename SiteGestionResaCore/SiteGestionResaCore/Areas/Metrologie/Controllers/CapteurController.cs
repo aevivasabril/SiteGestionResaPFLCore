@@ -54,39 +54,61 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
         public IActionResult ValiderAjoutCapteur(AjouterCapteurVM vm)
         {
-            double period = 0.0;
+            double periodInt = 0.0;
+            double periodExt = 0.0;
             AjouterCapteurVM model = HttpContext.GetFromSession<AjouterCapteurVM>("AjouterCapteurVM");
             ModelState.Remove("PiloteItem");
             ModelState.Remove("PeriodiciteItem");
+
             if (ModelState.IsValid)
             {
-                if(vm.DateProchaineVerif < DateTime.Now)
+                if(vm.DateProchaineVerifInt < DateTime.Now)
                 {
-                    ModelState.AddModelError("DateProchaineVerif", "La date de la prochaine vérification ne peut pas être inferieur à la date d'aujourd'hui");
+                    ModelState.AddModelError("DateProchaineVerifInt", "La date de la prochaine vérification interne ne peut pas être inferieur à la date d'aujourd'hui");
                     goto ERR;
                 }
-                if(vm.DateDernierVerif > DateTime.Now)
+                if (vm.DateProchaineVerifExt < DateTime.Now)
                 {
-                    ModelState.AddModelError("DateDernierVerif", "La date de la dernière vérification métrologie ne peut pas être superieur à la date d'aujourd'hui");
+                    ModelState.AddModelError("DateProchaineVerifExt", "La date de la prochaine vérification externe ne peut pas être inferieur à la date d'aujourd'hui");
                     goto ERR;
                 }
-                if(vm.CapteurConforme == false && vm.FacteurCorrectif == null) // demander le renseignement du facteur de correction
+                if (vm.DateDernierVerifInt > DateTime.Now)
+                {
+                    ModelState.AddModelError("DateDernierVerifInt", "La date de la dernière vérification métrologie interne ne peut pas être superieur à la date d'aujourd'hui");
+                    goto ERR;
+                }
+                if (vm.DateDernierVerifExt > DateTime.Now)
+                {
+                    ModelState.AddModelError("DateDernierVerifExt", "La date de la dernière vérification métrologie externe ne peut pas être superieur à la date d'aujourd'hui");
+                    goto ERR;
+                }
+                if (vm.CapteurConforme == false && vm.FacteurCorrectif == null) // demander le renseignement du facteur de correction
                 {
                     ModelState.AddModelError("FacteurCorrectif", "Si le capteur est non conforme vous devez indiquer un facteur de correction");
                     goto ERR;
                 }
                 // Ajouter l'information sur le capteur
-                // Calculer la periode métrologie
-                if (vm.SelectPeriodID == 1)
-                    period = 0.5;
-                else if (vm.SelectPeriodID == 2)
-                    period = 1;
+                // Calculer la periode métrologie INTERNE
+                if (vm.SelectPeriodIDint == 1)
+                    periodInt = 0.5;
+                else if (vm.SelectPeriodIDint == 2)
+                    periodInt = 1;
                 else
-                    period = 2;
+                    periodInt = 2;
 
-                bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerif.Value,
-                    vm.DateDernierVerif.GetValueOrDefault(), period, vm.CapteurConforme.GetValueOrDefault(), vm.EmtCapteur.GetValueOrDefault(),
-                    vm.FacteurCorrectif.GetValueOrDefault());
+                // Ajouter l'information sur le capteur
+                // Calculer la periode métrologie Externe
+                if (vm.SelectPeriodIDExt == 1)
+                    periodExt = 0.5;
+                else if (vm.SelectPeriodIDExt == 2)
+                    periodExt = 1;
+                else
+                    periodExt = 2;
+
+                bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerifInt.Value, vm.DateProchaineVerifExt.Value,
+                    vm.DateDernierVerifInt.GetValueOrDefault(), vm.DateDernierVerifExt.GetValueOrDefault(), periodInt, periodExt, vm.CapteurConforme.GetValueOrDefault(),
+                    vm.EmtCapteur.GetValueOrDefault(), vm.FacteurCorrectif.GetValueOrDefault());
+
                 if(IsOk == false)
                 {
                     ModelState.AddModelError("", "Problème pour rajouter le capteur, veuillez reessayer ultérieurement");
@@ -138,7 +160,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
         public IActionResult ModifierCapteur(int? id)
         {
-            int itemPeriod = 0;
+            int itemPeriodInt = 0;
+            int itemPeriodExt = 0;
             // recuperer les infos sur le capteur
             capteur capt = capteurDB.ObtenirCapteur(id.Value);
             equipement equip = capteurDB.ObtenirEquipement(capt.equipementID);
@@ -153,20 +176,31 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
             listPeriodicite.Add(new SelectListItem() { Value = "2", Text = "1 an" });
             listPeriodicite.Add(new SelectListItem() { Value = "3", Text = "2 ans" });
 
-            // Calculer l'item selon periode de métrologie
-            if (capt.periodicite_metrologie == 0.5)
-                itemPeriod = 1;
-            else if (capt.periodicite_metrologie == 1)
-                itemPeriod = 2;
-            else if(capt.periodicite_metrologie == 2)
-                itemPeriod = 3;
+            // Calculer l'item selon periode de métrologie interne
+            if (capt.periodicite_metrologie_int == 0.5)
+                itemPeriodInt = 1;
+            else if (capt.periodicite_metrologie_int == 1)
+                itemPeriodInt = 2;
+            else if(capt.periodicite_metrologie_int == 2)
+                itemPeriodInt = 3;
 
-            vm.SelectPeriodID = itemPeriod;
+            // Calculer l'item selon periode de métrologie externe
+            if (capt.periodicite_metrologie_ext == 0.5)
+                itemPeriodExt = 1;
+            else if (capt.periodicite_metrologie_ext == 1)
+                itemPeriodExt = 2;
+            else if(capt.periodicite_metrologie_ext == 2)
+                itemPeriodExt = 3;
+
+            vm.SelectPeriodIDExt = itemPeriodExt;
+            vm.SelectPeriodIDInt = itemPeriodInt;
             vm.idCapteur = id.Value;
             vm.NomCapteur = capt.nom_capteur;
             vm.CodeCapteur = capt.code_capteur;
-            vm.DateDernierVerif = capt.date_derniere_verif;
-            vm.DateProchaineVerif = capt.date_prochaine_verif;
+            vm.DateProchaineVerifInt = capt.date_prochaine_verif_int;
+            vm.DateDernierVerifInt = capt.date_derniere_verif_int;
+            vm.DateProchaineVerifExt = capt.date_prochaine_verif_ext;
+            vm.DateDernierVerifExt = capt.date_derniere_verif_ext;
             vm.CapteurConforme = capt.capteur_conforme;
             vm.EmtCapteur = capt.emt_capteur;
             vm.FacteurCorrectif = capt.facteur_correctif;
@@ -181,7 +215,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
         public IActionResult ModifCapteur(ModifierCapteurVM model, int id)
         {
             bool isOk = false;
-            double period = 0.0;
+            double periodInt = 0.0;
+            double periodExt = 0.0;
             //AjouterCapteurVM model = HttpContext.GetFromSession<AjouterCapteurVM>("AjouterCapteurVM");
             ModelState.Remove("PiloteItem");
             ModelState.Remove("PeriodiciteItem");
@@ -203,49 +238,97 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
             if (ModelState.IsValid)
             {
-                #region Vérification Date prochaine vérif!
+                #region Vérification Date prochaine vérif INTERNE!
 
-                if (model.DateProchaineVerif > DateTime.Now)
+                if (model.DateProchaineVerifInt > DateTime.Now)
                 {
                     // Vérifier si la date a changé
-                    if (model.DateProchaineVerif != capt.date_prochaine_verif)
+                    if (model.DateProchaineVerifInt != capt.date_prochaine_verif_int)
                     {
                         // Mettre à jour la periodicité
-                        isOk = capteurDB.UpdateDateProVerif(capt, model.DateProchaineVerif.Value);
+                        isOk = capteurDB.UpdateDateProVerifInt(capt, model.DateProchaineVerifInt.Value);
                         if (!isOk)
                         {
-                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la prochaine vérification, reesayez ultérieurement.");
+                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la prochaine vérification interne, reesayez ultérieurement.");
                             goto END;
                         }
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("DateProchaineVerif", "La date de la prochaine vérification ne peut pas être inferieur à la date d'aujourd'hui");
+                    ModelState.AddModelError("DateProchaineVerifInt", "La date de la prochaine vérification interne ne peut pas être inferieur à la date d'aujourd'hui");
                     goto END;
                 }
 
                 #endregion
 
-                #region Vérification date dernière vérification
+                #region Vérification Date prochaine vérif Externe!
 
-                if (model.DateDernierVerif < DateTime.Now)
+                if (model.DateProchaineVerifExt > DateTime.Now)
                 {
                     // Vérifier si la date a changé
-                    if (model.DateDernierVerif != capt.date_derniere_verif)
+                    if (model.DateProchaineVerifExt != capt.date_prochaine_verif_ext)
                     {
                         // Mettre à jour la periodicité
-                        isOk = capteurDB.UpdateDateDerniereVerif(capt, model.DateDernierVerif.Value);
+                        isOk = capteurDB.UpdateDateProVerifExt(capt, model.DateProchaineVerifExt.Value);
                         if (!isOk)
                         {
-                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la dernière vérification, réesayez ultérieurement.");
+                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la prochaine vérification Externe, reesayez ultérieurement.");
                             goto END;
                         }
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("DateDernierVerif", "La date de la dernière vérification métrologie ne peut pas être superieur à la date d'aujourd'hui");
+                    ModelState.AddModelError("DateProchaineVerifInt", "La date de la prochaine vérification externe ne peut pas être inferieur à la date d'aujourd'hui");
+                    goto END;
+                }
+
+                #endregion
+
+                #region Vérification date dernière vérification Interne
+
+                if (model.DateDernierVerifInt < DateTime.Now)
+                {
+                    // Vérifier si la date a changé
+                    if (model.DateDernierVerifInt != capt.date_derniere_verif_int)
+                    {
+                        // Mettre à jour la periodicité
+                        isOk = capteurDB.UpdateDateDerniereVerifInt(capt, model.DateDernierVerifInt.Value);
+                        if (!isOk)
+                        {
+                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la dernière vérification interne, réesayez ultérieurement.");
+                            goto END;
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("DateDernierVerifInt", "La date de la dernière vérification métrologie interne ne peut pas être superieur à la date d'aujourd'hui");
+                    goto END;
+                }
+
+                #endregion
+
+                #region Vérification date dernière vérification Externe
+
+                if (model.DateDernierVerifExt < DateTime.Now)
+                {
+                    // Vérifier si la date a changé
+                    if (model.DateDernierVerifExt != capt.date_derniere_verif_ext)
+                    {
+                        // Mettre à jour la periodicité
+                        isOk = capteurDB.UpdateDateDerniereVerifExt(capt, model.DateDernierVerifExt.Value);
+                        if (!isOk)
+                        {
+                            ModelState.AddModelError("", "Problème lors de la maj de la date pour la dernière vérification externe, réesayez ultérieurement.");
+                            goto END;
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("DateDernierVerif", "La date de la dernière vérification métrologie externe ne peut pas être superieur à la date d'aujourd'hui");
                     goto END;
                 }
 
@@ -299,22 +382,41 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
                 #region Vérifier si la periode n'a pas changée
                 // Ajouter l'information sur le capteur
-                // Calculer la periode métrologie
-                if (model.SelectPeriodID == 1)
-                    period = 0.5;
-                else if (model.SelectPeriodID == 2)
-                    period = 1;
+                // Calculer la periode métrologie interne
+                if (model.SelectPeriodIDInt == 1)
+                    periodInt = 0.5;
+                else if (model.SelectPeriodIDInt == 2)
+                    periodInt = 1;
                 else
-                    period = 2;
+                    periodInt = 2;
 
-                
-                if(capt.periodicite_metrologie != period)
+                // Calculer la periode métrologie externe
+                if (model.SelectPeriodIDExt == 1)
+                    periodExt = 0.5;
+                else if (model.SelectPeriodIDExt == 2)
+                    periodExt = 1;
+                else
+                    periodExt = 2;
+
+
+                if(capt.periodicite_metrologie_int != periodInt)
                 {
                     // Mettre à jour la periodicité
-                    isOk = capteurDB.UpdatePeriodicite(capt, period);
+                    isOk = capteurDB.UpdatePeriodiciteInt(capt, periodInt);
                     if (!isOk)
                     {
-                        ModelState.AddModelError("", "Problème lors de la maj de la periode de métrologie, reesayez ultérieurement.");
+                        ModelState.AddModelError("", "Problème lors de la maj de la periode de métrologie interne, reesayez ultérieurement.");
+                        goto END;
+                    }
+                }
+
+                if (capt.periodicite_metrologie_ext != periodExt)
+                {
+                    // Mettre à jour la periodicité
+                    isOk = capteurDB.UpdatePeriodiciteExt(capt, periodExt);
+                    if (!isOk)
+                    {
+                        ModelState.AddModelError("", "Problème lors de la maj de la periode de métrologie externe, reesayez ultérieurement.");
                         goto END;
                     }
                 }

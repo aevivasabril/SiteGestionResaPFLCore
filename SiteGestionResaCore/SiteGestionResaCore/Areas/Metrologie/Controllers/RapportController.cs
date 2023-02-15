@@ -51,7 +51,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                 vmun.emtCapteur = capt.emt_capteur;
                 vmun.TypeMetrologie = "Interne";
                 vmun.nomEquipement = rapportDB.NomEquipementXCapteur(capt.equipementID);
-                vmun.facteurCorrectif = capt.facteur_correctif;
+                //vmun.facteurCorrectif = capt.facteur_correctif;
                 // recuperer la liste des utilisateurs "admin"
                 IList<utilisateur> listUsrs = await rapportDB.ObtenirAdminUsrs();
                 vmun.OperateurItem = listUsrs.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
@@ -80,7 +80,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                 vmun.emtCapteur = capt.emt_capteur;
                 vmun.TypeMetrologie = "Externe";
                 vmun.nomEquipement = rapportDB.NomEquipementXCapteur(capt.equipementID);
-                vmun.facteurCorrectif = capt.facteur_correctif;
+                //vmun.facteurCorrectif = capt.facteur_correctif;
                 // recuperer la liste des utilisateurs "admin"
                 IList<utilisateur> listUsrs = await rapportDB.ObtenirAdminUsrs();
                 vmun.OperateurItem = listUsrs.Select(f => new SelectListItem { Value = f.Id.ToString(), Text = f.nom + ", " + f.prenom + " ( " + f.Email + " )" });
@@ -151,7 +151,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                 if (rapportDB.CreerRapportMetrologie(vm.contenuRapport, vm.nomDocRapport, vm.idCapteur, vm.DateVerifMetro.Value, vm.TypeMetrologie) == true)
                 {
                     // maj du facteur correctif et les dates de vérif et date prochaine verification
-                    bool isOk = rapportDB.majCapteurxRapport(vm.capteurConforme.Value, vm.facteurCorrectif.Value, vm.DateVerifMetro.Value, vm.idCapteur);
+                    bool isOk = rapportDB.majCapteurxRapport(vm.capteurConforme.Value, vm.facteurCorrectif.GetValueOrDefault(), vm.DateVerifMetro.Value, vm.idCapteur, vm.TypeMetrologie);
                   
                     if(isOk == true)
                     {

@@ -472,9 +472,13 @@ namespace SiteGestionResaCore.Data.Data
 
                 entity.Property(e => e.code_capteur).IsUnicode(false);
 
-                entity.Property(e => e.date_prochaine_verif).HasColumnType("datetime");
+                entity.Property(e => e.date_prochaine_verif_int).HasColumnType("datetime");
 
-                entity.Property(e => e.date_derniere_verif).HasColumnType("datetime");
+                entity.Property(e => e.date_derniere_verif_int).HasColumnType("datetime");
+
+                entity.Property(e => e.date_prochaine_verif_ext).HasColumnType("datetime");
+
+                entity.Property(e => e.date_derniere_verif_ext).HasColumnType("datetime");
 
                 entity.HasOne(d => d.equipement)
                     .WithMany(p => p.capteur)

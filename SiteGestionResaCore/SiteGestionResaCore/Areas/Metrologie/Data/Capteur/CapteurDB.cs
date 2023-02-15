@@ -50,15 +50,20 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
             return contextDb.equipement.ToList();
         }
 
-        public bool AjouterCapteur(string NomCapteur, string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerif,
-                    DateTime DateDernierVerif, double period, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif)
+        public bool AjouterCapteur(string NomCapteur, string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerifInt, DateTime DateProchaineVerifExt,
+                    DateTime DateDerniereVerifInt, DateTime DateDerniereVerifExt, double periodInt, double periodExt, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif)
         {
             capteur capt = new capteur();
             equipement equip = contextDb.equipement.First(e=>e.id == SelectedPiloteID);
-            if(DateDernierVerif.Year == 0001)
+            if(DateDerniereVerifInt.Year == 0001)
             {
-                DateDernierVerif = DateDernierVerif.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
+                DateDerniereVerifInt = DateDerniereVerifInt.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
                                                                     // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
+            }
+            if (DateDerniereVerifExt.Year == 0001)
+            {
+                DateDerniereVerifExt = DateDerniereVerifExt.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
+                                                                            // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
             }
 
             capt = new capteur
@@ -66,9 +71,12 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
                 nom_capteur = NomCapteur,
                 code_capteur = CodeCapteur,
                 equipementID = SelectedPiloteID,
-                date_prochaine_verif = DateProchaineVerif,
-                date_derniere_verif = DateDernierVerif,
-                periodicite_metrologie = period,
+                date_prochaine_verif_int = DateProchaineVerifInt,
+                date_prochaine_verif_ext = DateProchaineVerifExt,
+                date_derniere_verif_ext = DateDerniereVerifExt,
+                date_derniere_verif_int = DateDerniereVerifInt,
+                periodicite_metrologie_int = periodInt,
+                periodicite_metrologie_ext = periodExt,
                 capteur_conforme = CapteurConforme,
                 emt_capteur = EmtCapteur,
                 facteur_correctif = FacteurCorrectif
@@ -117,46 +125,91 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
             return contextDb.equipement.First(e => e.id == idEquipement);
         }
 
-        public bool UpdatePeriodicite(capteur capt, double periodicite)
+        public bool UpdatePeriodiciteInt(capteur capt, double periodicite)
         {
             try
             {
-                capt.periodicite_metrologie = periodicite;
+                capt.periodicite_metrologie_int = periodicite;
                 contextDb.SaveChanges();
             }
             catch (Exception e)
             {
-                logger.LogError(e.ToString(), "Problème lors de la MAJ de la periodicité d'un capteur");
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la periodicité interne d'un capteur");
                 return false;
             }
             return true;
         }
 
-        public bool UpdateDateProVerif(capteur capt, DateTime dateverif)
+        public bool UpdatePeriodiciteExt(capteur capt, double periodicite)
         {
             try
             {
-                capt.date_prochaine_verif = dateverif;
+                capt.periodicite_metrologie_ext = periodicite;
                 contextDb.SaveChanges();
             }
             catch (Exception e)
             {
-                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date prochaine vérification");
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la periodicité externe d'un capteur");
                 return false;
             }
             return true;
         }
 
-        public bool UpdateDateDerniereVerif(capteur capt, DateTime dateverif)
+        public bool UpdateDateProVerifInt(capteur capt, DateTime dateverif)
         {
             try
             {
-                capt.date_derniere_verif = dateverif;
+                capt.date_prochaine_verif_int = dateverif;
                 contextDb.SaveChanges();
             }
             catch (Exception e)
             {
-                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date dernière vérification");
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date prochaine vérification interne");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateDateProVerifExt(capteur capt, DateTime dateverif)
+        {
+            try
+            {
+                capt.date_prochaine_verif_ext = dateverif;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date prochaine vérification externe");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateDateDerniereVerifInt(capteur capt, DateTime dateverif)
+        {
+            try
+            {
+                capt.date_derniere_verif_int = dateverif;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date dernière vérification interne");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateDateDerniereVerifExt(capteur capt, DateTime dateverif)
+        {
+            try
+            {
+                capt.date_derniere_verif_ext = dateverif;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ de la date dernière vérification externe");
                 return false;
             }
             return true;

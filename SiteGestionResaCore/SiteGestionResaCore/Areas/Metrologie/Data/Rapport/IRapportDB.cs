@@ -18,6 +18,6 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
 
         bool CreerRapportMetrologie(byte[] data, string nomDoc, int idCapteur, DateTime dateVerif, string TypeRapport);
 
-        bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur);
+        bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur, string typeMetro);
     }
 }

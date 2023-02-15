@@ -104,7 +104,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
             return IsOk;
         }
 
-        public bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur)
+        public bool majCapteurxRapport(bool IsCaptConform, double FacteurCorrectif, DateTime DateVerifMetro, int IdCapteur, string typeMetro)
         {
             bool IsOk = false;
             try
@@ -123,38 +123,72 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
                     capteur.capteur_conforme = IsCaptConform;
                 }
 
-                // Mise à jour date de vérification
-                capteur.date_derniere_verif = DateVerifMetro;
-                contextDb.SaveChanges();
+                if(typeMetro == "Interne")
+                {
+                    // Mise à jour date de vérification
+                    capteur.date_derniere_verif_int = DateVerifMetro;
+                    contextDb.SaveChanges();
 
-                // Mise à jour date prochaine vérification
-                if (capteur.periodicite_metrologie == 0.5) // tous les 6 mois
-                {
-                    var ancienneDate = capteur.date_prochaine_verif;
-                    ancienneDate = ancienneDate.Value.AddMonths(6);
-                    capteur.date_prochaine_verif = ancienneDate;
-                    contextDb.SaveChanges();
+                    // Mise à jour date prochaine vérification
+                    if (capteur.periodicite_metrologie_int == 0.5) // tous les 6 mois
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_int;
+                        ancienneDate = ancienneDate.Value.AddMonths(6);
+                        capteur.date_prochaine_verif_int = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    else if (capteur.periodicite_metrologie_int == 1) // tous les ans
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_int;
+                        ancienneDate = ancienneDate.Value.AddYears(1);
+                        capteur.date_prochaine_verif_int = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    else // tous les 2 ans
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_int;
+                        ancienneDate = ancienneDate.Value.AddYears(2);
+                        capteur.date_prochaine_verif_int = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    IsOk = true;
                 }
-                else if (capteur.periodicite_metrologie == 1) // tous les ans
+
+                if (typeMetro == "Externe")
                 {
-                    var ancienneDate = capteur.date_prochaine_verif;
-                    ancienneDate = ancienneDate.Value.AddYears(1);
-                    capteur.date_prochaine_verif = ancienneDate;
+                    // Mise à jour date de vérification
+                    capteur.date_derniere_verif_ext = DateVerifMetro;
                     contextDb.SaveChanges();
+
+                    // Mise à jour date prochaine vérification
+                    if (capteur.periodicite_metrologie_ext == 0.5) // tous les 6 mois
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_ext;
+                        ancienneDate = ancienneDate.Value.AddMonths(6);
+                        capteur.date_prochaine_verif_ext = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    else if (capteur.periodicite_metrologie_ext == 1) // tous les ans
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_ext;
+                        ancienneDate = ancienneDate.Value.AddYears(1);
+                        capteur.date_prochaine_verif_ext = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    else // tous les 2 ans
+                    {
+                        var ancienneDate = capteur.date_derniere_verif_ext;
+                        ancienneDate = ancienneDate.Value.AddYears(2);
+                        capteur.date_prochaine_verif_ext = ancienneDate;
+                        contextDb.SaveChanges();
+                    }
+                    IsOk = true;
                 }
-                else // tous les 2 ans
-                {
-                    var ancienneDate = capteur.date_prochaine_verif;
-                    ancienneDate = ancienneDate.Value.AddYears(2);
-                    capteur.date_prochaine_verif = ancienneDate;
-                    contextDb.SaveChanges();
-                }
-                IsOk = true;
             }
             catch(Exception e)
             {
                 IsOk = false;
-                logger.LogError("Problème lors de la mise à jour du capteur après opération de metrologie: " + e.ToString());
+                logger.LogError("Problème lors de la mise à jour du capteur après opération de metrologie " + typeMetro +" : "+ e.ToString());
             }         
 
             return IsOk;

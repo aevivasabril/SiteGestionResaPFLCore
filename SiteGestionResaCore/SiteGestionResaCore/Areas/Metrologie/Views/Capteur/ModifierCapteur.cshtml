@@ -43,29 +43,55 @@
             </div>
         </div>
         <br />
+        <hr />
         <div class="form-group">
-            @Html.Label("Date prochaine métrologie(*):")
-            <input class="form-control" name="DateProchaineVerif" asp-for="@Model.DateProchaineVerif" type="date" />
-            @Html.ValidationMessageFor(m => m.DateProchaineVerif, "", new { @class = "text-danger" })
+            @Html.LabelFor(m=>m.DateProchaineVerifInt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateProchaineVerifInt" asp-for="@Model.DateProchaineVerifInt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateProchaineVerifInt, "", new { @class = "text-danger" })
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(m => m.DateDernierVerif, new { @class = "col-md-8 control-label" })
-            <input class="form-control" name="DateDernierVerif" asp-for="@Model.DateDernierVerif" type="date" />
-            @Html.ValidationMessageFor(m => m.DateDernierVerif, "", new { @class = "text-danger" })
+            @Html.LabelFor(m => m.DateDernierVerifInt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateDernierVerifInt" asp-for="@Model.DateDernierVerifInt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateDernierVerifInt, "", new { @class = "text-danger" })
             <p style="color:blue">
-                @if (Model.DateDernierVerif.Value.Year == 2000)
+                @if (Model.DateDernierVerifInt.Value.Year == 2000)
                 {
                     @Html.Label("*Vérification métrologique jamais faite*")
                 }
             </p>
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.SelectPeriodID, new { @class = "col-md-12 control-label" })
-            <select asp-for="SelectPeriodID" asp-items="@Model.PeriodiciteItem" class="form-control">
+            @Html.LabelFor(m => m.SelectPeriodIDInt, new { @class = "col-md-12 control-label" })
+            <select asp-for="SelectPeriodIDInt" asp-items="@Model.PeriodiciteItem" class="form-control">
             </select>
-            @Html.ValidationMessageFor(m => m.SelectPeriodID, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.SelectPeriodIDInt, "", new { @class = "text-danger" })
         </div>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateProchaineVerifExt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateProchaineVerifExt" asp-for="@Model.DateProchaineVerifExt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateProchaineVerifExt, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateDernierVerifExt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateDernierVerifExt" asp-for="@Model.DateDernierVerifExt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateDernierVerifExt, "", new { @class = "text-danger" })
+            <p style="color:blue">
+                @if (Model.DateDernierVerifExt.Value.Year == 2000)
+                {
+                    @Html.Label("*Vérification métrologique jamais faite*")
+                }
+            </p>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SelectPeriodIDExt, new { @class = "col-md-12 control-label" })
+            <select asp-for="SelectPeriodIDExt" asp-items="@Model.PeriodiciteItem" class="form-control">
+            </select>
+            @Html.ValidationMessageFor(m => m.SelectPeriodIDExt, "", new { @class = "text-danger" })
+        </div>
+        <br />
         <div class="form-row">
             @Html.LabelFor(m => m.EmtCapteur, new { @class = "col-md-12 control-label" })
             <div class="row">

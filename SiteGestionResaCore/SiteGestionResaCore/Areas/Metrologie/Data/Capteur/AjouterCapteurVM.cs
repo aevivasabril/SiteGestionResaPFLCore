@@ -27,22 +27,39 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         [Display(Name = "Code du capteur: ")]
         public string CodeCapteur { get; set; }
 
-        [Required (ErrorMessage ="Saisir la date de la prochaine métrologie")]
+        [Required (ErrorMessage ="Saisir la date de la prochaine métrologie Interne")]
         [DataType(DataType.Date)]
-        [Display(Name = "Date prochaine métrologie (*): ")]
-        public DateTime? DateProchaineVerif { get; set; }
+        [Display(Name = "Date prochaine métrologie Interne (*): ")]
+        public DateTime? DateProchaineVerifInt { get; set; }
 
         [DataType(DataType.Date)]
-        [Display(Name = "Date dernière métrologie: ")]
-        public DateTime? DateDernierVerif { get; set; }
+        [Display(Name = "Date dernière métrologie Interne: ")]
+        public DateTime? DateDernierVerifInt { get; set; }
+
+        [Required(ErrorMessage = "Saisir la date de la prochaine métrologie Externe")]
+        [DataType(DataType.Date)]
+        [Display(Name = "Date prochaine métrologie externe (*): ")]
+        public DateTime? DateProchaineVerifExt { get; set; }
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Date dernière métrologie externe: ")]
+        public DateTime? DateDernierVerifExt { get; set; }
 
         /// <summary>
         /// Id d'un intervenant maintenance
         /// </summary>
-        [Required (ErrorMessage ="Sélectionnez la periodicité métrologie")]
-        [Display(Name = "Périodicité métrologie (*): ")]
+        [Required (ErrorMessage ="Sélectionnez la periodicité métrologie interne")]
+        [Display(Name = "Périodicité métrologie interne (*): ")]
         [Range(1, 100, ErrorMessage = "Sélectionnez l'option dans la liste")]
-        public int SelectPeriodID { get; set; }
+        public int SelectPeriodIDint { get; set; }
+
+        /// <summary>
+        /// Id d'un intervenant maintenance
+        /// </summary>
+        [Required(ErrorMessage = "Sélectionnez la periodicité métrologie externe")]
+        [Display(Name = "Périodicité métrologie externe (*): ")]
+        [Range(1, 100, ErrorMessage = "Sélectionnez l'option dans la liste")]
+        public int SelectPeriodIDExt { get; set; }
 
         public IEnumerable<SelectListItem> PeriodiciteItem { get; set; }
 
