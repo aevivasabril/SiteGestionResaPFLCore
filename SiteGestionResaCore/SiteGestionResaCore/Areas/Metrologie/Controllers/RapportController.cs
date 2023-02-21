@@ -179,5 +179,19 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
             return View("FormRapportMetro", vm);
         }
+
+        public IActionResult ListRapports()
+        {
+            RappXDownloadVM model = new RappXDownloadVM();
+            model.ListCapteursXrapports = rapportDB.ListRapports();
+            return View("ListRapportXDownload", model);
+        }
+
+ 
+        public IActionResult TelechargementRapport(int? id)
+        {
+            rapport_metrologie rapport = rapportDB.ObtenirRapport(id.Value);
+            return File(rapport.contenu_rapport, System.Net.Mime.MediaTypeNames.Application.Octet, rapport.nom_document);
+        }
     }
 }

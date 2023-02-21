@@ -193,5 +193,28 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
 
             return IsOk;
         }
+
+        public List<CapteurXRapport> ListRapports()
+        {
+            CapteurXRapport captXrapp = new CapteurXRapport();
+            List<CapteurXRapport> list = new List<CapteurXRapport>();
+
+            var rapports = contextDb.rapport_metrologie.Distinct().ToList();
+            foreach(var x in rapports)
+            {
+                var capt = contextDb.capteur.First(c => c.id == x.capteurID);
+                var equip = contextDb.equipement.First(e => e.id == capt.equipementID);
+
+                captXrapp = new CapteurXRapport { idCapteur = capt.id, nomCapteur = capt.nom_capteur, nomEquipement = equip.nom, numGmao = equip.numGmao, dateVerif = x.date_verif_metrologie,
+                                                  nom_document = x.nom_document, idRapport = x.id, TypeRapport = x.type_rapport_metrologie};
+                list.Add(captXrapp);
+            }
+            return list;
+        }
+
+        public rapport_metrologie ObtenirRapport(int idRapport)
+        {
+            return contextDb.rapport_metrologie.First(r => r.id == idRapport);
+        }
     }
 }
