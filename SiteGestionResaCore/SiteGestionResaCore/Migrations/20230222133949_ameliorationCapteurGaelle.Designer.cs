@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20230222133949_ameliorationCapteurGaelle")]
+    partial class ameliorationCapteurGaelle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "6e1ef12f-b803-46b9-bcf6-2ebe24de97dd",
+                            ConcurrencyStamp = "2103ca9d-00c7-43f2-87e3-df18a015fb0d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "5930b3f0-6e96-4256-8833-a58b3ef132be",
+                            ConcurrencyStamp = "c06908a7-0ba3-4ab0-9dd3-5e6a6444092f",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "df78a4c1-f955-4dfc-bddc-8ef9890682ea",
+                            ConcurrencyStamp = "98c1a20c-3280-4258-9f94-e699f6e03790",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "d0767dfa-a371-4fe1-9874-7f168e192cee",
+                            ConcurrencyStamp = "cb6c5127-b8ae-4d8d-b9ce-668b8bf1830f",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "77490dbd-7b7f-4255-a4f6-77a1bcefb030",
+                            ConcurrencyStamp = "b6f2add6-26e1-409d-8d14-7e35844d1f4e",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "3c38214d-fca8-42ff-9a34-9d5834c4cc0b",
+                            ConcurrencyStamp = "40abbd06-5f37-4910-be20-e79247d03fcc",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -336,11 +338,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("code_capteur")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("commentaire")
                         .IsRequired()
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
@@ -2212,11 +2209,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.Property<int>("capteurID")
                         .HasColumnType("int");
-
-                    b.Property<string>("commentaire")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
 
                     b.Property<byte[]>("contenu_rapport")
                         .IsRequired()

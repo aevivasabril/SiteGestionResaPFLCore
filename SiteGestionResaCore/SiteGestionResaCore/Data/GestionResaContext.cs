@@ -467,10 +467,11 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<capteur>(entity =>
             {
                 entity.Property(e => e.nom_capteur)
-                    .IsRequired()
                     .IsUnicode(false);
 
-                entity.Property(e => e.code_capteur).IsUnicode(false);
+                entity.Property(e => e.code_capteur)
+                    .IsRequired()
+                    .IsUnicode(false);
 
                 entity.Property(e => e.date_prochaine_verif_int).HasColumnType("datetime");
 
@@ -485,6 +486,14 @@ namespace SiteGestionResaCore.Data.Data
                     .HasForeignKey(d => d.equipementID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_capteur_equipement");
+
+                entity.Property(e => e.unite_mesure)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.commentaire)
+                    .IsRequired()
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<rapport_metrologie>(entity =>
@@ -508,6 +517,10 @@ namespace SiteGestionResaCore.Data.Data
                     .HasForeignKey(d => d.capteurID)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_rapport_metrologique_capteur");
+
+                entity.Property(e => e.commentaire)
+                    .IsRequired()
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
