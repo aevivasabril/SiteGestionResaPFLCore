@@ -13,7 +13,7 @@ namespace SiteGestionResaCore.Data
         public int capteurID { get; set; }
         public DateTime date_verif_metrologie { get; set; }
         public string type_rapport_metrologie { get; set; }
-        public string commentaire { get; set; }
+        public string? commentaire { get; set; }
 
         public virtual capteur capteur { get; set; }
     }

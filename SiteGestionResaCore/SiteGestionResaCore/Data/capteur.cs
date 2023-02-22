@@ -26,7 +26,7 @@ namespace SiteGestionResaCore.Data
         public double emt_capteur { get; set; }
         public double? facteur_correctif { get; set; }
         public string unite_mesure { get; set; }
-        public string commentaire { get; set; }
+        public string? commentaire { get; set; }
 
         public virtual equipement equipement { get; set; }
 

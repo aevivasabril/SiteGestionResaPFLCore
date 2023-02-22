@@ -492,7 +492,6 @@ namespace SiteGestionResaCore.Data.Data
                     .IsUnicode(false);
 
                 entity.Property(e => e.commentaire)
-                    .IsRequired()
                     .IsUnicode(false);
             });
 
@@ -519,7 +518,6 @@ namespace SiteGestionResaCore.Data.Data
                     .HasConstraintName("FK_rapport_metrologique_capteur");
 
                 entity.Property(e => e.commentaire)
-                    .IsRequired()
                     .IsUnicode(false);
             });
 
