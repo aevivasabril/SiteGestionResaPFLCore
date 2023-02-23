@@ -107,7 +107,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
                 bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerifInt.Value, vm.DateProchaineVerifExt.Value,
                     vm.DateDernierVerifInt.GetValueOrDefault(), vm.DateDernierVerifExt.GetValueOrDefault(), periodInt, periodExt, vm.CapteurConforme.GetValueOrDefault(),
-                    vm.EmtCapteur.GetValueOrDefault(), vm.FacteurCorrectif.GetValueOrDefault());
+                    vm.EmtCapteur.GetValueOrDefault(), vm.FacteurCorrectif.GetValueOrDefault(), vm.UniteMesure, vm.Commentaire);
 
                 if(IsOk == false)
                 {
@@ -205,6 +205,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
             vm.EmtCapteur = capt.emt_capteur;
             vm.FacteurCorrectif = capt.facteur_correctif;
             vm.PeriodiciteItem = listPeriodicite;
+            vm.Unite = capt.unite_mesure;
+            vm.Commentaire = capt.commentaire;
 
             this.HttpContext.AddToSession("ModifierCapteurVM", vm);
 
@@ -463,7 +465,37 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                     }
                 }
                 #endregion
-                
+
+                #region Verifier si l'unité n'a pas changée
+
+                if(capt.unite_mesure != model.Unite)
+                {
+                    // mettre à jour l'unité de mesure
+                    isOk = capteurDB.UpdateUnite(capt, model.Unite);
+                    if (!isOk)
+                    {
+                        ModelState.AddModelError("", "Problème lors de la maj de l'unité de mesure capteur, reesayez ultérieurement.");
+                        goto END;
+                    }
+                }
+
+                #endregion
+
+                #region Verifier si le commentaire n'a pas changé
+
+                if (capt.commentaire != model.Commentaire)
+                {
+                    // mettre à jour l'unité de mesure
+                    isOk = capteurDB.UpdateCommentaire(capt, model.Commentaire);
+                    if (!isOk)
+                    {
+                        ModelState.AddModelError("", "Problème lors de la maj commentaire capteur, reesayez ultérieurement.");
+                        goto END;
+                    }
+                }
+
+                #endregion
+
                 ViewBag.AfficherMessage = true;
                 ViewBag.Message = "Le capteur " + capt.nom_capteur + " a été mis à jour! ";
             }

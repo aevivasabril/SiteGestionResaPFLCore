@@ -36,7 +36,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
                 {
                     idCapteur = l.id,
                     NomCapteur = l.nom_capteur,
-                    NomPilote = eq.nom
+                    NomPilote = eq.nom, 
+                    CodeCapteur = l.code_capteur
                 };
 
                 listCapteur.Add(cap);
@@ -51,7 +52,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         }
 
         public bool AjouterCapteur(string NomCapteur, string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerifInt, DateTime DateProchaineVerifExt,
-                    DateTime DateDerniereVerifInt, DateTime DateDerniereVerifExt, double periodInt, double periodExt, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif)
+                    DateTime DateDerniereVerifInt, DateTime DateDerniereVerifExt, double periodInt, double periodExt, bool CapteurConforme, 
+                    double EmtCapteur, double FacteurCorrectif, string unite, string comment)
         {
             capteur capt = new capteur();
             equipement equip = contextDb.equipement.First(e=>e.id == SelectedPiloteID);
@@ -79,7 +81,9 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
                 periodicite_metrologie_ext = periodExt,
                 capteur_conforme = CapteurConforme,
                 emt_capteur = EmtCapteur,
-                facteur_correctif = FacteurCorrectif
+                facteur_correctif = FacteurCorrectif, 
+                unite_mesure = unite,
+                commentaire = comment
             };
 
             try
@@ -293,6 +297,36 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         public double FacteurCorrectif(capteur capt)
         {
             return contextDb.capteur.First(c => c.id == capt.id).facteur_correctif.Value;
+        }
+
+        public bool UpdateUnite(capteur capt, string unite)
+        {
+            try
+            {
+                capt.unite_mesure = unite;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ unité capteur");
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateCommentaire(capteur capt, string comment)
+        {
+            try
+            {
+                capt.commentaire = comment;
+                contextDb.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e.ToString(), "Problème lors de la MAJ commentaire capteur");
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -15,5 +15,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
         public DateTime dateVerif { get; set; }
         public string TypeRapport { get; set; }
         public int idRapport { get; set; }
+        public string Commentaire { get; set; }
+        public string CodeCapteur { get; set; }
     }
 }

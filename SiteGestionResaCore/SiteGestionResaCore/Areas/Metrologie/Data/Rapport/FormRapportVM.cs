@@ -47,6 +47,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
         public string nomDocRapport { get; set; }
 
         public byte[] contenuRapport { get; set; }
+        public string Commentaire { get; set; }
 
     }
 }

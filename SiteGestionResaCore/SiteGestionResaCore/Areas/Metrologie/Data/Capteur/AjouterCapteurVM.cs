@@ -20,10 +20,11 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         public IEnumerable<SelectListItem> PiloteItem { get; set; }
 
-        [Required (ErrorMessage = "Saisir le nom du capteur")]
-        [Display(Name = "Nom du capteur (*): ")]       
+        //[Required (ErrorMessage = "Saisir le nom du capteur")]
+        [Display(Name = "Nom du capteur: ")]       
         public string NomCapteur { get; set; }
 
+        [Required(ErrorMessage = "Saisir le code du capteur")]
         [Display(Name = "Code du capteur: ")]
         public string CodeCapteur { get; set; }
 
@@ -73,5 +74,12 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         [Display(Name = "Si capteur non conforme alors inserez le facteur de correction (chiffre decimal: 0,0) : ")]
         public double? FacteurCorrectif { get; set; }
+
+        [Required(ErrorMessage = "L'unité capteur doit être renseigné")]
+        [Display(Name = "Unité de mesure du capteur: ")]
+        public string UniteMesure { get; set; }
+
+        [Display(Name = "Commentaire : ")]
+        public string Commentaire { get; set; }
     }
 }

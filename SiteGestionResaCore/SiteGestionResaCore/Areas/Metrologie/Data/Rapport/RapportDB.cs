@@ -68,7 +68,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
             return contextDb.equipement.First(e => e.id == idEquipement).nom;
         }
 
-        public bool CreerRapportMetrologie(byte[] data, string nomDoc, int idCapteur, DateTime dateVerif, string TypeRapport)
+        public bool CreerRapportMetrologie(byte[] data, string nomDoc, int idCapteur, DateTime dateVerif, string TypeRapport, string comment)
         {
             bool IsOk = false;
             try
@@ -89,7 +89,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
                     contenu_rapport = data,
                     date_verif_metrologie = dateVerif,
                     type_rapport_metrologie = TypeRapport,
-                    nom_document = nomDoc
+                    nom_document = nomDoc, 
+                    commentaire = comment
                 };
                 contextDb.rapport_metrologie.Add(rapport);
                 contextDb.SaveChanges();
@@ -206,7 +207,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Rapport
                 var equip = contextDb.equipement.First(e => e.id == capt.equipementID);
 
                 captXrapp = new CapteurXRapport { idCapteur = capt.id, nomCapteur = capt.nom_capteur, nomEquipement = equip.nom, numGmao = equip.numGmao, dateVerif = x.date_verif_metrologie,
-                                                  nom_document = x.nom_document, idRapport = x.id, TypeRapport = x.type_rapport_metrologie};
+                                                  nom_document = x.nom_document, idRapport = x.id, TypeRapport = x.type_rapport_metrologie, Commentaire = x.commentaire, CodeCapteur = capt.code_capteur};
                 list.Add(captXrapp);
             }
             return list;

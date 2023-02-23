@@ -102,6 +102,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
             model.capteurConforme = vm.capteurConforme;
             model.DateVerifMetro = vm.DateVerifMetro;
             model.SelectecOperateurId = vm.SelectecOperateurId;
+            model.Commentaire = vm.Commentaire;
             ViewBag.ModalRapport = "show";
             return View("FormRapportMetro", vm);
         }
@@ -132,6 +133,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
             vm.capteurConforme = model.capteurConforme;
             vm.facteurCorrectif = model.facteurCorrectif;
             vm.SelectecOperateurId = model.SelectecOperateurId;
+            vm.Commentaire = model.Commentaire;
 
             this.HttpContext.AddToSession("FormRapportVM", vm);           
 
@@ -148,7 +150,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                     return View("FormRapportMetro", vm);
                 }
                 // Enregistrer l'opération de métrologie
-                if (rapportDB.CreerRapportMetrologie(vm.contenuRapport, vm.nomDocRapport, vm.idCapteur, vm.DateVerifMetro.Value, vm.TypeMetrologie) == true)
+                if (rapportDB.CreerRapportMetrologie(vm.contenuRapport, vm.nomDocRapport, vm.idCapteur, vm.DateVerifMetro.Value, vm.TypeMetrologie, vm.Commentaire) == true)
                 {
                     // maj du facteur correctif et les dates de vérif et date prochaine verification
                     bool isOk = rapportDB.majCapteurxRapport(vm.capteurConforme.Value, vm.facteurCorrectif.GetValueOrDefault(), vm.DateVerifMetro.Value, vm.idCapteur, vm.TypeMetrologie);

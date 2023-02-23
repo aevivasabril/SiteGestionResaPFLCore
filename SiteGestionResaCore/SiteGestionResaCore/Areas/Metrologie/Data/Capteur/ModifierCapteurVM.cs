@@ -67,5 +67,11 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         [Display(Name = "Si capteur non conforme alors inserez le facteur de correction (chiffre decimal: 0,0) : ")]
         public double? FacteurCorrectif { get; set; }
+
+        [Display(Name = "Commentaire : ")]
+        public string Commentaire { get; set; }
+
+        [Display(Name = "Unité de mesure du capteur: ")]
+        public string Unite { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         public int idCapteur { get; set; }
         public string NomCapteur { get; set; }
         public string NomPilote { get; set; }
+        public string CodeCapteur { get; set; }
 
     }
 }

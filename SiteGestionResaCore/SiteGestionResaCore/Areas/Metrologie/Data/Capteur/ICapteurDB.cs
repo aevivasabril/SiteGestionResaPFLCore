@@ -13,7 +13,8 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         List<equipement> ObtListEquipements();
 
         bool AjouterCapteur(string NomCapteur,string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerifInt, DateTime DateProchaineVerifExt,
-                    DateTime DateDerniereVerifInt, DateTime DateDerniereVerifExt, double periodInt, double periodExt, bool CapteurConforme, double EmtCapteur, double FacteurCorrectif);
+                    DateTime DateDerniereVerifInt, DateTime DateDerniereVerifExt, double periodInt, double periodExt, bool CapteurConforme, 
+                    double EmtCapteur, double FacteurCorrectif, string unite, string comment);
         capteur ObtenirCapteur(int id);
 
         bool SupprimerCapteur(int idCapteur);
@@ -41,5 +42,9 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         bool UpdateConformite(capteur capt, bool conformite);
         double FacteurCorrectif(capteur capt);
+
+        bool UpdateUnite(capteur capt, string unite);
+
+        bool UpdateCommentaire(capteur capt, string comment);
     }
 }

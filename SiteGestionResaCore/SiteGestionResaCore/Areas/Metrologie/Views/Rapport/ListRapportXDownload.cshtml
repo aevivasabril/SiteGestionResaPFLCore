@@ -15,11 +15,13 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">Nom du capteur</th>
+                            <th scope="col">Code capteur</th>
                             <th scope="col">Associé à l'équipement</th>
                             <th scope="col">N° GMAO équipement</th>
                             <th scope="col">Nom fichier rapport</th>
                             <th scope="col">Date vérification</th>
                             <th scope="col">Type de rapport</th>
+                            <th scope="col">Commentaire</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -28,11 +30,13 @@
                         {
                             <tr>
                                 <td>@x.nomCapteur</td>
+                                <td>@x.CodeCapteur</td>
                                 <td>@x.nomEquipement</td>
                                 <td>@x.numGmao</td>
                                 <td>@x.nom_document</td>
                                 <td>@x.dateVerif.ToString()</td>
                                 <td>@x.TypeRapport</td>
+                                <td>@x.Commentaire</td>
                                 <td>
                                     <a class="btn navbar-inra" asp-action="TelechargementRapport" asp-area="Metrologie" asp-controller="Rapport" asp-route-id="@x.idRapport">Telecharger</a>
                                 </td>

@@ -41,6 +41,14 @@
             </div>
         </div>
         <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.UniteMesure, new { @class = "col-md-12 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.UniteMesure, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.UniteMesure, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
         <hr />
         <div class="form-group">
             @Html.LabelFor(m => m.DateProchaineVerifInt, new { @class = "col-md-8 control-label" })
@@ -108,6 +116,14 @@
             <div class="row">
                 @Html.TextBoxFor(m => m.FacteurCorrectif, new { @class = "col-md-12 form-control" })
                 @Html.ValidationMessageFor(m => m.FacteurCorrectif, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.Commentaire, new { @class = "col-md-12 control-label" })
+            <div class="row col-md-12">
+                @Html.TextBoxFor(m => m.Commentaire, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.Commentaire, "", new { @class = "text-danger" })
             </div>
         </div>
         <br />
