@@ -514,7 +514,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 242, nom = "Hotte PSM", zoneID = 12, numGmao = "", mobile = false, type_activites = "14,15" }, new equipement { id = 243, nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35", zoneID = 8, numGmao = "PILOT0022", mobile = false, type_activites = "11,13,14,15" }, 
                 new equipement { id = 244, nom = "Balance OHAUS Ranger 3000 -30Kg- tour de sechage", zoneID = 1, numGmao = "BAL0068", mobile = true, type_activites = "16,17" },
                 new equipement { id = 245, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 16, numGmao = "BAL0074", mobile = true, type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18" }, new equipement { id = 246, nom = "Balance PRECIA MOLEN 150 kg", zoneID = 7, numGmao = "BAL0073", mobile = true, type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18" },
-                new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true, type_activites = "18" }, new equipement { id = 248, nom = "Thermomix", zoneID = 12, numGmao = "", mobile = true, type_activites = "9,13,14,15" },
+                new equipement { id = 247, nom = "Tablette Latitude 7212 Dell", zoneID = 17, numGmao = "", mobile = true, type_activites = "18" }, new equipement { id = 248, nom = "Thermomix TM5", zoneID = 12, numGmao = "", mobile = true, type_activites = "9,13,14,15" },
 
                
                 new equipement { id = 250, nom = "Salle AP5", zoneID = 12, numGmao = "CHF011", mobile = false, type_activites = "15" }, new equipement { id = 251, nom = "Salle AP6", zoneID = 13, numGmao = "CHF013", mobile = false, type_activites = "15" },
@@ -527,7 +527,8 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false, type_activites = "7" }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg", zoneID = 12, numGmao = "BAL0079", mobile = true, type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18" },
                 new equipement { id = 261, nom = "Salle Saumurage", zoneID = 10, numGmao = "CHF018", mobile = false, type_activites = "13,14,15" }, new equipement { id = 262, nom = "Salle Pâtes molles moulage", zoneID = 5, numGmao = "LAB0048", mobile = false, type_activites = "13,14,15" },
                 new equipement { id = 263, nom = "Salle Pâtes molles tranchage", zoneID = 6, numGmao = "LAB0049", mobile = false, type_activites = "13,14,15" }, new equipement { id = 264, nom = "Salle Labo", zoneID = 11, numGmao = "LAB0017", mobile = false, type_activites = "15,18" },
-                new equipement { id = 265, nom = "Salle Pâtes préssées cuites", zoneID = 7, numGmao = "LAB0047", mobile = false, type_activites = "13,14,15" }, new equipement { id = 266, nom = "Salle Sthepan", zoneID = 9, numGmao = "LAB0046", mobile = false, type_activites = "13,14,15" }
+                new equipement { id = 265, nom = "Salle Pâtes préssées cuites", zoneID = 7, numGmao = "LAB0047", mobile = false, type_activites = "13,14,15" }, new equipement { id = 266, nom = "Salle Sthepan", zoneID = 9, numGmao = "LAB0046", mobile = false, type_activites = "13,14,15" },
+                new equipement { id = 267, nom = "Thermomix TM6", zoneID = 16, numGmao = "", mobile = true, type_activites = "9,13,14,15" }
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
