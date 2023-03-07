@@ -1,4 +1,4 @@
-﻿
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.DocMetro.AccueilVM
 @{
     ViewBag.Title = "MenuMetrologie";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -58,22 +58,26 @@
         <table class="table justify-content-center table-sm">
             <thead class="thead-dark">
                 <tr>
-                    <th scope="col">Id Essai</th>
-                    <th scope="col">Titre essai</th>
-                    <th scope="col">Equipements reservés</th>
-                    <th scope="col">Auteur</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">Code capteur</th>
+                    <th scope="col">Nom capteur</th>
+                    <th scope="col">Date dernière vérification</th>
+                    <th scope="col">Type de vérification</th>
+                    <th scope="col">Date prochaine vérification</th>
+                    <th scope="col">Periodicité</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td><a>Equipements réservés</a></td>
-                    <td></td>
-                    <td><a>Relance enquête</a></td>
-                </tr>
-
+                @for (int i = 0; i < Model.ListCapteurXVerif.Count(); i++)
+                {
+                    <tr>
+                        <td>@Model.ListCapteurXVerif[i].CodeCapteur</td>
+                        <td>@Model.ListCapteurXVerif[i].NomCapteur</td>
+                        <td>@Model.ListCapteurXVerif[i].DateDerniereVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].TypeVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].DateProVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].Periodicite</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

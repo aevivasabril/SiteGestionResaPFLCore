@@ -91,11 +91,13 @@ namespace SiteGestionResaCore
             services.AddScoped<IDocMetroDB, DocMetroDB>();
             services.AddScoped<ICapteurDB, CapteurDB>();
             services.AddScoped<IRapportDB, RapportDB>();
+            services.AddScoped<IRapportMetroDB, RapportMetroDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();
             services.AddSingleton<IHostedService, EnqueteTask>();
             services.AddSingleton<IHostedService, EntrepotTask>();
+            services.AddSingleton<IHostedService, RapportMetroTask>();
 
 
             services.AddSession();

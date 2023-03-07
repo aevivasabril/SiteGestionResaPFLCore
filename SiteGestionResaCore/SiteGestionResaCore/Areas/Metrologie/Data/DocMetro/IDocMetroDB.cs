@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Metrologie.Data.DocMetro;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data
         doc_metrologie ObtenirDocMetro(int id);
 
         bool SupprimerDoc(int id);
+
+        List<CapteurXVerif> ListProchainesVerifs();
     }
 }

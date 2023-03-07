@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.Metrologie.Data;
+using SiteGestionResaCore.Areas.Metrologie.Data.DocMetro;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Extensions;
 using System;
@@ -26,7 +27,10 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
 
         public IActionResult AccueilMetrologie()
         {
-            return View("AccueilMetrologie");
+            AccueilVM vm = new AccueilVM();
+            vm.ListCapteurXVerif = docMetroDB.ListProchainesVerifs();
+
+            return View("AccueilMetrologie", vm);
         }
 
         public IActionResult DocMetrologie()
