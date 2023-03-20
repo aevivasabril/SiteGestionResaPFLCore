@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20230213134603_DifferencierMetrologieInterneEtExterne")]
+    partial class DifferencierMetrologieInterneEtExterne
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "3f5ace32-e5a4-4766-8fda-1f586d6852cf",
+                            ConcurrencyStamp = "a667eef1-6807-4297-ae08-50d509a4e616",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "9382ac31-797a-42a0-9367-7c9fe0d41f58",
+                            ConcurrencyStamp = "261a77a1-3c0c-4c87-b037-87b1a11861a0",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "7b923942-14e3-40b7-8547-a4681d28c889",
+                            ConcurrencyStamp = "9eed2a0d-473e-4ce7-9347-df968148d601",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "14a53afe-5b81-4e69-a6fd-e640c951b3ea",
+                            ConcurrencyStamp = "b85f4d6f-0e59-4b2a-b9b5-9c6ceaa7578c",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "8a75d158-0acd-4c98-b88a-6c1a3a5d46dc",
+                            ConcurrencyStamp = "4db2bbbd-7901-48bb-ace5-b2d87f8d90e0",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "8d320402-6982-49ec-9f8a-8ce28040bdb8",
+                            ConcurrencyStamp = "24040efd-d635-4dd1-8281-2bb11446356c",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -336,11 +338,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("code_capteur")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("commentaire")
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
@@ -366,6 +363,7 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("nom_capteur")
+                        .IsRequired()
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
@@ -374,11 +372,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.Property<double>("periodicite_metrologie_int")
                         .HasColumnType("float");
-
-                    b.Property<string>("unite_mesure")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
 
                     b.HasKey("id");
 
@@ -1384,7 +1377,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 248,
                             mobile = true,
-                            nom = "Thermomix TM5",
+                            nom = "Thermomix",
                             numGmao = "",
                             type_activites = "9,13,14,15",
                             zoneID = 12
@@ -1541,15 +1534,6 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "LAB0046",
                             type_activites = "13,14,15",
                             zoneID = 9
-                        },
-                        new
-                        {
-                            id = 267,
-                            mobile = true,
-                            nom = "Thermomix TM6",
-                            numGmao = "",
-                            type_activites = "9,13,14,15",
-                            zoneID = 16
                         });
                 });
 
@@ -2220,10 +2204,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.Property<int>("capteurID")
                         .HasColumnType("int");
-
-                    b.Property<string>("commentaire")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
 
                     b.Property<byte[]>("contenu_rapport")
                         .IsRequired()

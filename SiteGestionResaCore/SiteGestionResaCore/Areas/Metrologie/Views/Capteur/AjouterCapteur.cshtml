@@ -1,0 +1,139 @@
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Capteur.AjouterCapteurVM
+
+@{
+    ViewBag.Title = "AjoutCapteur";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<hr />
+<h2>Ajouter un capteur</h2>
+<h5>Remplissez les informations concernant le capteur</h5>
+<hr />
+
+<div class="form-group row">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm("ValiderAjoutCapteur", "Capteur", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-row">
+            <div class="form-group col-md-12 col-lg-12">
+                @Html.LabelFor(m => m.SelectedPiloteID, new { @class = "col-md-12 control-label" })
+                <select asp-for="SelectedPiloteID" asp-items="@Model.PiloteItem" class="form-control">
+                    <option value="-1">- Sélectionnez l'équipement -</option>
+                </select>
+                @Html.ValidationMessageFor(m => m.SelectedPiloteID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.NomCapteur, new { @class = "col-md-6 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.NomCapteur, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.NomCapteur, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.CodeCapteur, new { @class = "col-md-6 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.CodeCapteur, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.CodeCapteur, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.UniteMesure, new { @class = "col-md-12 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.UniteMesure, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.UniteMesure, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateProchaineVerifInt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateProchaineVerifInt" asp-for="@Model.DateProchaineVerifInt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateProchaineVerifInt, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateDernierVerifInt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateDernierVerifInt" asp-for="@Model.DateDernierVerifInt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateDernierVerifInt, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SelectPeriodIDint, new { @class = "col-md-12 control-label" })
+            <select asp-for="SelectPeriodIDint" asp-items="@Model.PeriodiciteItem" class="form-control">
+            </select>
+            @Html.ValidationMessageFor(m => m.SelectPeriodIDint, "", new { @class = "text-danger" })
+        </div>
+        <br />
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateProchaineVerifExt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateProchaineVerifExt" asp-for="@Model.DateProchaineVerifExt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateProchaineVerifExt, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.DateDernierVerifExt, new { @class = "col-md-8 control-label" })
+            <input class="form-control" name="DateDernierVerifExt" asp-for="@Model.DateDernierVerifExt" type="date" />
+            @Html.ValidationMessageFor(m => m.DateDernierVerifExt, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SelectPeriodIDExt, new { @class = "col-md-12 control-label" })
+            <select asp-for="SelectPeriodIDExt" asp-items="@Model.PeriodiciteItem" class="form-control">
+            </select>
+            @Html.ValidationMessageFor(m => m.SelectPeriodIDExt, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-row">
+            @Html.LabelFor(m => m.EmtCapteur, new { @class = "col-md-12 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.EmtCapteur, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.EmtCapteur, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.CapteurConforme, new { @class = "col-md-12 control-label" })
+            @Html.ValidationMessageFor(m => m.CapteurConforme, "", new { @class = "text-danger" })
+            <div class="row">
+                <div class="col-6">
+                    @Html.RadioButtonFor(m => m.CapteurConforme, true)
+                    <label class="col-md-5 control-label">Oui</label>
+                </div>
+                <div class="col-6">
+                    @Html.RadioButtonFor(m => m.CapteurConforme, false)
+                    <label class="col-md-5 control-label">Non</label>
+
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.FacteurCorrectif, new { @class = "col-md-12 control-label" })
+            <div class="row">
+                @Html.TextBoxFor(m => m.FacteurCorrectif, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.FacteurCorrectif, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-row">
+            @Html.LabelFor(m => m.Commentaire, new { @class = "col-md-12 control-label" })
+            <div class="row col-md-12">
+                @Html.TextBoxFor(m => m.Commentaire, new { @class = "col-md-12 form-control" })
+                @Html.ValidationMessageFor(m => m.Commentaire, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <div class="form-group row">
+            <div class="col-md-2">
+                <a class="btn btn-primary" asp-action="OperationCapteurs" asp-controller="Capteur" asp-area="Metrologie">Annuler</a>
+            </div>
+            <div class="offset-7 col-md-1">
+                <input type="submit" value="Suivant" class="btn btn-default navbar-inra" />
+            </div>
+        </div>
+    }
+</div>

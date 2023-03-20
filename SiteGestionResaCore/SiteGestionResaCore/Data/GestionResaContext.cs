@@ -43,7 +43,9 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<activite_pfl> activite_pfl { get; set; }
         public virtual DbSet<doc_essai_pgd> doc_essai_pgd { get; set; }
         public virtual DbSet<evenement> evenement { get; set; }
-
+        public virtual DbSet<doc_metrologie> doc_metrologie { get; set; }
+        public virtual DbSet<capteur> capteur { get; set; }
+        public virtual DbSet<rapport_metrologie> rapport_metrologie {get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -445,6 +447,78 @@ namespace SiteGestionResaCore.Data.Data
                     .IsUnicode(false);
 
                 entity.Property(e => e.date_creation).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<doc_metrologie>(entity =>
+            {
+                entity.Property(e => e.contenu_doc)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.description_doc).IsUnicode(false);
+
+                entity.Property(e => e.date_creation).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<capteur>(entity =>
+            {
+                entity.Property(e => e.nom_capteur)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.code_capteur)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_prochaine_verif_int).HasColumnType("datetime");
+
+                entity.Property(e => e.date_derniere_verif_int).HasColumnType("datetime");
+
+                entity.Property(e => e.date_prochaine_verif_ext).HasColumnType("datetime");
+
+                entity.Property(e => e.date_derniere_verif_ext).HasColumnType("datetime");
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.capteur)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_capteur_equipement");
+
+                entity.Property(e => e.unite_mesure)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.commentaire)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<rapport_metrologie>(entity =>
+            {
+                entity.Property(e => e.contenu_rapport)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nom_document)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.type_rapport_metrologie)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.Property(e => e.date_verif_metrologie).HasColumnType("datetime");
+
+                entity.HasOne(d => d.capteur)
+                    .WithMany(p => p.rapport_metrologie)
+                    .HasForeignKey(d => d.capteurID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_rapport_metrologique_capteur");
+
+                entity.Property(e => e.commentaire)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },

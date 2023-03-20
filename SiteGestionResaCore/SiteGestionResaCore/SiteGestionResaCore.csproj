@@ -35,6 +35,7 @@
     <Folder Include="Areas\DonneesPGD\Models\" />
     <Folder Include="Areas\Evenements\Models\" />
     <Folder Include="Areas\Maintenance\Models\" />
+    <Folder Include="Areas\Metrologie\Models\" />
     <Folder Include="Areas\StatistiquePFL\Models\" />
     <Folder Include="Controllers\" />
   </ItemGroup>

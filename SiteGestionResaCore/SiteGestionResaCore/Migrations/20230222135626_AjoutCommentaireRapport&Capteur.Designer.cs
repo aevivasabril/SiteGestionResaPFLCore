@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20230222135626_AjoutCommentaireRapport&Capteur")]
+    partial class AjoutCommentaireRapportCapteur
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "3f5ace32-e5a4-4766-8fda-1f586d6852cf",
+                            ConcurrencyStamp = "6e1ef12f-b803-46b9-bcf6-2ebe24de97dd",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "9382ac31-797a-42a0-9367-7c9fe0d41f58",
+                            ConcurrencyStamp = "5930b3f0-6e96-4256-8833-a58b3ef132be",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "7b923942-14e3-40b7-8547-a4681d28c889",
+                            ConcurrencyStamp = "df78a4c1-f955-4dfc-bddc-8ef9890682ea",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "14a53afe-5b81-4e69-a6fd-e640c951b3ea",
+                            ConcurrencyStamp = "d0767dfa-a371-4fe1-9874-7f168e192cee",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "8a75d158-0acd-4c98-b88a-6c1a3a5d46dc",
+                            ConcurrencyStamp = "77490dbd-7b7f-4255-a4f6-77a1bcefb030",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "8d320402-6982-49ec-9f8a-8ce28040bdb8",
+                            ConcurrencyStamp = "3c38214d-fca8-42ff-9a34-9d5834c4cc0b",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -341,6 +343,7 @@ namespace SiteGestionResaCore.Migrations
                         .IsUnicode(false);
 
                     b.Property<string>("commentaire")
+                        .IsRequired()
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 
@@ -1384,7 +1387,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 248,
                             mobile = true,
-                            nom = "Thermomix TM5",
+                            nom = "Thermomix",
                             numGmao = "",
                             type_activites = "9,13,14,15",
                             zoneID = 12
@@ -1541,15 +1544,6 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "LAB0046",
                             type_activites = "13,14,15",
                             zoneID = 9
-                        },
-                        new
-                        {
-                            id = 267,
-                            mobile = true,
-                            nom = "Thermomix TM6",
-                            numGmao = "",
-                            type_activites = "9,13,14,15",
-                            zoneID = 16
                         });
                 });
 
@@ -2222,6 +2216,7 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("commentaire")
+                        .IsRequired()
                         .HasColumnType("varchar(max)")
                         .IsUnicode(false);
 

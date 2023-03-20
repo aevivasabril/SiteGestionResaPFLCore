@@ -1,0 +1,84 @@
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.DocMetro.AccueilVM
+@{
+    ViewBag.Title = "MenuMetrologie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h1 class="text-center">Opérations de métrologie</h1>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Ajouter, modifier ou supprimer un capteur</h5>
+                <a asp-action="OperationCapteurs" asp-controller="Capteur" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-center">Enregistrement métrologie d'un capteur</h5>
+                <a asp-action="SelectionCapteur" asp-controller="Rapport" asp-area="Metrologie" class="btn navbar-inra">Enregistrer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title text-center">Récupérer un rapport de métrologie</h5>
+                <a asp-action="ListRapports" asp-controller="Rapport" asp-area="Metrologie" class="btn navbar-inra">Téléchargement</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Documentation lié à la métrologie</h5>
+                <a asp-action="DocMetrologie" asp-controller="DocMetro" asp-area="Metrologie" class="btn navbar-inra">Charger ou consulter </a>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<hr />
+<br />
+
+<div class="col-sm-12 col-md-12 text-center">
+    <h5>Prochaines vérifications à faire (6 prochains mois) : </h5>
+    <div class="fixed_head_resas">
+        <table class="table justify-content-center table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Code capteur</th>
+                    <th scope="col">Nom capteur</th>
+                    <th scope="col">Date dernière vérification</th>
+                    <th scope="col">Type de vérification</th>
+                    <th scope="col">Date prochaine vérification</th>
+                    <th scope="col">Periodicité</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListCapteurXVerif.Count(); i++)
+                {
+                    <tr>
+                        <td>@Model.ListCapteurXVerif[i].CodeCapteur</td>
+                        <td>@Model.ListCapteurXVerif[i].NomCapteur</td>
+                        <td>@Model.ListCapteurXVerif[i].DateDerniereVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].TypeVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].DateProVerif</td>
+                        <td>@Model.ListCapteurXVerif[i].Periodicite</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

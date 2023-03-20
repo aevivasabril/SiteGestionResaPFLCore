@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20221116135149_AjoutTableDocMetrologie")]
+    partial class AjoutTableDocMetrologie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "3f5ace32-e5a4-4766-8fda-1f586d6852cf",
+                            ConcurrencyStamp = "d697ab5e-0f76-4161-aab2-8a6e65caa299",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "9382ac31-797a-42a0-9367-7c9fe0d41f58",
+                            ConcurrencyStamp = "3643bd4f-f7b8-40b5-ae24-89fb418c474d",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "7b923942-14e3-40b7-8547-a4681d28c889",
+                            ConcurrencyStamp = "bfa24627-fda2-49ec-8179-a86f720cc246",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "14a53afe-5b81-4e69-a6fd-e640c951b3ea",
+                            ConcurrencyStamp = "51080f98-6266-4b63-a91d-f76e2c20f633",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "8a75d158-0acd-4c98-b88a-6c1a3a5d46dc",
+                            ConcurrencyStamp = "858769a3-5181-420d-9d09-54f310ad2181",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "8d320402-6982-49ec-9f8a-8ce28040bdb8",
+                            ConcurrencyStamp = "5748bfb6-31d7-4668-b9ea-49412ba84e6f",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -323,68 +325,6 @@ namespace SiteGestionResaCore.Migrations
                             nom_activite = "Autres procèdes",
                             type_documents = "PC,M,E,W,A,R"
                         });
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.capteur", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("capteur_conforme")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("code_capteur")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("commentaire")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<DateTime?>("date_derniere_verif_ext")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("date_derniere_verif_int")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("date_prochaine_verif_ext")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime?>("date_prochaine_verif_int")
-                        .HasColumnType("datetime");
-
-                    b.Property<double>("emt_capteur")
-                        .HasColumnType("float");
-
-                    b.Property<int>("equipementID")
-                        .HasColumnType("int");
-
-                    b.Property<double?>("facteur_correctif")
-                        .HasColumnType("float");
-
-                    b.Property<string>("nom_capteur")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<double>("periodicite_metrologie_ext")
-                        .HasColumnType("float");
-
-                    b.Property<double>("periodicite_metrologie_int")
-                        .HasColumnType("float");
-
-                    b.Property<string>("unite_mesure")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.HasIndex("equipementID");
-
-                    b.ToTable("capteur");
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.doc_essai_pgd", b =>
@@ -1384,7 +1324,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 248,
                             mobile = true,
-                            nom = "Thermomix TM5",
+                            nom = "Thermomix",
                             numGmao = "",
                             type_activites = "9,13,14,15",
                             zoneID = 12
@@ -1541,15 +1481,6 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "LAB0046",
                             type_activites = "13,14,15",
                             zoneID = 9
-                        },
-                        new
-                        {
-                            id = 267,
-                            mobile = true,
-                            nom = "Thermomix TM6",
-                            numGmao = "",
-                            type_activites = "9,13,14,15",
-                            zoneID = 16
                         });
                 });
 
@@ -2211,45 +2142,6 @@ namespace SiteGestionResaCore.Migrations
                     b.ToTable("projet");
                 });
 
-            modelBuilder.Entity("SiteGestionResaCore.Data.rapport_metrologie", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("capteurID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("commentaire")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<byte[]>("contenu_rapport")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)")
-                        .IsUnicode(false);
-
-                    b.Property<DateTime>("date_verif_metrologie")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("nom_document")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.Property<string>("type_rapport_metrologie")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
-                    b.HasKey("id");
-
-                    b.HasIndex("capteurID");
-
-                    b.ToTable("rapport_metrologie");
-                });
-
             modelBuilder.Entity("SiteGestionResaCore.Data.resa_maint_equip_adjacent", b =>
                 {
                     b.Property<int>("id")
@@ -2653,15 +2545,6 @@ namespace SiteGestionResaCore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SiteGestionResaCore.Data.capteur", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
-                        .WithMany("capteur")
-                        .HasForeignKey("equipementID")
-                        .HasConstraintName("FK_capteur_equipement")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SiteGestionResaCore.Data.doc_essai_pgd", b =>
                 {
                     b.HasOne("SiteGestionResaCore.Data.equipement", "equipement")
@@ -2749,15 +2632,6 @@ namespace SiteGestionResaCore.Migrations
                         .WithMany("projet")
                         .HasForeignKey("organismeID")
                         .HasConstraintName("FK_projet_organisme");
-                });
-
-            modelBuilder.Entity("SiteGestionResaCore.Data.rapport_metrologie", b =>
-                {
-                    b.HasOne("SiteGestionResaCore.Data.capteur", "capteur")
-                        .WithMany("rapport_metrologie")
-                        .HasForeignKey("capteurID")
-                        .HasConstraintName("FK_rapport_metrologique_capteur")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SiteGestionResaCore.Data.resa_maint_equip_adjacent", b =>

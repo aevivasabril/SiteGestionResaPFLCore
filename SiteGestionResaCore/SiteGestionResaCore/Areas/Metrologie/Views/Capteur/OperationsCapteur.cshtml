@@ -1,0 +1,101 @@
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Capteur.OperationCapteurVM
+
+@{
+    ViewBag.Title = "Operations Métrologie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+
+<br />
+<div class="row">
+    <div class="col-md-4 offset-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Ajouter un capteur</h5>
+                <a asp-action="AjouterCapteur" asp-controller="Capteur" asp-area="Metrologie" class="btn navbar-inra">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+<hr />
+<br />
+
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="col-sm-12 col-md-12 text-center">
+    <h5>Liste des capteurs enregistrées : </h5>
+    <div class="fixed_head_resas">
+        <table class="table table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nom capteur</th>
+                    <th scope="col">Code capteur</th>
+                    <th scope="col">Pilote</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model.ListCapteurs)
+                {
+                    <tr>
+                        <td>@x.NomCapteur</td>
+                        <td>@x.CodeCapteur</td>
+                        <td>@x.NomPilote</td>
+                        <td>
+
+                            <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer" asp-action="SupprimerCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">
+                                <span class="fas fa-trash"></span>
+                            </a>
+                            <a class="btn navbar-inra" asp-action="ModifierCapteur" asp-area="Metrologie" asp-controller="Capteur" asp-route-id="@x.idCapteur">Modifier</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
+</div>
+
+<form asp-action="ValiderSuppCap" asp-controller="Capteur" asp-area="Metrologie" asp-route-id="@Model.IdCapteurXSupp" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="SuppModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center" id="staticBackdropLabel">Suppression du capteur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold">Etês-vous sûr de vouloir supprimer le capteur @Model.NomCapteurXSupp?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @*script pour afficher le popoup de confirmation de demande *@
+    <script>
+        @{
+
+            if (ViewBag.modalSupp == null)
+            {
+                ViewBag.modalSupp = "hide";
+            }
+        }
+        $('#SuppModal').modal('@ViewBag.modalSupp');
+
+    </script>
+}

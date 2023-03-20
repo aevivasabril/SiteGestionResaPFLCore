@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20230222142602_CommentaireNonRequis")]
+    partial class CommentaireNonRequis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1384,7 +1386,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 248,
                             mobile = true,
-                            nom = "Thermomix TM5",
+                            nom = "Thermomix",
                             numGmao = "",
                             type_activites = "9,13,14,15",
                             zoneID = 12
@@ -1541,15 +1543,6 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "LAB0046",
                             type_activites = "13,14,15",
                             zoneID = 9
-                        },
-                        new
-                        {
-                            id = 267,
-                            mobile = true,
-                            nom = "Thermomix TM6",
-                            numGmao = "",
-                            type_activites = "9,13,14,15",
-                            zoneID = 16
                         });
                 });
 
