@@ -20,7 +20,7 @@ using SiteGestionResaCore.Models;
 namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 {
     [Area("DonneesPGD")]
-    [Authorize(Roles = "Admin, MainAdmin")]
+    //[Authorize(Roles = "Admin, MainAdmin")]
     public class CreationEntrepotController : Controller
     {
         private readonly IEssaisXEntrepotDB entrepotDB;

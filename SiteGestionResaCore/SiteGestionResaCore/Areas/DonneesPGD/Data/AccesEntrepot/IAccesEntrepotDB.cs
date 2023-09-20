@@ -1,4 +1,5 @@
 ﻿using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +29,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
         bool SupprimerEntrepotXProjet(int IdProjet);
         double CalculTotalKoEntrepot(int idProjet);
         List<EntrepotsXProjet> ObtenirListTousEntrepots();
+        InfosProjet ObtenirInfosProjet(int id);
+        ConsultInfosEssaiChildVM ObtenirInfosEssai(int id);
     }
 }

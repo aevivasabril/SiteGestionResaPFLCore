@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
+using SiteGestionResaCore.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -302,6 +303,47 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data.AccesEntrepot
                 }
             }
             return list;
+        }
+
+        public InfosProjet ObtenirInfosProjet(int id)
+        {
+            var proj = contextDB.projet.First(p => p.id == id);
+
+            InfosProjet infos = new InfosProjet()
+            {
+                DateCreation = proj.date_creation,
+                Description = proj.description_projet,
+                Financement = proj.financement,
+                MailRespProj = proj.mailRespProjet,
+                MailUsrSaisie = contextDB.Users.First(p => p.Id == proj.compte_userID).Email,
+                NumProjet = proj.num_projet,
+                Organisme = contextDB.organisme.First(o => o.id == proj.organismeID).nom_organisme,
+                Provenance = proj.provenance,
+                TitreProjet = proj.titre_projet,
+                TypeProjet = proj.type_projet
+            };
+            return infos;
+        }
+        public ConsultInfosEssaiChildVM ObtenirInfosEssai(int id)
+        {
+            var essai = contextDB.essai.First(e => e.id == id);
+
+            ConsultInfosEssaiChildVM Infos = new ConsultInfosEssaiChildVM
+            {
+                id = essai.id,
+                TitreEssai = essai.titreEssai,
+                Confidentialite = essai.confidentialite,
+                DateCreation = essai.date_creation,
+                DestProd = essai.destination_produit,
+                MailManipulateur = contextDB.Users.First(u => u.Id == essai.manipulateurID).Email,
+                MailUser = contextDB.Users.First(u => u.Id == essai.compte_userID).Email,
+                PrecisionProd = essai.precision_produit,
+                ProveProd = essai.provenance_produit,
+                QuantiteProd = essai.quantite_produit,
+                TransportStlo = essai.transport_stlo,
+                TypeProduitEntrant = essai.type_produit_entrant
+            };
+            return Infos;
         }
     }
 }

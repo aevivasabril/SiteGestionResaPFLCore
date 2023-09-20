@@ -154,7 +154,7 @@
         if (id)
         {
             $.ajax({
-                url: "@Url.Action("VoirInfosProjet", "Validation", new { Area = "Reservation" })?id=" + id,
+                url: "@Url.Action("VoirInfosProjet", "AccesEntrepot", new { Area = "DonneesPGD" })?id=" + id,
                 type: 'POST',
                 success: function (html) {
                     $("#InfosProjet").html(html);
@@ -168,7 +168,7 @@
         if (id)
         {
             $.ajax({
-                url: "@Url.Action("VoirInfosEssai", "Consultation", new { Area = "Reservation" })?id=" + id,
+                url: "@Url.Action("VoirInfosEssai", "AccesEntrepot", new { Area = "DonneesPGD" })?id=" + id,
                 type: 'POST',
                 success: function (html) {
                     $("#InfosEssai").html(html);

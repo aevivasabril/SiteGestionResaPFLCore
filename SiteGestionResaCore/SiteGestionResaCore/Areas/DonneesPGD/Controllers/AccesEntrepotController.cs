@@ -11,11 +11,12 @@ using System.IO;
 using Ionic.Zip;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using SiteGestionResaCore.Models;
 
 namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 {
     [Area("DonneesPGD")]
-    [Authorize(Roles = "Admin, MainAdmin")]
+    //[Authorize(Roles = "Admin, MainAdmin")]
     public class AccesEntrepotController : Controller
     {
         private readonly IAccesEntrepotDB accesEntrepotDB;
@@ -574,6 +575,18 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             }*/
 
             return View("TousEntrepots", vm);
+        }
+
+        public IActionResult VoirInfosProjet(int id)
+        {
+            InfosProjet vm = accesEntrepotDB.ObtenirInfosProjet(id);
+            return PartialView("~/Views/Shared/_DisplayInfosProjet.cshtml", vm);
+        }
+
+        public IActionResult VoirInfosEssai(int id)
+        {
+            ConsultInfosEssaiChildVM model = accesEntrepotDB.ObtenirInfosEssai(id);
+            return PartialView("~/Views/Shared/_DisplayInfosEssai.cshtml", model);
         }
     }
 }
