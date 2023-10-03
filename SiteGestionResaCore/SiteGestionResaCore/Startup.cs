@@ -40,6 +40,7 @@ using SiteGestionResaCore.Areas.Evenements.Data;
 using SiteGestionResaCore.Areas.Metrologie.Data;
 using SiteGestionResaCore.Areas.Metrologie.Data.Capteur;
 using SiteGestionResaCore.Areas.Metrologie.Data.Rapport;
+using SiteGestionResaCore.Areas.User.Data.Profil;
 
 namespace SiteGestionResaCore
 {
@@ -92,6 +93,7 @@ namespace SiteGestionResaCore
             services.AddScoped<ICapteurDB, CapteurDB>();
             services.AddScoped<IRapportDB, RapportDB>();
             services.AddScoped<IRapportMetroDB, RapportMetroDB>();
+            services.AddScoped<IProfilDB, ProfilDB>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
             //services.AddScoped<IReportGenerator, ReportGenerator>();
