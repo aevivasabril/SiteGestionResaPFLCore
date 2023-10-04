@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Metrologie.Data.Rapport;
+using SiteGestionResaCore.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
         List<DocumentQualite> ListDocs();
         string GetNomDoc(string cheminDoc);
         doc_qualite ObtenirDocAQ(int IdDoc);
+        List<CapteurXRapport> ListRapports();
     }
 }

@@ -1,0 +1,54 @@
+﻿@model SiteGestionResaCore.Areas.Metrologie.Data.Rapport.RappXDownloadVM
+
+@{
+    ViewBag.Title = "Liste Rapports Métrologie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div class="row">
+    <div class="col-sm-12 col-md-12 text-center">
+        <h4 class="text-center">Liste des rapports métrologie disponibles pour téléchargement</h4>
+        <div class="fixed_head_resas">
+            <div class="row justify-content-center">
+                <table class="table table-striped justify-content-center table-sm">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nom du capteur</th>
+                            <th scope="col">Code capteur</th>
+                            <th scope="col">Associé à l'équipement</th>
+                            <th scope="col">N° GMAO équipement</th>
+                            <th scope="col">Nom fichier rapport</th>
+                            <th scope="col">Date vérification</th>
+                            <th scope="col">Type de rapport</th>
+                            <th scope="col">Commentaire</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model.ListCapteursXrapports)
+                        {
+                            <tr>
+                                <td>@x.nomCapteur</td>
+                                <td>@x.CodeCapteur</td>
+                                <td>@x.nomEquipement</td>
+                                <td>@x.numGmao</td>
+                                <td>@x.nom_document</td>
+                                <td>@x.dateVerif.ToString()</td>
+                                <td>@x.TypeRapport</td>
+                                <td>@x.Commentaire</td>
+                                <td>
+                                    <a class="btn navbar-inra" asp-action="TelechargementRapportXUsr" asp-area="AboutPFL" asp-controller="DocQualite" asp-route-id="@x.idRapport">Telecharger</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row offset-5">
+    <a asp-action="AccueilMetrologie" asp-controller="DocMetro" asp-area="Metrologie">Revenir à la page précedente</a>
+</div>

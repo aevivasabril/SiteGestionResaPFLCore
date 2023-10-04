@@ -1,4 +1,5 @@
-﻿using SiteGestionResaCore.Data;
+﻿using SiteGestionResaCore.Areas.Metrologie.Data.Rapport;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,35 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
         public doc_qualite ObtenirDocAQ(int IdDoc)
         {
             return context.doc_qualite.First(d => d.id == IdDoc);
+        }
+
+        public List<CapteurXRapport> ListRapports()
+        {
+            CapteurXRapport captXrapp = new CapteurXRapport();
+            List<CapteurXRapport> list = new List<CapteurXRapport>();
+
+            var rapports = context.rapport_metrologie.Distinct().ToList();
+            foreach (var x in rapports)
+            {
+                var capt = context.capteur.First(c => c.id == x.capteurID);
+                var equip = context.equipement.First(e => e.id == capt.equipementID);
+
+                captXrapp = new CapteurXRapport
+                {
+                    idCapteur = capt.id,
+                    nomCapteur = capt.nom_capteur,
+                    nomEquipement = equip.nom,
+                    numGmao = equip.numGmao,
+                    dateVerif = x.date_verif_metrologie,
+                    nom_document = x.nom_document,
+                    idRapport = x.id,
+                    TypeRapport = x.type_rapport_metrologie,
+                    Commentaire = x.commentaire,
+                    CodeCapteur = capt.code_capteur
+                };
+                list.Add(captXrapp);
+            }
+            return list;
         }
     }
 }
