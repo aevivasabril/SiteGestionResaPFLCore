@@ -116,49 +116,55 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data
                 if(capt.date_prochaine_verif_int.Value < DateTime.Today.AddMonths(6)) // Si la prochaine vérif interne a lieu dans les prochains 6 mois alors sauvegarder
                 {
                     // on peut car on aura qu'un rapport interne et un rapport externe par capteur
-                    rapport = contextDb.rapport_metrologie.First(r => r.capteurID == capt.id && r.type_rapport_metrologie == "Interne");
-
-                    if (capt.periodicite_metrologie_int == 0.5)
-                        periodicite = "6 mois";
-                    else if (capt.periodicite_metrologie_int == 1)
-                        periodicite = "1 an";
-                    else
-                        periodicite = "2 ans";
-
-                    CapteurXVerif captXVer = new CapteurXVerif
+                    rapport = contextDb.rapport_metrologie.FirstOrDefault(r => r.capteurID == capt.id && r.type_rapport_metrologie == "Interne");
+                    // si le rapport est null cela veut dire qu'il n'a pas de date de prochaine vérif interne pour ce capteur
+                    if(rapport != null)
                     {
-                        CodeCapteur = capt.code_capteur,
-                        DateDerniereVerif = rapport.date_verif_metrologie,
-                        DateProVerif = capt.date_prochaine_verif_int.Value,
-                        NomCapteur = capt.nom_capteur,
-                        Periodicite = periodicite,
-                        TypeVerif = rapport.type_rapport_metrologie
-                    };
+                        if (capt.periodicite_metrologie_int == 0.5)
+                            periodicite = "6 mois";
+                        else if (capt.periodicite_metrologie_int == 1)
+                            periodicite = "1 an";
+                        else
+                            periodicite = "2 ans";
 
-                    List.Add(captXVer);
+                        CapteurXVerif captXVer = new CapteurXVerif
+                        {
+                            CodeCapteur = capt.code_capteur,
+                            DateDerniereVerif = rapport.date_verif_metrologie,
+                            DateProVerif = capt.date_prochaine_verif_int.Value,
+                            NomCapteur = capt.nom_capteur,
+                            Periodicite = periodicite,
+                            TypeVerif = rapport.type_rapport_metrologie
+                        };
+
+                        List.Add(captXVer);
+                    }
                 }
                 if(capt.date_prochaine_verif_ext.Value < DateTime.Today.AddMonths(6)) // Si la prochaine vérif externe a lieu dans les prochains 6 mois alors sauvegarder
                 {
-                    rapport = contextDb.rapport_metrologie.First(r => r.capteurID == capt.id && r.type_rapport_metrologie == "Externe");
-
-                    if (capt.periodicite_metrologie_ext == 0.5)
-                        periodicite = "6 mois";
-                    else if (capt.periodicite_metrologie_ext == 1)
-                        periodicite = "1 an";
-                    else
-                        periodicite = "2 ans";
-
-                    CapteurXVerif captXVer = new CapteurXVerif
+                    rapport = contextDb.rapport_metrologie.FirstOrDefault(r => r.capteurID == capt.id && r.type_rapport_metrologie == "Externe");
+                    // si le rapport est null cela veut dire qu'il n'a pas de date de prochaine vérif externe pour ce capteur
+                    if (rapport != null)
                     {
-                        CodeCapteur = capt.code_capteur,
-                        DateDerniereVerif = rapport.date_verif_metrologie,
-                        DateProVerif = capt.date_prochaine_verif_ext.Value,
-                        NomCapteur = capt.nom_capteur,
-                        Periodicite = periodicite,
-                        TypeVerif = rapport.type_rapport_metrologie
-                    };
+                        if (capt.periodicite_metrologie_ext == 0.5)
+                            periodicite = "6 mois";
+                        else if (capt.periodicite_metrologie_ext == 1)
+                            periodicite = "1 an";
+                        else
+                            periodicite = "2 ans";
 
-                    List.Add(captXVer);
+                        CapteurXVerif captXVer = new CapteurXVerif
+                        {
+                            CodeCapteur = capt.code_capteur,
+                            DateDerniereVerif = rapport.date_verif_metrologie,
+                            DateProVerif = capt.date_prochaine_verif_ext.Value,
+                            NomCapteur = capt.nom_capteur,
+                            Periodicite = periodicite,
+                            TypeVerif = rapport.type_rapport_metrologie
+                        };
+
+                        List.Add(captXVer);
+                    }                   
                 }
             }        
             return List;

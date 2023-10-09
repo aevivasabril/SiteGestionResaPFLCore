@@ -87,6 +87,11 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                     ModelState.AddModelError("FacteurCorrectif", "Si le capteur est non conforme vous devez indiquer un facteur de correction");
                     goto ERR;
                 }
+                if(vm.DateProchaineVerifExt != null)
+                {
+                    ModelState.AddModelError("SelectPeriodIDExt", "Vous devez saisir une periodicité si vous avez une date pour la prochaine vérification exterieur");
+                    goto ERR;
+                }
                 // Ajouter l'information sur le capteur
                 // Calculer la periode métrologie INTERNE
                 if (vm.SelectPeriodIDint == 1)
@@ -105,9 +110,9 @@ namespace SiteGestionResaCore.Areas.Metrologie.Controllers
                 else
                     periodExt = 2;
 
-                bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerifInt.Value, vm.DateProchaineVerifExt.Value,
-                    vm.DateDernierVerifInt.GetValueOrDefault(), vm.DateDernierVerifExt.GetValueOrDefault(), periodInt, periodExt, vm.CapteurConforme.GetValueOrDefault(),
-                    vm.EmtCapteur.GetValueOrDefault(), vm.FacteurCorrectif.GetValueOrDefault(), vm.UniteMesure, vm.Commentaire);
+                bool IsOk = capteurDB.AjouterCapteur(vm.NomCapteur, vm.CodeCapteur, vm.SelectedPiloteID, vm.DateProchaineVerifInt.GetValueOrDefault(),
+                    vm.DateProchaineVerifExt.GetValueOrDefault(), vm.DateDernierVerifInt.GetValueOrDefault(), vm.DateDernierVerifExt.GetValueOrDefault(), periodInt, 
+                    periodExt, vm.CapteurConforme.GetValueOrDefault(), vm.EmtCapteur.GetValueOrDefault(), vm.FacteurCorrectif.GetValueOrDefault(), vm.UniteMesure, vm.Commentaire);
 
                 if(IsOk == false)
                 {

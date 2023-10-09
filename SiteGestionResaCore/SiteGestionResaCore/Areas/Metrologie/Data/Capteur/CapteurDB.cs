@@ -67,6 +67,16 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
                 DateDerniereVerifExt = DateDerniereVerifExt.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
                                                                             // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
             }
+            if (DateProchaineVerifInt.Year == 0001)
+            {
+                DateProchaineVerifInt = DateProchaineVerifInt.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
+                                                                            // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
+            }
+            if (DateProchaineVerifExt.Year == 0001)
+            {
+                DateProchaineVerifExt = DateProchaineVerifExt.AddYears(1999); // SQL accepte des dates à partir de l'année 1753 sinon on a une erreur,
+                                                                            // mais j'ajoute quelques années car sinon c'est chiant à choisir sur le calendrier à partir de 1700 et quelque
+            }
 
             capt = new capteur
             {

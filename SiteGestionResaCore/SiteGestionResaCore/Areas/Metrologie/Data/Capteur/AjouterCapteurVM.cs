@@ -37,9 +37,9 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         [Display(Name = "Date dernière métrologie Interne: ")]
         public DateTime? DateDernierVerifInt { get; set; }
 
-        [Required(ErrorMessage = "Saisir la date de la prochaine métrologie Externe")]
+        //[Required(ErrorMessage = "Saisir la date de la prochaine métrologie Externe")]
         [DataType(DataType.Date)]
-        [Display(Name = "Date prochaine métrologie externe (*): ")]
+        [Display(Name = "Date prochaine métrologie externe : ")]
         public DateTime? DateProchaineVerifExt { get; set; }
 
         [DataType(DataType.Date)]
@@ -57,9 +57,9 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
         /// <summary>
         /// Id d'un intervenant maintenance
         /// </summary>
-        [Required(ErrorMessage = "Sélectionnez la periodicité métrologie externe")]
-        [Display(Name = "Périodicité métrologie externe (*): ")]
-        [Range(1, 100, ErrorMessage = "Sélectionnez l'option dans la liste")]
+        //[Required(ErrorMessage = "Sélectionnez la periodicité métrologie externe")]
+        [Display(Name = "Périodicité métrologie externe: ")]
+        //[Range(1, 100, ErrorMessage = "Sélectionnez l'option dans la liste")]
         public int SelectPeriodIDExt { get; set; }
 
         public IEnumerable<SelectListItem> PeriodiciteItem { get; set; }
