@@ -19,12 +19,12 @@ namespace SiteGestionResaCore.Areas.User.Data.Profil
 
         public string ObtNomEquipe(int equipeID)
         {
-            return context.ld_equipes_stlo.First(e => e.id == equipeID).nom_equipe;
+            return context.ld_equipes_stlo.FirstOrDefault(e => e.id == equipeID).nom_equipe;
         }
 
         public string ObtNomOrganisme(int orgID)
         {
-            return context.organisme.First(o => o.id == orgID).nom_organisme;
+            return context.organisme.FirstOrDefault(o => o.id == orgID).nom_organisme;
         }
 
         public List<EnquetesNonReponduesXUsr> ObtListEnquetes(utilisateur usr)
