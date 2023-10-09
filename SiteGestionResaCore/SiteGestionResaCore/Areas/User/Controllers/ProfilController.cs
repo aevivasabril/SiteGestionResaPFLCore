@@ -32,8 +32,24 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             ProfilUserVM vm = new ProfilUserVM();
             vm.NomUsr = user.nom;
             vm.PrenomUsr = user.prenom;
-            vm.NomEquipe = profilDB.ObtNomEquipe(user.equipeID.Value);
-            vm.NomOrganisme = profilDB.ObtNomOrganisme(user.organismeID.Value);
+            if(user.equipeID != null)
+            {
+                vm.NomEquipe = profilDB.ObtNomEquipe(user.equipeID.Value);
+            }
+            else
+            {
+                vm.NomEquipe = null;
+            }
+
+            if (user.organismeID != null)
+            {
+                vm.NomOrganisme = profilDB.ObtNomOrganisme(user.organismeID.Value);
+            }
+            else
+            {
+                vm.NomOrganisme = null;
+            }
+
             vm.MailUsr = user.Email;
             vm.ListEnquetesNonRepondues = profilDB.ObtListEnquetes(user);
             return View("ProfilUser", vm);
