@@ -602,7 +602,7 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 261, nom = "Salle Saumurage", zoneID = 10, numGmao = "CHF018", mobile = false, type_activites = "13,14,15" }, new equipement { id = 262, nom = "Salle Pâtes molles moulage", zoneID = 5, numGmao = "LAB0048", mobile = false, type_activites = "13,14,15" },
                 new equipement { id = 263, nom = "Salle Pâtes molles tranchage", zoneID = 6, numGmao = "LAB0049", mobile = false, type_activites = "13,14,15" }, new equipement { id = 264, nom = "Salle Labo", zoneID = 11, numGmao = "LAB0017", mobile = false, type_activites = "15,18" },
                 new equipement { id = 265, nom = "Salle Pâtes préssées cuites", zoneID = 7, numGmao = "LAB0047", mobile = false, type_activites = "13,14,15" }, new equipement { id = 266, nom = "Salle Sthepan", zoneID = 9, numGmao = "LAB0046", mobile = false, type_activites = "13,14,15" },
-                new equipement { id = 267, nom = "Thermomix TM6", zoneID = 16, numGmao = "", mobile = true, type_activites = "9,13,14,15" }, new equipement {id = 268, nom = "Pilote UF forte concentration", zoneID = 8, numGmao = "PILOT0023", mobile = false, type_activites = "8"}
+                new equipement { id = 267, nom = "Thermomix TM6", zoneID = 16, numGmao = "", mobile = true, type_activites = "9,13,14,15" }, new equipement {id = 268, nom = "Pilote UF forte concentration", zoneID = 8, numGmao = "PILOT0023", mobile = false, nomTabPcVue="tab_UA_UFFC", type_activites = "8"}
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
