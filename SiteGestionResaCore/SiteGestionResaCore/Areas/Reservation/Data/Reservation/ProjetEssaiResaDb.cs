@@ -94,11 +94,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                     organismeOk = true;
                 }
                 else
-                {
-                    // Si l'organisme est "INRAE" alors vérifier l'appartenance à une même équipe
-                    if(usr.equipeID.Value == auteur.equipeID.Value)
-                        // Alors permettre la copie à la personne d'une même équipe
-                        equipeOk = true;
+                { // si l'organisme c'est l'inrae
+                    if(usr.equipeID != null)
+                    {
+                        // Si l'organisme est "INRAE" alors vérifier l'appartenance à une même équipe
+                        if (usr.equipeID.Value == auteur.equipeID.Value)
+                            // Alors permettre la copie à la personne d'une même équipe
+                            equipeOk = true;
+                    }                    
                 }
             }
             else
