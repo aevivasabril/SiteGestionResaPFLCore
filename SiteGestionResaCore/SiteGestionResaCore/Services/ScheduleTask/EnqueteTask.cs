@@ -41,6 +41,12 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
             bool isOK = enqueteTaskDB.AreEnquetesCreated();
 
+            #region Changement d'équipe pour les utilisateurs : SMCF, ISF et PSM vers PSF (à faire une fois et après à supprimer)
+
+            bool isOk = enqueteTaskDB.ChangerEquipeUser();
+
+            #endregion
+
             #endregion
 
             #region Reperer les enquetes dont l'envoi se fait pour la première fois
