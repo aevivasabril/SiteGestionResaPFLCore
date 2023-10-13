@@ -299,5 +299,19 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
                 logger.LogError(e, "Problème requete pour retirer les droits LogisticMaint");
             }
         }
+
+        public void ChangerEquipeUser()
+        {
+            var listUsr = context.Users.ToList().Distinct();
+
+            foreach (var usr in listUsr)
+            {
+                if (usr.equipeID == 3 || usr.equipeID == 4 || usr.equipeID == 5) // les utilisateurs dont l'équipe était PSM, ISF ou SMCF
+                {
+                    usr.equipeID = 8; //changement d'équipe pour les rajouter dans l'équipe PSF
+                    context.SaveChanges();
+                }
+            }
+        }
     }
 }

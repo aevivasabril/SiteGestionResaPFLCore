@@ -179,20 +179,5 @@ namespace SiteGestionResaCore.Services.ScheduleTask
             resaDb.SaveChanges();
         }
 
-        public bool ChangerEquipeUser()
-        {
-            bool IsOk = false;
-            var listUsr = resaDb.Users.ToList().Distinct();
-
-            foreach(var usr in listUsr)
-            {
-                if(usr.equipeID == '3' || usr.equipeID == '4' || usr.equipeID == '5') // les utilisateurs dont l'équipe était PSM, ISF ou SMCF
-                {
-                    usr.equipeID = 8; //changement d'équipe pour les rajouter dans l'équipe PSF
-                    resaDb.SaveChanges();
-                }
-            }
-            return IsOk;
-        }
     }
 }

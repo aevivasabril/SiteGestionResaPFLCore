@@ -537,6 +537,25 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             return View("GestionUtilisateurs", vm);
         }
 
+        public IActionResult MajEquipes()
+        {         
+            try 
+            {
+                EquipeResaDb.ChangerEquipeUser();
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Migration vers l'équipe PSF OK";
+            }
+            catch(Exception e)
+            {
+                ViewBag.AfficherMessage = true;
+                ViewBag.Message = "Migration vers l'équipe PSF KO: " + e.ToString();
+            }
+
+            // Récupérer la session "GestionUsersViewModel"
+            GestionUsersViewModel vm = HttpContext.GetFromSession<GestionUsersViewModel>("GestionUsersViewModel");
+            return View("GestionUtilisateurs", vm);
+        }
+
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

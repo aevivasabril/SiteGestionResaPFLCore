@@ -26,6 +26,5 @@ namespace SiteGestionResaCore.Services.ScheduleTask
 
         void UpdateDateEnvoiEnqueteManuel(enquete enquete);
 
-        bool ChangerEquipeUser();
     }
 }

@@ -42,5 +42,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
         Task RemoveAdmDonneesUsr(int id);
 
+        void ChangerEquipeUser();
+
     }
 }
