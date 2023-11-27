@@ -137,11 +137,14 @@ namespace SiteGestionResaCore.Areas.User.Data.ResasUser
                 var resas = resaDB.reservation_projet.Where(r => r.essaiID == essai.id).ToList();
 
                 // Retrouver la date la plus recente des réservations
-                var dateInf = resas.OrderBy(r => r.date_debut).ToList();                
-                
-                TimeSpan diff = DateTime.Today - dateInf[0].date_debut;
-                // Il faut que l'utilisateur puisse modifier la réservation 2 jours après début de l'essai s'il a un pb d'approvissionement
-                if (diff.Days <= 2)  // 
+                //var dateInf = resas.OrderBy(r => r.date_debut).ToList();
+                // Retrouver la date fin la plus ancienne des réservations
+                var dateInf = resas.OrderByDescending(r => r.date_fin).ToList(); 
+
+                TimeSpan diff = DateTime.Today - dateInf[0].date_fin;
+                // Il faut que l'utilisateur puisse modifier la réservation 15 jours (pour avoir la vrai utilisation)
+                // après début de l'essai s'il a un pb d'approvissionement ou en anticipant un problème
+                if (diff.Days <= 15)  // 
                     return true;
                 else
                     return false;
