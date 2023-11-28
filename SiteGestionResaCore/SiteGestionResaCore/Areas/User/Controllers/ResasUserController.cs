@@ -580,11 +580,11 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                             ModelState.AddModelError("", "Vous ne pouvez pas modifier les dates réservation équipement à moins d'un jour du début d'utilisation!");
                             return View("ModificationDates", ModifDatesVM);
                         }
-                        if (diff.Days < 0)
+                        /*if (diff.Days < 0)
                         {
                             ModelState.AddModelError("", "Vous ne pouvez pas ajouter un équipement à votre réservation à une date antérieur!");
                             return View("ModificationDates", ModifDatesVM);
-                        }
+                        }*/
                     }
                     
                     #endregion
