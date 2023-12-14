@@ -306,7 +306,7 @@ namespace SiteGestionResaCore.Areas.Equipe.Data
 
             foreach (var usr in listUsr)
             {
-                if (usr.equipeID == 3 || usr.equipeID == 4 || usr.equipeID == 5) // les utilisateurs dont l'équipe était PSM, ISF ou SMCF
+                if (usr.equipeID == 3 || usr.equipeID == 4 || usr.equipeID == 5 || usr.equipeID == 6) // les utilisateurs dont l'équipe était PSM, ISF, SMCF ou PFL
                 {
                     usr.equipeID = 8; //changement d'équipe pour les rajouter dans l'équipe PSF
                     context.SaveChanges();
