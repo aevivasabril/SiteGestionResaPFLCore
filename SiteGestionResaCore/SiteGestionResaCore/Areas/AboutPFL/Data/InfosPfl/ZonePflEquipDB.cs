@@ -33,7 +33,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data
             //bool cheminFicheMat = false;
             //bool cheminFicheMet = false;
             // Liste des équipements de la zone
-            var query = context.equipement.Where(e => e.zoneID == idZone).ToList();
+            var query = context.equipement.Where(e => e.zoneID == idZone && e.equip_delete != true).ToList();
 
             foreach (var equip in query)
             {

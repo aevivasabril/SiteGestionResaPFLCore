@@ -35,7 +35,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
         public List<equipement> ListeEquipements(int ZoneID)
         {
-            return resaDB.equipement.Where(e=>e.zoneID == ZoneID).Distinct().ToList();
+            return resaDB.equipement.Where(e=>e.zoneID == ZoneID && e.equip_delete != true).Distinct().ToList();
         }
 
         public ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup)

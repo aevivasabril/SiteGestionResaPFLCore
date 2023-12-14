@@ -141,7 +141,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                                 && equip.zoneID == idZone && essa.resa_refuse != true && essa.resa_supprime != true && resa.essaiID == essa.id
                                 select resa).Distinct().ToList().GroupBy(r=>r.equipementID);
 
-            var equipements = resaDB.equipement.Where(e=>e.zoneID == idZone).Distinct().ToList();
+            var equipements = resaDB.equipement.Where(e=>e.zoneID == idZone && e.equip_delete != true).Distinct().ToList();
 
             foreach(var equip in equipements)
             {
