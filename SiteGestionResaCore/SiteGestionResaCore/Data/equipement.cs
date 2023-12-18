@@ -22,6 +22,7 @@ namespace SiteGestionResaCore.Data
         public bool? mobile { get; set; }
         public string? nomTabPcVue { get; set; }
         public string type_activites { get; set; }
+        public bool? equip_delete { get; set; }
 
         public virtual zone zone { get; set; }
         public virtual ICollection<reservation_projet> reservation_projet { get; set; }
