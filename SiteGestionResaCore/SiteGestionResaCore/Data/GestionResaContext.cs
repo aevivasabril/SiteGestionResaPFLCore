@@ -628,7 +628,7 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_type_projet { id = 3, nom_type_projet = "Formation/Stage" }, new ld_type_projet { id = 4 , nom_type_projet = "Industriel (cellules hébergés"} });
 
             modelBuilder.Entity<ld_equipes_stlo>().HasData(new ld_equipes_stlo[] { new ld_equipes_stlo { id = 1, nom_equipe = "Microbio" }, new ld_equipes_stlo { id = 2, nom_equipe = "BN" },               
-                new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}, new ld_equipes_stlo { id = 8, nom_equipe = "PSF" }  });
+                /*new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, */new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}, new ld_equipes_stlo { id = 8, nom_equipe = "PSF" }  });
 
             modelBuilder.Entity<ld_type_maintenance>().HasData(new ld_type_maintenance[] { new ld_type_maintenance { id = 1, nom_type_maintenance = "Maintenance curative (Dépannage avec blocage de zone)" },
                 new ld_type_maintenance { id = 2, nom_type_maintenance = "Maintenance préventive (Interne avec blocage de zone)" }, new ld_type_maintenance { id = 3, nom_type_maintenance = "Maintenance préventive (Externe avec blocage de zone)" },
