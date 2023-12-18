@@ -233,6 +233,44 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Controllers
             }
         }
 
+        /// <summary>
+        /// Demande de suppression d'une fiche
+        /// </summary>
+        /// <param name="id">id fiche</param>
+        /// <returns></returns>
+        public IActionResult SupprimerEquip(int? id)
+        {
+            // Récupérer la session "EquipsXModifVM"
+            EquipsXModifVM vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+            vm.IdEquipement = id.Value;
+            ViewBag.ModalSuppEquip = "show";
+            this.HttpContext.AddToSession("EquipsXModifVM", vm);
+            return View("EquipsXModif", vm);
+        }
+
+        [HttpPost]
+        public IActionResult ConfSuppEquip(int? id)
+        {
+            // Récupérer la session "EquipsXModifVM"
+            EquipsXModifVM vm = HttpContext.GetFromSession<EquipsXModifVM>("EquipsXModifVM");
+
+            // supprimer l'équipement en mettant la variable bool equip_delete à true
+            bool isOk = equipsToModifDB.SupprimerEquipement(id.Value);
+            if (!isOk)
+            {
+                ModelState.AddModelError("", "Une erreur est survenu lors de la suppression de l'équipement");
+                vm.ListeEquipements = equipsToModifDB.ListeEquipementsXZone(vm.IdZone);
+                this.HttpContext.AddToSession("EquipsXModifVM", vm);
+                return View("EquipsXModif", vm);
+            }
+            else
+            {
+                vm.ListeEquipements = equipsToModifDB.ListeEquipementsXZone(vm.IdZone);
+                this.HttpContext.AddToSession("EquipsXModifVM", vm);
+                return View("EquipsXModif", vm);
+            }
+        }
+
         /*public IActionResult ModifNumGMAO(int? id)
         {
             // Récupérer la session "EquipsXModifVM"

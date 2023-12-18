@@ -26,7 +26,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
             List<InfosEquipement> List = new List<InfosEquipement>();
 
             // Liste des équipements de la zone
-            var query = context.equipement.Where(e => e.zoneID == idZone).ToList();
+            var query = context.equipement.Where(e => e.zoneID == idZone && e.equip_delete != true).ToList();
 
             foreach (var equip in query)
             {
@@ -132,6 +132,24 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
         public string ObtNomEquipement(int IdEquipement)
         {
             return context.equipement.First(e => e.id == IdEquipement).nom;
+        }
+
+        public bool SupprimerEquipement(int IdEquipement)
+        {
+            bool IsOk = false;
+            equipement equip = context.equipement.First(e => e.id == IdEquipement);
+            try
+            {
+                equip.equip_delete = true;
+                context.SaveChanges();
+                IsOk = true;
+            }
+            catch (Exception e)
+            {
+                IsOk = false;
+                logger.LogError("", "Problème pour supprimer l'équipement: " + equip.nom + ". Erreur: " + e.ToString());
+            }
+            return IsOk;
         }
 
         /*public bool ModifierNumGMAO(string numGmao, int idEquipement)

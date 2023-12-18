@@ -50,7 +50,7 @@ namespace SiteGestionResaCore.Models
             List<equipement> List = new List<equipement>();
 
             var query = (from equip in context.equipement
-                         where equip.zoneID == idZone
+                         where equip.zoneID == idZone && equip.equip_delete != true
                          select equip).ToArray();
 
             foreach (var y in query)

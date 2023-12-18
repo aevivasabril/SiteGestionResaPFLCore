@@ -12,6 +12,7 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.ModifEquip
         bool SupprimerFicheMat(int IdFiche);
         bool ModifierFicheMat(int IdFiche, byte[] Contenu, string nomDoc);
         string ObtNomEquipement(int IdEquipement);
+        bool SupprimerEquipement(int IdEquipement);
         //bool ModifierNumGMAO(string numGmao, int IdEquipement);
     }
 }

@@ -28,7 +28,11 @@
             {
                 <a class="btn btn-secondary" asp-action="Ajouterfiche" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Ajouter Fiche Materiel</a>
             }
-            @*<a class="btn btn-secondary" asp-action="ModifNumGMAO" asp-controller="ModifEquip" asp-area="AboutPFL" asp-route-id="@Model.ListeEquipements[i].IdEquipement">Modifier Num GMAO</a>*@
+
+            <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Supprimer équipement" asp-action="SupprimerEquip" asp-area="AboutPFL" asp-controller="ModifEquip" asp-route-id="@Model.ListeEquipements[i].IdEquipement">
+                <span class="fas fa-trash"></span>
+            </a>
+
         </div>
     </div>
     <br />
@@ -39,7 +43,7 @@
 </div>
 
 
-<form asp-area="AboutPFL" asp-controller="ModifEquip" asp-action="ValidAjoutFiche" asp-route-id="@Model.IdEquipement" method="post" enctype="multipart/form-data"> 
+<form asp-area="AboutPFL" asp-controller="ModifEquip" asp-action="ValidAjoutFiche" asp-route-id="@Model.IdEquipement" method="post" enctype="multipart/form-data">
     <!-- Modal pop-up pour ajout d'un nouveau document AQ-->
     <div class="modal fade" id="AddFicheMat" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
         <div class="modal-dialog navbar-inra" role="document">
@@ -159,6 +163,31 @@
     </div>
 </form>
 
+<form asp-action="ConfSuppEquip" asp-controller="ModifEquip" asp-route-id="@Model.IdEquipement" asp-area="AboutPFL" method="post">
+    <!-- Modal pop-up d'info-->
+    <div class="modal fade" id="suppEquip" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
+        <div class="modal-dialog navbar-inra" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Suppression équipement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modalcontent">
+                    <p class="font-weight-bold text-center">
+                        Confirmez-vous la suppression de cet équipement?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="submit" class="btn btn-secondary" data-dismiss="modal">Ignorer</button>
+                    <input type="submit" class="btn btn-primary" value="Valider" />
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 @section Scripts {
     @*script pour afficher le popoup de confirmation de demande *@
 <script>
@@ -179,11 +208,16 @@
             {
                 ViewBag.ModifNumGmao = "hide";
             }
+            if (ViewBag.ModalSuppEquip == null)
+            {
+                ViewBag.ModalSuppEquip = "hide";
+            }
         }
         $('#AddFicheMat').modal('@ViewBag.ModalAddingFic');
         $('#suppFiche').modal('@ViewBag.ModalConfirSupp');
         $('#ModifFicheMat').modal('@ViewBag.ModalModifFiche');
         $('#ModifNumGmao').modal('@ViewBag.ModifNumGmao');
+        $('#suppEquip').modal('@ViewBag.ModalSuppEquip');
 
 </script>
 }

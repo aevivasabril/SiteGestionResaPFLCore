@@ -48,7 +48,7 @@ namespace SiteGestionResaCore.Areas.Metrologie.Data.Capteur
 
         public List<equipement> ObtListEquipements()
         {
-            return contextDb.equipement.ToList();
+            return contextDb.equipement.Where(e => e.equip_delete != true).ToList();
         }
 
         public bool AjouterCapteur(string NomCapteur, string CodeCapteur, int SelectedPiloteID, DateTime DateProchaineVerifInt, DateTime DateProchaineVerifExt,
