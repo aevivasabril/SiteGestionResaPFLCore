@@ -81,14 +81,18 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             var listIntervCommun = context.resa_maint_equip_adjacent.Where(r => r.maintenanceID == IdMaint).ToList();
 
             // Voir si l'opération de maintenance est déjà fini
-            var OpMaint = context.maintenance.First(m => m.id == IdMaint);
+            /*var OpMaint = context.maintenance.First(m => m.id == IdMaint);
             if (OpMaint.maintenance_finie == false || OpMaint.maintenance_finie == null)
                 finie = false;
             else
-                finie = true;
+                finie = true;*/
 
             foreach (var maint in listIntervCommun)
             {
+                if (maint.interv_fini == false || maint.interv_fini == null)
+                    finie = false;
+                else
+                    finie = true;
                 EquipCommunXInterv equipCommunXInterv = new EquipCommunXInterv
                 {
                     DateDebut = maint.date_debut,
@@ -116,14 +120,18 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             var listMaintPfl = context.reservation_maintenance.Where(r => r.maintenanceID == IdMaint).ToList();
 
             // Voir si l'opération de maintenance est déjà fini
-            var OpMaint = context.maintenance.First(m => m.id == IdMaint);
+            /*var OpMaint = context.maintenance.First(m => m.id == IdMaint);
             if (OpMaint.maintenance_finie == false || OpMaint.maintenance_finie == null)
                 finie = false;
             else
-                finie = true;
+                finie = true;*/
 
             foreach (var maint in listMaintPfl)
-            {                   
+            {
+                if (maint.interv_fini == false || maint.interv_fini == null)
+                    finie = false;
+                else
+                    finie = true;
                 EquipPflXIntervention equipPflXIntervention = new EquipPflXIntervention 
                 {
                     DateDebut = maint.date_debut,
@@ -556,12 +564,18 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             return interOk;
         }
 
-        public void UpdateStatusMaintenanceFinie(int idMaint)
+        public void UpdateStatusMaintenancePFLFinie(int idMaint)
         {
-            var resa = context.maintenance.First(r => r.id == idMaint);
-            resa.maintenance_finie = true;
+            var resa = context.reservation_maintenance.First(r => r.id == idMaint);
+            resa.interv_fini = true;
             context.SaveChanges();
         }
 
+        public void UpdateStatusMaintenanceCommFinie(int idMaint)
+        {
+            var resa = context.resa_maint_equip_adjacent.First(r => r.id == idMaint);
+            resa.interv_fini = true;
+            context.SaveChanges();
+        }
     }
 }

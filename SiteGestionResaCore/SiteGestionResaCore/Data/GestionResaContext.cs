@@ -319,6 +319,8 @@ namespace SiteGestionResaCore.Data.Data
 
                 entity.Property(e => e.date_fin).HasColumnType("datetime");
 
+                entity.Property(e => e.actions_realisees).IsUnicode(false);
+
                 entity.HasOne(d => d.equipement)
                     .WithMany(p => p.reservation_maintenance)
                     .HasForeignKey(d => d.equipementID)
@@ -341,6 +343,8 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.nom_equipement).IsUnicode(false);
 
                 entity.Property(e => e.zone_affectee).IsUnicode(false);
+
+                entity.Property(e => e.actions_realisees).IsUnicode(false);
 
                 entity.HasOne(d => d.maintenance)
                     .WithMany(p => p.resa_maint_equip_adjacent)

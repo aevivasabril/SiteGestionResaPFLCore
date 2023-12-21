@@ -13,6 +13,8 @@ namespace SiteGestionResaCore.Data
         public DateTime date_debut { get; set; }
         public DateTime date_fin { get; set; }
         public string zone_affectee { get; set; }
+        public bool? interv_fini { get; set; }
+        public string? actions_realisees { get; set; }
 
         public virtual maintenance maintenance { get; set; }
     }

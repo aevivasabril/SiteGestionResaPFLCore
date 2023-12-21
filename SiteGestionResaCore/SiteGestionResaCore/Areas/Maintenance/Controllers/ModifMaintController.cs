@@ -232,7 +232,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             maintenance maint = modifMaintDb.ObtenirMaintenanceXInterv(id);
 
             // Indiquer sur la base de données que l'intervention est fini
-            modifMaintDb.UpdateStatusMaintenanceFinie(maint.id);
+            modifMaintDb.UpdateStatusMaintenanceCommFinie(id);
 
             //resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
@@ -714,7 +714,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
 
             // Indiquer sur la base de données que l'intervention est fini
-            modifMaintDb.UpdateStatusMaintenanceFinie(maint.id);
+            modifMaintDb.UpdateStatusMaintenancePFLFinie(id);
 
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
             if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)") == true)

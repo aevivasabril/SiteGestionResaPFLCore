@@ -564,7 +564,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 else
                     supprimee = "non";
 
-                if (maint.maintenance_finie.HasValue == true)
+                if (m.interv_fini.HasValue == true)
                     terminee = "oui";
                 else
                     terminee = "non";
@@ -610,7 +610,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
                 else
                     supprimee = "false";
 
-                if (maint.maintenance_finie.HasValue == true)
+                if (m.interv_fini.HasValue == true)
                     terminee = "oui";
                 else
                     terminee = "false";

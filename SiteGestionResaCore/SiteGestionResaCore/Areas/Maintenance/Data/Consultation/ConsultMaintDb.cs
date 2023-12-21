@@ -38,7 +38,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if(maint.maintenance_supprime != true && maint.maintenance_finie != true)
+                if(maint.maintenance_supprime != true && inter.interv_fini != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -82,7 +82,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if(maint.maintenance_supprime != true && maint.maintenance_finie != true)
+                if(maint.maintenance_supprime != true && inter.interv_fini != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -124,7 +124,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime != true && maint.maintenance_finie == true)
+                if (maint.maintenance_supprime != true && inter.interv_fini == true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -167,7 +167,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime != true && maint.maintenance_finie == true)
+                if (maint.maintenance_supprime != true && inter.interv_fini == true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -210,7 +210,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime == true && maint.maintenance_finie != true)
+                if (maint.maintenance_supprime == true && inter.interv_fini != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -256,7 +256,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime == true && maint.maintenance_finie != true)
+                if (maint.maintenance_supprime == true && inter.interv_fini != true)
                 {
                     if (maint.intervenant_externe != false)
                     {
