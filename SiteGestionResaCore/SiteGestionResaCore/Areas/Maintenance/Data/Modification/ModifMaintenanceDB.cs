@@ -564,17 +564,19 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
             return interOk;
         }
 
-        public void UpdateStatusMaintenancePFLFinie(int idMaint)
+        public void UpdateStatusMaintenancePFLFinie(string action, int idMaint)
         {
             var resa = context.reservation_maintenance.First(r => r.id == idMaint);
             resa.interv_fini = true;
+            resa.actions_realisees = action;
             context.SaveChanges();
         }
 
-        public void UpdateStatusMaintenanceCommFinie(int idMaint)
+        public void UpdateStatusMaintenanceCommFinie(string action, int idMaint)
         {
             var resa = context.resa_maint_equip_adjacent.First(r => r.id == idMaint);
             resa.interv_fini = true;
+            resa.actions_realisees = action;
             context.SaveChanges();
         }
     }

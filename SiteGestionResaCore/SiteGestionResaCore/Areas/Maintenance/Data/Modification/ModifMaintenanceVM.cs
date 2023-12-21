@@ -47,6 +47,9 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         [Display(Name = "Créneau fin")]
         public string DatePickerFin_Matin { get; set; }
 
+        [Required(ErrorMessage = "Veuillez décrire les actions réalisées")]
+        public string ActionsMaintenance { get; set; }
+
         #region Ouvrir/ Fermer la vue suite à la recherche d'une opération
 
         public string Ouvert = "";

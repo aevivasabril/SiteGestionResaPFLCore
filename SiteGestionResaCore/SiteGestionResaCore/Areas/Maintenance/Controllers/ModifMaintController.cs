@@ -220,7 +220,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
-        public async Task<IActionResult> ConfirmIntervComAsync(int id)
+        public async Task<IActionResult> ConfirmIntervComAsync(ModifMaintenanceVM vm, int id)
         {
             bool success = false;
             var retryCount = 5;
@@ -230,9 +230,16 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXInterv(id);
+            ModelState.Remove("DateFin");
+            ModelState.Remove("DatePickerFin_Matin");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.modalValidPfl = "show";
+                return View("ModificationIntervention", Model);
+            }
 
             // Indiquer sur la base de données que l'intervention est fini
-            modifMaintDb.UpdateStatusMaintenanceCommFinie(id);
+            modifMaintDb.UpdateStatusMaintenanceCommFinie(vm.ActionsMaintenance, id);
 
             //resa_maint_equip_adjacent resaCommun = modifMaintDb.ObtenirIntervEquiComm(id);
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
@@ -332,7 +339,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
-
+            ModelState.Remove("ActionsMaintenance");
             // Si la personne n'a pas choisi de date ou créneau
             if (ModelState.IsValid == false) // la date choisie doit etre superieure à la date d'aujourd'hui
             {
@@ -703,7 +710,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
-        public async Task<IActionResult> ConfirmIntervPflAsync(int id)
+        public async Task<IActionResult> ConfirmIntervPflAsync(ModifMaintenanceVM vm, int id)
         {
             string MsgUser = "";
             bool success = false;
@@ -712,9 +719,16 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             maintenance maint = modifMaintDb.ObtenirMaintenanceXIntervPFl(id);
             // Récupérer la session VM
             ModifMaintenanceVM Model = HttpContext.GetFromSession<ModifMaintenanceVM>("ModifMaintVM");
+            ModelState.Remove("DateFin");
+            ModelState.Remove("DatePickerFin_Matin");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.modalValidPfl = "show";
+                return View("ModificationIntervention", Model);
+            }
 
             // Indiquer sur la base de données que l'intervention est fini
-            modifMaintDb.UpdateStatusMaintenancePFLFinie(id);
+            modifMaintDb.UpdateStatusMaintenancePFLFinie(vm.ActionsMaintenance, id);
 
             // si l'intervention est "equipement en panne" alors ne pas envoyer de mail! car après une intervention curative s'enchaine
             if (maint.type_maintenance.Equals("Equipement en panne (blocage équipement)") == true)

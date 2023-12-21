@@ -230,7 +230,7 @@
 <form asp-action="ConfirmIntervCom" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervCom" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ValidFinIntervCom" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-        <div class="modal-dialog modal-sm navbar-inra">
+        <div class="modal-dialog navbar-inra">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-center" id="staticBackdropLabel">Intervention commun Finie </h5>
@@ -240,9 +240,12 @@
                 </div>
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold">
-                        L'intervention sera clôturée définitivement
-                        Voulez-vous continuer?
+                        Décrivez les actions de maintenance réalisées:
                     </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.ActionsMaintenance, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.ActionsMaintenance, "", new { @class = "text-danger" })
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
@@ -302,7 +305,7 @@
 <form asp-action="ConfirmIntervPfl" asp-controller="ModifMaint" asp-area="Maintenance" asp-route-id="@Model.IdIntervPfl" method="post">
     <!-- Modal pop-up d'info-->
     <div class="modal fade" id="ValidFinIntervPfl" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
-        <div class="modal-dialog modal-sm navbar-inra">
+        <div class="modal-dialog navbar-inra">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-center" id="staticBackdropLabel">Intervention PFL Finie </h5>
@@ -312,9 +315,12 @@
                 </div>
                 <div class="modal-body" id="modalcontent">
                     <p class="font-weight-bold">
-                        L'intervention sera clôturée définitivement
-                        Voulez-vous continuer?
+                        Décrivez les actions de maintenance réalisées sur cet équipement:  
                     </p>
+                    <div class="form-group">
+                        @Html.TextAreaFor(m => m.ActionsMaintenance, new { @class = "col-md-12 form-control" })
+                        @Html.ValidationMessageFor(m => m.ActionsMaintenance, "", new { @class = "text-danger" })
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>

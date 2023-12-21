@@ -32,7 +32,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Modification
         bool SupprimerReservation(int IDresa);
         bool VerifDisponibilitEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
         bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateFin, reservation_maintenance interv);
-        void UpdateStatusMaintenancePFLFinie(int idMaint);
-        void UpdateStatusMaintenanceCommFinie(int idMaint);
+        void UpdateStatusMaintenancePFLFinie(string action, int idMaint);
+        void UpdateStatusMaintenanceCommFinie(string action, int idMaint);
     }
 }
