@@ -101,7 +101,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 
             // Obtenir les infos maintenance
             maintenance maint = modifMaintDb.ObtenirMaintenanceXInterv(id);
-
+            ModelState.Remove("ActionsMaintenance");
             // Si la personne n'a pas choisi de date ou créneau
             if (ModelState.IsValid == false )
             {
