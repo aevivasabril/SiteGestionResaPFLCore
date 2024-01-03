@@ -22,5 +22,6 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
         public DateTime DateSuppression { get; set; }
         public string RaisonSupp { get; set; }
         public bool MaintenanceFinie { get; set; }
+        public string ActionMainte { get; set; }
     }
 }

@@ -145,7 +145,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                         OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
                         TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
                         NomIntervExterne = NomIntervExt,
-                        NumGMAO = context.equipement.First(e => e.id == inter.equipementID).numGmao
+                        NumGMAO = context.equipement.First(e => e.id == inter.equipementID).numGmao,
+                        ActionMainte = inter.actions_realisees
                     };
                     ListPFLFinies.Add(info);
                 }
@@ -188,7 +189,8 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
                         ZoneAffecte = inter.zone_affectee,
                         OperateurPFL = context.Users.First(u => u.Id == context.maintenance.First(m => m.id == inter.maintenanceID).userID).Email,
                         TypeMaintenance = context.maintenance.First(m => m.id == inter.maintenanceID).type_maintenance,
-                        NomIntervExterne = NomIntervExt
+                        NomIntervExterne = NomIntervExt,
+                        ActionMainte = inter.actions_realisees
                     };
 
                     ListSansZoneFinies.Add(info);
