@@ -38,6 +38,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
         {
             PostEnqueteViewModel vm = new PostEnqueteViewModel(){ };
             vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
+            vm.ListEnquetesSansRpSix = postEnqueteDB.ObtEnquetesSansRpSix();
             return View("RecupNotesEnquete", vm);
         }
 
@@ -330,6 +331,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             ViewBag.AfficherMessage = true;
             PostEnqueteViewModel vm = new PostEnqueteViewModel() { };
             vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
+            vm.ListEnquetesSansRpSix = postEnqueteDB.ObtEnquetesSansRpSix();
             return View("RecupNotesEnquete", vm);
         }
 
@@ -358,6 +360,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             enquete.UpdateDateEnvoiEnqueteManuel(enq);
             PostEnqueteViewModel vm = new PostEnqueteViewModel() { };
             vm.ListEnquetesSansRp = postEnqueteDB.ObtEnquetesSansRp();
+            vm.ListEnquetesSansRpSix = postEnqueteDB.ObtEnquetesSansRpSix();
             return View("RecupNotesEnquete", vm);
         }
 

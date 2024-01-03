@@ -13,5 +13,6 @@ namespace SiteGestionResaCore.Areas.Enquete.Data.PostEnquete
         projet GetProjet(int IdProj);
         List<EnquetesSansReponse> ObtEnquetesSansRp();
         enquete GetEnqueteXEssai(int IdEssai);
+        List<EnquetesSansReponse> ObtEnquetesSansRpSix();
     }
 }
