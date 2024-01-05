@@ -17,6 +17,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
         public string DateSupp = "Date suppression";
         public string RaisonSupp = "Raison supression";
         public string MaintTermin = "Maintenance terminée?";
+        public string Action = "Action réalisée";
         public string NomEquip = "Nom équipement";
         public string DateDebut = "Date début";
         public string DateFin = "Date fin";
