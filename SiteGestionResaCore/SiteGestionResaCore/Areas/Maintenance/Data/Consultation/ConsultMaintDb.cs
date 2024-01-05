@@ -30,6 +30,29 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             List<InfosInterventions> ListPFL = new List<InfosInterventions>();
             string NomIntervExt = "";
 
+            // Bout de code pour mettre les operations "resa_maint_equip_adjacent" et "reservation_maintenance" en coherence avec la variable 'intervention_finie' du tableau "maintenance"
+            // maintenant chaque operation par équipement est finalisée ou pas donc independante de l'état général de la maintenance
+            // A EXECUTER UNE SEUL FOIS! 
+            /*List<maintenance> maintenances = context.maintenance.Where(m => m.maintenance_finie == true).Distinct().ToList();
+            foreach ( var maint in maintenances)
+            {
+                // obtenir les maintenances sur des équipements PFL et les mettre à jour
+                var interventions = context.reservation_maintenance.Where(m => m.maintenanceID == maint.id).Distinct().ToList();
+                foreach ( var oper in interventions)
+                {
+                    oper.interv_fini = true;
+                    oper.actions_realisees = "Auto: intervention fini";
+                    context.SaveChanges();
+                }
+
+                var interv_adjacentes = context.resa_maint_equip_adjacent.Where(r => r.maintenanceID == maint.id).Distinct().ToList();
+                foreach (var oper in interv_adjacentes)
+                {
+                    oper.interv_fini = true;
+                    oper.actions_realisees = "Auto: intervention fini";
+                    context.SaveChanges();
+                }
+            }*/
             // récupérer uniquement les interventions des 12 derniers mois
             DateTime DateSeuil = DateTime.Now.AddYears(-1);
 
@@ -212,7 +235,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime == true && inter.interv_fini != true)
+                if (maint.maintenance_supprime == true)
                 {
                     if (maint.intervenant_externe != false)
                     {
@@ -258,7 +281,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Data.Consultation
             {
                 maintenance maint = context.maintenance.First(m => m.id == inter.maintenanceID);
 
-                if (maint.maintenance_supprime == true && inter.interv_fini != true)
+                if (maint.maintenance_supprime == true)
                 {
                     if (maint.intervenant_externe != false)
                     {
