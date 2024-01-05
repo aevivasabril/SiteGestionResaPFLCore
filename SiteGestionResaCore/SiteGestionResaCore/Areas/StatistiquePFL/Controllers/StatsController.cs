@@ -526,7 +526,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                     {
                         // Déterminer les headers tableau
                         var headers = new string[] { headersCsv.CodeMaint, headersCsv.TypeMainte, headersCsv.MailOper, headersCsv.IntervExt, headersCsv.NomIntervExt, headersCsv.DescripOpe,
-                                        headersCsv.MaintSupp, headersCsv.DateSupp, headersCsv.RaisonSupp, headersCsv.MaintTermin, headersCsv.NomEquip, headersCsv.DateDebut,
+                                        headersCsv.MaintSupp, headersCsv.DateSupp, headersCsv.RaisonSupp, headersCsv.MaintTermin, headersCsv.Action ,headersCsv.NomEquip, headersCsv.DateDebut,
                                         headersCsv.DateFin, headersCsv.ZoneAffecte};
 
                         foreach (var col in headers)
@@ -559,6 +559,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                             csv.Append(resa.RaisonSuppression);
                             csv.Append(";");
                             csv.Append(resa.MaintTerminee);
+                            csv.Append(";");
+                            csv.Append(resa.ActionRealisee);
                             csv.Append(";");
                             csv.Append(resa.NomEquipement);
                             csv.Append(";");

@@ -17,6 +17,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats
         public DateTime? DateSuppression { get; set; }
         public string RaisonSuppression { get; set; }
         public string MaintTerminee { get; set; }
+        public string ActionRealisee { get; set; }
 
         public string NomEquipement { get; set; }
         public DateTime DateDebut { get; set; }
