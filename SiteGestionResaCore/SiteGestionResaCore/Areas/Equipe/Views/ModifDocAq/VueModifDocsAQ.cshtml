@@ -7,7 +7,7 @@
 <br />
 <h2 class="text-center">Ajoutez des nouveaux documents et rubriques</h2>
 <h6 class="text-center">
-    Mettez à disposition des utilisateurs un nouveau document AQ.
+    Mettez à disposition des utilisateurs des documents PFL utiles
 </h6>
 <br />
 <div class="form-group text-center">
@@ -17,7 +17,7 @@
 <hr />
 <div class="row">
     <div class="col-md-12 text-center">
-        <h5 class="text-center"><strong>Documents qualité Plate-forme LAIT</strong></h5>
+        <h5 class="text-center"><strong>Documents utiles Plate-forme LAIT</strong></h5>
         <h6 class="text-center">Modifiez ou supprimmez les documents ci-dessous</h6>
     </div>
 </div>
@@ -63,7 +63,7 @@
                         <input type="text" autocomplete="off" placeholder="Description du fichier" name="description" required />
                     </div>
                     <br />
-                    <p>Donnez un nom à la rubrique. Ex: <strong>Certificat ISO 9001...</strong></p>
+                    <p>Donnez un nom à la rubrique. Ex: <strong>Fiche projet...</strong></p>
                     <div class="form-group">
                         @Html.TextAreaFor(m => m.NomRubriqueDoc, new { @class = "col-md-12 form-control" })
                         @Html.ValidationMessageFor(m => m.NomRubriqueDoc, "", new { @class = "text-danger" })
