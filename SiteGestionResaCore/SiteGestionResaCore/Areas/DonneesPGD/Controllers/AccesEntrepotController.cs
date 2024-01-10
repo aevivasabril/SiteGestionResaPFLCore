@@ -230,11 +230,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
                         byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(d.nom_document);
                         var nomDoc = System.Text.Encoding.ASCII.GetString(bytesP);
-                        string nomDocSimpl = accesEntrepotDB.TraiterChaineCaract(nomDoc, 15);
+                        //string nomDocSimpl = accesEntrepotDB.TraiterChaineCaract(nomDoc, 15);
                         #endregion
 
                         // Recréer le fichier et l'ajouter dans le dossier "activite"
-                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDocSimpl, d.contenu_document);
+                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDoc, d.contenu_document);
                     }
                 }                     
             }
@@ -456,11 +456,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
                         byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(d.nom_document);
                         var nomDoc = System.Text.Encoding.ASCII.GetString(bytesP);
-                        string nomDocSimpl = accesEntrepotDB.TraiterChaineCaract(nomDoc, 15);
+                        //string nomDocSimpl = accesEntrepotDB.TraiterChaineCaract(nomDoc, 15);
                         #endregion
 
                         // Recréer le fichier et l'ajouter dans le dossier "activite"
-                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDocSimpl, d.contenu_document);
+                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDoc, d.contenu_document);
                     }
                 }
             }
