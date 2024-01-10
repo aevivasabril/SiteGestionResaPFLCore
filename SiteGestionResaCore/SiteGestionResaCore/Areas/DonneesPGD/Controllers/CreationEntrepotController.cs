@@ -351,7 +351,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                                         }
                                         csv.AppendLine();
                                     }
-                                    var sousNom = accesEntrepotDB.TraiterChaineCaract(Donnees.NomEquipement, 20);
+                                    var sousNom = accesEntrepotDB.TraiterChaineCaract(Donnees.NomEquipement, 15);
                                     titreCsv = "AutoPcVue_" + sousNom + "-" + Donnees.NumGmao + ".csv";
 
                                     var donneesPcVue = File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
@@ -389,7 +389,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                         organisme orgProj = entrepotDB.ObtenirOrgXProj(proj.organismeID.Value);
 
                         StringBuilder txt = new StringBuilder();
-                        string titreTxt = "Informations_Essai" + "_" + essai.id + ".txt";
+                        string titreTxt = "Infos_Essai" + "_" + essai.id + ".txt";
 
                         #region ecriture dans le fichier
                         txt.Append("-------INFOS PROJET-------");

@@ -140,8 +140,8 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             #endregion
 
             // Limiter la quantité des caracteres 
-            titreProj = accesEntrepotDB.TraiterChaineCaract(projet.titre_projet, 30);
-            string dossNameProj = "projet-" + titreProj + "-Num-" + projet.num_projet; // Supprimer les espaces et supprimer les accents!
+            titreProj = accesEntrepotDB.TraiterChaineCaract(projet.titre_projet, 15);
+            string dossNameProj = projet.num_projet + "-" + titreProj; // Supprimer les espaces et supprimer les accents!
 
             // Créer un sous dossier avec le nom du projet 
             string pathP = path + @"\" + dossNameProj;
@@ -160,9 +160,9 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
             // Pour chaque essai créer un dossier et ajouter tous les documents associés à cet essai dans le dossier
             foreach (var essai in essais)
             {
-                titreEssai = accesEntrepotDB.TraiterChaineCaract(essai.titreEssai, 30);
+                titreEssai = accesEntrepotDB.TraiterChaineCaract(essai.titreEssai, 15);
                
-                string dossNameEssai = titreEssai + "-Num-" + essai.id; 
+                string dossNameEssai = titreEssai + "-N-" + essai.id; 
 
                 string pathE = pathP + @"\" + dossNameEssai;
 
@@ -182,7 +182,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                 {
                     // Récupérer le nom de l'id Activité
                     var docu = accesEntrepotDB.ObtActivite(doc.Key);
-                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.id.ToString() + "_" + docu.nom_activite, 25);     
+                    string nameAct = accesEntrepotDB.TraiterChaineCaract(docu.id.ToString() + "_" + docu.nom_activite, 16);     
 
                     string PathAct = pathE + @"\" + nameAct;
 
@@ -202,7 +202,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                         if(d.equipementID != null)
                         {
                             var equip = accesEntrepotDB.GetEquipement(d.equipementID.Value);
-                            nomEquip = accesEntrepotDB.TraiterChaineCaract(equip.nom, 31);
+                            nomEquip = accesEntrepotDB.TraiterChaineCaract(equip.numGmao + "-" + equip.nom, 16);
                             
                             PathDoc = PathDoc + @"\" + nomEquip;
                             if (accesEntrepotDB.CreateDirectoryTemp(PathDoc) != true)
@@ -216,7 +216,7 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
                         // Determiner le type de document pour créer le dossier
                         type_document type = accesEntrepotDB.ObtenirTypeDocument(d.type_documentID);
 
-                        typeDoc = accesEntrepotDB.TraiterChaineCaract(type.nom_document, 25);
+                        typeDoc = accesEntrepotDB.TraiterChaineCaract(type.nom_document, 10);
                         PathTypeDoc = PathDoc + @"\" + typeDoc;
                         if (accesEntrepotDB.CreateDirectoryTemp(PathTypeDoc) != true)
                         {
@@ -230,10 +230,11 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Controllers
 
                         byte[] bytesP = System.Text.Encoding.GetEncoding(1251).GetBytes(d.nom_document);
                         var nomDoc = System.Text.Encoding.ASCII.GetString(bytesP);
+                        string nomDocSimpl = accesEntrepotDB.TraiterChaineCaract(nomDoc, 15);
                         #endregion
 
                         // Recréer le fichier et l'ajouter dans le dossier "activite"
-                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDoc, d.contenu_document);
+                        System.IO.File.WriteAllBytes(PathTypeDoc + @"\" + nomDocSimpl, d.contenu_document);
                     }
                 }                     
             }
