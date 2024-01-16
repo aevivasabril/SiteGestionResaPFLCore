@@ -59,9 +59,9 @@
             @foreach (var x in Model.ListEnquetesNonRepondues)
             {
                 <tr>
-                    <td>@x.InfoProjet</td>
-                    <td>@x.InfoEssai</td>
-                    <td><a href="@x.LienEnquete">Lien vers enquête</a></td>
+                    <td class="text-center">@x.InfoProjet</td>
+                    <td class="text-center">@x.InfoEssai</td>
+                    <td class="text-center"><a href="@x.LienEnquete">Lien vers enquête</a></td>
                 </tr>
             }
         </tbody>

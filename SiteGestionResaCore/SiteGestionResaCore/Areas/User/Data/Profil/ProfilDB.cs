@@ -41,7 +41,7 @@ namespace SiteGestionResaCore.Areas.User.Data.Profil
                             from r in T3.DefaultIfEmpty()
                             join equip in context.equipement on r.equipementID equals equip.id into T4
                             from e in T4.DefaultIfEmpty()
-                            where m.resa_refuse != true && m.resa_supprime != true && r.date_debut.Year == dateToday.Year && r.date_fin.Year == dateToday.Year // reservations de l'année
+                            where m.resa_refuse != true && m.resa_supprime != true 
                             && r.date_fin < dateToday && en.reponduEnquete != true && m.resa_supprime != true && m.resa_refuse != true
                             && s.Id == usr.Id// réservations dont la date fin n'est pas supérieure à la date d'aujourd'hui (réservations passées) 
                             select new
