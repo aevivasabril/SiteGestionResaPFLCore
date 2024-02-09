@@ -50,6 +50,10 @@
                     <button style="background-color: #70cff0" disabled="True">Bleu</button>
                     <label>Intervention de maintenance</label>
                 </div>
+                <div class="col-md-6">
+                    <button style="background-color: lightgray" disabled="True">Gris</button>
+                    <label>Equipements dans une zone restreinte ou confidentielle</label>
+                </div>
             </div>
         </div>
     </div>
@@ -150,7 +154,8 @@
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
 
                                 @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() != 0 ||
-                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count() != 0)
+                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count() != 0 ||
+                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatinAdjRest.Count() !=0 )
                                 {
                                     @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
                                     {
@@ -172,7 +177,7 @@
                                         <a href="#" onclick="DisplayModalInterv(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin[z].IdMaint)">
                                             <strong>Intervention </strong>
                                         </a>
-                                    }
+                                    }                                   
                                 }
 
                             </td>
@@ -180,7 +185,8 @@
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
 
                                 @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() != 0 ||
-                                    @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count() != 0)
+                                   @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count() != 0 ||
+                                   @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasApremAdjRest.Count() != 0)
                                 {
                                     @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
                                     {

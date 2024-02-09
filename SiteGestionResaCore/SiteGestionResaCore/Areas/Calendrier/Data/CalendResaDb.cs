@@ -43,6 +43,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             #region Variables pour les essais
 
             ResasEquipParJour resasEquipTEMP = new ResasEquipParJour();
+            ResasEquipParJour resasEquipsADJ = new ResasEquipParJour(); // Equipements non reservés qui sont dans une zone affectée par une réservation restreint (non réservés)
             ResasEquipParJour resasEquip = new ResasEquipParJour();
             DateTimeFormatInfo dateTimeFormats = null;
             reservation_projet ResaAGarder = new reservation_projet();     // On garde une des réservations de côté (peu importe laquelle car on a juste besoin d'accèder aux infos "essai")
@@ -126,8 +127,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                     case "Restreint": // si "Restreint" il faut bloquer toute la zone, alors vérifier si les réservations sont dans la même zone que l'équipement et bloquer l'équipement 
 
                         #region Confidentialité "Restreint"
-
-                        resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement s'il est dans la zone des réservations "Restreint"
+                        // séparer les équipements qui sont bloqués, des équipements qui sont dans la même zone et qui ne sont pas bloqués
+                        resasEquipTEMP = ResaConfidentialiteRestreintEq(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement qui est réservé en mode restreint
+                        resasEquipsADJ = ResaConfidentialiteRestreintAdj(ess, infosResa, Equipement, DateRecup); // Bloque les equipements qui sont dans la zone restreint
 
                         #endregion
 
@@ -142,7 +144,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             Equipement.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //TODO:  la zone equipements mobiles devrait être bloqué?
                         {
                             // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" blocage uniquement de la zone "Confidentiel"
-                            resasEquipTEMP = ResaConfidentialiteRestreint(ess, infosResa, Equipement, DateRecup);
+                            // séparer les équipements qui sont bloqués, des équipements qui sont dans la même zone et qui ne sont pas bloqués
+                            resasEquipTEMP = ResaConfidentialiteRestreintEq(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement qui est réservé en mode restreint
+                            resasEquipsADJ = ResaConfidentialiteRestreintAdj(ess, infosResa, Equipement, DateRecup); // Bloque les equipements qui sont dans la zone restreint
                         }
                         else // Si équipement présent dans la zone PFL alors le bloquer selon la réservation
                         {
@@ -160,6 +164,23 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                 foreach (var res in resasEquipTEMP.ListResasAprem)
                 {
                     resasEquip.ListResasAprem.Add(res);
+                }
+
+                // Stocker les valeurs rétrouvés pour cet essai des équipements dans une zone restreint
+                foreach (var res in resasEquipsADJ.ListResasMatinAdjRest)
+                {
+                    if (!resasEquip.ListResasMatinAdjRest.Contains(res))
+                    {
+                        resasEquip.ListResasMatinAdjRest.Add(res);
+                    }
+                }
+                // Stocker les valeurs rétrouvés pour cet essai 
+                foreach (var res in resasEquipsADJ.ListResasApremAdjRest)
+                {
+                    if (!resasEquip.ListResasApremAdjRest.Contains(res))
+                    {
+                        resasEquip.ListResasApremAdjRest.Add(res);
+                    }                   
                 }
             }
 
@@ -237,9 +258,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
         #endregion
 
-        #region Gestion nom du jour et couleurs pour l'affichage
+            #region Gestion nom du jour et couleurs pour l'affichage
 
-        ENDT:
+            ENDT:
                 // Obtenir le nom du jour 
                 JourCalendrier = DateRecup; // enregistrer la date en question
                 NomJour = DateRecup.ToString("dddd", dateTimeFormats); // Reecrire le nom du jour car lors de l'appel de la méthode ResaConfidentialiteOuverte()
@@ -249,14 +270,8 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
                 if (NomJour != "samedi" && NomJour != "dimanche")
                 {
-                    // si plus d'une réservation à ce jour alors conflit entre 2 résas "Restreint"
-                    if (resasEquip.ListResasMatin.Count() > 1) // réservations restreint
-                        resasEquip.CouleurMatin = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
-
-                    if (resasEquip.ListResasAprem.Count() > 1)
-                        resasEquip.CouleurAprem = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
-
-                    if (resasEquip.ListResasMatin.Count() == 1)
+                    // si un équipement reservé le matin
+                    if (resasEquip.ListResasMatinAdjRest.Count() == 0 && resasEquip.ListResasMatin.Count() == 1)
                     {
                         if (resasEquip.ListResasMatin[0].StatusEssai == EnumStatusEssai.Validate.ToString())
                             resasEquip.CouleurMatin = "#fdc0be"; // rouge (validée et occupée)
@@ -264,17 +279,66 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             resasEquip.CouleurMatin = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
                     }
 
-                    // si pas de chevauchement des résas alors vérifier le status projet
-                    if (resasEquip.ListResasAprem.Count() == 1)
+                    // si un equipement reservé l'aprèm
+                    if (resasEquip.ListResasApremAdjRest.Count() == 0 && resasEquip.ListResasAprem.Count() == 1)
                     {
                         if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
                             resasEquip.CouleurAprem = "#fdc0be"; // rouge (validée et occupée)
                         else if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
                             resasEquip.CouleurAprem = "#fbeed9";  // Couleur beige pour indiquer que la réservation est en attente
                     }
+   
+                    // plus d'un équipement dans la zone restreint alors conflit
+                    if (resasEquip.ListResasMatinAdjRest.Count() > 1 && resasEquip.ListResasMatin.Count() == 0 ) // équipements dans une zone restreint et sans autre réservation
+                        resasEquip.CouleurMatin = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
+
+                    if (resasEquip.ListResasApremAdjRest.Count() > 1 && resasEquip.ListResasAprem.Count() == 0)
+                        resasEquip.CouleurAprem = "#ffd191"; // Indiquer un chevauchement des créneaux réservation (orange)
+
+
+                    // MATIN: si plus d'un équipement en zone restreint à ce jour et un équipement qui est réservé et qui est dans la zone alors priorité à l'équipement reservé
+                    if (resasEquip.ListResasMatinAdjRest.Count() > 1 && resasEquip.ListResasMatin.Count() == 1) // équipements dans une zone restreint
+                    {
+                        if (resasEquip.ListResasMatin[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                            resasEquip.CouleurMatin = "#fdc0be"; // rouge (validée et occupée)
+                        else if (resasEquip.ListResasMatin[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                            resasEquip.CouleurMatin = "#fbeed9"; // attente de validation
+                    }
+
+                    // APREM: si plus d'un équipement en zone restreint à ce jour et un équipement qui est réservé et qui est dans la zone alors priorité à l'équipement reservé
+                    if (resasEquip.ListResasApremAdjRest.Count() > 1 && resasEquip.ListResasAprem.Count() == 1) // équipements dans une zone restreint
+                    {
+                        if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                            resasEquip.CouleurAprem = "#fdc0be"; // rouge (validée et occupée)
+                        else if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                            resasEquip.CouleurAprem = "#fbeed9"; // attente de validation
+                    }
+
+                    if (resasEquip.ListResasMatinAdjRest.Count() == 1 && resasEquip.ListResasMatin.Count() == 0)                
+                        resasEquip.CouleurMatin = "lightgray";  // Couleur gris pour indiquer que l'équipement est dans une zone restreint le matin
+                    // si pas de chevauchement des résas alors vérifier le status projet
+                    if (resasEquip.ListResasApremAdjRest.Count() == 1 && resasEquip.ListResasAprem.Count() == 0)
+                        resasEquip.CouleurAprem = "lightgray";  // Couleur gris pour indiquer que l'équipement est dans une zone restreint l'aprèm
+
+                    if (resasEquip.ListResasMatinAdjRest.Count() == 1 && resasEquip.ListResasMatin.Count() == 1)
+                    {
+                        if (resasEquip.ListResasMatin[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                            resasEquip.CouleurMatin = "#fdc0be"; // rouge (validée et occupée)
+                        else if (resasEquip.ListResasMatin[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                            resasEquip.CouleurMatin = "#fbeed9"; // attente de validation
+                    }
+                    
+                    if (resasEquip.ListResasApremAdjRest.Count() == 1 && resasEquip.ListResasAprem.Count() == 1)
+                    {
+                        if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.Validate.ToString())
+                            resasEquip.CouleurAprem = "#fdc0be"; // rouge (validée et occupée)
+                        else if (resasEquip.ListResasAprem[0].StatusEssai == EnumStatusEssai.WaitingValidation.ToString())
+                            resasEquip.CouleurAprem = "#fbeed9"; // attente de validation
+                    }
+
 
                     // Définition des couleurs maintenance (regne sur les essais) 
-                    if(resasEquip.InfosIntervMatin.Count() == 1)
+                    if (resasEquip.InfosIntervMatin.Count() == 1)
                     {
                         resasEquip.CouleurMatin = "#70cff0"; // blue opération maintenance en cours
                     }
@@ -283,11 +347,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                         resasEquip.CouleurAprem = "#70cff0"; // bleu opération maintenance en cours
                     }
 
+
                     // CODE COULEUR DISPO SUR: https://encycolorpedia.fr/
                     // Definir les couleurs de fond pour indiquer si le créneau est occupé ou pas
-                    if (resasEquip.ListResasMatin.Count() == 0 && resasEquip.InfosIntervMatin.Count() == 0) // si au moins une réservation le matin alors matinée occupée
+                    if (resasEquip.ListResasMatin.Count() == 0 && resasEquip.InfosIntervMatin.Count() == 0 && resasEquip.ListResasMatinAdjRest.Count() == 0) // si au moins une réservation le matin alors matinée occupée
                         resasEquip.CouleurMatin = "#c2e6e2"; // matin dispo (Vert)
-                    if (resasEquip.ListResasAprem.Count() == 0 && resasEquip.InfosIntervAprem.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
+                    if (resasEquip.ListResasAprem.Count() == 0 && resasEquip.InfosIntervAprem.Count() == 0 && resasEquip.ListResasApremAdjRest.Count() == 0) // si au moins une réservation l'aprèm alors aprèm occupée
                         resasEquip.CouleurAprem = "#c2e6e2"; // Aprèm libre (Vert)
                 }
                 else // si jour samedi ou dimanche alors mettre en fond gris
@@ -518,7 +583,15 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return EquipVsResa;
         }
 
-        public ResasEquipParJour ResaConfidentialiteRestreint(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
+        /// <summary>
+        /// Methode pour retrouver l'équipement bloqué par réservation restreint
+        /// </summary>
+        /// <param name="ess"></param>
+        /// <param name="infosResa"></param>
+        /// <param name="Equipement"></param>
+        /// <param name="DateRecup"></param>
+        /// <returns></returns>
+        public ResasEquipParJour ResaConfidentialiteRestreintEq(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
         {
             ResasEquipParJour EquipVsResa = new ResasEquipParJour();
 
@@ -526,7 +599,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             foreach (var resa in resas)
             {
-                if (resaDB.equipement.Where(e => e.id == resa.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                if (resaDB.equipement.Where(e => e.id == resa.equipementID).First().id == Equipement.id) // si l'équipement objet du "planning" est déjà réservé restreint
                 {
                     if ( DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString()) 
                         && DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()) )
@@ -602,6 +675,100 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             if (!EssaiDejaAjouteAprem)
                             {
                                 EquipVsResa.ListResasAprem.Add(infosResa);
+                            }
+                        }
+                        #endregion
+                    }
+                }
+            }
+            return EquipVsResa;
+        }
+
+        public ResasEquipParJour ResaConfidentialiteRestreintAdj(essai ess, InfosAffichageResa infosResa, equipement Equipement, DateTime DateRecup)
+        {
+            ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+
+            var resas = resaDB.reservation_projet.Where(r => r.essaiID == ess.id);
+
+            foreach (var resa in resas)
+            {
+                if (resaDB.equipement.Where(e => e.id == resa.equipementID).First().zoneID.Value == Equipement.zoneID && 
+                    (resaDB.equipement.Where(e => e.id == resa.equipementID).First().id != Equipement.id)) // si l'équipement objet du "planning" est dans la zone d'une réservation restreint
+                {
+                    if (DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resa.date_debut.ToShortDateString())
+                        && DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resa.date_fin.ToShortDateString()))
+                    {
+                        #region vérifier si l'essai n'est pas déjà dans la liste Matin
+                        // vérifier si l'essai n'est pas déjà dans la liste Matin
+                        var EssaiDejaAjouteMatin = EquipVsResa.ListResasMatinAdjRest.Any(e => e.IdEssai == ess.id);
+                        var EssaiDejaAjouteAprem = EquipVsResa.ListResasApremAdjRest.Any(e => e.IdEssai == ess.id);
+
+                        if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_debut.ToShortDateString())) // début
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_debut.Hour.Equals(13)) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                            {
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasApremAdjRest.Add(infosResa);
+                                }
+                            }
+                            else // si l'heure de debut est 7h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                // Regarder pour définir le créneau
+                                if (resa.date_fin.Hour.Equals(12) && (resa.date_fin.ToShortDateString() == DateRecup.ToShortDateString())) // si l'heure de debut de réservation est l'aprèm alors rajouter cette résa dans le créneau aprèm
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatinAdjRest.Add(infosResa);
+                                    }
+                                    //Resas.InfosResaMatin.Add(null); // Matin vide
+                                }
+                                else // si l'heure de fin est 18h alors on rajoute sur les 2
+                                {
+                                    if (!EssaiDejaAjouteMatin)
+                                    {
+                                        EquipVsResa.ListResasMatinAdjRest.Add(infosResa);
+                                    }
+                                    if (!EssaiDejaAjouteAprem)
+                                    {
+                                        EquipVsResa.ListResasApremAdjRest.Add(infosResa);
+                                    }
+                                }
+                            }
+                        }
+                        else if (DateTime.Parse(DateRecup.ToShortDateString()) == DateTime.Parse(resa.date_fin.ToShortDateString())) // fin
+                        {
+                            // Regarder pour définir le créneau
+                            if (resa.date_fin.Hour.Equals(12)) // si l'heure de fin de réservation est midi alors rajouter cette résa dans le créneau du matin
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatinAdjRest.Add(infosResa);
+                                }
+                            }
+                            else // si l'heure de fin est 18h alors on rajoute dans les 2 créneau les infos réservation
+                            {
+                                if (!EssaiDejaAjouteMatin)
+                                {
+                                    EquipVsResa.ListResasMatinAdjRest.Add(infosResa);
+                                }
+                                if (!EssaiDejaAjouteAprem)
+                                {
+                                    EquipVsResa.ListResasApremAdjRest.Add(infosResa);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Ajouter cette résa sur le créneau matin et aprèm 
+                            if (!EssaiDejaAjouteMatin)
+                            {
+                                EquipVsResa.ListResasMatinAdjRest.Add(infosResa);
+                            }
+                            if (!EssaiDejaAjouteAprem)
+                            {
+                                EquipVsResa.ListResasApremAdjRest.Add(infosResa);
                             }
                         }
                         #endregion
