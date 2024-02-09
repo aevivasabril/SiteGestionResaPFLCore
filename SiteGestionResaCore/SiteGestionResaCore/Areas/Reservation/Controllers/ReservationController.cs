@@ -77,7 +77,8 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                 ManipProjItem = usersManip,
                 ProductItem = prodEntree,
                 ProvenanceProduitItem = provProd,
-                DestProduitItem = destProd
+                DestProduitItem = destProd,
+                ConfidentialiteEssai = "Ouvert" // mettre par défaut ouvert
 
             };
             return View(vm);
@@ -299,7 +300,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
             vm.DescriptionProjet = pr.description_projet;
 
             // Données à copier pour l'essai
-            vm.ConfidentialiteEssai = ess.confidentialite;
+            vm.ConfidentialiteEssai = "Ouvert"; // Mettre par défaut ouvert
             vm.PrecisionProduitIn = ess.precision_produit;
             vm.QuantiteProduit = ess.quantite_produit;
             vm.TitreEssai = ess.titreEssai;
