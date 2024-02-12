@@ -215,6 +215,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
 
         #endregion
 
+        #region Messages pour les tooltip des types de confidentialité
+
+        public string ReservationOuverte = "Equipement réservé. Vous pourriez avoir d'autres utilisateurs autour de vous";
+
+        public string ReservationRestreint = "Equipement réservé, et pré-blocage de tous les autres équipements de la zone." +
+            " Utiliser ce mode de confidentialité uniquement si vous avez besoin de bloquer TOUTE la zone. Ex: essai qui nécessite beaucoup de place autour de vous";
+
+        public string ReservationConfidentielle = "Si l'équipement réservé est sur la PFL, alors blocage de toute la PFL. " +
+            "Si l'équipement réservé est dans une salle alimentaire alors blocage de toute la salle. Utiliser ce mode qu'en cas de stricte nécessité";
+        #endregion
     }
 
     #region Enum pour établir des valeurs définis

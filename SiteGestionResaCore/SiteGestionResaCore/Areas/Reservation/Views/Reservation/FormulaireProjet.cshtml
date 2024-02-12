@@ -108,16 +108,16 @@
             <div class="row">
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Ouvert")
-                    <label class="col-md-5 control-label">Ouvert</label>
+                    <label class="col-md-5 control-label" data-toggle="tooltip" data-placement="top" title="@Model.ReservationOuverte">Ouvert</label>
                 </div>
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Restreint")
-                    <label class="col-md-5 control-label">Restreint</label>
+                    <label class="col-md-5 control-label" data-toggle="tooltip" data-placement="top" title="@Model.ReservationRestreint">Restreint</label>
 
                 </div>
                 <div class="col-4">
                     @Html.RadioButtonFor(m => m.ConfidentialiteEssai, "Confidentiel")
-                    <label class="col-md-5 control-label">Confidentiel</label>
+                    <label class="col-md-5 control-label" data-toggle="tooltip" data-placement="top" title="@Model.ReservationConfidentielle">Confidentiel</label>
                 </div>
             </div>
         </div>
