@@ -141,10 +141,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                         if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7A) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7B) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp7C) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp5) ||
                             EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp6) || EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp8) ||
-                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9)) //|| EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) (TODO:  la zone equipements mobiles devrait être bloqué?)
+                            EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.SalleAp9))
                         {
-                            // Pour ces zones alors faire comment on fait pour les essai du type "Ouvert" blocage uniquement des équipements
+                            // Pour ces zones alors faire comment on fait pour les essai du type "Restreint" et "ouvert" blocage uniquement des équipements
                             ResasTemp = ResaConfidentialiteRestreint(ess, resaInfo, EquipementPlanning, dateResa);
+                        }
+                        else if (EquipementPlanning.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) // Cette zone n'est pas bloqué comme les autres, on bloque uniquement l'équipement peu importe la confidentialité
+                        {
+                            ResasTemp = ResaConfidentialiteOuverte(ess, resaInfo, IdEquipement, dateResa);
                         }
                         else
                         {
@@ -371,10 +375,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
-         
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
+
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
-            if(zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
+            if (zon == ApCinq || zon == ApSix || zon == ApSeptA || zon == ApSeptB || zon == ApSeptC || zon == ApHuit || zon == ApNeuf)
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates (Zones alimentaires)
                 // l'équipement pour réservation est dans la zone des salles alimentaires (même traitement que sur une réservation restreint
@@ -394,6 +399,22 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
                     estConfidentielDispo = true;
             }
+            else if (zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                var resasMob = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                where essai.id == resa.essaiID && resa.equipementID == idEquipement && essai.confidentialite == EnumConfidentialite.Confidentiel.ToString()
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasMob.Count() == 0) // aucun equipement réservé à ces dates! 
+                {
+                    estConfidentielDispo = true;
+                }
+            }
             else
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
@@ -407,12 +428,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                     select essai).Distinct().ToList();
 
-                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
+                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires et hors équipements mobiles
                     estConfidentielDispo = true;
             }
 
@@ -451,13 +472,13 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 var IntervZone = (from maint in context.maintenance
                                   from resaMaint in context.reservation_maintenance
                                   from equip in context.equipement
-                                  where maint.id == resaMaint.maintenanceID
+                                  where maint.id == resaMaint.maintenanceID 
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone") 
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)") 
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (zon != EquipsMob) // si intervention dans la zone équipements mobiles, ne pas bloquer la zone
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -552,6 +573,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, au mêmes dates et en mode confidentiel
@@ -575,6 +597,22 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
                     estConfidentielDispo = true;
             }
+            else if (zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                var resasMob = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                where essai.id == resa.essaiID && resa.equipementID == idEquipement && essai.confidentialite == EnumConfidentialite.Confidentiel.ToString()
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasMob.Count() == 0) // aucun equipement réservé à ces dates! 
+                {
+                    estConfidentielDispo = true;
+                }
+            }
             else
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
@@ -588,12 +626,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                     select essai).Distinct().ToList();
 
-                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
+                if (essaiConfPFL.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires et équipements mobiles
                     estConfidentielDispo = true;
             }
 
@@ -634,11 +672,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob) // si intervention dans la zone équipements mobiles, ne pas bloquer la zone
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -669,6 +707,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <summary>
         /// Méthode permettant de vérifier pour un essai "confidentiel" à saisir que toute la plate-forme est disponible (cas PFL) 
         /// ou que la salle alimentaire en question est dispo à 100%
+        /// Ou si l'équipement à réserver est dans la zone "Equipements mobiles" le gérer comme ouvert 
         /// </summary>
         /// <param name="dateDebut"></param>
         /// <param name="dateFin"></param>
@@ -686,7 +725,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                        where equip.id == idEquipement
                        select equip.zoneID.Value).First();
 
-            #region Zones alimentaires
+            #region Zones alimentaires et zone équipements mobiles
             int ApCinq = Convert.ToInt32(EnumZonesPfl.SalleAp5);
             int ApSix = Convert.ToInt32(EnumZonesPfl.SalleAp6);
             int ApSeptA = Convert.ToInt32(EnumZonesPfl.SalleAp7A);
@@ -694,6 +733,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
             #endregion
 
             #region Vérification sur les réservations du type "Ouvert" où il faut juste vérifier par l'ID equipement
@@ -751,6 +791,24 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (essaiConfZonesAlim.Count() == 0) 
                     estConfidentielDispo = true;
             }
+            else if(zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                var resasMob = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                where essai.id == resa.essaiID && resa.equipementID == idEquipement // si la réservation est ouvert ou c
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasMob.Count() == 0) // aucun equipement réservé à ces dates! 
+                {
+                    estOuvertDisponible = true;
+                    estRestreintDispo = true;
+                    estConfidentielDispo = true;
+                }
+            }
             else
             { // si une réservation ouverte est sur la zone PFL, aux mêmes dates alors on bloque
                 // OUVERT
@@ -762,7 +820,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                     select essai).Distinct().ToList();
@@ -779,7 +837,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                      essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                  && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA &&
                                      resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC &&
-                                     resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                     resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf && resa.equipement.zoneID != EquipsMob)
                                  && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
                                  && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
                                  select essai).Distinct().ToList();
@@ -796,7 +854,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                              essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                           && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA &&
                                               reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC &&
-                                              reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                              reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                           && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                           && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                           select essai).Distinct().ToList();
@@ -844,11 +902,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob) // si intervention dans la zone équipements mobiles, ne pas bloquer la zone
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -1022,6 +1080,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             // Si l'équipement que l'on souhaite réserver est dans la zone des salles alimentaires alors on doit bloquer les réservation s'une des 
             // réservations est dans la même zone, aux mêmes dates et en mode confidentiel
@@ -1045,6 +1104,22 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (essaiConfZonesAlim.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
                     estConfidentielDispo = true;
             }
+            else if (zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                var resasMob = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                where essai.id == resa.essaiID && resa.equipementID == idEquipement && essai.confidentialite == EnumConfidentialite.Confidentiel.ToString()
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasMob.Count() == 0) // aucun equipement réservé à ces dates! 
+                {
+                    estConfidentielDispo = true;
+                }
+            }
             else
             {
                 // requete pour trouver les essais "confidentiels" avec les mêmes dates ( PFL )
@@ -1058,7 +1133,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                         essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                     select essai).Distinct().ToList();
@@ -1098,11 +1173,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob) // si intervention dans la zone équipements mobiles, ne pas bloquer la zone
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -1142,6 +1217,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
             int ApSeptC = Convert.ToInt32(EnumZonesPfl.SalleAp7C);
             int ApHuit = Convert.ToInt32(EnumZonesPfl.SalleAp8);
             int ApNeuf = Convert.ToInt32(EnumZonesPfl.SalleAp9);
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
@@ -1216,6 +1292,24 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (essaiConfZone.Count() == 0) // si aucune réservation "confidentiel sur ces dates et hors les zones alimentaires 
                     estConfidentielDispo = true;
             }
+            else if (zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                var resasMob = (from essai in context.essai
+                                from resa in context.reservation_projet
+                                where essai.id == resa.essaiID && resa.equipementID == idEquipement
+                                && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                    essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
+                                && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
+                                select essai).Distinct().ToList();
+
+                if (resasMob.Count() == 0) // aucun equipement réservé à ces dates! 
+                {
+                    estConfidentielDispo = true;
+                    estOuvertDisponible = true;
+                    estRestreintDispo = true;
+                }
+            }
             else
             {
                 // OUVERT
@@ -1228,7 +1322,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                        essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                    && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
                                    && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
-                                   && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                   && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf && resa.equipement.zoneID != EquipsMob)
                                    && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
                                    && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
                                    select essai).Distinct().ToList();
@@ -1249,7 +1343,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
                                     && (resa.equipement.zoneID != ApCinq && resa.equipement.zoneID != ApSix && resa.equipement.zoneID != ApSeptA
                                     && resa.equipement.zoneID != ApSeptB && resa.equipement.zoneID != ApSeptC
-                                    && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf)
+                                    && resa.equipement.zoneID != ApHuit && resa.equipement.zoneID != ApNeuf && resa.equipement.zoneID != EquipsMob)
                                     && ((dateDebut >= resa.date_debut || dateFin >= resa.date_debut)
                                     && (dateDebut <= resa.date_fin || dateFin <= resa.date_fin))
                                     select essai).Distinct().ToList();
@@ -1273,7 +1367,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     && (essai.id != IdEssai)
                                     && (reser.equipement.zoneID != ApCinq && reser.equipement.zoneID != ApSix && reser.equipement.zoneID != ApSeptA
                                     && reser.equipement.zoneID != ApSeptB && reser.equipement.zoneID != ApSeptC
-                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf)
+                                    && reser.equipement.zoneID != ApHuit && reser.equipement.zoneID != ApNeuf && reser.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= reser.date_debut) || dateFin >= reser.date_debut)
                                     && ((dateDebut <= reser.date_fin) || dateFin <= reser.date_fin)))
                                     select essai).Distinct().ToList();
@@ -1304,6 +1398,21 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                 if (IntervZonAlim.Count() == 0)
                     estInterventionDispo = true;
             }
+            else if (zon == EquipsMob) // Si l'équipement à réserver est dans la zone équipements mobiles, vérifier uniquement s'il n'est pas déjà bloqué
+            {
+                // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
+                var IntervZonPFL = (from maint in context.maintenance
+                                    from resaMaint in context.reservation_maintenance
+                                    from equip in context.equipement
+                                    where maint.id == resaMaint.maintenanceID && resaMaint.equipementID == idEquipement
+                                    && (maint.maintenance_supprime != true)
+                                    && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
+                                    && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
+                                    select maint).Distinct().ToList();
+
+                if (IntervZonPFL.Count() == 0)
+                    estInterventionDispo = true;
+            }
             else
             { // si l'équipement est dans la zone PFL alors il doit pas y avoir aucune maintenance sur la PFL
                 // si l'équipement que l'on rajoute dans un essai est dans la même zone d'une intervention aux mêmes dates alors il faut le bloquer
@@ -1314,7 +1423,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                     && (maint.maintenance_supprime != true)
                                     && (resaMaint.equipement.zoneID != ApCinq && resaMaint.equipement.zoneID != ApSix && resaMaint.equipement.zoneID != ApSeptA
                                     && resaMaint.equipement.zoneID != ApSeptB && resaMaint.equipement.zoneID != ApSeptC
-                                    && resaMaint.equipement.zoneID != ApHuit && resaMaint.equipement.zoneID != ApNeuf)
+                                    && resaMaint.equipement.zoneID != ApHuit && resaMaint.equipement.zoneID != ApNeuf && resaMaint.equipement.zoneID != EquipsMob)
                                     && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                     && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                     select maint).Distinct().ToList();
@@ -1341,7 +1450,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public bool ZoneDisponibleXIntervention(DateTime dateDebut, DateTime dateFin, int idEquipement)
         {
             bool resaOk = false;
-            bool interOk = false;           
+            bool interOk = false;
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
+
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
@@ -1356,7 +1467,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                             where essai.id == resa.essaiID
                             && (essai.status_essai == EnumStatusEssai.Validate.ToString() ||
                                 essai.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                            && (resa.equipement.zoneID == zon)
+                            && (resa.equipement.zoneID == zon) && (resa.equipement.zoneID != EquipsMob)
                             && (((dateDebut >= resa.date_debut) || dateFin >= resa.date_debut)
                             && ((dateDebut <= resa.date_fin) || dateFin <= resa.date_fin))
                             select essai).Distinct().ToList();
@@ -1391,6 +1502,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             bool resaOk = false;
             bool interOk = false;
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
@@ -1447,11 +1559,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob) // si intervention dans la zone équipements mobiles, ne pas bloquer la zone
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -1480,6 +1592,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public bool VerifDisponibilitZoneEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement)
         {
             bool interOk = false;
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles); // ignorer la zone "équipements mobiles" car la zone ne peut pas être bloqué
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
@@ -1492,7 +1605,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                              from equip in context.equipement
                              where maint.id == resaMaint.maintenanceID
                              && (maint.maintenance_supprime != true)
-                             && (resaMaint.equipement.zoneID == zon)
+                             && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob)
                              && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                              && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                              select maint).Distinct().ToList();
@@ -1506,6 +1619,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public bool VerifDisponibilitEquipSurInterventions(DateTime dateDebut, DateTime dateFin, int idEquipement)
         {
             bool interOk = false;
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles); // ignorer la zone "équipements mobiles" car la zone ne peut pas être bloqué
 
             // Récupérer l'id zone pour l'équipement enquêté
             var zon = (from equip in context.equipement
@@ -1544,11 +1658,11 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
-                                  && (resaMaint.equipement.zoneID == zon)
+                                  && (resaMaint.equipement.zoneID == zon) && (resaMaint.equipement.zoneID != EquipsMob) // vérifier si l'équipement ^n'est pas bloqué par une intervention et ignorer ceux qui sont dans la zone equips mobiles
                                   && (((dateDebut >= resaMaint.date_debut) || dateFin >= resaMaint.date_debut)
                                   && ((dateDebut <= resaMaint.date_fin) || dateFin <= resaMaint.date_fin))
                                   select maint).Distinct().ToList();
@@ -1721,7 +1835,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                   from equip in context.equipement
                                   where maint.id == resaMaint.maintenanceID
                                   && (maint.maintenance_supprime != true)
-                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone")
+                                  && ((maint.type_maintenance == "Maintenance curative (Dépannage avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Interne avec blocage de zone)")
                                   || (maint.type_maintenance == "Maintenance préventive (Externe avec blocage de zone)")
                                   || (maint.type_maintenance == "Amélioration (avec blocage de zone)"))
@@ -1929,11 +2043,36 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public ReservationsJour IntervEquipParJourZone(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
         {
             ReservationsJour EquipVsResa = new ReservationsJour();
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             foreach (var resaInter in maint.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
             {
-                if (context.equipement.Where(e => e.id == resaInter.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                equipement equipementInterv = context.equipement.Where(e => e.id == resaInter.equipementID).First();
+                if (equipementInterv.zoneID.Value == Equipement.zoneID && Equipement.zoneID == EquipsMob) // si l'équipement objet du planning et l'équipement intervention sont dans la même zone equipement mobile 
                 {
+                    if (equipementInterv.id == Equipement.id)
+                    {
+                        // Bloquer l'équipement pour affichage calendrier
+                        goto ACTION;
+                    }
+                    else
+                    {
+                        // pas d'action, on sauvegarde rien pour afficher sur le calendrier
+                        goto ENDT;
+                    }
+                }
+                if (equipementInterv.zoneID.Value == Equipement.zoneID && Equipement.zoneID != EquipsMob) // S'il s'agit d'une autre zone differente à la zone equipement mobile 
+                {
+                    // Bloquer l'équipement pour affichage calendrier 
+                    goto ACTION;
+                }
+                else
+                {
+                    // pas d'action, on sauvegarde rien pour afficher sur le calendrier
+                    goto ENDT;
+                }
+
+            ACTION:
                     if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
                         && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
                     {
@@ -1993,8 +2132,9 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
                                 EquipVsResa.InfosIntervAprem.Add(infosAffichage);
                         }
                     }
-                }
+                
             }
+            ENDT:
             return EquipVsResa;
         }
 

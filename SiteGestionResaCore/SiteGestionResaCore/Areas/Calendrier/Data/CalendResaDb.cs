@@ -148,6 +148,10 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                             resasEquipTEMP = ResaConfidentialiteRestreintEq(ess, infosResa, Equipement, DateRecup); // Bloque l'équipement qui est réservé en mode restreint
                             resasEquipsADJ = ResaConfidentialiteRestreintAdj(ess, infosResa, Equipement, DateRecup); // Bloque les equipements qui sont dans la zone restreint
                         }
+                        else if (Equipement.zoneID.Equals((int)EnumZonesPfl.EquipMobiles)) // Cette zone n'est pas bloqué comme les autres, on bloque uniquement l'équipement peu importe la confidentialité
+                        {
+                            resasEquipTEMP = ResaConfidentialiteOuverte(ess, infosResa, IdEquipement, DateRecup);
+                        }
                         else // Si équipement présent dans la zone PFL alors le bloquer selon la réservation
                         {
                             resasEquipTEMP = ResaConfidentialiteConf(ess, infosResa, Equipement, DateRecup);
@@ -186,7 +190,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             #endregion
 
-            #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions)
+            #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions) 
 
             InfosInterv = (from interMaint in resaDB.reservation_maintenance
                           from maint in resaDB.maintenance
@@ -378,11 +382,34 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         public ResasEquipParJour IntervEquipParJourZone(maintenance maint, InfosAffichageMaint infosAffichage, equipement Equipement, DateTime DateRecup)
         {
             ResasEquipParJour EquipVsResa = new ResasEquipParJour();
+            int EquipsMob = Convert.ToInt32(EnumZonesPfl.EquipMobiles);
 
             foreach (var resaInter in resaDB.reservation_maintenance.Where(r => r.maintenanceID == maint.id))
             {
-                if (resaDB.equipement.Where(e => e.id == resaInter.equipementID).First().zoneID.Value == Equipement.zoneID) // si l'équipement objet du "planning" est dans la zone d'une réservation
+                equipement equipementInterv = resaDB.equipement.Where(e => e.id == resaInter.equipementID).First();
+                if(equipementInterv.zoneID.Value == Equipement.zoneID && Equipement.zoneID == EquipsMob) // si l'équipement objet du planning et l'équipement intervention sont dans la même zone equipement mobile 
                 {
+                    if(equipementInterv.id == Equipement.id)
+                    {
+                        // Bloquer l'équipement pour affichage calendrier
+                        goto ACTION;
+                    }
+                    else
+                    {
+                        // pas d'action, on sauvegarde rien pour afficher sur le calendrier
+                        goto ENDT;
+                    }
+                }
+                if(equipementInterv.zoneID.Value == Equipement.zoneID && Equipement.zoneID != EquipsMob) // S'il s'agit d'une autre zone differente à la zone equipement mobile 
+                {
+                    // Bloquer l'équipement pour affichage calendrier 
+                    goto ACTION;
+                }
+                else
+                {
+                    goto ENDT;
+                }
+            ACTION:
                     if ((DateTime.Parse(DateRecup.ToShortDateString()) >= DateTime.Parse(resaInter.date_debut.ToShortDateString()))
                         && (DateTime.Parse(DateRecup.ToShortDateString()) <= DateTime.Parse(resaInter.date_fin.ToShortDateString()))) // Si l'équipement à afficher est impliqué dans l'essai
                     {
@@ -442,8 +469,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                                 EquipVsResa.InfosIntervAprem.Add(infosAffichage);
                         }
                     }
-                }
+                
             }
+            ENDT:
             return EquipVsResa;
         }
 

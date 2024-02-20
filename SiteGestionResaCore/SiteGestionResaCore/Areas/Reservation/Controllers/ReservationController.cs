@@ -660,7 +660,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             case "Maintenance curative (Dépannage avec blocage de zone)":
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
-                                    // Vérifier qu'il n'y pas des interventions ou des essais en cours sur cette zone car la maintenance curative (dépannage) a besoin de la zone
+                                    // Vérifier qu'il n'y pas des interventions sur cette zone car la maintenance curative (dépannage) a besoin de la zone
                                     // Si false alors une intervention est déjà déclarée pour les mêmes dates sur la zone
                                     if(reservationDb.VerifDisponibilitZoneEquipSurInterventions(debutToSave, finToSave, equipementZone.CalendEquipSelectionnes[i].idEquipement) == false )
                                     {
