@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20231011123046_ajouterNomTable_piloteUFFC")]
+    partial class ajouterNomTable_piloteUFFC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "db906827-d001-40aa-83e9-4d8155552760",
+                            ConcurrencyStamp = "24bd4403-6de0-433d-81d3-674bded81391",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "ea5f133c-37a7-4011-9ba4-951acd7bc1a9",
+                            ConcurrencyStamp = "722e61d5-3540-43b3-86f5-e8e641a2757d",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "3f31a42c-e21c-402f-8cba-f6e6ec418130",
+                            ConcurrencyStamp = "a7a87659-4e32-4c86-8ead-961bcc04dcc8",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "704f814b-6256-41dd-bc65-4be1675c2725",
+                            ConcurrencyStamp = "c6c574b4-431f-48bf-9cae-ad4e11dc385c",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "1c576c3d-b704-4e26-8eb1-e58ca84435cc",
+                            ConcurrencyStamp = "30f2cc12-4ce9-4620-8028-a08eff7ef1e6",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "681872b3-06f6-444b-aebd-2149303f07cc",
+                            ConcurrencyStamp = "2c6e7b31-f9f3-4bf5-af8b-3ef533fa368b",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -569,9 +571,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool?>("equip_delete")
-                        .HasColumnType("bit");
-
                     b.Property<bool?>("mobile")
                         .HasColumnType("bit");
 
@@ -635,10 +634,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 165,
                             mobile = true,
-                            nom = "Balance OHAUS 2 Kg (SALLE AP9)",
+                            nom = "Balance OHAUS 2 Kg (Scout Pro SPU2001)",
                             numGmao = "BAL0011",
                             type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
-                            zoneID = 17
+                            zoneID = 16
                         },
                         new
                         {
@@ -825,7 +824,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 187,
                             mobile = true,
-                            nom = "Mini cuve N°7 (150L)",
+                            nom = "Mini cuve 150L",
                             numGmao = "ECUV0007",
                             type_activites = "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                             zoneID = 17
@@ -971,10 +970,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 203,
                             mobile = true,
-                            nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116 (SALLE AP6)",
+                            nom = "Thermoscelleuse ERECAM semi-automatique dia:68/95/116",
                             numGmao = "EMB0003",
                             type_activites = "14,15",
-                            zoneID = 17
+                            zoneID = 12
                         },
                         new
                         {
@@ -1072,7 +1071,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 214,
                             mobile = false,
-                            nom = "Pilote UF TIA (JYG)",
+                            nom = "Pilote UF TIA/PALL 0,02u (JYG)",
                             nomTabPcVue = "tab_UA_UFMF",
                             numGmao = "PILOT0002",
                             type_activites = "8",
@@ -1167,7 +1166,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 224,
                             mobile = true,
-                            nom = "Pilote TIA air comprimé",
+                            nom = "Pilote UF TAMI/Tia 8Kda mobile",
                             numGmao = "PILOT0013",
                             type_activites = "8",
                             zoneID = 8
@@ -1342,7 +1341,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 243,
                             mobile = false,
-                            nom = "Boucle de Traitement Thermique",
+                            nom = "Boucle de Traitement Thermique Bain-marie MEMMERT - Type WNE45 + Thermo Haake K35",
                             numGmao = "PILOT0022",
                             type_activites = "11,13,14,15",
                             zoneID = 8
@@ -1360,10 +1359,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 245,
                             mobile = true,
-                            nom = "Balance OHAUS Ranger 3000 -30Kg (SALLE AP9)",
+                            nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0074",
                             type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
-                            zoneID = 17
+                            zoneID = 16
                         },
                         new
                         {
@@ -1387,10 +1386,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 248,
                             mobile = true,
-                            nom = "Thermomix TM5 (SALLE AP5)",
-                            numGmao = "BROY0029",
+                            nom = "Thermomix TM5",
+                            numGmao = "",
                             type_activites = "9,13,14,15",
-                            zoneID = 17
+                            zoneID = 12
                         },
                         new
                         {
@@ -1486,10 +1485,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 260,
                             mobile = true,
-                            nom = "Balance OHAUS Ranger 3000 -30Kg (SALLE AP5)",
+                            nom = "Balance OHAUS Ranger 3000 -30Kg",
                             numGmao = "BAL0079",
                             type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18",
-                            zoneID = 17
+                            zoneID = 12
                         },
                         new
                         {
@@ -1549,10 +1548,10 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 267,
                             mobile = true,
-                            nom = "Thermomix TM6 (SALLE AP9)",
-                            numGmao = "BROY0046",
+                            nom = "Thermomix TM6",
+                            numGmao = "",
                             type_activites = "9,13,14,15",
-                            zoneID = 17
+                            zoneID = 16
                         },
                         new
                         {
@@ -1563,42 +1562,6 @@ namespace SiteGestionResaCore.Migrations
                             numGmao = "PILOT0023",
                             type_activites = "8",
                             zoneID = 8
-                        },
-                        new
-                        {
-                            id = 269,
-                            mobile = true,
-                            nom = "Bain-marie sans couvercle (SALLE AP6)",
-                            numGmao = "BTH0066",
-                            type_activites = "9",
-                            zoneID = 17
-                        },
-                        new
-                        {
-                            id = 270,
-                            mobile = true,
-                            nom = "Bain-marie MEMMERT (avec couvercle, petite capacité)(SALLE AP9)",
-                            numGmao = "BTH0065",
-                            type_activites = "9",
-                            zoneID = 17
-                        },
-                        new
-                        {
-                            id = 271,
-                            mobile = true,
-                            nom = "Bain-marie MEMMERT (avec couvercle, grande capacité) (SALLE AP8)",
-                            numGmao = "BTH0033",
-                            type_activites = "9",
-                            zoneID = 17
-                        },
-                        new
-                        {
-                            id = 272,
-                            mobile = true,
-                            nom = "Agitateur BIOBLOCK type RZR 2000 Digital (SALLE AP8)",
-                            numGmao = "AGIT0186",
-                            type_activites = "17",
-                            zoneID = 17
                         });
                 });
 
@@ -1785,13 +1748,28 @@ namespace SiteGestionResaCore.Migrations
                         },
                         new
                         {
-                            id = 7,
-                            nom_equipe = "CIRM-BIA"
+                            id = 3,
+                            nom_equipe = "PSM"
                         },
                         new
                         {
-                            id = 8,
-                            nom_equipe = "PSF"
+                            id = 4,
+                            nom_equipe = "ISF"
+                        },
+                        new
+                        {
+                            id = 5,
+                            nom_equipe = "SMCF"
+                        },
+                        new
+                        {
+                            id = 6,
+                            nom_equipe = "PFL"
+                        },
+                        new
+                        {
+                            id = 7,
+                            nom_equipe = "CIRM-BIA"
                         });
                 });
 
@@ -2291,18 +2269,11 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("actions_realisees")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
                     b.Property<DateTime>("date_debut")
                         .HasColumnType("datetime");
 
                     b.Property<DateTime>("date_fin")
                         .HasColumnType("datetime");
-
-                    b.Property<bool?>("interv_fini")
-                        .HasColumnType("bit");
 
                     b.Property<int>("maintenanceID")
                         .HasColumnType("int");
@@ -2329,10 +2300,6 @@ namespace SiteGestionResaCore.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("actions_realisees")
-                        .HasColumnType("varchar(max)")
-                        .IsUnicode(false);
-
                     b.Property<DateTime>("date_debut")
                         .HasColumnType("datetime");
 
@@ -2341,9 +2308,6 @@ namespace SiteGestionResaCore.Migrations
 
                     b.Property<int>("equipementID")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("interv_fini")
-                        .HasColumnType("bit");
 
                     b.Property<int>("maintenanceID")
                         .HasColumnType("int");

@@ -602,6 +602,7 @@ namespace SiteGestionResaCore.Data.Data
 
                 new equipement { id = 255, nom = "Cuve 10 lts Coquard", zoneID = 12, numGmao = "CUISMEL0002", mobile = false, type_activites = "13,14,15" }, new equipement { id = 256, nom = "Salle AP7 A", zoneID = 18, numGmao = "CHF015", mobile = false, type_activites = "13,14,15" },
                 new equipement { id = 257, nom = "Salle AP7 B", zoneID = 19, numGmao = "CHF021", mobile = false, type_activites = "13,14,15" }, new equipement { id = 258, nom = "Salle AP7 C", zoneID = 20, numGmao = "CHF022", mobile = false, type_activites = "13,14,15" },
+
                 new equipement { id = 259, nom = "Tank 850 L" , zoneID = 4, numGmao = "ECUV0038", mobile = false, type_activites = "7" }, new equipement { id = 260, nom = "Balance OHAUS Ranger 3000 -30Kg (SALLE AP5)", zoneID = 17, numGmao = "BAL0079", mobile = true, type_activites = "2,3,4,5,6,8,9,10,11,13,14,15,16,17,18" },
                 new equipement { id = 261, nom = "Salle Saumurage", zoneID = 10, numGmao = "CHF018", mobile = false, type_activites = "13,14,15" }, new equipement { id = 262, nom = "Salle Pâtes molles moulage", zoneID = 5, numGmao = "LAB0048", mobile = false, type_activites = "13,14,15" },
                 new equipement { id = 263, nom = "Salle Pâtes molles tranchage", zoneID = 6, numGmao = "LAB0049", mobile = false, type_activites = "13,14,15" }, new equipement { id = 264, nom = "Salle Labo", zoneID = 11, numGmao = "LAB0017", mobile = false, type_activites = "15,18" },
