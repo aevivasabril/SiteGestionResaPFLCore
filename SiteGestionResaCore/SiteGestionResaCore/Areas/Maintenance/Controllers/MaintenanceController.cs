@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 namespace SiteGestionResaCore.Areas.Maintenance.Data
 {
     [Area("Maintenance")]
-    [Authorize(Roles = "Admin, Logistic, MainAdmin")] // Il faut être ou Admin ou Logistic ou MainAdmin si on met authorize pour chaque rôle il faut être parti des 3 rôles pour accèder
+    [Authorize(Roles = "Admin, MainAdmin")] // Il faut être ou Admin ou Logistic ou MainAdmin si on met authorize pour chaque rôle il faut être parti des 3 rôles pour accèder
+    [Authorize(Roles = "LogisticMaint")]    // Il faut être partie aussi du rôle admin logistique maintenance
     public class MaintenanceController : Controller
     {
         private readonly IFormulaireIntervDB intervDb;
