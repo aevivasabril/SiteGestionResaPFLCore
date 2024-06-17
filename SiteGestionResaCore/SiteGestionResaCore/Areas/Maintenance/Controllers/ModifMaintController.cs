@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 namespace SiteGestionResaCore.Areas.Maintenance.Controllers
 {
     [Area("Maintenance")]
-    //[Authorize(Roles = "Admin, Logistic, MainAdmin")] // Il faut être ou Admin ou Logistic ou MainAdmin si on met authorize pour chaque rôle il faut être parti des 3 rôles pour accèder
+    [Authorize(Roles = "Admin, MainAdmin")] // Il faut être ou Admin ou MainAdmin si on met authorize pour chaque rôle il faut être parti des 3 rôles pour accèder
+    [Authorize(Roles = "LogisticMaint")]    // Il faut être partie aussi du rôle admin logistique maintenance
     public class ModifMaintController : Controller
     {
         private readonly IModifMaintenanceDB modifMaintDb;
@@ -31,7 +32,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             this.modifMaintDb = modifMaintDb;
         }
 
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult ModificationIntervention()
         {
             ModifMaintenanceVM vm = new ModifMaintenanceVM();
@@ -43,7 +44,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult TrouverIntervention(ModifMaintenanceVM vm)
         {
             // Vérifier que le numéro d'intervention existe!
@@ -71,7 +72,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             return View("ModificationIntervention", vm);
         }
 
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult ModifierInterCom(int id)
         {
             // Récupérer la session VM
@@ -91,7 +92,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <param name="id">id resa_maint_equip_adjacent</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public async Task<IActionResult> ModifierInterCommunAsync(ModifMaintenanceVM vm, int id)
         {
             DateTime NewDate = new DateTime();
@@ -193,7 +194,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// </summary>
         /// <param name="id">id resa_maint_equip_adjacent</param>
         /// <returns></returns>
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult IntervCommunFini(int id)
         {          
             // Récupérer la session VM
@@ -219,7 +220,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <param name="id">id resa_maint_equip_adjacent</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public async Task<IActionResult> ConfirmIntervComAsync(ModifMaintenanceVM vm, int id)
         {
             bool success = false;
@@ -298,7 +299,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         
         }
 
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult ModifierInterPfl(int id)
         {
             // Récupérer la session VM
@@ -318,7 +319,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         /// <param name="id">id reservation_maintenance</param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public async Task<IActionResult> ModifierIntervPflAsync(ModifMaintenanceVM vm, int id)
         {
             DateTime NewDate = new DateTime();
@@ -688,7 +689,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
             return View("ModificationIntervention", Model);
         }
 
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public IActionResult IntervPflFini(int id)
         {
             // Récupérer la session VM
@@ -709,7 +710,7 @@ namespace SiteGestionResaCore.Areas.Maintenance.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
+        //[Authorize(Roles = "Admin, Logistic, MainAdmin, LogisticMaint")]
         public async Task<IActionResult> ConfirmIntervPflAsync(ModifMaintenanceVM vm, int id)
         {
             string MsgUser = "";
