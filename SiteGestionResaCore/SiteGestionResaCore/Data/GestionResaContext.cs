@@ -633,7 +633,7 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_provenance_produit { id = 8, nom_provenance_produit = "Earl Lemarchand"}});
 
             modelBuilder.Entity<ld_type_projet>().HasData(new ld_type_projet[] { new ld_type_projet { id = 1, nom_type_projet = "Non connu" }, new ld_type_projet { id = 2, nom_type_projet = "Recherche" }, 
-                new ld_type_projet { id = 3, nom_type_projet = "Formation/Stage" }, new ld_type_projet { id = 4 , nom_type_projet = "Industriel (cellules hébergés"} });
+                new ld_type_projet { id = 3, nom_type_projet = "Formation/Stage" }, new ld_type_projet { id = 4 , nom_type_projet = "Industriel (cellules hébergés)"} });
 
             modelBuilder.Entity<ld_equipes_stlo>().HasData(new ld_equipes_stlo[] { new ld_equipes_stlo { id = 1, nom_equipe = "Microbio" }, new ld_equipes_stlo { id = 2, nom_equipe = "BN" },               
                 /*new ld_equipes_stlo { id = 6 , nom_equipe = "PFL"}, */new ld_equipes_stlo { id = 7 , nom_equipe = "CIRM-BIA"}, new ld_equipes_stlo { id = 8, nom_equipe = "PSF" }  });
@@ -644,7 +644,8 @@ namespace SiteGestionResaCore.Data.Data
                 new ld_type_maintenance { id = 6, nom_type_maintenance = "Maintenance curative (Dépannage sans blocage zone)" }, 
                 new ld_type_maintenance { id = 7, nom_type_maintenance = "Maintenance préventive (Interne sans blocage de zone)" },
                 new ld_type_maintenance { id = 8, nom_type_maintenance = "Maintenance préventive (Externe sans blocage de zone)" },
-                new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" }
+                new ld_type_maintenance { id = 9, nom_type_maintenance = "Amélioration (sans blocage de zone)" },
+                new ld_type_maintenance { id = 10, nom_type_maintenance = "Intervention métrologique (blocage de l'équipement)"}
             });
 
             modelBuilder.Entity<type_document>().HasData(new type_document[] { new type_document { id = 1, nom_document = "Données Physico-chimiques", identificateur = "PC"},
