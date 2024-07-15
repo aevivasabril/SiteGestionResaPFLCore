@@ -754,6 +754,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Controllers
                             case "Maintenance préventive (Interne sans blocage de zone)":
                             case "Maintenance préventive (Externe sans blocage de zone)":
                             case "Amélioration (sans blocage de zone)":
+                            case "Intervention métrologique (blocage de l'équipement)":
                                 isResaOkToAdd = false;                                
                                 for (int i = 0; i < equipementZone.CalendEquipSelectionnes.Count(); i++)
                                 {
