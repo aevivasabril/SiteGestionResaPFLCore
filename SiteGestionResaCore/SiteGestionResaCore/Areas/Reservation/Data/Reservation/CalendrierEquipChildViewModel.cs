@@ -30,7 +30,7 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         public string numGmaoEquipement { get; set; }
 
         // TODO: vois si ce serait utile (je pense que non!) zone id calendrier view model
-        public int zoneIDEquipement { get; set; }
+        //public int zoneIDEquipement { get; set; }
 
         #endregion  
         /// <summary>

@@ -23,7 +23,6 @@
                 <input class="form-control" name="DatePickerAu" asp-for="@Model.DatePickerAu" type="date" />
                 @Html.ValidationMessageFor(m => m.DatePickerAu, "", new { @class = "text-danger" })
                 <!-- pour passer l'id zone de cette vue au controleur Reservation methode GetPlanning() -->
-                @Html.HiddenFor(model => model.zoneIDEquipement)
             </div>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4">
