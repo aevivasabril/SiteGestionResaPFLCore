@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Data.Data;
 using System;
@@ -17,16 +18,16 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// </summary>
         private GestionResaContext context;
         private readonly UserManager<utilisateur> userManager;
-        //private readonly ILogger<FormulaireResaDb> logger;
+        private readonly ILogger<ProjetEssaiResaDb> logger;
 
         public ProjetEssaiResaDb(
             GestionResaContext projEssaiDb,
-            UserManager<utilisateur> userManager/*,
-            ILogger<FormulaireResaDb> logger*/)
+            UserManager<utilisateur> userManager,
+            ILogger<ProjetEssaiResaDb> logger)
         {
             this.context = projEssaiDb;
             this.userManager = userManager;
-            //this.logger = logger;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -140,13 +141,21 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         /// <returns>projet</returns>
         public projet ObtenirProjet_pourCopie(string NumProjet)
         {
-            //projet pr = new projet();
-            return context.projet.FirstOrDefault(p => p.num_projet == NumProjet);
+            projet pr = new projet();
+            try
+            {
+                pr = context.projet.FirstOrDefault(p => p.num_projet == NumProjet);
+            }
+            catch(Exception e)
+            {
+                logger.LogError("Problème pour récupérer le projet associé: " + e.Message);               
+            }
+            
             /*pr = (from proj in context.projet
                   where proj.num_projet == NumProjet
                   select proj).First();*/
 
-            //return pr;
+            return pr;
         }
 
         /// <summary>
@@ -174,17 +183,20 @@ namespace SiteGestionResaCore.Areas.Reservation.Data
         {
             int idType;
             projet proj = context.projet.FirstOrDefault(u => u.id == IdProjet);
-            if (proj.type_projet != null)
+                        
+            try
             {
                 idType = (from typeprojet in context.ld_type_projet
-                          from pro in context.projet
-                          where (pro.id == IdProjet) && (pro.type_projet == typeprojet.nom_type_projet)
-                          select typeprojet.id).First();
+                            from pro in context.projet
+                            where (pro.id == IdProjet) && (pro.type_projet == typeprojet.nom_type_projet)
+                            select typeprojet.id).First();
             }
-            else
+            catch (Exception e)
             {
+                logger.LogError("Problème pour récupérer le projet associé: " + e.Message);
                 idType = -1;
             }
+           
             return idType;
         }
 
