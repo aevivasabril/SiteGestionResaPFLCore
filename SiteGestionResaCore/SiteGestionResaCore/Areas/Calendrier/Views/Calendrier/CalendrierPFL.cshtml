@@ -1,4 +1,36 @@
-﻿<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+﻿@*
+    * website developped to manage the dairy platform STLO operations
+    * Code by Anny VIVAS, inspired from the operationnal functioning of the ancien website developped by Bruno PERRET
+    * July 2021
+    * website includes code from:
+    *  DotNetZip library for dealing with zip, bsip and zlib from .net
+    *  Created by: Henrik/Dino Chiesa
+    *
+    *  MailKit open source library for .NET mail-client
+    *  Created by:  Jeffrey Stedfast
+    *
+    *  Microsoft.AspNetCore.Identity.EntityFrameworkCore, ASP.NET Core Identity provider that uses Entity Framework Core
+    *  Created by: Microsoft
+    *
+    *  Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation, Runtime compilation support for Razor views and Razor pages in ASP.NET Core MVC
+    *  Created by: Microsoft
+    *
+    *  Microsoft.EntityFrameworkCore.Design, Shared design-time components for Entity Framework Core tools
+    *  Created by: Microsoft
+    *
+    *  Microsoft.EntityFrameworkCore.SqlServer, Microsoft SQL Server database provider for Entity Framework Core
+    *  Created by: Microsoft
+    *
+    *  Ncrontab, NCrontab is crontab for all .NET runtimes supported by .NET Standard 1.0. It provides parsing and formatting of crontab expressions as well as calculation of occurrences of time based on a schedule expressed in the crontab format
+    *  Created by: Atif Aziz
+    *
+    * This projet is released under the terms of the GNU general public license GPL version 3 or later:
+    * availaible here: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+    *
+    * Copyright (c) 2021-2024 Anny Vivas
+*@
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
       integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
 
 @model CalenViewModel
@@ -154,8 +186,8 @@
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurMatin">
 
                                 @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count() != 0 ||
-                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count() != 0 ||
-                                    Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatinAdjRest.Count() !=0 )
+                                   Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin.Count() != 0 ||
+                                   Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatinAdjRest.Count() != 0)
                                 {
                                     @for (int z = 0; z < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasMatin.Count(); z++)
                                     {
@@ -177,7 +209,7 @@
                                         <a href="#" onclick="DisplayModalInterv(@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervMatin[z].IdMaint)">
                                             <strong>Intervention </strong>
                                         </a>
-                                    }                                   
+                                    }
                                 }
 
                             </td>
@@ -185,8 +217,8 @@
                             <td style="background-color:@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].CouleurAprem">
 
                                 @if (@Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count() != 0 ||
-                                   @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count() != 0 ||
-                                   @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasApremAdjRest.Count() != 0)
+                                  @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].InfosIntervAprem.Count() != 0 ||
+                                  @Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasApremAdjRest.Count() != 0)
                                 {
                                     @for (int u = 0; u < Model.ListResasZone[j].ListEquipementVsResa[y].ListResasDuAu[x].ListResasAprem.Count(); u++)
                                     {

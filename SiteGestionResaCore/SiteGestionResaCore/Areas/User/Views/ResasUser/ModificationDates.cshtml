@@ -1,236 +1,268 @@
-﻿@model SiteGestionResaCore.Areas.User.Data.ResasUser.ModifDatesVM
+﻿@*
+    * website developped to manage the dairy platform STLO operations
+    * Code by Anny VIVAS, inspired from the operationnal functioning of the ancien website developped by Bruno PERRET
+    * July 2021
+    * website includes code from:
+    *  DotNetZip library for dealing with zip, bsip and zlib from .net
+    *  Created by: Henrik/Dino Chiesa
+    *
+    *  MailKit open source library for .NET mail-client
+    *  Created by:  Jeffrey Stedfast
+    *
+    *  Microsoft.AspNetCore.Identity.EntityFrameworkCore, ASP.NET Core Identity provider that uses Entity Framework Core
+    *  Created by: Microsoft
+    *
+    *  Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation, Runtime compilation support for Razor views and Razor pages in ASP.NET Core MVC
+    *  Created by: Microsoft
+    *
+    *  Microsoft.EntityFrameworkCore.Design, Shared design-time components for Entity Framework Core tools
+    *  Created by: Microsoft
+    *
+    *  Microsoft.EntityFrameworkCore.SqlServer, Microsoft SQL Server database provider for Entity Framework Core
+    *  Created by: Microsoft
+    *
+    *  Ncrontab, NCrontab is crontab for all .NET runtimes supported by .NET Standard 1.0. It provides parsing and formatting of crontab expressions as well as calculation of occurrences of time based on a schedule expressed in the crontab format
+    *  Created by: Atif Aziz
+    *
+    * This projet is released under the terms of the GNU general public license GPL version 3 or later:
+    * availaible here: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+    *
+    * Copyright (c) 2021-2024 Anny Vivas
+*@
 
-    @{
-        ViewData["Title"] = "ModifierEquipResa";
-        Layout = "~/Views/Shared/_Layout.cshtml";
+@model SiteGestionResaCore.Areas.User.Data.ResasUser.ModifDatesVM
 
-    }
-    <br />
-    <h3 class="text-center">Modification des dates pour réservation de l'equipement <strong>@Model.NomEquipement</strong></h3>
-    <br />
+@{
+    ViewData["Title"] = "ModifierEquipResa";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<br />
+<h3 class="text-center">Modification des dates pour réservation de l'equipement <strong>@Model.NomEquipement</strong></h3>
+<br />
 
 
-    <div class="offset-1 col-md-10">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title text-center">Code couleur calendrier</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <button style="background-color:#ffd191" disabled="True">Orange</button>
-                        <label>Conflit 2 essais "Restreint"</label>
-                    </div>
-                    <div class="col-md-6">
-                        <button style="background-color:#fdc0be" disabled="True">Rouge</button>
-                        <label>Réservation essai validé</label>
-                    </div>
+<div class="offset-1 col-md-10">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center">Code couleur calendrier</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#ffd191" disabled="True">Orange</button>
+                    <label>Conflit 2 essais "Restreint"</label>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <button style="background-color:#fbeed9" disabled="True">Beige</button>
-                        <label>Essai en attente de validation</label>
-                    </div>
-                    <div class="col-md-6">
-                        <button style="background-color:#a2d9d4" disabled="True">Vert</button>
-                        <label>Disponible</label>
-                    </div>
+                <div class="col-md-6">
+                    <button style="background-color:#fdc0be" disabled="True">Rouge</button>
+                    <label>Réservation essai validé</label>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <button style="background-color: #70cff0" disabled="True">Bleu</button>
-                        <label>Intervention de maintenance</label>
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color:#fbeed9" disabled="True">Beige</button>
+                    <label>Essai en attente de validation</label>
+                </div>
+                <div class="col-md-6">
+                    <button style="background-color:#a2d9d4" disabled="True">Vert</button>
+                    <label>Disponible</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button style="background-color: #70cff0" disabled="True">Bleu</button>
+                    <label>Intervention de maintenance</label>
                 </div>
             </div>
         </div>
     </div>
+</div>
+<br />
+<hr />
+@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="container">
     <br />
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="container">
-        <br />
-        <form asp-action="AfficherPlanningEquip" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.IdEquipement" method="post">
-            <h4 class="text-center">Sélectionnez les dates pour voir les créneaux disponibles pour le(s) équipement(s)</h4>
-            <div class="form-group row justify-content-center">
-                <br />
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <!--Date picker -->
-                    <div class="form-group">
-                        @Html.Label("Du : ")
-                        <input class="form-control" name="DateDebutCalend" asp-for="@Model.DateDebutCalend" type="date" />
-                        @Html.ValidationMessageFor(m => m.DateDebutCalend, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <!--Date picker -->
-                    <div class="form-group">
-                        @Html.Label("Au : ")
-                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
-                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
-                        <input class="form-control" name="DateFinCalend" asp-for="@Model.DateFinCalend" type="date" />
-                        @Html.ValidationMessageFor(m => m.DateFinCalend, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-4 col-lg-4">
-                    <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+    <form asp-action="AfficherPlanningEquip" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.IdEquipement" method="post">
+        <h4 class="text-center">Sélectionnez les dates pour voir les créneaux disponibles pour le(s) équipement(s)</h4>
+        <div class="form-group row justify-content-center">
+            <br />
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <!--Date picker -->
+                <div class="form-group">
+                    @Html.Label("Du : ")
+                    <input class="form-control" name="DateDebutCalend" asp-for="@Model.DateDebutCalend" type="date" />
+                    @Html.ValidationMessageFor(m => m.DateDebutCalend, "", new { @class = "text-danger" })
                 </div>
             </div>
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <!--Date picker -->
+                <div class="form-group">
+                    @Html.Label("Au : ")
+                    <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                    <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                    <input class="form-control" name="DateFinCalend" asp-for="@Model.DateFinCalend" type="date" />
+                    @Html.ValidationMessageFor(m => m.DateFinCalend, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-4">
+                <input type="submit" class="btn btn-outline-success" value="Afficher Planning" />
+            </div>
+        </div>
 
 
-            <div class="row">
-                <div id="scroller" class="col-sm-12 col-md-12 col-lg-12">
-                    <!--https://www.w3schools.com/bootstrap4/bootstrap_tables.asp-->
-                    <table class="table table-bordered table-responsive table-sm">
-                        <h4 class="text-center"><strong>Calendrier @Model.NomEquipement </strong></h4>
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Créneaux</th> <!--Colonne pour ajouter les créneaux matin et aprèm, pas besoin de head-->
-                                @foreach (var x in Model.ListResas)
-                                {
-                                    <th scope="col">@x.NomJour @x.JourResa.ToShortDateString()</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td scope="row" class="first_col">
-                                    <dl class="dl-horizontal text-center">
-                                        <br />
-                                        <dd>M</dd>
-                                        <dd>A</dd>
-                                        <dd>T</dd>
-                                        <dd>I</dd>
-                                        <dd>N</dd>
-                                    </dl>
+        <div class="row">
+            <div id="scroller" class="col-sm-12 col-md-12 col-lg-12">
+                <!--https://www.w3schools.com/bootstrap4/bootstrap_tables.asp-->
+                <table class="table table-bordered table-responsive table-sm">
+                    <h4 class="text-center"><strong>Calendrier @Model.NomEquipement </strong></h4>
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Créneaux</th> <!--Colonne pour ajouter les créneaux matin et aprèm, pas besoin de head-->
+                            @foreach (var x in Model.ListResas)
+                            {
+                                <th scope="col">@x.NomJour @x.JourResa.ToShortDateString()</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="row" class="first_col">
+                                <dl class="dl-horizontal text-center">
+                                    <br />
+                                    <dd>M</dd>
+                                    <dd>A</dd>
+                                    <dd>T</dd>
+                                    <dd>I</dd>
+                                    <dd>N</dd>
+                                </dl>
+                            </td>
+                            @foreach (var y in Model.ListResas)
+                            {
+                                <td style="background-color:@y.CouleurFondMatin.ToString()">
+                                    @foreach (var i in y.InfosResaMatin)
+                                    {
+                                        if (i.confidentialite == "Confidentiel")
+                                        {
+                                            <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
+                                        }
+                                        else
+                                        {
+                                            <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
+                                        }
+                                    }
+                                    @foreach (var i in y.InfosIntervMatin)
+                                    {
+                                        <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>
+                                    }
                                 </td>
-                                @foreach (var y in Model.ListResas)
-                                {
-                                    <td style="background-color:@y.CouleurFondMatin.ToString()">
-                                        @foreach (var i in y.InfosResaMatin)
+                            }
+                        </tr>
+                        <tr>
+                            <td scope="row" class="first_col">
+                                <dl class="dl-horizontal text-center">
+                                    <br />
+                                    <dd>A</dd>
+                                    <dd>P</dd>
+                                    <dd>R</dd>
+                                    <dd>E</dd>
+                                    <dd>M</dd>
+                                </dl>
+                            </td>
+                            @foreach (var y in Model.ListResas)
+                            {
+                                <td style="background-color:@y.CouleurFondAprem.ToString()">
+                                    @foreach (var i in y.InfosResaAprem)
+                                    {
+                                        if (i.confidentialite == "Confidentiel")
                                         {
-                                            if (i.confidentialite == "Confidentiel")
-                                            {
-                                                <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
-                                            }
-                                            else
-                                            {
-                                                <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
-                                            }
+                                            <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
                                         }
-                                        @foreach (var i in y.InfosIntervMatin)
+                                        else
                                         {
-                                            <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>
+                                            <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
                                         }
-                                    </td>
-                                }
-                            </tr>
-                            <tr>
-                                <td scope="row" class="first_col">
-                                    <dl class="dl-horizontal text-center">
-                                        <br />
-                                        <dd>A</dd>
-                                        <dd>P</dd>
-                                        <dd>R</dd>
-                                        <dd>E</dd>
-                                        <dd>M</dd>
-                                    </dl>
+                                    }
+                                    @foreach (var i in y.InfosIntervAprem)
+                                    {
+                                        <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>
+                                    }
                                 </td>
-                                @foreach (var y in Model.ListResas)
-                                {
-                                    <td style="background-color:@y.CouleurFondAprem.ToString()">
-                                        @foreach (var i in y.InfosResaAprem)
-                                        {
-                                            if (i.confidentialite == "Confidentiel")
-                                            {
-                                                <a><strong>[Essai <strong>@i.confidentialite.ToString()</strong>] (Responsable: @i.mailRespProjet)</strong></a>
-                                            }
-                                            else
-                                            {
-                                                <a><strong>[@i.num_projet ( Essai N° @i.numEssai) - @i.confidentialite.ToString()] @i.titre_projet (Responsable: @i.mailRespProjet)</strong></a>
-                                            }
-                                        }
-                                        @foreach (var i in y.InfosIntervAprem)
-                                        {
-                                            <a><strong>[Intervention <strong>@i.CodeOperation</strong>] @i.DescriptionOperation (Responsable: @i.MailOperateur)</strong></a>
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                        </tbody>
-                    </table>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </form>
+</div>
+<hr />
+<div class="container">
+    <form asp-action="ChangerDateResa" asp-controller="ResasUser" asp-route-id="@Model.IdReservation" asp-area="User" method="post">
+        <h5 class="text-center"><strong>Sélectionnez les dates pour modification réservation</strong></h5>
+        <div class="form-group row">
+            <div class="col-sm-12 col-md-12">
+                <div class="form-row">
+                    <div class="form-group col-sm-4 col-md-4">
+                        <!--Date picker -->
+                        @Html.Label("Date Début:  ")
+                        <input class="form-control" name="DateDebutCreneau" asp-for="@Model.DateDebutCreneau" type="date" />
+                        @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
+                        @Html.ValidationMessageFor(m => m.DateDebutCreneau, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-sm-3 col-md-3">
+                        <br />
+                        <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="true" />
+                        @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")*@
+                        <label class="col-md-2 control-label">Matin</label>
+                        @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                    </div>
+                    <div class="form-group col-sm-3 col-md-3">
+                        <br />
+                        <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="false" />
+                        @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")*@
+                        <label class="col-md-10 control-label">Après-midi</label>
+                        @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-sm-4 col-md-4">
+                        @Html.Label("Date Fin:  ")
+                        <input class="form-control" name="DateFinCreneau" asp-for="@Model.DateFinCreneau" type="date" />
+                        @Html.ValidationMessageFor(m => m.DateFinCreneau, "", new { @class = "text-danger" })
+                        <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
+                    </div>
+                    <div class="form-group col-sm-3 col-md-3">
+                        <br />
+                        <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
+                        <label class="col-md-2 control-label">Matin</label>
+                        @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-sm-3 col-md-3">
+                        <br />
+                        <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
+                        <label class="col-md-10 control-label">Après-midi</label>
+                        @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
+                    </div>
                 </div>
             </div>
 
-        </form>
-    </div>
-    <hr />
-    <div class="container">
-        <form asp-action="ChangerDateResa" asp-controller="ResasUser" asp-route-id="@Model.IdReservation" asp-area="User" method="post">
-            <h5 class="text-center"><strong>Sélectionnez les dates pour modification réservation</strong></h5>
-            <div class="form-group row">
-                <div class="col-sm-12 col-md-12">
-                    <div class="form-row">
-                        <div class="form-group col-sm-4 col-md-4">
-                            <!--Date picker -->
-                            @Html.Label("Date Début:  ")
-                            <input class="form-control" name="DateDebutCreneau" asp-for="@Model.DateDebutCreneau" type="date" />
-                            @*@Html.EditorFor(m => m.DateDebut, new { htmlAttributes = new { @class = "datepick form-control col-7", @id = "ResaDebutDP_" + Model.idEquipement, @placeholder = "MM/DD/YYYY" } })*@
-                            @Html.ValidationMessageFor(m => m.DateDebutCreneau, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-sm-3 col-md-3">
-                            <br />
-                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="true" />
-                            @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "true")*@
-                            <label class="col-md-2 control-label">Matin</label>
-                            @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
-
-                        </div>
-                        <div class="form-group col-sm-3 col-md-3">
-                            <br />
-                            <input type="radio" name="DatePickerDebut_Matin" asp-for="@Model.DatePickerDebut_Matin" value="false" />
-                            @*@Html.RadioButtonFor(m => m.DatePickerDebut_Matin, "false")*@
-                            <label class="col-md-10 control-label">Après-midi</label>
-                            @Html.ValidationMessageFor(m => m.DatePickerDebut_Matin, "", new { @class = "text-danger" })
-
-                        </div>
+            <div class="col-sm-12 col-md-12">
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <a class="btn btn-primary" asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.IdEssai">Annuler</a>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-sm-4 col-md-4">
-                            @Html.Label("Date Fin:  ")
-                            <input class="form-control" name="DateFinCreneau" asp-for="@Model.DateFinCreneau" type="date" />
-                            @Html.ValidationMessageFor(m => m.DateFinCreneau, "", new { @class = "text-danger" })
-                            <!-- CHANGER LE m => m.NomZone et rajouter la vrai variable du viewModel<input type="text" class="form-control" id="datepickerdebut" placeholder="MM/DD/YYYY">-->
-                        </div>
-                        <div class="form-group col-sm-3 col-md-3">
-                            <br />
-                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="true" />
-                            <label class="col-md-2 control-label">Matin</label>
-                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
-                        </div>
-                        <div class="form-group col-sm-3 col-md-3">
-                            <br />
-                            <input type="radio" name="DatePickerFin_Matin" asp-for="@Model.DatePickerFin_Matin" value="false" />
-                            <label class="col-md-10 control-label">Après-midi</label>
-                            @Html.ValidationMessageFor(m => m.DatePickerFin_Matin, "", new { @class = "text-danger" })
-                        </div>
+                    <div class="offset-8 col-md-2">
+                        <input type="submit" class="btn btn-default navbar-inra" value="Modifier dates réservation" name="action" />
                     </div>
                 </div>
-
-                <div class="col-sm-12 col-md-12">
-                    <div class="form-group row">
-                        <div class="col-md-2">
-                            <a class="btn btn-primary" asp-action="ModifierEquipResa" asp-controller="ResasUser" asp-area="User" asp-route-id="@Model.IdEssai">Annuler</a>
-                        </div>
-                        <div class="offset-8 col-md-2">
-                            <input type="submit" class="btn btn-default navbar-inra" value="Modifier dates réservation" name="action" />
-                        </div>
-                    </div>
-                </div>
-
             </div>
-        </form>
-    </div>
+
+        </div>
+    </form>
+</div>
 
 
 
-    
+

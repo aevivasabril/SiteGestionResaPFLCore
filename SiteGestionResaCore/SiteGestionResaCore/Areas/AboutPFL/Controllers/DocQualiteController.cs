@@ -1,4 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * website developped to manage the dairy platform STLO operations  
+ * Code by Anny VIVAS, inspired from the operationnal functioning of the ancien website developped by Bruno PERRET  
+ * July 2021
+ * 
+ * This projet is released under the terms of the GNU general public license GPL version 3 or later:
+ * availaible here: https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ * 
+ * Copyright (c) 2021-2024 Anny Vivas
+ */
+
+
+using Microsoft.AspNetCore.Mvc;
 using SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite;
 using SiteGestionResaCore.Areas.Metrologie.Data.Rapport;
 using SiteGestionResaCore.Data;
