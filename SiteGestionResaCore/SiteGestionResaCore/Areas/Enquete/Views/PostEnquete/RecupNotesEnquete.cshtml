@@ -60,8 +60,6 @@
             <!--Date picker -->
             <div class="form-group">
                 @Html.Label("Au : ")
-                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
-                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
                 <input class="form-control" name="DateAu" asp-for="@Model.DateAu" type="date" />
                 @Html.ValidationMessageFor(m => m.DateAu, "", new { @class = "text-danger" })
             </div>

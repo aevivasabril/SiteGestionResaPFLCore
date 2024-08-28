@@ -50,8 +50,7 @@
             <!--Date picker -->
             <div class="form-group">
                 @Html.Label("Au : ")
-                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
-                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+
                 <input class="form-control" name="DatePickerAu" asp-for="@Model.DatePickerAu" type="date" />
                 @Html.ValidationMessageFor(m => m.DatePickerAu, "", new { @class = "text-danger" })
                 <!-- pour passer l'id zone de cette vue au controleur Reservation methode GetPlanning() -->
@@ -63,7 +62,6 @@
     </div>
     <div class="row">
         <div id="scroller" class="col-sm-12 col-md-12 col-lg-12">
-            <!--https://www.w3schools.com/bootstrap4/bootstrap_tables.asp-->
             <table class="table table-bordered table-responsive">
                 <h5 class="text-center">Calendrier</h5>
                 <thead class="thead-dark">

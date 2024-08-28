@@ -69,7 +69,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                             "</p><p>Cordialement, </p><p>L'équipe PFL! </p> </body></html>";
 
                 await emailSender.SendEmailAsync(proj.mailRespProjet, "Notification avant suppression automatique entrepôt des données", message);
-                await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Notification avant suppression automatique entrepôt des données", message);// Ajouté uniquement pour vérifier!
+
             }
 
             #endregion
@@ -90,7 +90,6 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                             "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
                     await emailSender.SendEmailAsync(proj.mailRespProjet, "Suppression automatique entrepôt des données", message);
-                    await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Notification avant suppression automatique entrepôt des données", message);
                 }
                 else
                 {

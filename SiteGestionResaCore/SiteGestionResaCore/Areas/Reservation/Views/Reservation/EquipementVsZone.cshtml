@@ -147,8 +147,6 @@
                     <!--Date picker -->
                     <div class="form-group">
                         @Html.Label("Au : ")
-                        <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
-                        <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
                         <input class="form-control" name="DatePickerAu" asp-for="@Model.CalendVM.DatePickerAu" type="date" />
                         @Html.ValidationMessageFor(m => m.CalendVM.DatePickerAu, "", new { @class = "text-danger" })
                     </div>
@@ -162,7 +160,6 @@
             {
                 <div class="row">
                     <div id="scroller" class="col-sm-12 col-md-12 col-lg-12">
-                        <!--https://www.w3schools.com/bootstrap4/bootstrap_tables.asp-->
                         <table class="table table-bordered table-responsive table-sm">
                             <h4 class="text-center"><strong>Calendrier @Model.CalendEquipSelectionnes[j].nomEquipement </strong></h4>
                             <thead class="thead-dark">

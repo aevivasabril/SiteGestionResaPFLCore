@@ -49,8 +49,6 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         public RapportMetroTask(IServiceScopeFactory serviceScopeFactory,
             ILogger<RapportMetroTask> logger) : base(serviceScopeFactory)
         {
-            // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
-            //emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             rapportMetroDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IRapportMetroDB>();
             this.logger = logger;
         }

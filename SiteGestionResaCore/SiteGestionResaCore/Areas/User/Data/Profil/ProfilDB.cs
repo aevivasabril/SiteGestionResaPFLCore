@@ -94,8 +94,8 @@ namespace SiteGestionResaCore.Areas.User.Data.Profil
                     InfoEssai = x.TitreEssai + " (N°" + x.IdEssai + ")",
                     InfoProjet = x.Projet.titre_projet + "(N° " + x.Projet.num_projet + ")",
                     //IdEssai = x.IdEssai,
-                    LienEnquete = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + x.IdEssai
-                    //LienEnquete = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + x.IdEssai // Lien sur mon ordi (FONCTIONNE!!! :D )
+                    LienEnquete = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + x.IdEssai
+                    //LienEnquete = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + x.IdEssai 
                 };
                 List.Add(Enquete);
             }

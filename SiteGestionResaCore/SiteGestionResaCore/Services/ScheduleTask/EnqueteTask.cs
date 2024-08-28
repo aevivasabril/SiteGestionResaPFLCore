@@ -51,7 +51,6 @@ namespace SiteGestionResaCore.Services.ScheduleTask
         public EnqueteTask(IServiceScopeFactory serviceScopeFactory,
             ILogger<EnqueteTask> logger): base(serviceScopeFactory)
         {
-            // lien solution: https://www.thecodebuzz.com/cannot-consume-scoped-service-from-singleton-ihostedservice/
             emailSender = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEmailSender>();
             enqueteTaskDB = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<IEnqueteTaskDB>();
             this.logger = logger;
@@ -87,7 +86,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
                 var email = enqueteTaskDB.GetEmailCreatorEssai(essai.compte_userID);
 
-                string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
                 //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
@@ -106,15 +105,11 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                     logger.LogError("Problème d'envoi de mail enquete pour l'essai Id: " + essai.id + " .Message: " + e.Message);
                 }
                
-                //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
-
                 // Mettre à jour la date-envoi_enquete
                 enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
             }
 
             #endregion
-            // TODO: effacer!! c'est juste pour tester l'envoi des mails tous les 2 minutes
-            await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
 
             #endregion
 
@@ -131,7 +126,7 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                 var proj = enqueteTaskDB.GetProjetParEnquete(essai.projetID);
                 var email = enqueteTaskDB.GetEmailCreatorEssai(essai.compte_userID);
 
-                string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
                 //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
@@ -151,7 +146,6 @@ namespace SiteGestionResaCore.Services.ScheduleTask
                     logger.LogError("Problème d'envoi de mail enquete (RELANCE) pour l'essai Id: " + essai.id + " .Message: " + e.Message);
                 }
                 
-                //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 // Mettre à jour la date-envoi_enquete
                 enqueteTaskDB.UpdateDateEnvoiEnquete(enque);
             }

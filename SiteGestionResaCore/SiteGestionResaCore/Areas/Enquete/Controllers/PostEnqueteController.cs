@@ -301,7 +301,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                 var proj = enquete.GetProjetParEnquete(essai.projetID);
                 var email = enquete.GetEmailCreatorEssai(essai.compte_userID);
 
-                string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
                 //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
@@ -313,15 +313,12 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
                 await emailSender.SendEmailAsync(email, "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
-                //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
 
                 // Mettre à jour la date-envoi_enquete
                 enquete.UpdateDateEnvoiEnquete(enque);
             }
 
             #endregion
-            // TODO: effacer!! c'est juste pour tester l'envoi des mails tous les 2 minutes
-            await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "TEST tâche côté serveur", DateTime.Now.ToString());
 
             #endregion
 
@@ -338,7 +335,7 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                 var proj = enquete.GetProjetParEnquete(essai.projetID);
                 var email = enquete.GetEmailCreatorEssai(essai.compte_userID);
 
-                string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
+                string callbackUrl = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // lien pour le serveur caseine! 
 
                 //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
 
@@ -350,7 +347,6 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                             + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
                 await emailSender.SendEmailAsync(email, "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
-                //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
                 // Mettre à jour la date-envoi_enquete
                 enquete.UpdateDateEnvoiEnquete(enque);
             }
@@ -374,9 +370,9 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
             var email = enquete.GetEmailCreatorEssai(essai.compte_userID);
             var enq = postEnqueteDB.GetEnqueteXEssai(id);
 
-            string callbackUrl = "http://147.99.161.143/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + id; // lien pour le serveur caseine! 
+            string callbackUrl = "http://xxx.xx.xx.xxx/SiteGestionResa/Enquete/Enquete/EnqueteSatisfaction?id=" + id; // lien pour le serveur caseine! 
 
-            //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; // Lien sur mon ordi (FONCTIONNE!!! :D )
+            //string callbackUrl = "http://localhost:55092/Enquete/Enquete/EnqueteSatisfaction?id=" + essai.id; 
 
             string message = @"<html>
                             <body> 
