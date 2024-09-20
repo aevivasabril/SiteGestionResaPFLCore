@@ -1,35 +1,4 @@
-﻿@*
- * website developped to manage the dairy platform STLO operations
- * Code by Anny VIVAS, inspired from the operationnal functioning of the ancien website developped by Bruno PERRET
- * July 2021
- * website includes code from:
- *  DotNetZip library for dealing with zip, bsip and zlib from .net
- *  Created by: Henrik/Dino Chiesa
- *
- *  MailKit open source library for .NET mail-client
- *  Created by:  Jeffrey Stedfast
- *
- *  Microsoft.AspNetCore.Identity.EntityFrameworkCore, ASP.NET Core Identity provider that uses Entity Framework Core
- *  Created by: Microsoft
- *
- *  Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation, Runtime compilation support for Razor views and Razor pages in ASP.NET Core MVC
- *  Created by: Microsoft
- *
- *  Microsoft.EntityFrameworkCore.Design, Shared design-time components for Entity Framework Core tools
- *  Created by: Microsoft
- *
- *  Microsoft.EntityFrameworkCore.SqlServer, Microsoft SQL Server database provider for Entity Framework Core
- *  Created by: Microsoft
- *
- *  Ncrontab, NCrontab is crontab for all .NET runtimes supported by .NET Standard 1.0. It provides parsing and formatting of crontab expressions as well as calculation of occurrences of time based on a schedule expressed in the crontab format
- *  Created by: Atif Aziz
- *
- * This projet is released under the terms of the GNU general public license GPL version 3 or later:
- * availaible here: https://www.gnu.org/licenses/gpl-3.0-standalone.html
- *
- * Copyright (c) 2021-2024 Anny Vivas
- *@
-
+﻿
 @{
     ViewBag.Title = "Equipe";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -58,6 +27,11 @@
                     <a class="btn-link" asp-action="MenuStats" asp-controller="Stats" asp-area="StatistiquePFL">Statistiques PFL</a>
                 </h5>
                 <p class="card-text">Accès aux diverses statistiques Plateforme. Fichiers excel téléchargeables.</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: Brioude Internet. https://www.brioude-internet.fr/12403/quels-kpi-pour-lanalyse-des-medias-sociaux/
+                    </small>
+                </p>
             </div>
         </div>
     </div>
@@ -70,6 +44,11 @@
                     <a class="btn-link" asp-action="RecupNotesEnquete" asp-controller="PostEnquete" asp-area="Enquete">Enquetes de satisfaction</a>
                 </h5>
                 <p class="card-text">Obtenir les notes des enquêtes de satisfaction et accès aux statistiques obtenues des enquêtes repondues</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: Phosphore. https://www.phosphore.com/orientation/la-consultation-que-vous-attendiez/
+                    </small>
+                </p>
             </div>
         </div>
     </div>
@@ -84,6 +63,11 @@
                     <a class="btn-link" asp-action="GestionUtilisateurs" asp-controller="Equipe" asp-area="Equipe">Gestion des utilisateurs</a>
                 </h5>
                 <p class="card-text">Supprimer des anciens utilisateurs, modifier les droits de compte, valider les demandes d'ouverture... </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: Shutterstock
+                    </small>
+                </p>
             </div>
         </div>
     </div>
@@ -95,6 +79,11 @@
                     <a class="btn-link" asp-action="MenuConsultation" asp-controller="Validation" asp-area="Reservation">Réservations</a>
                 </h5>
                 <p class="card-text">Valider ou refuser des réservations, consulter les réservations validés ou supprimées </p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: Cefirc - Formation Santé Sécurité - Pau 64. https://www.cefirc.fr/manager-de-proximite-organiser-le-travail-et-donner-des-consignes/
+                    </small>
+                </p>
             </div>
         </div>
     </div>
@@ -131,6 +120,12 @@
                     <a class="btn-link" asp-action="IndexModifDocsAQ" asp-controller="ModifDocAq" asp-area="Equipe">Documentation Importante PFL</a>
                 </h5>
                 <p class="card-text">Mise à jour des documents PFL publiés dans la page</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: Power tools user guides - documentation - free transparent PNG clipart images download.
+                        ClipartMax.com. (s. d.-b). ClipartMax.com. https://www.clipartmax.com/middle/m2i8H7i8H7d3b1N4_power-tools-user-guides-documentation
+                    </small>
+                </p>
             </div>
         </div>
     </div>
@@ -142,6 +137,12 @@
                     <a class="btn-link" asp-action="AccueilEvenements" asp-controller="Events" asp-area="Evenements">Evènements</a>
                 </h5>
                 <p class="card-text">Ajouter, supprimer, modifier ou afficher dans la page d'accueil des évènements</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Image: L, B. (2020, 3 mars). Stratégie marketing : 11 étapes pour l'organisation d'un événement. KakaBlog.net.
+                        https://kakablog.net/strategie-marketing-11-etapes-pour-lorganisation-dun-evenement/
+                    </small>
+                </p>
             </div>
         </div>
     </div>
