@@ -1,2 +1,2 @@
-# SiteGestionResaPFLCore
-Migration vers ASP net CORE
+Ce site web est dédié aux administrateurs de la Plate-forme lait et les utilisateurs. Il permet aux administrateurs de gérer l'ouverture/suppression des comptes utilisateurs, validation ou refus des réservation, déclaration des opérations de maintenance, métrologie, entre autres. Pour plus d'informations sur le fonctionnement du site, référez-vous au manuel d'utilisation disponible dans le dossier « documents ».
+
