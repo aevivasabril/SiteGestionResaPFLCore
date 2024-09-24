@@ -383,7 +383,6 @@ namespace SiteGestionResaCore.Areas.Enquete.Controllers
                         + "</p><p>Cordialement, </p><br><p>L'équipe PFL! </p> </body></html>";
 
             await emailSender.SendEmailAsync(email, "(RELANCE ++) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
-            //await emailSender.SendEmailAsync("anny.vivas@inrae.fr", "(RELANCE) Enquête de satisfaction PFL", message.Replace("[CALLBACK_URL]", callbackUrl));
             // Mettre à jour la date-envoi_enquete et la date premier envoie
             enquete.UpdateDateEnvoiEnqueteManuel(enq);
             PostEnqueteViewModel vm = new PostEnqueteViewModel() { };
