@@ -610,7 +610,8 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 267, nom = "Thermomix TM6 (SALLE AP9)", zoneID = 17, numGmao = "BROY0046", mobile = true, type_activites = "9,13,14,15" }, new equipement {id = 268, nom = "Pilote UF forte concentration", zoneID = 8, numGmao = "PILOT0023", mobile = false, type_activites = "8"},
                 new equipement { id = 269, nom = "Bain-marie sans couvercle (SALLE AP6)", zoneID = 17, numGmao = "BTH0066", mobile = true, type_activites = "9"}, new equipement { id = 270, nom = "Bain-marie MEMMERT (avec couvercle, petite capacité)(SALLE AP9)", zoneID = 17, numGmao = "BTH0065", mobile = true, type_activites = "9"},
                 new equipement { id = 271, nom = "Bain-marie MEMMERT (avec couvercle, grande capacité) (SALLE AP8)", zoneID = 17, numGmao = "BTH0033", mobile = true, type_activites = "9"},
-                new equipement { id = 272, nom = "Agitateur BIOBLOCK type RZR 2000 Digital (SALLE AP8)", zoneID = 17, numGmao = "AGIT0186", mobile = true, type_activites = "17"}
+                new equipement { id = 272, nom = "Agitateur BIOBLOCK type RZR 2000 Digital (SALLE AP8)", zoneID = 17, numGmao = "AGIT0186", mobile = true, type_activites = "17"},
+                new equipement { id = 273, nom = "Homogénéisateur GEA One 7TS ", zoneID = 3, numGmao = "HOMO0009", mobile = false, type_activites = "11"}
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 
