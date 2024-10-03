@@ -1,0 +1,143 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "type": "SoftwareSourceCode",
+    "applicationCategory": "infrastructure",
+    "author": [
+        {
+            "id": "https://orcid.org/0009-0008-5616-4801",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "TRANSFORM DEPARTMENT, INRAE, UMR 1253 STLO (science and technology of dairy and eggs) "
+            },
+            "email": "anny.vivas@inrae.fr",
+            "familyName": "VIVAS ABRIL",
+            "givenName": "Anny"
+        }
+    ],
+    "codeRepository": "https://github.com/aevivasabril/SiteGestionResaPFLCore.git",
+    "contributor": [
+        {
+            "id": "_:contributor_1",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Ex colleague INRAE"
+            },
+            "familyName": "MORAND",
+            "givenName": "Didier"
+        },
+        {
+            "type": "schema:Role",
+            "contributor": "_:contributor_1",
+            "schema:endDate": "2022-08-15",
+            "schema:roleName": "TESTER",
+            "schema:startDate": "2020-11-20"
+        },
+        {
+            "id": "_:contributor_2",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "TRANSFORM DEPARTMENT, INRAE, UMR 1253 STLO (science and technology of dairy and eggs) "
+            },
+            "email": "gilles.garric@inrae.fr",
+            "familyName": "Garric",
+            "givenName": "Gilles "
+        },
+        {
+            "type": "schema:Role",
+            "contributor": "_:contributor_2",
+            "schema:endDate": "2023-09-01",
+            "schema:roleName": "TESTER",
+            "schema:startDate": "2020-11-20"
+        },
+        {
+            "id": "_:contributor_3",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "TRANSFORM DEPARTMENT, INRAE, UMR 1253 STLO (science and technology of dairy and eggs) "
+            },
+            "email": "marielle.harel-oger@inrae.fr",
+            "familyName": "HAREL-OGER",
+            "givenName": "Marielle"
+        },
+        {
+            "type": "schema:Role",
+            "contributor": "_:contributor_3",
+            "schema:roleName": "TESTER",
+            "schema:startDate": "2020-11-20"
+        },
+        {
+            "id": "_:contributor_4",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "TRANSFORM DEPARTMENT, INRAE, UMR 1253 STLO (science and technology of dairy and eggs) "
+            },
+            "email": "gaelle.tanguy@inrae.fr",
+            "familyName": "Tanguy",
+            "givenName": "Gaëlle "
+        },
+        {
+            "type": "schema:Role",
+            "contributor": "_:contributor_4",
+            "schema:endDate": "2023-09-01",
+            "schema:roleName": "TESTER ",
+            "schema:startDate": "2020-11-20"
+        },
+        {
+            "id": "_:contributor_5",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Ex colleague INRAE"
+            },
+            "familyName": "THOMAS",
+            "givenName": "Jean-Luc"
+        },
+        {
+            "type": "schema:Role",
+            "contributor": "_:contributor_5",
+            "schema:endDate": "2021-10-01",
+            "schema:roleName": "TESTER",
+            "schema:startDate": "2020-11-20"
+        }
+    ],
+    "dateCreated": "2020-11-02",
+    "dateModified": "2024-09-26",
+    "datePublished": "2021-07-07",
+    "description": "Gerami = Gestion, réservation et acquisition des données sur le matériel d'une infrastructure de recherche (Management, reservation and data acquisition for the equipements of a research infrastructure)\\nWebsite dedicated to the administrateurs of the STLO Dairy platform and users. It allows administrators to manage the opening/deletion of user accounts, validation or refusal of reservations, planning maintenance operations, metrology and others operations. Users can retrieve the data available and generated on their platform experiences.",
+    "keywords": [
+        "acquisition data",
+        "management",
+        "reservation"
+    ],
+    "license": "https://spdx.org/licenses/GPL-3.0-or-later",
+    "name": "GERAMI",
+    "operatingSystem": "Responsive to all OS",
+    "programmingLanguage": [
+        "C#",
+        "cshtml",
+        "javascript"
+    ],
+    "runtimePlatform": "ASP .NET CORE",
+    "softwareRequirements": [
+        "Visual studio 2019",
+        "https://visualstudio.microsoft.com/fr/vs/older-downloads/",
+        "/",
+        "VERSION 3.1.20, SDK 3.1414, Asp.net core 3.1.20, desktop .NET 3.1.20 and runtime .net 3.1.20",
+        "https://dotnet.microsoft.com/fr-fr/download/dotnet/3.1",
+        "/",
+        "EF Core Power Tools Version 12.5.123 https://github.com/ErikEJ/EFCorePowerTools/tree/archive/tools/VS2019Support",
+        "/",
+        "SQL server management version 2014",
+        "https://www.microsoft.com/fr-fr/download/details.aspx?id=42299",
+        "/",
+        "/"
+    ],
+    "version": "6.0.4",
+    "developmentStatus": "inactive",
+    "issueTracker": "https://github.com/aevivasabril/SiteGestionResaPFLCore/issues"
+}
