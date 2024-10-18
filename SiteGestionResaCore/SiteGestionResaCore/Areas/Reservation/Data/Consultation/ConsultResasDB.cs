@@ -31,12 +31,14 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         public IList<InfosResasValid> ObtInfEssaiValidees()
         {
             List<InfosResasValid> list = new List<InfosResasValid>();
-            // Obtenir tous les essais "VALIDEES"
+            // afficher uniquement les essais "Validées" pour une année à partir de la date de consultation
+
             var Reg = (from proj in resaDB.projet
+                       from res in resaDB.reservation_projet
                         join ess in resaDB.essai on proj.id equals ess.projetID into t1
                         from m in t1.DefaultIfEmpty()
-                        where m.status_essai == EnumStatusEssai.Validate.ToString()                    
-                        select new
+                        where m.status_essai == EnumStatusEssai.Validate.ToString() && m.id == res.essaiID && res.date_debut >= DateTime.Now.AddYears(-1)
+                       select new
                         {
                             idEssai = m.id,
                             DateValidation = m.date_validation.Value,
@@ -68,11 +70,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         public IList<InfosResaNonValid> ObtInfosEssaisRefusees()
         {
             List<InfosResaNonValid> list = new List<InfosResaNonValid>();
-            // Obtenir tous les essais "REFUSES"
+            // Obtenir tous les essais "REFUSES" pour l'année en cours à partir de la date de consultation
             var Reg = (from proj in resaDB.projet
+                       from res in resaDB.reservation_projet
                        join ess in resaDB.essai on proj.id equals ess.projetID into t1
                        from m in t1.DefaultIfEmpty()
-                       where m.status_essai == EnumStatusEssai.Refuse.ToString()
+                       where m.status_essai == EnumStatusEssai.Refuse.ToString() && m.id == res.essaiID && res.date_debut >= DateTime.Now.AddYears(-1)
                        select new
                        {
                            idEssai = m.id,
@@ -115,11 +118,12 @@ namespace SiteGestionResaCore.Areas.Reservation.Data.Consultation
         public IList<InfosResaNonValid> ObtInfosEssaisSupprimees()
         {
             List<InfosResaNonValid> list = new List<InfosResaNonValid>();
-            // Obtenir tous les essais "SUPPRIMES"
+            // Obtenir tous les essais "SUPPRIMES" pour l'année en cours à partir de la date de consultation
             var Reg = (from proj in resaDB.projet
+                       from res in resaDB.reservation_projet
                        join ess in resaDB.essai on proj.id equals ess.projetID into t1
                        from m in t1.DefaultIfEmpty()
-                       where m.status_essai == EnumStatusEssai.Canceled.ToString()
+                       where m.status_essai == EnumStatusEssai.Canceled.ToString() && m.id == res.essaiID && res.date_debut >= DateTime.Now.AddYears(-1)
                        select new
                        {
                            idEssai = m.id,
