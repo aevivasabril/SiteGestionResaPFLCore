@@ -18,12 +18,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
         Task<ResasEquipParJour> ResasEquipementParJourAsync(int IdEquipement, DateTime DateRecup);
 
-        InfosEquipementReserve ObtenirInfosResa(int IdEssai);
+        Task<InfosEquipementReserve> ObtenirInfosResaAsync(int IdEssai);
 
-        essai ObtenirEssai(int IdEssai);
+        Task<essai> ObtenirEssaiAsync(int IdEssai);
 
-        projet ObtenirProjetEssai(essai Essai);
+        Task<projet> ObtenirProjetEssaiAsync(essai Essai);
 
-        InfosAffichageMaint ObtenirInfosInter(int IdMaint);
+        Task<InfosAffichageMaint> ObtenirInfosInterAsync(int IdMaint);
     }
 }

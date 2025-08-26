@@ -919,12 +919,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return EquipVsResa;
         }
 
-        public InfosEquipementReserve ObtenirInfosResa(int IdEssai)
+        public async Task<InfosEquipementReserve> ObtenirInfosResaAsync(int IdEssai)
         {
             InfosEquipementReserve Infos = new InfosEquipementReserve();
-            essai essai = ObtenirEssai(IdEssai);
+            essai essai = await ObtenirEssaiAsync(IdEssai);
 
-            projet pr = ObtenirProjetEssai(essai);
+            projet pr = await ObtenirProjetEssaiAsync(essai);
             // si essai confidentiel copier uniquement le mail du responsable projet
             if(essai.confidentialite == EnumConfidentialite.Confidentiel.ToString())
             {
@@ -940,9 +940,9 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             return Infos;
         }
 
-        public InfosAffichageMaint ObtenirInfosInter(int IdMaint)
+        public async Task<InfosAffichageMaint> ObtenirInfosInterAsync(int IdMaint)
         {
-            maintenance maint = resaDB.maintenance.First(m => m.id == IdMaint);
+            maintenance maint = await resaDB.maintenance.FirstAsync(m => m.id == IdMaint);
             InfosAffichageMaint infosMaint = new InfosAffichageMaint
             {
                 IdMaint = IdMaint,
@@ -953,14 +953,14 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             };
             return infosMaint;
         }
-        public essai ObtenirEssai(int IdEssai)
+        public async Task<essai> ObtenirEssaiAsync(int IdEssai)
         {
-            return resaDB.essai.First(e => e.id == IdEssai);
+            return await resaDB.essai.FirstAsync(e => e.id == IdEssai);
         }
 
-        public projet ObtenirProjetEssai(essai essai)
+        public async Task<projet> ObtenirProjetEssaiAsync(essai essai)
         {
-            return resaDB.projet.First(p => p.id == essai.projetID);
+            return await resaDB.projet.FirstAsync(p => p.id == essai.projetID);
         }
 
         /*public List<reservation_projet> ListResasFromTo(DateTime dateDu, DateTime dateAu)

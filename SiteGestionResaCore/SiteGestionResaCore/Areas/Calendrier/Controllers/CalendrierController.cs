@@ -61,7 +61,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     {
                         // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
                         model = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
-                        ModelState.AddModelError("", "Seulement les données de réservation de moins d'un an seront affichées");
+                        ModelState.AddModelError("", "Seulement les données de réservation de moins d'un an seront affichées, pour consulter les réservations plus anciennes voir avec les administrateurs");
                         return View("CalendrierPFL", model);
                     }
                     var x = await DonneesCalendrierPFLAsync(false, model.DateDu, model.DateAu);
@@ -91,12 +91,12 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             return View("CalendrierPFL", model);
         }
 
-        public IActionResult VoirInfosEssai(int id)
+        public async Task<IActionResult> VoirInfosEssaiAsync(int id)
         {
             // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
 
             // Obtenir les infos à afficher pour l'essai demandé
-            InfosEquipementReserve InfosResa = CalendResaDb.ObtenirInfosResa(id);
+            InfosEquipementReserve InfosResa = await CalendResaDb.ObtenirInfosResaAsync(id);
 
             return PartialView ("_InfosResaCalendrier", InfosResa);
         }
@@ -106,10 +106,10 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         /// </summary>
         /// <param name="id">Id maintenance</param>
         /// <returns></returns>
-        public IActionResult VoirInfosInterv(int id)
+        public async Task<IActionResult> VoirInfosIntervAsync(int id)
         {
             // Obtenir les infos à afficher pour l'intervention maintenance demandé
-            InfosAffichageMaint InfosInterv = CalendResaDb.ObtenirInfosInter(id);
+            InfosAffichageMaint InfosInterv = await CalendResaDb.ObtenirInfosInterAsync(id);
 
             return PartialView("_InfosIntervCalendrier", InfosInterv);
         }
