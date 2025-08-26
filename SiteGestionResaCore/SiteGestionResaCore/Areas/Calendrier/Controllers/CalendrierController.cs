@@ -30,11 +30,11 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         /// Action pour obtenir les infos de réservation pour une semaine
         /// </summary>
         /// <returns></returns>
-        public IActionResult CalendrierPFL(CalenViewModel vm)
+        public async Task<IActionResult> CalendrierPFLAsync(CalenViewModel vm)
         {
             //Liberer la session si la personne reclique sur le ménu calendrier?
 
-            var x = DonneesCalendrierPFL(true, null, null);
+            var x = await DonneesCalendrierPFLAsync(true, null, null);
 
             // Premier affichage du calendrier à complèter pour une semaine
             vm = new CalenViewModel()
@@ -51,13 +51,20 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         }
 
         [HttpPost]
-        public IActionResult AfficherPlanningDuAu(CalenViewModel model)
+        public async Task<IActionResult> AfficherPlanningDuAuAsync(CalenViewModel model)
         {
             if (model.DateAu != null && model.DateDu != null) // Vérification uniquement des datePicker pour l'affichage du calendrier
             {
                 if (model.DateDu.Value <= model.DateAu.Value)
                 {
-                    var x = DonneesCalendrierPFL(false, model.DateDu, model.DateAu);
+                    if (model.DateDu <= DateTime.Now.AddYears(-1).AddDays(-1))
+                    {
+                        // Récupérer la session "CalenViewModel" où se trouvent toutes les informations des réservations pour toute la PFL
+                        model = HttpContext.GetFromSession<CalenViewModel>("CalenViewModel");
+                        ModelState.AddModelError("", "Seulement les données de réservation de moins d'un an seront affichées");
+                        return View("CalendrierPFL", model);
+                    }
+                    var x = await DonneesCalendrierPFLAsync(false, model.DateDu, model.DateAu);
 
                     model.JoursCalendrier = x.Item1;
                     model.ListResasZone = x.Item2;
@@ -117,7 +124,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
         /// <param name="DateDu"></param>
         /// <param name="DateAu"></param>
         /// <returns>List<JourCalendrier>, List<ResasZone></returns>
-        public (List<JourCalendrier>, List<ResasZone>) DonneesCalendrierPFL(bool IsForOneWeek, DateTime? DateDu, DateTime? DateAu)
+        public async Task<(List<JourCalendrier>, List<ResasZone>)> DonneesCalendrierPFLAsync(bool IsForOneWeek, DateTime? DateDu, DateTime? DateAu)
         {
             List<JourCalendrier> ListCalendrierParZone = new List<JourCalendrier>();
             List<ResasEquipParJour> ListResEquipParjour = new List<ResasEquipParJour>();
@@ -185,14 +192,14 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
             #region Recueil des réservations par jour et par équipement par zone
 
             // Obtenir la liste des zones
-            List<zone> zones = CalendResaDb.ListeZones();
+            IList<zone> zones = await CalendResaDb.ListeZonesAsync();
 
             // Pour chaque zone, obtenir la liste des équipements avec leurs réservations
             foreach (var z in zones)
             {
                 ListEquiVsResa = new List<EquipementVsResa>(); // initialiser à zéro!
                 // Obtenir la liste des équipements pour la zone Z
-                List<equipement> equipements = CalendResaDb.ListeEquipements(z.id);
+                IList<equipement> equipements = await CalendResaDb.ListeEquipementsAsync(z.id);
 
                 foreach (var equip in equipements)
                 {
@@ -212,7 +219,7 @@ namespace SiteGestionResaCore.Areas.Calendrier.Controllers
                     for (int i = 0; i < NbJours; i++)
                     {
                         // Obtenir l'emploi du temps du jour de la semaine i pour un équipement
-                        ResasEquipParJour EquipResaJour = CalendResaDb.ResasEquipementParJour(equip.id, DateRecup);
+                        ResasEquipParJour EquipResaJour = await CalendResaDb.ResasEquipementParJourAsync(equip.id, DateRecup);
                         // Ajouter les données calendrier pour l'équipement dans la liste
                         ListResEquipParjour.Add(EquipResaJour);
                         

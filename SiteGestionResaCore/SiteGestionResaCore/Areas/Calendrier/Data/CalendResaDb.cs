@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using SiteGestionResaCore.Data;
@@ -28,17 +29,17 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
             this.logger = logger;
         }
 
-        public List<zone> ListeZones()
+        public async Task<IList<zone>> ListeZonesAsync()
         {
-            return resaDB.zone.ToList();
+            return await resaDB.zone.ToListAsync();
         }
 
-        public List<equipement> ListeEquipements(int ZoneID)
+        public async Task<IList<equipement>> ListeEquipementsAsync(int ZoneID)
         {
-            return resaDB.equipement.Where(e => e.zoneID == ZoneID && e.equip_delete != true).Distinct().ToList();
+            return await resaDB.equipement.Where(e => e.zoneID == ZoneID && e.equip_delete != true).Distinct().ToListAsync();
         }
 
-        public ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup)
+        public async Task<ResasEquipParJour> ResasEquipementParJourAsync(int IdEquipement, DateTime DateRecup)
         {
             #region Variables pour les essais
 
@@ -80,14 +81,15 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
                 goto ENDT;
 
             // Récupérer toutes les réservations validés ou en attente valid 
-            InfosEssai = (from resa in resaDB.reservation_projet
-                             from essa in resaDB.essai
-                             where resa.essaiID == essa.id &&
-                             (essa.status_essai == EnumStatusEssai.Validate.ToString() ||
-                             essa.status_essai == EnumStatusEssai.WaitingValidation.ToString())
-                             && ((DatEnqDebMatin >= resa.date_debut || DatEnqDebAprem >= resa.date_debut) &&
-                                (DatEnqFinMatin <= resa.date_fin || DatEnqFinAprem <= resa.date_fin))
-                             select essa).Distinct().ToList();
+            InfosEssai = await (from resa in resaDB.reservation_projet
+                                 from essa in resaDB.essai
+                                 where resa.essaiID == essa.id &&
+                                 (essa.status_essai == EnumStatusEssai.Validate.ToString() ||
+                                 essa.status_essai == EnumStatusEssai.WaitingValidation.ToString())
+                                 //&& (resa.date_debut >= DateTime.Now.AddYears(-1).AddDays(-1)) // Uniquement les données d'un an max
+                                 && ((DatEnqDebMatin >= resa.date_debut || DatEnqDebAprem >= resa.date_debut) &&
+                                    (DatEnqFinMatin <= resa.date_fin || DatEnqFinAprem <= resa.date_fin))
+                                 select essa).Distinct().ToListAsync();
 
             // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
             /*foreach (var es in SubInfosEssai)
@@ -192,13 +194,14 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
 
             #region Informations interventions maintenance (bloquer toute la zone pour tous les types d'interventions) 
 
-            InfosInterv = (from interMaint in resaDB.reservation_maintenance
-                          from maint in resaDB.maintenance
-                          where (interMaint.maintenanceID == maint.id)
-                          && (maint.maintenance_supprime != true)
-                          && ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
-                          && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
-                          select maint).Distinct().ToList();
+            InfosInterv = await (from interMaint in resaDB.reservation_maintenance
+                                  from maint in resaDB.maintenance
+                                  where (interMaint.maintenanceID == maint.id)
+                                  && (maint.maintenance_supprime != true)
+                                  //&& (interMaint.date_debut >= DateTime.Now.AddYears(-1).AddDays(-1)) // Uniquement les données d'un an max
+                                  && ((DatEnqDebMatin >= interMaint.date_debut || DatEnqDebAprem >= interMaint.date_debut)
+                                  && (DatEnqFinMatin <= interMaint.date_fin || DatEnqFinAprem <= interMaint.date_fin))
+                                  select maint).Distinct().ToListAsync();
 
 
             // Récupérer les essais où la date enquêté est bien dans la plage de déroulement
@@ -959,5 +962,25 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
         {
             return resaDB.projet.First(p => p.id == essai.projetID);
         }
+
+        /*public List<reservation_projet> ListResasFromTo(DateTime dateDu, DateTime dateAu)
+        {
+            return (from resa in resaDB.reservation_projet
+                    where (resa.date_debut <= dateDu && resa.date_fin >= dateDu && resa.date_fin <= dateAu)
+                    || (resa.date_debut >= dateDu && resa.date_fin <= dateAu)
+                    || (resa.date_debut >= dateDu && resa.date_debut <= dateAu && resa.date_fin >= dateDu && resa.date_fin <= dateAu)
+                    && (resa.date_debut >= DateTime.Now.AddYears(-1)) // Uniquement les données d'un an max
+                    select resa).Distinct().ToList();
+        }
+
+        public List<reservation_maintenance> ListMaintenanceFromTo(DateTime dateDu, DateTime dateAu)
+        {
+            return (from resaMaint in resaDB.reservation_maintenance
+                    where (resaMaint.date_debut <= dateDu && resaMaint.date_fin >= dateDu && resaMaint.date_fin <= dateAu)
+                    || (resaMaint.date_debut >= dateDu && resaMaint.date_fin <= dateAu)
+                    || (resaMaint.date_debut >= dateDu && resaMaint.date_debut <= dateAu && resaMaint.date_fin >= dateDu && resaMaint.date_fin <= dateAu)
+                    && (resaMaint.date_debut >= DateTime.Now.AddYears(-1)) // Uniquement les données d'un an max
+                    select resaMaint).Distinct().ToList();
+        }*/
     }
 }

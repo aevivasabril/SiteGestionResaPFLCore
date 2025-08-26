@@ -2,6 +2,7 @@
 using SiteGestionResaCore.Models.Maintenance;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SiteGestionResaCore.Areas.Calendrier.Data
 {
@@ -9,13 +10,13 @@ namespace SiteGestionResaCore.Areas.Calendrier.Data
     {
         //List<InfosCalenZone> ObtenirZonesVsEquipements();
 
-        List<zone> ListeZones();
+        Task<IList<zone>> ListeZonesAsync();
 
-        List<equipement> ListeEquipements(int ZoneID);
+        Task<IList<equipement>> ListeEquipementsAsync(int ZoneID);
 
         //InfosCalenZone ResasEquipementsParZone(DateTime DateRecup, int NbJours, int ZoneId);
 
-        ResasEquipParJour ResasEquipementParJour(int IdEquipement, DateTime DateRecup);
+        Task<ResasEquipParJour> ResasEquipementParJourAsync(int IdEquipement, DateTime DateRecup);
 
         InfosEquipementReserve ObtenirInfosResa(int IdEssai);
 
