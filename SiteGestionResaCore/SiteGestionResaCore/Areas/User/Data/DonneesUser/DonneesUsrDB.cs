@@ -389,7 +389,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     }
                     break;
                 case "tab_UA_MFMG":
-                    var queryyMFMG = (from donnees in pcVueDb.tab_UA_GP7
+                    var queryyMFMG = (from donnees in pcVueDb.tab_UA_MFMG
                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                     select donnees).ToList();
                     foreach (var donne in queryyMFMG)
