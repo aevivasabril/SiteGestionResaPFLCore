@@ -13,7 +13,7 @@ namespace SiteGestionResaCore.Models
         /// </summary>
         [Required(ErrorMessage ="Le champ Email est requis")]
         [EmailAddress]
-        [RegularExpression(@"^[A-Za-z][^%$*!&?()\\^#,=\/""\s]*@[a-zA-Z\[-]*]*\.[a-zA-Z]{2,}", ErrorMessage ="Votre adresse mail semble erroné!")] // mettre 2 "" dans l'expression quand on souhaite filtrer le "
+        [RegularExpression(@"^[A-Za-z][^%$*!&?()\\^#,=\/""\s]*@[a-zA-Z\.[-]*]*\.[a-zA-Z]{2,}", ErrorMessage ="Votre adresse mail semble erroné!")] // mettre 2 "" dans l'expression quand on souhaite filtrer le "
         [Display(Name = "Email*")]
         public string Email { get; set; }
 
