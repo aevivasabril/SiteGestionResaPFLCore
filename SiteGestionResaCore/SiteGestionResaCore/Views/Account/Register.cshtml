@@ -70,6 +70,18 @@
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+                <div class="col-md-2">
+                    @Html.CheckBoxFor(m => m.AcceptPolitique)
+                </div>
+                <div class="col-md-10">
+                    <label class="col-md-offset-2 control-label">En soumettant ce formulaire vous acceptez que les données fournies soient utilisées par le site web GERAMI. Pour plus d'informations <a class="btn-link" asp-action="Index" asp-controller="Home" asp-area=""> consultez la politique de protection des données</a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
             <input type="submit" class="btn btn-default navbar-inra" value="Envoyer" />
         </div>
     </div>
