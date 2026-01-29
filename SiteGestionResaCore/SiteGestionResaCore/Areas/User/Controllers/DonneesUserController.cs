@@ -93,10 +93,19 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 csv.Append(group.Key.ToShortDateString());
                 csv.Append(";");
                 csv.Append(group.Key.ToLongTimeString());
-                foreach (var r in group)
+                foreach(var header in headers)
                 {
-                    csv.Append(";");
-                    csv.Append(r.Value);     
+                    try
+                    {
+                        DataPcVueEquip headerData = group.Single(d => d.NomCapteur == header);
+                        csv.Append(";");
+                        csv.Append(headerData.Value);
+                    }
+                    catch(Exception e) // Si on trouve pas de valeur pour une des colonnes, il s'agit d'une perte des données donc il faut contourner cela, on peut mettre un -
+                    {
+                        csv.Append(";");
+                        csv.Append("N");
+                    }
                 }
                 csv.AppendLine();
             }
