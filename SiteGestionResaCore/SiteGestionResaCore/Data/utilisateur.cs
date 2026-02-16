@@ -19,6 +19,8 @@ namespace SiteGestionResaCore.Data
         public bool? compteInactif { get; set; }
         public int? equipeID { get; set; }
 
+        public bool? accordDonnees { get; set; }
+
         public virtual organisme organisme { get; set; }
         public virtual ICollection<essai> essai { get; set; }
         public virtual ICollection<maintenance> maintenance { get; set; }
