@@ -70,6 +70,7 @@ namespace SiteGestionResaCore.Models
         /// <summary>
         /// Case à cocher pour les nouveaux utilisateurs pour accepter la politique de traitement des données
         /// </summary>
+        [Required (ErrorMessage = "Vous devez accepter la politique RGPD pour pouvoir ouvrir un compte")]
         public bool AcceptPolitique { get; set; }
 
         public IEnumerable<SelectListItem> OrganItem { get; set; }

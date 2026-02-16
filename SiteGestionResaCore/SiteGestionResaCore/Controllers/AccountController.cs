@@ -140,92 +140,101 @@ namespace SiteGestionResaCore.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new utilisateur { UserName = model.Email, Email = model.Email, nom = model.Nom, prenom= model.Prenom, organismeID = model.SelectedOrganId, equipeID = model.SelectedEquipId };
-                var result = await userManager.CreateAsync(user, model.Password);
-                
-                if (result.Succeeded)
+
+                if (model.AcceptPolitique == false)
                 {
-                    // tout nouveau enregistré est utilisateur par défaut jusqu'à ce que un admin l'ajoute dans le groupe admin
-                    try
+                    ModelState.AddModelError("", "Vous devez accepter la politique RGPD pour pouvoir ouvrir un compte");
+                }
+                else
+                {
+                    var user = new utilisateur { UserName = model.Email, Email = model.Email, nom = model.Nom, prenom = model.Prenom, organismeID = model.SelectedOrganId, equipeID = model.SelectedEquipId, accordDonnees = model.AcceptPolitique };
+                    var result = await userManager.CreateAsync(user, model.Password);
+
+                    if (result.Succeeded)
                     {
-                        result = await userManager.AddToRoleAsync(user, "Utilisateur");
-                        // viewbag pour activer le popup d'info
-                        ViewBag.ModalState = "show";
-                        // Envoyer un mail au super Admin et le groupe logistic pour qu'il valide le compte 
-                        UsersLogistic = await formulaireResaDb.ObtenirLogisticUsersAsync();
-                        UsersSuperAdm = await formulaireResaDb.ObtenirMainAdmUsersAsync();
-                        string html = @"<html>
+                        // tout nouveau enregistré est utilisateur par défaut jusqu'à ce que un admin l'ajoute dans le groupe admin
+                        try
+                        {
+                            result = await userManager.AddToRoleAsync(user, "Utilisateur");
+                            // viewbag pour activer le popup d'info
+                            ViewBag.ModalState = "show";
+                            // Envoyer un mail au super Admin et le groupe logistic pour qu'il valide le compte 
+                            UsersLogistic = await formulaireResaDb.ObtenirLogisticUsersAsync();
+                            UsersSuperAdm = await formulaireResaDb.ObtenirMainAdmUsersAsync();
+                            string html = @"<html>
                                     <body>
                                     <p>
                                         Bonjour,  <br><br>
                                         Un nouveau utilisateur vient de créer un compte! Vous pouvez valider ou refuser l'ouverture de compte<br/></p>
                                         <p> Nom : " + user.nom + "</p><p> Prénom:" + user.prenom + "</p><p> Mail: " + user.Email
-                                        + "</p> <br> L'équipe PFL" +
-                                    " </ body >     " +
-                                    "</ html > ";
+                                            + "</p> <br> L'équipe PFL" +
+                                        " </ body >     " +
+                                        "</ html > ";
 
-                        // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
-                        // LOGISTIC
-                        for (int index = 0; index < UsersLogistic.Count(); index++)
-                        {
-                            NumberOfRetries = 3;
-                            retryCount = NumberOfRetries;
-                            success = false;
-
-                            while (!success && retryCount > 0)
+                            // Faire une boucle pour reesayer l'envoi de mail si jamais il y a un pb de connexion
+                            // LOGISTIC
+                            for (int index = 0; index < UsersLogistic.Count(); index++)
                             {
-                                try
-                                {
-                                    await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Création d'un nouveau compte utilisateur", html);
-                                    success = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    retryCount--;
+                                NumberOfRetries = 3;
+                                retryCount = NumberOfRetries;
+                                success = false;
 
-                                    if (retryCount == 0)
+                                while (!success && retryCount > 0)
+                                {
+                                    try
                                     {
-                                        ViewBag.Message = e.ToString() + "Problème de connexion pour l'envoie de mail! : " + e.Message + ".";
-                                        return View("Error");
+                                        await emailSender.SendEmailAsync(UsersLogistic[index].Email, "Création d'un nouveau compte utilisateur", html);
+                                        success = true;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        retryCount--;
+
+                                        if (retryCount == 0)
+                                        {
+                                            ViewBag.Message = e.ToString() + "Problème de connexion pour l'envoie de mail! : " + e.Message + ".";
+                                            return View("Error");
+                                        }
+                                    }
+                                }
+                            }
+                            // MAINADMIN
+                            for (int index = 0; index < UsersSuperAdm.Count(); index++)
+                            {
+                                NumberOfRetries = 3;
+                                retryCount = NumberOfRetries;
+                                success = false;
+
+                                while (!success && retryCount > 0)
+                                {
+                                    try
+                                    {
+                                        await emailSender.SendEmailAsync(UsersSuperAdm[index].Email, "Création d'un nouveau compte utilisateur", html);
+                                        success = true;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        retryCount--;
+
+                                        if (retryCount == 0)
+                                        {
+                                            ViewBag.Message = e.ToString() + "Problème de connexion pour l'envoie de mail! : " + e.Message + ".";
+                                            return View("Error");
+                                        }
                                     }
                                 }
                             }
                         }
-                        // MAINADMIN
-                        for (int index = 0; index < UsersSuperAdm.Count(); index++)
+                        catch (Exception e)
                         {
-                            NumberOfRetries = 3;
-                            retryCount = NumberOfRetries;
-                            success = false;
-
-                            while (!success && retryCount > 0)
-                            {
-                                try
-                                {
-                                    await emailSender.SendEmailAsync(UsersSuperAdm[index].Email, "Création d'un nouveau compte utilisateur", html);
-                                    success = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    retryCount--;
-
-                                    if (retryCount == 0)
-                                    {
-                                        ViewBag.Message = e.ToString() + "Problème de connexion pour l'envoie de mail! : " + e.Message + ".";
-                                        return View("Error");
-                                    }
-                                }
-                            }
+                            ViewBag.Message = e.ToString() + ". Problème pour ajouter ce nouveau utilisateur dans le rôle 'utilisateur' ";
+                            return View("Error");
                         }
-                    }
-                    catch(Exception e)
-                    {
-                        ViewBag.Message = e.ToString() + ". Problème pour ajouter ce nouveau utilisateur dans le rôle 'utilisateur' ";
-                        return View("Error");
-                    }
 
+                    }
+                    AddErrors(result);
                 }
-                AddErrors(result);
+                 
             }
 
             var allOrgs = formulaireResaDb.ObtenirListOrg().Select(f => new SelectListItem
