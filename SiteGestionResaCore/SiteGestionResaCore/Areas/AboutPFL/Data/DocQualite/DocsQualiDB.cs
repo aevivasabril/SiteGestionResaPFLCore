@@ -77,5 +77,29 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
             }
             return list;
         }
+
+        public doc_qualite ObtenirDocRGPD()
+        {
+            doc_qualite politique = new doc_qualite();
+            // récupérer uniquement la doc RGPD
+            // Appliquer une regex pour extraire uniquement le nom
+            string regexPatt = @"RGPD";
+            Regex Rg = new Regex(regexPatt);
+
+            List<DocumentQualite> listXVue = new List<DocumentQualite>();
+            var list = context.doc_qualite.ToList();
+            foreach (var doc in list)
+            {
+                MatchCollection match = Rg.Matches(doc.nom_document);
+                if(match.Count() == 1) // Le nom de la doc contient le mot clé RGPD
+                {
+                    politique = doc;
+                    goto ENDT;
+                }
+            }
+
+            ENDT:
+            return politique;
+        }
     }
 }

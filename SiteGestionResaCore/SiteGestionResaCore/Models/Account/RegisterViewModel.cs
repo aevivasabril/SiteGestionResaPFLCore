@@ -67,6 +67,12 @@ namespace SiteGestionResaCore.Models
         [Display(Name = "Sélectionnez une équipe STLO si vous appartenez à une (internes INRAE)")]
         public int SelectedEquipId { get; set; }
 
+        /// <summary>
+        /// Case à cocher pour les nouveaux utilisateurs pour accepter la politique de traitement des données
+        /// </summary>
+        [Required (ErrorMessage = "Vous devez accepter la politique RGPD pour pouvoir ouvrir un compte")]
+        public bool AcceptPolitique { get; set; }
+
         public IEnumerable<SelectListItem> OrganItem { get; set; }
 
         public IEnumerable<SelectListItem> EquipItem { get; set; }

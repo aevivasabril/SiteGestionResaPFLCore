@@ -13,5 +13,6 @@ namespace SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite
         string GetNomDoc(string cheminDoc);
         doc_qualite ObtenirDocAQ(int IdDoc);
         List<CapteurXRapport> ListRapports();
+        doc_qualite ObtenirDocRGPD();
     }
 }
