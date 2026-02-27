@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.Reservation.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Collections.Generic;
+using SiteGestionResaCore.Areas.AboutPFL.Data.DocQualite;
 
 namespace SiteGestionResaCore.Controllers
 {
@@ -23,19 +24,22 @@ namespace SiteGestionResaCore.Controllers
         private readonly SignInManager<utilisateur> signInManager;
         private readonly IEmailSender emailSender;
         private readonly IFormulaireResaDb formulaireResaDb;
+        private readonly IDocsQualiDB docsQualiDB;
 
         public AccountController(
             IAccountResaDB accountResaDB,
             UserManager<utilisateur> userManager,
             SignInManager<utilisateur> signInManager,
             IEmailSender emailSender, 
-            IFormulaireResaDb formulaireResaDb)
+            IFormulaireResaDb formulaireResaDb,
+            IDocsQualiDB docsQualiDB)
         {
             this.accountResaDB = accountResaDB;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
             this.formulaireResaDb = formulaireResaDb;
+            this.docsQualiDB = docsQualiDB;
         }
 
         //
@@ -311,6 +315,18 @@ namespace SiteGestionResaCore.Controllers
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
+        }
+
+        /// <summary>
+        /// Action pour téléchargement de la politique RGPD
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public ActionResult DownloadRGPDDoc()
+        {
+            doc_qualite docPolitique = docsQualiDB.ObtenirDocRGPD();
+            return File(docPolitique.contenu_doc_qualite, System.Net.Mime.MediaTypeNames.Application.Octet, docPolitique.nom_document);
+            //return View();
         }
 
         //
