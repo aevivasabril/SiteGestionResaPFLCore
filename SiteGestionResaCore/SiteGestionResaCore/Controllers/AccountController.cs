@@ -147,7 +147,7 @@ namespace SiteGestionResaCore.Controllers
 
                 if (model.AcceptPolitique == false)
                 {
-                    ModelState.AddModelError("", "Vous devez accepter la politique RGPD pour pouvoir ouvrir un compte");
+                    ModelState.AddModelError("", "Vous devez accepter la politique RGPD pour ouvrir un compte");
                 }
                 else
                 {
