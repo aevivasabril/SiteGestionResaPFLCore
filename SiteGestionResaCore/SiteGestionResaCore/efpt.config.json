@@ -11,92 +11,108 @@
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
-   "Tables": [
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[AICommonParameters]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_LOG_TRACA]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_ACT]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_CUV]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_ECR]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_ENG]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_EVAA]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_EVAB]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_GP7]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_MAT]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_MFMG]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_MTH]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_NEP]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_OPTIMAL]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_SAL]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_SEC]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[tab_UA_SPI]"
-      },
-      {
-        "HasPrimaryKey": true,
-        "Name": "[dbo].[tab_UA_VALO]"
-      },
-      {
-        "HasPrimaryKey": true,
-        "Name": "[dbo].[tab_UA_UFMF]"
-      },
-      {
-        "HasPrimaryKey": true,
-        "Name": "[dbo].[tab_UA_ECREM]"
-      },
-      {
-        "HasPrimaryKey": true,
-        "Name": "[dbo].[tab_UA_UFFC]"
-      }
-   ],
+  "Tables": [
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[AICommonParameters]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_LOG_TRACA]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_ACT]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_CUV]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_ECR]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_ENG]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_EVAA]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_EVAB]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_GP7]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_MAT]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_MFMG]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_MTH]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_NEP]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_OPTIMAL]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_SAL]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_SEC]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_SPI]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_VALO]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_UFMF]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_ECREM]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_UFFC]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_EVAPO]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_GENERAL]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_MTH]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_STEPHAN]"
+    }
+  ],
    "UseDatabaseNames": true,
    "UseDbContextSplitting": false,
    "UseFluentApiOnly": true,
