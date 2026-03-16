@@ -46,6 +46,7 @@ namespace SiteGestionResaCore.Data.Data
         public virtual DbSet<doc_metrologie> doc_metrologie { get; set; }
         public virtual DbSet<capteur> capteur { get; set; }
         public virtual DbSet<rapport_metrologie> rapport_metrologie {get; set; }
+        public virtual DbSet<compteurs_energies> compteurs_energies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -524,6 +525,27 @@ namespace SiteGestionResaCore.Data.Data
                 entity.Property(e => e.commentaire)
                     .IsUnicode(false);
             });
+
+            modelBuilder.Entity<compteurs_energies>(entity =>
+            {
+                entity.Property(e => e.nom_compteur)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.nomTabPcVue)
+                    .IsRequired()
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.equipement)
+                    .WithMany(p => p.compteurs_energies)
+                    .HasForeignKey(d => d.equipementID)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_compteur_energies_equipement");
+            });
+
+            modelBuilder.Entity<compteurs_energies>().HasData(new compteurs_energies[] { new compteurs_energies { id = 1, nom_compteur = "Compteur electrique general PFL", nomTabPcVue = "tab_COMPT_GENERAL" },
+            new compteurs_energies{ id = 2, nom_compteur = "Compteur electrique evapo-concentrateur", nomTabPcVue = "tab_COMPT_EVAPO", equipementID = 225 },
+            new compteurs_energies{ id = 3, nom_compteur = "Compteur electrique microthermics", nomTabPcVue = "tab_COMPT_MTH", equipementID = 223},
+            new compteurs_energies { id = 4, nom_compteur = "Compteur electrique cuiseur Stephan", nomTabPcVue = "tab_COMPT_STEPHAN", equipementID = 170} });
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 

@@ -13,6 +13,7 @@ namespace SiteGestionResaCore.Data
 			doc_essai_pgd = new HashSet<doc_essai_pgd>();
             doc_fiche_materiel = new HashSet<doc_fiche_materiel>();
             capteur = new HashSet<capteur>();
+            compteurs_energies = new HashSet<compteurs_energies>();
         }
 
         public int id { get; set; }
@@ -30,5 +31,6 @@ namespace SiteGestionResaCore.Data
         public virtual ICollection<doc_essai_pgd> doc_essai_pgd { get; set; }
 		public virtual ICollection<doc_fiche_materiel> doc_fiche_materiel { get; set; }
         public virtual ICollection<capteur> capteur { get; set; }
+        public virtual ICollection<compteurs_energies> compteurs_energies { get; set; }
     }
 }
