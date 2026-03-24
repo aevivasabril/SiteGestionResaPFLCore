@@ -87,5 +87,19 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Data
 
         public List<MaintenanceInfos> ListMaintenances { get; set; }
 
+        /// <summary>
+        /// Date debut pour recuperation des consommations électriques général PFL
+        /// </summary>
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateDuCompteur { get; set; }
+
+        /// <summary>
+        /// Date fin pour recuperation des consommations électriques général PFL
+        /// </summary>
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateAuCompteur { get; set; }
+
     }
 }

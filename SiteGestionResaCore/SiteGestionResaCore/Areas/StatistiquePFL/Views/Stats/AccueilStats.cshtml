@@ -87,6 +87,39 @@
 <hr />
 <hr />
 
+<form asp-action="DonneesConsoElectPFL" asp-controller="Stats" asp-area="StatistiquePFL" method="post">
+    <br />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <h4 class="text-center"><strong>Récupérer Excel avec les données de consommation électriques de la PFL pour une période définie</strong></h4>
+    <div class="form-group row justify-content-center">
+        <br />
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Du : ")
+                <input class="form-control" name="DateDuCompteur" asp-for="@Model.DateDuCompteur" type="date" />
+                @Html.ValidationMessageFor(m => m.DateDuCompteur, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4">
+            <!--Date picker -->
+            <div class="form-group">
+                @Html.Label("Au : ")
+                <!--https://stackoverflow.com/questions/42309439/how-to-post-input-type-date-to-mvc-controller-->
+                <!--https://stackoverflow.com/questions/31556837/binding-model-asp-net-input-type-date-->
+                <input class="form-control" name="DateAuCompteur" asp-for="@Model.DateAuCompteur" type="date" />
+                @Html.ValidationMessageFor(m => m.DateAuCompteur, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <input type="submit" class="btn btn-secondary" value="Télécharger .csv consommations" />
+    </div>
+</form>
+<br />
+<hr />
+<hr />
+
 
 <!--Modal pour sélection du projet -->
 <div class="modal fade" id="UtilXProjetModal" tabindex="-1" role="dialog" aria-labelledby="myModal" aria-hidden="true">
@@ -234,7 +267,7 @@
                                 </div>
                             </div>
                             <hr />
-                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par équipe" />
+                            <input type="submit" class="btn navbar-inra" value="Récupérer le récapitulatif par organisme" />
                         </div>
                     </div>
                 </form>

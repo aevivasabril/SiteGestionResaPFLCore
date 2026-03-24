@@ -568,5 +568,79 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             return DataPcVue;
         }
 
+        public AllDataPcVue ObtDataConsoElectPFL(DateTime dateDu, DateTime dateAu)
+        {
+            AllDataPcVue DataPcVue = new AllDataPcVue();
+            List<DataPcVueEquip> OnlyData = new List<DataPcVueEquip>();
+            DateTime dateDebutPcVue = new DateTime();
+            DateTime dateFinPcVue = new DateTime();
+            DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
+
+            // Recupérer le compteurs_energies pour le comptage électrique général
+            compteurs_energies CompteurGeneral = ObtenirCompteurEnergiePfl();
+
+            if (dateDu <= DateToday && dateAu <= DateToday) // Informations qui seront complètes 
+            {
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = dateDu.AddHours(-1);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                dateFinPcVue = dateAu.AddHours(23);
+                dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                
+            }
+            else if (dateDu <= DateToday && dateAu >= DateToday) // Informations qui ne seront pas complètes car la date fin dépasse la date actuelle
+            { // si la date est supérieur ou égal à la date d'aujourd'hui
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = dateDu.AddHours(-1);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                dateFinPcVue = DateToday;
+                dateFinPcVue = dateFinPcVue.AddYears(-1600);
+            }
+
+            //Application de la requete pour obtenir les infos sur la table PcVue Conso électricité général
+            // Table des données nommé Tab_COMPT_GENERAL
+            var queryAct = (from donnees in pcVueDb.Tab_COMPT_GENERAL
+                            where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                            select donnees).ToList();
+            foreach (var donne in queryAct)
+            {
+                DataPcVueEquip DataPcV;
+                // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                //Rajouter dans la liste des données PcVue
+                OnlyData.Add(DataPcV);
+            }
+           
+            DataPcVue = new AllDataPcVue { DataEquipement = OnlyData, NomEquipement = CompteurGeneral.nom_compteur, NumGmao = null };
+            return DataPcVue;
+        }
+
+        /// <summary>
+        /// Methode interne! 
+        /// </summary>
+        /// <returns></returns>
+        compteurs_energies ObtenirCompteurEnergiePfl()
+        {
+            compteurs_energies compteurGral = new compteurs_energies();
+            String regexPatt = @"GENERAL";
+
+            Regex Rg = new Regex(regexPatt);
+
+            List<compteurs_energies> listCompts = resaDB.compteurs_energies.ToList();
+            foreach(var compt in listCompts)
+            {
+                MatchCollection match = Rg.Matches(compt.nomTabPcVue);
+                if(match.Count() == 1)
+                {
+                    compteurGral = compt;
+                    goto ENDT;
+                }
+            }
+
+            ENDT:
+            return compteurGral;
+        }
     }
 }

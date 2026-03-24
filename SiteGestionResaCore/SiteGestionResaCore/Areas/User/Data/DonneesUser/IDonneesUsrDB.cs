@@ -1,5 +1,6 @@
 ﻿using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.ResasUser;
+using SiteGestionResaCore.Data;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
@@ -18,5 +19,8 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
         List<InfosResasEquipement> ListEquipVsDonnees(int IdEssai);
 
         AllDataPcVue ObtenirDonneesPcVue(int idResa);
+
+        AllDataPcVue ObtDataConsoElectPFL(DateTime dateDu, DateTime dateAu);
+
     }
 }

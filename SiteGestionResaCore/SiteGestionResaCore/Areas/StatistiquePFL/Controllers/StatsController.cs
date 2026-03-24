@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SiteGestionResaCore.Areas.StatistiquePFL.Data;
 using SiteGestionResaCore.Areas.StatistiquePFL.Data.Stats;
+using SiteGestionResaCore.Areas.User.Data.DataPcVue;
+using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Extensions;
 
 namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
@@ -15,11 +17,14 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
     public class StatsController : Controller
     {
         private readonly IStatistiquesDB statistiquesDB;
+        private readonly IDonneesUsrDB donneesUsrDB;
 
         public StatsController(
-            IStatistiquesDB statistiquesDB)
+            IStatistiquesDB statistiquesDB,
+            IDonneesUsrDB donneesUsrDB)
         {
             this.statistiquesDB = statistiquesDB;
+            this.donneesUsrDB = donneesUsrDB;
         }
 
         public IActionResult MenuStats()
@@ -51,6 +56,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
                 ModelState.Remove("DateAuEquip");
                 ModelState.Remove("DateDuMaintenance");
                 ModelState.Remove("DateAuMaintenance");
+                ModelState.Remove("DateAuCompteur");
+                ModelState.Remove("DateDuCompteur");
                 if (ModelState.IsValid)
                 {
                     if (vm.DateDu.Value < vm.DateAu.Value)
@@ -167,7 +174,7 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
         [HttpPost]
         public IActionResult RecapXProjet(AccueilStatsVM vm)
         {
-            //AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
+            AccueilStatsVM model = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
             HeadersCsvResas headersCsv = new HeadersCsvResas();
             StringBuilder csv = new StringBuilder();
             string titreCsv = null;
@@ -177,8 +184,9 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("DateAuEquip");
             ModelState.Remove("DateDuMaintenance");
             ModelState.Remove("DateAuMaintenance");
-
-            if (vm.SelectProjetId >= 0)
+            ModelState.Remove("DateAuCompteur");
+            ModelState.Remove("DateDuCompteur");
+            if (ModelState.IsValid)
             {
                 List<InfosReservations> list = statistiquesDB.ObtRecapitulatifXProjet(vm.SelectProjetId);
                 if(list.Count() == 0) // Si la liste est vide pas besoin de télécharger excel, il n'y a pas des essais valides pour ce projet
@@ -245,9 +253,10 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             }
             else
             {
+                //vm = HttpContext.GetFromSession<AccueilStatsVM>("AccueilStatsVM");
                 ModelState.AddModelError("", "Veuillez choisir un projet!");
                 ViewBag.ModalUseProjet = "show";
-                return View("AccueilStats", vm);
+                return View("AccueilStats", model);
             }          
         }
 
@@ -271,6 +280,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("SelectOrgId");
             ModelState.Remove("DateDuMaintenance");
             ModelState.Remove("DateAuMaintenance");
+            ModelState.Remove("DateDuCompteur");
+            ModelState.Remove("DateAuCompteur");
             if (ModelState.IsValid)
             {
                 if (vm.DateAuEquip < vm.DateDuEquip)
@@ -372,6 +383,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("SelectEquipeId");
             ModelState.Remove("DateDuMaintenance");
             ModelState.Remove("DateAuMaintenance");
+            ModelState.Remove("DateAuCompteur");
+            ModelState.Remove("DateDuCompteur");
             if (ModelState.IsValid)
             {
                 if (vm.DateAuEquip < vm.DateDuEquip)
@@ -506,6 +519,8 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             ModelState.Remove("SelectOrgId");
             ModelState.Remove("DateDuEquip");
             ModelState.Remove("DateAuEquip");
+            ModelState.Remove("DateAuCompteur");
+            ModelState.Remove("DateDuCompteur");
             if (ModelState.IsValid)
             {
                 if (vm.DateAuMaintenance < vm.DateDuMaintenance)
@@ -624,5 +639,96 @@ namespace SiteGestionResaCore.Areas.StatistiquePFL.Controllers
             // Sauvegarder la session data du formulaire projet pour le traiter après (cette partie fonctionne)
             return PartialView("_ListEssaiXProd", vm);
         }
+
+        [HttpPost]
+        public IActionResult DonneesConsoElectPFL(AccueilStatsVM vm)
+        {
+            StringBuilder csv = new StringBuilder();
+            string titreCsv = null;
+
+            ModelState.Remove("SelectProjetId");
+            ModelState.Remove("SelectEquipeId");
+            ModelState.Remove("SelectOrgId");
+            ModelState.Remove("DateDuEquip");
+            ModelState.Remove("DateAuEquip");
+            ModelState.Remove("DateDuMaintenance");
+            ModelState.Remove("DateAuMaintenance");
+            if (ModelState.IsValid)
+            {
+                AllDataPcVue Donnees = donneesUsrDB.ObtDataConsoElectPFL(vm.DateDuCompteur.Value, vm.DateAuCompteur.Value);
+
+                // Determiner les headers tableau 
+                var headers = Donnees.DataEquipement.Select(d => d.NomCapteur).Distinct().ToList();
+                // Ajouter la colonne de date
+                csv.Append("Date");
+                csv.Append(";");
+                csv.Append("Heure");
+
+                foreach(var dc in headers)
+                {
+                    csv.Append(";");                   
+                    switch (dc)
+                    {
+                        case "COMPT_GENERAL_PFL.Ea":
+                            csv.Append(dc + " (kWh)");
+                            break;
+                        case "COMPT_GENERAL_PFL.rEA":
+                            csv.Append(dc + " (kWh)");
+                            break;
+                        case "COMPT_GENERAL_PFL.P":
+                            csv.Append(dc + " (kW)");
+                            break;
+                        case "COMPT_GENERAL_PFL.I1":
+                            csv.Append(dc + " (mA)");
+                            break;
+                        case "COMPT_GENERAL_PFL.I2":
+                            csv.Append(dc + " (mA)");
+                            break;
+                        case "COMPT_GENERAL_PFL.I3":
+                            csv.Append(dc + " (mA)");
+                            break;
+                        case "COMPT_GENERAL_PFL.In":
+                            csv.Append(dc + " (mA)");
+                            break;
+                    }
+                }
+                csv.AppendLine();
+
+                // Regrouper les données par date pour identifier chaque ligne du tableau
+                var reg = Donnees.DataEquipement.GroupBy(d => d.Chrono);
+
+                foreach (var group in reg)
+                {
+                    csv.Append(group.Key.ToShortDateString());
+                    csv.Append(";");
+                    csv.Append(group.Key.ToLongTimeString());
+                    foreach (var header in headers)
+                    {
+                        try
+                        {
+                            DataPcVueEquip headerData = group.Single(d => d.NomCapteur == header);
+                            csv.Append(";");
+                            csv.Append(headerData.Value);
+                        }
+                        catch (Exception e) // Si on trouve pas de valeur pour une des colonnes, il s'agit d'une perte des données donc il faut contourner cela, on peut mettre un -
+                        {
+                            csv.Append(";");
+                            csv.Append("N");
+                        }
+                    }
+                    csv.AppendLine();
+                }
+
+                titreCsv = "Donnees_" + Donnees.NomEquipement + ".csv";
+
+                return File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Oups! Vous avez oublié de saisir les dates! ");
+                return View("AccueilStats", vm);
+            }
+        }
+
     }
 }
