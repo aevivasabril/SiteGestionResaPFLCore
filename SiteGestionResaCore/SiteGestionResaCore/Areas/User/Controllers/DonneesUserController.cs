@@ -55,7 +55,9 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             // id essai
             EquipVsDonneesVM vm = new EquipVsDonneesVM();
             List<InfosResasEquipement> ListResa = donneesUsrDB.ListEquipVsDonnees(id);
+            List<InfosCompteursXEquipResa> ListCompteurs = donneesUsrDB.ListCompteursXEquipResa(ListResa);
             vm.EquipementsReserves = ListResa;
+            vm.CompteursVsEquips = ListCompteurs;
             vm.TitreEssai = donneesUsrDB.ObtenirInfosEssai(id).TitreEssai;
             return PartialView("~/Views/Shared/_EquipVsDonnees.cshtml", vm);
         }

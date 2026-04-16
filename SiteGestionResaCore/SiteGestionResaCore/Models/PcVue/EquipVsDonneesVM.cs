@@ -17,6 +17,15 @@ namespace SiteGestionResaCore.Models
             set { _equipementsReserves = value; }
         }
 
+        private List<InfosCompteursXEquipResa> _compteursVsEquips;
+
+        public List<InfosCompteursXEquipResa> CompteursVsEquips
+        {
+            get { return _compteursVsEquips; }
+            set { _compteursVsEquips = value; }
+        }
+
+
         public string TitreEssai { get; set; }
     }
 }

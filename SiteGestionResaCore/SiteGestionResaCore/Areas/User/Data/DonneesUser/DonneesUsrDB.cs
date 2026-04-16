@@ -275,6 +275,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     DateFin = ResaEquip.date_fin,
                     IdResa = ResaEquip.id,
                     NomEquipement = resaDB.equipement.First(e => e.id == ResaEquip.equipementID).nom,
+                    IdEquipement = ResaEquip.equipementID,
                     ZoneEquipement = (from zon in resaDB.zone
                                       from equi in resaDB.equipement
                                       where zon.id == equi.zoneID && equi.id == ResaEquip.equipementID
@@ -568,6 +569,12 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             return DataPcVue;
         }
 
+        /// <summary>
+        /// Consommation électrique géneral
+        /// </summary>
+        /// <param name="dateDu"></param>
+        /// <param name="dateAu"></param>
+        /// <returns></returns>
         public AllDataPcVue ObtDataConsoElectPFL(DateTime dateDu, DateTime dateAu)
         {
             AllDataPcVue DataPcVue = new AllDataPcVue();
@@ -641,6 +648,84 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
             ENDT:
             return compteurGral;
+        }
+
+        public List<InfosCompteursXEquipResa> ListCompteursXEquipResa(List<InfosResasEquipement> ListResasEquipement)
+        {
+            List<InfosCompteursXEquipResa> list = new List<InfosCompteursXEquipResa>();
+            DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
+            DateTime dateDebutPcVue = new DateTime();
+            DateTime dateFinPcVue = new DateTime();
+
+            foreach (var resa in ListResasEquipement)
+            {
+                var compteur = resaDB.compteurs_energies.Where(e => e.equipementID == resa.IdEquipement).FirstOrDefault(); 
+
+                if(compteur != null)
+                {
+                    // TODO: Verifier qu'il y a des données à récupérer pour le compteur
+                    // Déterminer la date debut et fin pour vérifier s'il y a des données
+                    if (resa.DateDebut <= DateToday && resa.DateFin <= DateToday) // Manip finie! 
+                    {
+                        // convertir les dates fin et date debut réservation 
+                        dateDebutPcVue = resa.DateDebut.AddHours(-3);
+                        dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                        // Vérifier le créneau pour ajouter ou enlever des heures
+                        if (resa.DateFin.Hour == 12) // Finie la matinée vers midi alors rajouter une heure
+                        {
+                            dateFinPcVue = resa.DateFin.AddHours(-1); // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
+                            dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                        }
+                        else // heure fin 18h, rajouter 6h c'est à dire 5h à cause de la conversion (-1h)
+                        {
+                            dateFinPcVue = resa.DateFin.AddHours(3);
+                            dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                        }
+                    }
+                    else if (resa.DateDebut <= DateToday && resa.DateFin >= DateToday) // Manip encore en cours!
+                    { // si la date est supérieur ou égal à la date d'aujourd'hui
+                      // convertir les dates fin et date debut réservation 
+                        dateDebutPcVue = resa.DateDebut.AddHours(-3);
+                        dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                        dateFinPcVue = DateToday;
+                        dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                    }
+
+                    bool query = false;
+                    switch (compteur.nomTabPcVue)
+                    {
+                        case "tab_COMPT_EVAPO":
+                            query = (from donnees in pcVueDb.Tab_COMPT_EVAPO
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
+                        case "tab_COMPT_MTH":
+                            query = (from donnees in pcVueDb.Tab_COMPT_MTH
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
+                        case "tab_COMPT_STEPHAN":
+                            query = (from donnees in pcVueDb.Tab_COMPT_STEPHAN
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
+                    }
+                    InfosCompteursXEquipResa infos = new InfosCompteursXEquipResa
+                    {
+                        IdCompt = compteur.id,
+                        NomCompteur = compteur.nom_compteur,
+                        DateDebut = resa.DateDebut, // A changer
+                        DateFin = resa.DateFin, // A changer
+                        IdEquipAssocie = resa.IdEquipement,
+                        NomEquipAssocie = resa.NomEquipement,
+                    };
+                }
+            }
+
+            return list;
+
         }
     }
 }

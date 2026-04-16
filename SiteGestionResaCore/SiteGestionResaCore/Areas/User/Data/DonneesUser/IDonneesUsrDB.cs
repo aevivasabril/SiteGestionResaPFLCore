@@ -22,5 +22,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         AllDataPcVue ObtDataConsoElectPFL(DateTime dateDu, DateTime dateAu);
 
+        List<InfosCompteursXEquipResa> ListCompteursXEquipResa(List<InfosResasEquipement> ListResasEquipement);
+
     }
 }
