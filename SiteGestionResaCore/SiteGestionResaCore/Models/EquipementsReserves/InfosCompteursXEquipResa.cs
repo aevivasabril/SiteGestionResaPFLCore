@@ -14,5 +14,6 @@ namespace SiteGestionResaCore.Models.EquipementsReserves
         public DateTime DateDebut { get; set; }
         public DateTime DateFin { get; set; }
         public bool IsDataReady { get; set; } // s'il y à des données à récupérer
+        public int IdResa { get; set; }
     }
 }

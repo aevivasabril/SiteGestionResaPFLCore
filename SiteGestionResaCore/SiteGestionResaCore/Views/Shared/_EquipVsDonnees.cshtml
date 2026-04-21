@@ -66,30 +66,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Model.EquipementsReserves)
+                    @foreach (var x in Model.CompteursVsEquips)
                     {
                         <tr>
-                            <td>@x.NomEquipement</td>
-                            <td>@x.ZoneEquipement</td>
+                            <td>@x.NomCompteur</td>
+                            <td>@x.NomEquipAssocie</td>
                             <td>@x.DateDebut</td>
                             <td>@x.DateFin</td>
-                            @if (x.IsEquipUnderPcVue == true)
-                            {
-                                if (x.IsDataReady == true)
-                                {
-                                    <td><a asp-action="ObtenirDonnees" asp-area="User" asp-controller="DonneesUser" asp-route-id="@x.IdResa">Téléchargement</a></td>
-                                }
-                                else
-                                {
-                                    <td>Données indisponibles</td>
-                                }
 
+                            @if (x.IsDataReady == true)
+                            {
+                                <td><a asp-action="ObtenirDonneesCompteur" asp-area="User" asp-controller="DonneesUser" asp-route-id="@x.IdCompt">Téléchargement</a></td>
                             }
                             else
                             {
-                                <td>Equipement non supervisé</td>
-                            }
-
+                                <td>Données indisponibles</td>
+                            }                                                    
                         </tr>
                     }
                 </tbody>

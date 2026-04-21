@@ -59,6 +59,8 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             vm.EquipementsReserves = ListResa;
             vm.CompteursVsEquips = ListCompteurs;
             vm.TitreEssai = donneesUsrDB.ObtenirInfosEssai(id).TitreEssai;
+            // Sauvegarder la session
+            this.HttpContext.AddToSession("EquipVsDonneesVM", vm);
             return PartialView("~/Views/Shared/_EquipVsDonnees.cshtml", vm);
         }
         /// <summary>
@@ -113,6 +115,68 @@ namespace SiteGestionResaCore.Areas.User.Controllers
             }
 
             titreCsv = "DonneesProjet_" + Donnees.NomEquipement + ".csv";
+
+            return File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
+
+            #endregion
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">id compteur</param>
+        /// <returns></returns>
+        public IActionResult ObtenirDonneesCompteur(int id)
+        {
+            EquipVsDonneesVM model = HttpContext.GetFromSession<EquipVsDonneesVM>("EquipVsDonneesVM");
+            //AllDataPcVue DonneesCompteur = donneesUsrDB.ObtenirDonneesCompteur(IdResa);
+            InfosCompteursXEquipResa infos = model.CompteursVsEquips.Where(e => e.IdCompt == id).SingleOrDefault();
+
+            AllDataPcVue DonneesCompteur = donneesUsrDB.ObtenirDonneesComptEquipement(infos);
+
+            StringBuilder csv = new StringBuilder();
+            string titreCsv = null;
+
+            #region  Créer un excel avec les données
+
+            // Déterminer les headers tableau
+            var headers = DonneesCompteur.DataEquipement.Select(d => d.NomCapteur).Distinct().ToList();
+            // Ajouter la colonne de date 
+            csv.Append("Date");
+            csv.Append(";");
+            csv.Append("Heure");
+
+            foreach (var dc in headers)
+            {
+                csv.Append(";");
+                csv.Append(dc);
+            }
+            csv.AppendLine();
+
+            // Reagrouper les données par date pour identifier chaque future ligne tableau
+            var reg = DonneesCompteur.DataEquipement.GroupBy(d => d.Chrono);
+            foreach (var group in reg)
+            {
+                csv.Append(group.Key.ToShortDateString());
+                csv.Append(";");
+                csv.Append(group.Key.ToLongTimeString());
+                foreach (var header in headers)
+                {
+                    try
+                    {
+                        DataPcVueEquip headerData = group.Single(d => d.NomCapteur == header);
+                        csv.Append(";");
+                        csv.Append(headerData.Value);
+                    }
+                    catch (Exception e) // Si on trouve pas de valeur pour une des colonnes, il s'agit d'une perte des données donc il faut contourner cela, on peut mettre un -
+                    {
+                        csv.Append(";");
+                        csv.Append("N");
+                    }
+                }
+                csv.AppendLine();
+            }
+
+            titreCsv = "DonneesProjet_" + DonneesCompteur.NomEquipement + ".csv";
 
             return File(new System.Text.UTF8Encoding().GetBytes(csv.ToString()), "text/csv", titreCsv);
 

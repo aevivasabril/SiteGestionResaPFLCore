@@ -4,6 +4,7 @@ using SiteGestionResaCore.Areas.Equipe.Data.RecupData;
 using SiteGestionResaCore.Areas.User.Data.DataPcVue;
 using SiteGestionResaCore.Areas.User.Data.DonneesUser;
 using SiteGestionResaCore.Data;
+using SiteGestionResaCore.Extensions;
 using SiteGestionResaCore.Models;
 using SiteGestionResaCore.Models.EquipementsReserves;
 using System;
@@ -55,8 +56,12 @@ namespace SiteGestionResaCore.Areas.Equipe.Controllers
             // id essai
             EquipVsDonneesVM vm = new EquipVsDonneesVM();
             List<InfosResasEquipement> ListResa = donneesUsrDB.ListEquipVsDonnees(id);
+            List<InfosCompteursXEquipResa> ListCompteurs = donneesUsrDB.ListCompteursXEquipResa(ListResa);
             vm.EquipementsReserves = ListResa;
+            vm.CompteursVsEquips = ListCompteurs;
             vm.TitreEssai = donneesUsrDB.ObtenirInfosEssai(id).TitreEssai;
+            //Sauvegarder la session
+            this.HttpContext.AddToSession("EquipVsDonneesVM", vm);
             return PartialView("~/Views/Shared/_EquipVsDonnees.cshtml", vm);
         }
         /// <summary>

@@ -608,10 +608,10 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
             //Application de la requete pour obtenir les infos sur la table PcVue Conso électricité général
             // Table des données nommé Tab_COMPT_GENERAL
-            var queryAct = (from donnees in pcVueDb.Tab_COMPT_GENERAL
+            var queryGral = (from donnees in pcVueDb.Tab_COMPT_GENERAL
                             where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                             select donnees).ToList();
-            foreach (var donne in queryAct)
+            foreach (var donne in queryGral)
             {
                 DataPcVueEquip DataPcV;
                 // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
@@ -656,6 +656,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
             DateTime DateToday = DateTime.Now; // pour vérifier quelle date utiliser pour la requete!
             DateTime dateDebutPcVue = new DateTime();
             DateTime dateFinPcVue = new DateTime();
+            bool IsDataReady = false;
 
             foreach (var resa in ListResasEquipement)
             {
@@ -696,6 +697,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                     bool query = false;
                     switch (compteur.nomTabPcVue)
                     {
+                        // Les compteurs n'étant jamais coupés ils afficheront des données disponibles tout le temps
                         case "tab_COMPT_EVAPO":
                             query = (from donnees in pcVueDb.Tab_COMPT_EVAPO
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
@@ -712,6 +714,11 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                      select donnees).Any();
                             break;
                     }
+                    if (query)
+                        IsDataReady = true;
+                    else
+                        IsDataReady = false;
+
                     InfosCompteursXEquipResa infos = new InfosCompteursXEquipResa
                     {
                         IdCompt = compteur.id,
@@ -720,12 +727,100 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                         DateFin = resa.DateFin, // A changer
                         IdEquipAssocie = resa.IdEquipement,
                         NomEquipAssocie = resa.NomEquipement,
+                        IsDataReady = IsDataReady, 
+                        IdResa = resa.IdResa
                     };
+                    list.Add(infos);
                 }
             }
 
             return list;
 
+        }
+
+        public AllDataPcVue ObtenirDonneesComptEquipement(InfosCompteursXEquipResa compteur)
+        {
+            AllDataPcVue DataCompteur = new AllDataPcVue();
+            DateTime DateToday = DateTime.Now;
+            DateTime dateDebutPcVue = new DateTime();
+            DateTime dateFinPcVue = new DateTime();
+            List<DataPcVueEquip> OnlyData = new List<DataPcVueEquip>();
+
+            if (compteur.DateDebut <= DateToday && compteur.DateFin <= DateToday) // Manip finie! 
+            {
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = compteur.DateDebut.AddHours(-3);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                // Vérifier le créneau pour ajouter ou enlever des heures
+                if (compteur.DateFin.Hour == 12) // Finie la matinée vers midi alors rajouter une heure
+                {
+                    dateFinPcVue = compteur.DateFin.AddHours(-1); // on enleve une heure (conversion) et on rajoute une heure donc rien à rajouter
+                    dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                }
+                else // heure fin 18h, rajouter 6h c'est à dire 5h à cause de la conversion (-1h)
+                {
+                    dateFinPcVue = compteur.DateFin.AddHours(3);
+                    dateFinPcVue = dateFinPcVue.AddYears(-1600);
+                }
+            }
+            else if (compteur.DateDebut <= DateToday && compteur.DateFin >= DateToday) // Manip encore en cours!
+            { // si la date est supérieur ou égal à la date d'aujourd'hui
+                // convertir les dates fin et date debut réservation 
+                dateDebutPcVue = compteur.DateDebut.AddHours(-3);
+                dateDebutPcVue = dateDebutPcVue.AddYears(-1600);
+
+                dateFinPcVue = DateToday;
+                dateFinPcVue = dateFinPcVue.AddYears(-1600);
+            }
+
+            compteurs_energies compt_equip = resaDB.compteurs_energies.First(e => e.id == compteur.IdCompt);
+
+            switch (compt_equip.nomTabPcVue)
+            {
+                case "tab_COMPT_EVAPO":
+                    var queryEvapo = (from donnees in pcVueDb.Tab_COMPT_EVAPO
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryEvapo)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+                case "tab_COMPT_MTH":
+                    var queryMth = (from donnees in pcVueDb.Tab_COMPT_MTH
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryMth)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+                case "tab_COMPT_STEPHAN":
+                    var querySth = (from donnees in pcVueDb.Tab_COMPT_STEPHAN
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in querySth)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+            }
+            DataCompteur = new AllDataPcVue { DataEquipement = OnlyData, NomEquipement = compt_equip.nom_compteur, NumGmao = null };
+
+            return DataCompteur;
         }
     }
 }

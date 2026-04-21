@@ -24,5 +24,7 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
 
         List<InfosCompteursXEquipResa> ListCompteursXEquipResa(List<InfosResasEquipement> ListResasEquipement);
 
+        AllDataPcVue ObtenirDonneesComptEquipement(InfosCompteursXEquipResa compteur);
+
     }
 }
