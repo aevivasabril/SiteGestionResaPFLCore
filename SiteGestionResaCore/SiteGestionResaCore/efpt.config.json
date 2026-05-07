@@ -111,6 +111,10 @@
     {
       "HasPrimaryKey": true,
       "Name": "[dbo].[tab_COMPT_STEPHAN]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_UA_STEPHAN]"
     }
   ],
    "UseDatabaseNames": true,

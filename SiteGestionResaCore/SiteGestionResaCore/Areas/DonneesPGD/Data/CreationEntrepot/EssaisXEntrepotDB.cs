@@ -535,6 +535,16 @@ namespace SiteGestionResaCore.Areas.DonneesPGD.Data
                                  where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
                                  select donnees).Any();
                         break;
+                    case "tab_UA_UFFC":
+                        query = (from donnees in pcVueDb.tab_UA_UFFC
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
+                                 select donnees).Any();
+                        break;
+                    case "tab_UA_STEPHAN":
+                        query = (from donnees in pcVueDb.tab_UA_STEPHAN
+                                 where donnees.Chrono >= dateDebut.Ticks && donnees.Chrono <= dateFin.Ticks
+                                 select donnees).Any();
+                        break;
                     default: // vérifier le cas des 2 tables pour l'évaporateur
                         string pattern = @"[\w]+";
                         Regex rg = new Regex(pattern);
