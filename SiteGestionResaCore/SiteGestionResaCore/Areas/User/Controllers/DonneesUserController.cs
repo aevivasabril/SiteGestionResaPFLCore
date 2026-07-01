@@ -88,7 +88,7 @@ namespace SiteGestionResaCore.Areas.User.Controllers
                 csv.Append(";");
                 csv.Append(dc);
             }
-            csv.AppendLine();
+             csv.AppendLine();
 
             // Reagrouper les données par date pour identifier chaque future ligne tableau
             var reg = Donnees.DataEquipement.GroupBy(d => d.Chrono);

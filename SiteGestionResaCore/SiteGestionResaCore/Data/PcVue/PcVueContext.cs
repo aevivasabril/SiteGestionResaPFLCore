@@ -41,6 +41,7 @@ namespace SiteGestionResaCore.Data.PcVue
         public virtual DbSet<tab_COMPT_MTH> Tab_COMPT_MTH { get; set; }
         public virtual DbSet<tab_COMPT_STEPHAN> Tab_COMPT_STEPHAN { get; set; }
         public virtual DbSet<tab_UA_STEPHAN> tab_UA_STEPHAN { get; set; }
+        public virtual DbSet<tab_UA_BANCMESURE> tab_UA_BANCMESURE { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -422,6 +423,21 @@ namespace SiteGestionResaCore.Data.PcVue
 
                 entity.HasIndex(e => e.Chrono)
                     .HasName("IX_TREND_tab_UA_STEPHAN_CLUSTERED")
+                    .IsClustered();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<tab_UA_BANCMESURE>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
+                    .HasName("IX_TREND_tab_UA_BANCMESURE_PRIMARY")
+                    .IsClustered(false);
+
+                entity.HasIndex(e => e.Chrono)
+                    .HasName("IX_TREND_tab_UA_BANCMESURE_CLUSTERED")
                     .IsClustered();
 
                 entity.Property(e => e.Name)

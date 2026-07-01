@@ -227,6 +227,11 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
+                        case "tab_UA_BANCMESURE":
+                            query = (from donnees in pcVueDb.tab_UA_BANCMESURE
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
                         default: // vérifier le cas des 2 tables pour l'évaporateur
                             string pattern = @"[\w]+";
                             Regex rg = new Regex(pattern);
@@ -529,6 +534,19 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                     select donnees).ToList();
                     foreach (var donne in querySth)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+                case "tab_UA_BANCMESURE":
+                    var queryBanc = (from donnees in pcVueDb.tab_UA_BANCMESURE
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryBanc)
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
