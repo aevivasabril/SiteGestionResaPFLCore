@@ -633,7 +633,8 @@ namespace SiteGestionResaCore.Data.Data
                 new equipement { id = 269, nom = "Bain-marie sans couvercle (SALLE AP6)", zoneID = 17, numGmao = "BTH0066", mobile = true, type_activites = "9"}, new equipement { id = 270, nom = "Bain-marie MEMMERT (avec couvercle, petite capacité)(SALLE AP9)", zoneID = 17, numGmao = "BTH0065", mobile = true, type_activites = "9"},
                 new equipement { id = 271, nom = "Bain-marie MEMMERT (avec couvercle, grande capacité) (SALLE AP8)", zoneID = 17, numGmao = "BTH0033", mobile = true, type_activites = "9"},
                 new equipement { id = 272, nom = "Agitateur BIOBLOCK type RZR 2000 Digital (SALLE AP8)", zoneID = 17, numGmao = "AGIT0186", mobile = true, type_activites = "17"},
-                new equipement { id = 273, nom = "Homogénéisateur GEA One 7TS ", zoneID = 3, numGmao = "HOMO0009", mobile = false, type_activites = "11"}
+                new equipement { id = 273, nom = "Homogénéisateur GEA One 7TS ", zoneID = 3, numGmao = "HOMO0009", mobile = false, type_activites = "11"},
+                new equipement { id = 274, nom = "Banc de mesure des fluides N°1", zoneID = 17, numGmao = "MMES0068", mobile = true, nomTabPcVue = "tab_UA_BANCMESURE", type_activites = "18"}
             });
 
             modelBuilder.Entity<ld_destination>().HasData(new ld_destination[] { new ld_destination { id = 1, nom_destination = "Non connu (sans dégustation)"}, 

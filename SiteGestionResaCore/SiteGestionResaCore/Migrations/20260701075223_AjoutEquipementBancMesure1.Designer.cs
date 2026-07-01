@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SiteGestionResaCore.Data.Data;
 
 namespace SiteGestionResaCore.Migrations
 {
     [DbContext(typeof(GestionResaContext))]
-    partial class GestionResaContextModelSnapshot : ModelSnapshot
+    [Migration("20260701075223_AjoutEquipementBancMesure1")]
+    partial class AjoutEquipementBancMesure1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,42 +53,42 @@ namespace SiteGestionResaCore.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "8bfd7de4-3c4d-4ab9-b634-0c08dc521bf5",
+                            ConcurrencyStamp = "7ce092cd-7fff-4c8f-80ab-8731cb7f3ad4",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a1d3f310-c290-4eea-87ca-37a5329cdd9b",
+                            ConcurrencyStamp = "195b36b7-3a14-4eb5-89d4-f695fabfe765",
                             Name = "Utilisateur",
                             NormalizedName = "UTILISATEUR"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "2cc463db-4ba8-4088-874c-af895836604d",
+                            ConcurrencyStamp = "e01d2d64-8578-447e-b121-df0498fb3803",
                             Name = "MainAdmin",
                             NormalizedName = "MAINADMIN"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "1e4fd97e-b1f6-4446-9e7f-905433786391",
+                            ConcurrencyStamp = "ed42356d-6a96-4576-ba00-f321eea68794",
                             Name = "Logistic",
                             NormalizedName = "LOGISTIC"
                         },
                         new
                         {
                             Id = 5,
-                            ConcurrencyStamp = "c626f160-caa1-44b7-9d13-ed7cab6a88fa",
+                            ConcurrencyStamp = "82e5b7aa-d332-4d7f-ba46-2ad52521f4c7",
                             Name = "LogisticMaint",
                             NormalizedName = "LOGISTICMAINT"
                         },
                         new
                         {
                             Id = 6,
-                            ConcurrencyStamp = "932877f0-c392-4b23-8c88-e96fa62973f9",
+                            ConcurrencyStamp = "793471b3-7ea1-4e6b-9917-beb1d0bce59b",
                             Name = "DonneesAdmin",
                             NormalizedName = "DONNEESADMIN"
                         });
@@ -1669,7 +1671,7 @@ namespace SiteGestionResaCore.Migrations
                         {
                             id = 274,
                             mobile = true,
-                            nom = "Banc de mesure des fluides N°1",
+                            nom = "Banc de mesure des fluides ",
                             nomTabPcVue = "tab_UA_BANCMESURE",
                             numGmao = "MMES0068",
                             type_activites = "18",
