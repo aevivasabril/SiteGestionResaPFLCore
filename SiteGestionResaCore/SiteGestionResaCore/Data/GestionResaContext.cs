@@ -545,7 +545,10 @@ namespace SiteGestionResaCore.Data.Data
             modelBuilder.Entity<compteurs_energies>().HasData(new compteurs_energies[] { new compteurs_energies { id = 1, nom_compteur = "Compteur electrique general PFL", nomTabPcVue = "tab_COMPT_GENERAL" },
             new compteurs_energies{ id = 2, nom_compteur = "Compteur electrique evapo-concentrateur", nomTabPcVue = "tab_COMPT_EVAPO", equipementID = 225 },
             new compteurs_energies{ id = 3, nom_compteur = "Compteur electrique microthermics", nomTabPcVue = "tab_COMPT_MTH", equipementID = 223},
-            new compteurs_energies { id = 4, nom_compteur = "Compteur electrique cuiseur Stephan", nomTabPcVue = "tab_COMPT_STEPHAN", equipementID = 170} });
+            new compteurs_energies { id = 4, nom_compteur = "Compteur electrique cuiseur Stephan", nomTabPcVue = "tab_COMPT_STEPHAN", equipementID = 170},
+            new compteurs_energies { id = 5, nom_compteur = "Compteur electrique actini", nomTabPcVue = "tab_COMPT_ACTINI", equipementID = 222},
+            new compteurs_energies { id = 6, nom_compteur = "Compteur electrique ecremeuse", nomTabPcVue = "tab_COMPT_ECREMEUSE", equipementID = 182},
+            new compteurs_energies { id = 7, nom_compteur = "Compteur electrique GP7", nomTabPcVue = "tab_COMPT_GP7", equipementID = 220}});
 
             modelBuilder.Entity<organisme>().HasData(new organisme[] { new organisme{ nom_organisme = "Inrae", id = 1}, new organisme { nom_organisme = "Agrocampus Ouest", id = 2 },
                 new organisme { nom_organisme = "Sill", id = 3 }, new organisme{ nom_organisme = "Eurial", id = 4}, new organisme{ nom_organisme = "Actalia", id = 5}, 

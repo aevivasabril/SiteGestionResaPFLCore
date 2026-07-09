@@ -749,6 +749,21 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                      where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                      select donnees).Any();
                             break;
+                        case "tab_COMPT_ACTINI":
+                            query = (from donnees in pcVueDb.tab_COMPT_ACTINI
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
+                        case "tab_COMPT_ECREMEUSE":
+                            query = (from donnees in pcVueDb.tab_COMPT_ECREMEUSE
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
+                        case "tab_COMPT_GP7":
+                            query = (from donnees in pcVueDb.tab_COMPT_GP7
+                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                     select donnees).Any();
+                            break;
                     }
                     if (query)
                         IsDataReady = true;
@@ -845,6 +860,48 @@ namespace SiteGestionResaCore.Areas.User.Data.DonneesUser
                                     where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
                                     select donnees).ToList();
                     foreach (var donne in querySth)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+
+                case "tab_COMPT_ACTINI":
+                    var queryAct = (from donnees in pcVueDb.tab_COMPT_ACTINI
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryAct)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+
+                case "tab_COMPT_ECREMEUSE":
+                    var queryEcr = (from donnees in pcVueDb.tab_COMPT_ECREMEUSE
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryEcr)
+                    {
+                        DataPcVueEquip DataPcV;
+                        // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
+                        DataPcV = new DataPcVueEquip { Chrono = new DateTime(donne.Chrono).AddYears(1600).ToLocalTime(), NomCapteur = donne.Name, Value = donne.Value };
+                        //Rajouter dans la liste des données PcVue
+                        OnlyData.Add(DataPcV);
+                    }
+                    break;
+
+                case "tab_COMPT_GP7":
+                    var queryGp = (from donnees in pcVueDb.tab_COMPT_GP7
+                                    where donnees.Chrono >= dateDebutPcVue.Ticks && donnees.Chrono <= dateFinPcVue.Ticks
+                                    select donnees).ToList();
+                    foreach (var donne in queryGp)
                     {
                         DataPcVueEquip DataPcV;
                         // Reconvertir la date à partir des secondes lus vers datetime (ajouter les 1600 ans
