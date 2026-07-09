@@ -42,6 +42,9 @@ namespace SiteGestionResaCore.Data.PcVue
         public virtual DbSet<tab_COMPT_STEPHAN> Tab_COMPT_STEPHAN { get; set; }
         public virtual DbSet<tab_UA_STEPHAN> tab_UA_STEPHAN { get; set; }
         public virtual DbSet<tab_UA_BANCMESURE> tab_UA_BANCMESURE { get; set; }
+        public virtual DbSet<tab_COMPT_ACTINI> tab_COMPT_ACTINI { get; set; }
+        public virtual DbSet<tab_COMPT_ECREMEUSE> tab_COMPT_ECREMEUSE { get; set; }
+        public virtual DbSet<tab_COMPT_GP7> tab_COMPT_GP7 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -438,6 +441,51 @@ namespace SiteGestionResaCore.Data.PcVue
 
                 entity.HasIndex(e => e.Chrono)
                     .HasName("IX_TREND_tab_UA_BANCMESURE_CLUSTERED")
+                    .IsClustered();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<tab_COMPT_ACTINI>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
+                    .HasName("IX_TREND_tab_COMPT_ACTINI_PRIMARY")
+                    .IsClustered(false);
+
+                entity.HasIndex(e => e.Chrono)
+                    .HasName("IX_TREND_tab_COMPT_ACTINI_CLUSTERED")
+                    .IsClustered();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<tab_COMPT_ECREMEUSE>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
+                    .HasName("IX_TREND_tab_COMPT_ECREMEUSE_PRIMARY")
+                    .IsClustered(false);
+
+                entity.HasIndex(e => e.Chrono)
+                    .HasName("IX_TREND_tab_COMPT_ECREMEUSE_CLUSTERED")
+                    .IsClustered();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(255)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<tab_COMPT_GP7>(entity =>
+            {
+                entity.HasKey(e => new { e.Name, e.Chrono, e.Value, e.Quality })
+                    .HasName("IX_TREND_tab_COMPT_GP7_PRIMARY")
+                    .IsClustered(false);
+
+                entity.HasIndex(e => e.Chrono)
+                    .HasName("IX_TREND_tab_COMPT_GP7_CLUSTERED")
                     .IsClustered();
 
                 entity.Property(e => e.Name)

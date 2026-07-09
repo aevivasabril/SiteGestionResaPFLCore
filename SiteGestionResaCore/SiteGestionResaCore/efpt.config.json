@@ -119,6 +119,18 @@
     {
       "HasPrimaryKey": true,
       "Name": "[dbo].[tab_UA_BANCMESURE]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_ACTINI]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_ECREMEUSE]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[tab_COMPT_GP7]"
     }
   ],
    "UseDatabaseNames": true,
